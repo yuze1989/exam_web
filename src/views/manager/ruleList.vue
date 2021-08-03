@@ -36,9 +36,6 @@
 <script>
 import provinceCodeList from "../../utils/provinceCode";
 import myPagination from '@/components/pagination';
-import {
-  listRules
-} from "../../api/api";
 export default {
   components: { myPagination },
   data() {

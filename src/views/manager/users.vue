@@ -77,7 +77,7 @@
 <script>
 import axios from 'axios'
 import provinceList from "../../utils/provinceCode";
-import { user_info_page} from '../../api/api';
+// import { user_info_page} from '../../api/api';
 import userAdd from './userAdd';
 import userModify from './userModify';
 import myPagination from "@/components/pagination";
@@ -140,13 +140,13 @@ export default {
         size: this.size
       };
       this.listLoading = true;
-      user_info_page(para).then((res) => {
-        this.data = res.result || [];
-        this.total = res.result.total || 0;
-        this.users = res.result.records;
-        // this.users.sort((a, b) => { return (a.id < b.id) ? 1 : -1 })
-        this.listLoading = false;
-      });
+      // user_info_page(para).then((res) => {
+      //   this.data = res.result || [];
+      //   this.total = res.result.total || 0;
+      //   this.users = res.result.records;
+      //   // this.users.sort((a, b) => { return (a.id < b.id) ? 1 : -1 })
+      //   this.listLoading = false;
+      // });
     },
     handleCurrentChange(current) {
       this.selections.current = current
