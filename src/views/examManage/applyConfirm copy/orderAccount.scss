@@ -1,0 +1,36 @@
+.form_border{
+    width: 100%;
+    .header{
+        text-align: left;
+        padding: 1rem;
+    }
+   .from-wrap{
+        width: 100%;
+    }
+    .logo-img{
+        width: 2rem;
+        height: 2rem;
+    }
+    .operate-item{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+    }
+    .deleteRowM {
+        font-size: 25px;
+        color: red;
+    }
+}
+.export-box{
+  display: flex;
+  flex-direction: row;
+  padding-right: 10px;
+  width: 100%;
+}
+.upload{
+  margin-left: 16px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
