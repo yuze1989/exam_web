@@ -2,7 +2,7 @@
   <section class="form_border">
     <div class="header">
       <el-button class="meiyuan_btn" type="primary" size="medium" @click="add"
-        >新增画室信息</el-button
+        >新增画室信息 </el-button
       >
     </div>
     <!--列表-->
