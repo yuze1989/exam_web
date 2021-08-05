@@ -22,12 +22,11 @@ const API = {
     rulesUpdate:'/rules/update', // 规则更新
     rulesCreate:'/rules/create', // 规则保存
     rulesDetail:'/rules/detail',  // 根据省份查询科目
-
     roomManage: {// 画室管理
-      list: "/exTemp/studio/page",
-      insert: "/exTemp/studio/add",
-      update: "/exTemp/studio/edit"
-    },
+        list: "/studio/list",
+        insert: "/exTemp/studio/add",
+        update: "/studio/update"
+      },
     messageManage:{// 考试信息管理
       list: "/exTemp/product/page",
       insert: "/exTemp/product/add",

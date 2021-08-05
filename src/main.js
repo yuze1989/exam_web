@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import myPagination from "@/components/pagination";
 import { bus } from './Bus'
 import { Tab, Tabs,CountDown,Button} from 'vant';
+import { validater } from '@/api/valid';
 
 
 Vue.use(ElementUI);
@@ -35,7 +36,7 @@ VueRouter.prototype.push = function push(location, onResolve, onReject) {
   if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
   return originalPush.call(this, location).catch(err => err)
 }
-
+Vue.prototype.$rules = validater;  //表单验证规则
 Vue.prototype.$bus = bus;  //接口列表
 Vue.prototype.API = API;  //接口列表
 // 引入全局插件和函数

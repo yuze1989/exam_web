@@ -18,24 +18,41 @@
       :rules="rules"
       ref="ruleForm"
     >
-      <el-form-item label="画室编号" prop="studioCode">
-        <el-input v-model="from.studioCode" placeholder="请输入画室编号"
-        ></el-input>
-      </el-form-item>
+   
       <el-form-item label="画室名称" prop="studioName">
         <el-input v-model="from.studioName" placeholder="请输入画室名称"></el-input>
+      </el-form-item>
+         <el-form-item label="画室地区" prop="studioAreaCode">
+        <el-select v-model="from.studioAreaCode" placeholder="请选择" @change="studioAreaChange">
+          <el-option
+            v-for="item in studioAreaOption"
+            :key="item.provinceCode"
+            :label="item.province"
+            :value="item.provinceCode">
+          </el-option>
+        </el-select>
+        </el-input>
+      </el-form-item>
+        <el-form-item label="画室联系人" prop="contactName">
+        <el-input v-model="from.contactName" placeholder="请输入画室联系人姓名"></el-input>
+      </el-form-item>
+         <el-form-item label="手机号码" prop="contactMobile">
+        <el-input v-model="from.contactMobile" type="number" placeholder="请输入手机号码"
+        ></el-input>
+      </el-form-item>
+  
       </el-form-item>
     </el-form>
 
     <div slot="footer">
       <el-button @click="close">取消</el-button>
-      <el-button type="primary" @click="confirm">绑定</el-button>
+      <el-button type="primary" @click="confirm">确定</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
-
+import { getAllProvince, creatStudio,updateStudio } from '@/api/studioManage.js'
 export default {
   name: "addRoom",
   props: {
@@ -54,7 +71,24 @@ export default {
       },
     },
   },
+  created(){
+    this.getAllProvinces() 
+  },
   methods: {
+    // 区域改变监听
+    studioAreaChange(e){
+      this.studioAreaOption.map(item =>{
+        if(item.provinceCode == e){
+          this.from.studioAreaName = item.province
+        }
+      })
+    },
+   // 获取所有区域
+     getAllProvinces(){
+      getAllProvince().then(res=>{
+        this.studioAreaOption = res.result
+      })
+    },
     close() {
       this.$emit("update:visible", false);
     },
@@ -63,17 +97,27 @@ export default {
       if (this.isAdd) {
         this.from = {
           studioName: "",
-          studioCode: "",
+          studioAreaName: "",
+          studioAreaCode: "",
+          contactName : "",
+          contactMobile: "",
+          id:''
         };
       } else {
         this.from = {
-          studioName: this.editItem.studioName,
-          studioCode: this.editItem.studioCode,
+          studioName: this.editItem.studioName,  // 画室名称 
+           studioCode : this.editItem.studioCode, //画室编码
+          studioAreaName: this.editItem.studioAreaName, // 画室区域名称
+          studioAreaCode : this.editItem.studioAreaCode, // 画室区域编码
+          contactName : this.editItem.contactName , //画室联系人姓名
+          contactMobile :this.editItem.contactMobile , // 画室联系人手机号
+          id:this.editItem.id 
         };
       }
     },
     confirm() {
       if (this.isAdd) {
+      
         this.add();
       } else {
         this.edit();
@@ -88,12 +132,30 @@ export default {
     add() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.$axios
-            .post(this.API.roomManage.insert, this.from)
-            .then((res) => {
+        console.log(this.API)
+        debugger
+        creatStudio(this.from).then((res) => {
               if (res) {
                 this.$message({
                   message: "新增成功",
+                  type: "success",
+                });
+                this.$emit("addSuccess");
+              }
+            })
+            .catch(() => {});
+        } else {
+        }
+      });
+    },
+     edit() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+        console.log(this.API)
+        updateStudio(this.from).then((res) => {
+              if (res) {
+                this.$message({
+                  message: "修改成功",
                   type: "success",
                 });
                 this.$emit("addSuccess");
@@ -109,12 +171,23 @@ export default {
     return {
       from: {
         studioName: "",
-        studioCode: "",
+        studioAreaCode: "",
+        studioAreaName: "",
+        contactName: '',
+        contactMobile: ""
       },
+      studioAreaOption: [],
       rules: {
         studioName: [{ required: true, message: "请输入画室名称", trigger: "blur" }],
-        studioCode: [
-          { required: true, message: "请输入编号", trigger: "blur" },
+         studioAreaCode: [
+          { required: true, message: "请输入画室区域", trigger: "blur" },
+        ],
+         contactName : [
+          { required: true, message: "请输入画室联系人", trigger: "blur" },
+        ],
+         contactMobile  : [
+          { required: true, message: "请输入画室联系人手机号", trigger: "blur" },
+          {validator: this.$rules.phoneNumber, trigger: 'blur'}
         ],
       },
     };

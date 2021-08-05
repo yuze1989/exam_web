@@ -1,0 +1,183 @@
+<template>
+   <section class="form_border">
+    <div style="color:bule">
+        汇总信息：生源信息汇总
+      </div>
+    <!--列表-->
+    <el-table
+      :data="data.records"
+      highlight-current-row
+      v-loading="listLoading"
+      border
+      :header-cell-style="{
+        background: '#08223c',
+        color: '#fff',
+        border: 'none',
+      }"
+    >
+      <el-table-column
+        label="考试编码"
+        header-align="center"
+        align="center"
+        prop="examCode"
+      >
+      </el-table-column>
+      <el-table-column
+        label="考试名称"
+        header-align="center"
+        align="center"
+        prop="examName"
+      >
+      </el-table-column>
+       <el-table-column
+        label="画室编号"
+        header-align="center"
+        align="center"
+        prop="studioCode"
+      >
+      </el-table-column>
+       <el-table-column
+        label="画室名称"
+        header-align="center"
+        align="center"
+        prop="studioName"
+      >
+      </el-table-column>
+       <el-table-column
+        label="画室地区"
+        header-align="center"
+        align="center"
+        prop="studioAreaName"
+      >
+      </el-table-column>
+        <el-table-column
+        label="学生总人数"
+        header-align="center"
+        align="center"
+        prop="studioNum"
+      >
+      </el-table-column>
+       <el-table-column
+      fixed="right"
+      label="操作"
+      width="200">
+      <template slot-scope="scope">
+        <el-button @click="relationStudio(scope.row)" type="primary"  size="small" round>生源详情</el-button>
+      </template>
+    </el-table-column>
+    </el-table>
+    <!--工具条-->
+    <el-col :span="24" class="toolbar">
+      <myPagination
+        :current.sync="form.pageIndex"
+        :pages.sync="data.pages"
+        :size.sync="form.pageSize"
+        :total.sync="data.total"
+        @cb="currentChange"
+      />
+    </el-col>
+
+  </section>
+</template>
+
+<script>
+
+import { apiStudioStatisticsList } from '@/api/studioManage.js'
+export default {
+  name: "StudioStatistics",
+  data() {
+    return {
+         examId: '',
+       listLoading: false,
+      sels: [], //列表选中列
+      search: {
+        name: "",
+        mobilePhone: "",
+      },
+      dialogTableVisible:false,
+      selectRoomIds: [],
+      roomOptions: [],
+      form: {
+        current: 1,
+        size: 10,
+
+      },
+
+      data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
+        {
+         
+        }
+      ] },
+      isAdd: false,
+      isAddType: 1, //1新增  0编辑
+      editItemData: {},
+    };
+  },
+  created() {
+     this.examId =   this.$route.params.examId
+     this.getList();
+  },
+
+  methods: {
+ 
+  // 获取列表
+    getList() {
+      let params = {
+        current : this.form.current ,
+        size : this.form.size ,
+        examId : this.examId
+       
+      };
+      apiStudioStatisticsList(params).then((res) => {
+                 this.data.records = res.result.list;
+                this.data.current = res.result.current;
+                this.data.total = res.result.total;
+                (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
+            })
+            .catch(() => {});
+    },
+    // 确认关联画室
+    confirmRltRoom(){
+    let list = []
+       let params = {
+        studioIds  : this.selectRoomIds ,
+        examId  : this.sels.id 
+       
+      };
+      apiRelationStudio(params).then((res) => {
+           this.$message({
+                  message: "关联成功",
+                  type: "success",
+            });
+            this.selectRoomIds = []
+            this.dialogTableVisible = false
+            this.getList()
+        })
+        .catch(() => {});
+    
+    },
+    // 关联画室
+    relationStudio(row){
+         this.sels = row
+          this.dialogTableVisible = true
+    }, 
+    // 统计信息
+    statisticsInfo(){},
+   currentChange() {
+      //console.log('index' + index)
+      this.getList();
+    },
+  },
+  mounted() {},
+  beforeCreate() {},
+};
+</script>
+
+<style lang="scss" scoped>
+@import "./schoolManage.scss";
+.header{
+display: flex;
+padding-left:200px;
+}
+</style>
+

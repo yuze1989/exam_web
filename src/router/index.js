@@ -120,7 +120,45 @@ export const asyncRouter = [
         meta: {
           name: '画室管理',
           icon: 'classmate'
+        },
+        // children: [
+        //   {
+        //     path: "/roomManage/associationExam",
+        //     id: 105,
+        //     code: 10105,
+        //     name: "AssociationExam",
+        //     component: resolve => require(["@/views/examManage/roomManage/associationExam.vue"], resolve),
+        //     meta: {
+        //       name: '关联考试',
+        //       icon: 'classmate'
+        //     }
+  
+        //   }
+        // ]
+      },
+      {
+        path: "/associationExam",
+        id: 105,
+        code: 10105,
+        name: "AssociationExam",
+        component: resolve => require(["@/views/examManage/roomManage/associationExam.vue"], resolve),
+        meta: {
+          name: '关联考试',
+          icon: 'classmate'
         }
+
+      },
+      {
+        path: "/studioStatistics",
+        id: 107,
+        code: 10107,
+        name: "StudioStatistics",
+        component: resolve => require(["@/views/examManage/roomManage/studioStatistics.vue"], resolve),
+        meta: {
+          name: '画室统计',
+          icon: 'classmate'
+        }
+
       }
     ]
   },

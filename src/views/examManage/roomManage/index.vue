@@ -1,8 +1,11 @@
 <template>
   <section class="form_border">
     <div class="header">
-      <el-button class="meiyuan_btn" type="primary" size="medium" @click="add"
-        >新增画室信息 </el-button
+      <el-button class="meiyuan_btn" type="primary" size="medium" @click="addStudio"
+        >新增画室信息</el-button
+      >
+       <el-button class="association_btn" type="primary" size="medium" @click="associationExam"
+        >关联考试</el-button
       >
     </div>
     <!--列表-->
@@ -31,6 +34,36 @@
         prop="studioName"
       >
       </el-table-column>
+       <el-table-column
+        label="联系人姓名"
+        header-align="center"
+        align="center"
+        prop="contactName"
+      >
+      </el-table-column>
+       <el-table-column
+        label="联系人手机号"
+        header-align="center"
+        align="center"
+        prop="contactMobile"
+      >
+      </el-table-column>
+       <el-table-column
+        label="画室地区"
+        header-align="center"
+        align="center"
+        prop="studioAreaName"
+      >
+      </el-table-column>
+       <el-table-column
+      fixed="right"
+      label="操作"
+      width="200">
+      <template slot-scope="scope">
+        <el-button @click="editItemAction(scope.row)" type="primary" icon="el-icon-edit" size="small" round>编辑</el-button>
+        <el-button  size="small" @click="handleDetele(scope.row)" type="danger" icon="el-icon-delete" round>删除</el-button>
+      </template>
+    </el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -55,7 +88,7 @@
 
 <script>
 import addRoomDialog from "./addRoomDialog";
-
+import { deteleStudio } from '@/api/studioManage.js'
 export default {
   components: {
     addRoomDialog,
@@ -70,23 +103,67 @@ export default {
       },
 
       form: {
-        pageIndex: 1,
-        pageSize: 10,
+        current: 1,
+        size: 10,
       },
 
-      data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
+      data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
+        {
+         
+        }
+      ] },
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
     };
   },
   created() {
-    // this.getList();
+     this.getList();
   },
 
   methods: {
+    // 关联考试
+    associationExam(){
+      this.$router.push({ name: 'AssociationExam'})
+    },
+  // 删除
+    handleDetele(item){
+        let that = this
+       this.$confirm('此操将删除该条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定删除',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          deteleStudio({
+            id: item.id
+          }).then(res=>{
+            if(res){
+              that.$message({
+                type: 'success',
+                message: '删除成功!'
+               });
+               that.getList();
+            }else{
+             that.$message({
+                type: 'error',
+                message: '删除失败!'
+               });
+            }
+            
+          })
+         
+        }).catch(() => {
+          that.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+    },
+  // 编辑
+    handleClick(){},
     // 新增
-    add() {
+    addStudio() {
       this.isAddType = 1;
       this.isAdd = true;
     },
@@ -106,20 +183,17 @@ export default {
     // api
     getList() {
       let params = {
-        pageIndex: this.form.pageIndex,
-        pageSize: this.form.pageSize,
-        model: {
-          name: this.search.name,
-          mobilePhone: this.search.mobilePhone,
-        },
+        current : this.form.current ,
+        size : this.form.size ,
+       
       };
       this.$axios
         .post(this.API.roomManage.list, params)
         .then((res) => {
-          this.data.records = res.records;
-          this.data.pageIndex = res.pageIndex;
-          this.data.total = res.total;
-          (this.data.pageSize = res.pageSize), (this.data.pages = res.pages);
+          this.data.records = res.result.records;
+          this.data.current = res.result.current;
+          this.data.total = res.result.total;
+          (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
         })
         .catch(() => {});
     },
