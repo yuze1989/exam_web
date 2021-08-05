@@ -177,7 +177,7 @@
         </el-button>
       </div>
 
-      <div v-for="(item, index) in subject" :key="index" :value="item">
+      <div v-for="(item, index) in subject" :key="index+'-'" :value="item">
         <el-form
           :inline="true"
           :model="item"
@@ -217,7 +217,7 @@
             <el-button
               type="text"
               style="width: 50px;"
-              @click="delSubject(index)"
+              @click="delSubject(index2)"
             >
               移除
             </el-button>
@@ -353,8 +353,8 @@ export default {
       console.log(this.editItem, this.isAdd, 'this.isAdd')
       if (this.isAdd) {
         this.from = {}
-        this.address = []
-        this.subject = []
+        this.address = [{}]
+        this.subject = [{}]
       } else {
         this.$axios
           .get(this.API.examinfo.detail + '?id=' + this.editItem.id)
@@ -372,8 +372,8 @@ export default {
               examEndTime: result.examEndTime, // 考试结束时间 ,
               examStartTime: result.examStartTime, // 考试开始时间 ,
             }
-            this.address = result.addressList
-            this.subject = result.subjectList
+            this.address = result.addressList?result.addressList:[{}]
+            this.subject = result.subjectList?result.subjectList:[{}]
           })
       }
     },
@@ -391,6 +391,7 @@ export default {
 
     // api
     add() {
+      console.log(this.$refs,'this.$refs.ruleForm')
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           let data = {
@@ -417,13 +418,13 @@ export default {
     },
 
     addAddress() {
-      this.address = [...this.address.push({})]
+      this.address.push({})
     },
     delAddress(index) {
       this.address.splice(index, 1)
     },
     addSubject() {
-      this.subject = [...this.subject.push({})]
+      this.subject.push({})
     },
     delSubject(index) {
       this.subject.splice(index, 1)

@@ -84,10 +84,10 @@ export const asyncRouter = [
     path: "/",
     component: Layout,
     name: "examManage",
-    id: 79,
-    code: 10079,
+    id: 84,
+    code: 10084,
     meta: {
-      name: '考试报名',
+      name: '考生管理2',
       icon: 'classmate'
     },
     children: [
@@ -95,33 +95,63 @@ export const asyncRouter = [
         path: "/applyConfirm",
         id: 80,
         code: 10080,
-        component: resolve => require(["@/views/examManage/applyConfirm/index.vue"], resolve),//() => import("@/views/school/index.vue"),
+        component: resolve => require(["@/views/examManage/applyConfirm/index.vue"], resolve),
         meta: {
           name: '考试信息管理',
           icon: 'classmate'
         }
       },
-      {
-        path: "/messageManage",
-        id: 81,
-        code: 10081,
-        component: resolve => require(["@/views/manager/ruleList.vue"], resolve),
-        // component: resolve => require(["@/views/examManage/messageManage/index.vue"], resolve),
-        meta: {
-          name: '考试信息管理',
-          icon: 'classmate'
-        }
-      },
+      //  require(["@/views/manager/ruleList.vue"] 规则
       {
         path: "/roomManage",
         id: 83,
         code: 10083,
-        component: resolve => require(["@/views/examManage/roomManage/index.vue"], resolve),//() => import("@/views/school/index.vue"),
+        component: resolve => require(["@/views/examManage/roomManage/index.vue"], resolve),
         meta: {
           name: '画室管理',
           icon: 'classmate'
         }
-      }
+      },
+      {
+        path: "/studentsManage",
+        id: 87,
+        code: 10087,
+        component: resolve => require(["@/views/examManage/studentsManage/index.vue"], resolve),
+        meta: {
+          name: '学生管理',
+          icon: 'classmate'
+        }
+      },
+      // {
+      //   path: "/xxx",
+      //   id: 86,
+      //   code: 10086,
+      //   // component: resolve => require(["@/views/examManage/studentsManage/index.vue"], resolve),
+      //   meta: {
+      //     name: '考场管理',
+      //     icon: 'classmate'
+      //   }
+      // },
+      {
+        path: "/xx",
+        id: 92,
+        code: 10092,
+        // component: resolve => require(["@/views/examManage/studentsManage/index.vue"], resolve),
+        meta: {
+          name: '准考证号',
+          icon: 'classmate'
+        }
+      },
+      {
+        path: "/x",
+        id: 92,
+        code: 10092,
+        // component: resolve => require(["@/views/examManage/studentsManage/index.vue"], resolve),
+        meta: {
+          name: '准考证&二维码',
+          icon: 'classmate'
+        }
+      },
     ]
   },
   {
@@ -139,7 +169,7 @@ export const asyncRouter = [
         path: "/orderAccount",
         id: 20,
         code: 10020,
-        component: resolve => require(["@/views/orderManage/orderAccount/index.vue"], resolve),//() => import("@/views/orderManage/index.vue"),
+        component: resolve => require(["@/views/orderManage/orderAccount/index.vue"], resolve),
         meta: {
           name: '订单管理',
           icon: 'notice-fill'
@@ -157,38 +187,38 @@ export const asyncRouter = [
       // }
     ]
   },
-  {
-    path: "/",
-    component: Layout,
-    name: "authManage",
-    id: 8,
-    code: 10008,
-    meta: {
-      name: '权限管理',
-      icon: 'set'
-    },
-    children: [
-      {
-        path: "/authManage",
-        id: 16,
-        code: 10016,
-        component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
-        meta: {
-          name: '角色管理',
-          icon: 'classmate'
-        },
-      }, {
-        path: "/userManage",
-        id: 17,
-        code: 10017,
-        component: resolve => require(["@/views/authManage/userManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
-        meta: {
-          name: '用户管理',
-          icon: 'classtime'
-        },
-      }
-    ]
-  },
+  // {
+  //   path: "/",
+  //   component: Layout,
+  //   name: "authManage",
+  //   id: 8,
+  //   code: 10008,
+  //   meta: {
+  //     name: '权限管理',
+  //     icon: 'set'
+  //   },
+  //   children: [
+  //     {
+  //       path: "/authManage",
+  //       id: 16,
+  //       code: 10016,
+  //       component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+  //       meta: {
+  //         name: '角色管理',
+  //         icon: 'classmate'
+  //       },
+  //     }, {
+  //       path: "/userManage",
+  //       id: 17,
+  //       code: 10017,
+  //       component: resolve => require(["@/views/authManage/userManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+  //       meta: {
+  //         name: '用户管理',
+  //         icon: 'classtime'
+  //       },
+  //     }
+  //   ]
+  // },
 ];
 
 const createRouter = () =>

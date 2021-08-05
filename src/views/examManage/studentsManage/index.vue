@@ -20,7 +20,7 @@
           </el-form-item>
         </el-col>
 
-        <!-- <el-col :span="4">
+        <el-col :span="4">
           <el-form-item>
             <el-select
               v-model="forms.model.checkState"
@@ -36,7 +36,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </el-col> -->
+        </el-col>
 
         <el-col :span="4">
           <el-form-item>
@@ -174,7 +174,7 @@
         </template>
       </el-table-column>
       <!-- //审核状态  0:待审核,1:通过,2:拒绝 支付状态 1:待支付,2:成功,3:失败,4:处理 -->
-      <!-- <el-table-column
+      <el-table-column
         label="操作"
         width="180"
         header-align="center"
@@ -196,7 +196,7 @@
             >拒绝</el-button
           >
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -336,10 +336,6 @@ export default {
       this.isEnableOrder = false;
     },
     onSubmit() {
-      // if (!this.$route.meta.usable) {
-      //   this.$message.error("该功能权限暂未开放，请联系客服");
-      //   return;
-      // }
       this.forms.pageIndex = 1;
       this.getOrderList();
     },

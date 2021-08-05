@@ -52,6 +52,7 @@ const actions = {
   login({
     commit
   }, data) {
+    console.log(commit,data)
     return new Promise((resolve, reject) => {
       request({
         url: "/user/login",
@@ -63,30 +64,9 @@ const actions = {
           "username": data.username,
         }
       }).then(response => {
-        console.log(response.code,response,'111')
+        console.log(response,'111')
         if (response.code == "200") {
-          response.result.user ={
-            // address: "浙江杭州滨江",
-            // city: "杭州市",
-            // collect: false,
-            // collectCount: 0,
-            // companyCheck: false,
-            // county: "滨江区",
-            // description: null,
-            // fansCount: 0,
-            // id: "319",
-            // idcardCheck: false,
-            // isCompany: true,
-            // isTeacher: false,
-            // lastLoginTime: "2021-08-02 22:45:38",
-            // loginCode: "888",
-            // loginIdentity: -1,
-            // mobilePhone: "1588888888",
-            // nickName: "老张",
-            // pingFee: 0,
-            // province: "浙江省",
-            // roleId: 0,
-          }
+          response.result.user ={}
           console.log(response)
           commit("SET_TOKEN", response.result.token);
           commit("SET_MENU", response.result.menuList);
@@ -100,12 +80,13 @@ const actions = {
           localStorage.setItem("user_avatar", response.result.user.imgUrl);
           localStorage.setItem("user_loginCode", response.result.user.loginCode);
           localStorage.setItem("menu", JSON.stringify(response. result.menuList))
-          // console.log(response. result.user.loginCode,'222')
           resolve(response);
         } else {
           Message.error(response.message);
           reject();
         }
+      }).catch(err=>{
+        reject(err);
       })
     });
   },
@@ -125,23 +106,6 @@ const actions = {
           hidden: true
         }]
       });
-
-      // request({
-      //   url: "/admin/admin/info",
-      //   method: "get"
-      // }).then(response => {
-      //   // roles must be a non-empty array
-      //   if (!response.roles || response.roles.length <= 0) {
-      //     reject("该角色不存在");
-      //   }
-
-      //   commit("SET_ROLES", response.roles);
-      //   commit("SET_USERNAME", response.username);
-      //   commit("SET_NICKNAME", response.nickname);
-      //   resolve(response);
-      // }).catch(error => {
-      //   reject(error);
-      // });
     });
   },
 
@@ -156,9 +120,6 @@ const actions = {
       localStorage.removeItem("currentSchoolId")
       removeToken();
       resetRouter();
-      // dispatch("tagsView/delAllViews", null, {
-      //   root: true
-      // });
       resolve();
     });
   },

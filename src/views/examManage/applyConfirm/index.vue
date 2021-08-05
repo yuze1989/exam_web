@@ -166,7 +166,7 @@
 
             <el-button
               type="text"
-              v-if="scope.row.status == -1"
+              v-if="scope.row.status == -1 && scope.row.examType == 1"
               size="small"
               @click="toShowInvite(scope.row)"
             >
@@ -180,7 +180,7 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar">
       <myPagination
-        :current.sync="forms.pageIndex"
+        :current.sync="forms.current"
         :pages.sync="data.pages"
         :size.sync="forms.pageSize"
         :total.sync="data.total"
@@ -242,7 +242,7 @@ export default {
       list: [],
       listLoading: false,
       forms: {
-        pageIndex: 1,
+        current: 1,
         pageSize: 10,
         model: {
           name: '',
@@ -302,7 +302,7 @@ export default {
         name: '',
         examStatus: -1,
       }),
-        (this.forms.pageIndex = 1)
+        (this.forms.current = 1)
       this.getOrderList()
     },
     changeStatus() {},
@@ -331,7 +331,7 @@ export default {
     getOrderList() {
       this.listLoading = true
       let params = {
-        pageIndex: this.forms.pageIndex,
+        current: this.forms.current,
         pageSize: this.forms.pageSize,
         name: this.forms.model.name,
         examStatus:
@@ -342,7 +342,6 @@ export default {
       this.$axios
         .post(this.API.examinfo.list, params)
         .then((res) => {
-          console.log(res, 'res222')
           this.list = res.result.records
           this.data = res.result
           this.listLoading = false
@@ -352,7 +351,7 @@ export default {
         })
     },
     onSubmit() {
-      this.forms.pageIndex = 1
+      this.forms.current = 1
       this.getOrderList()
     },
     // 1:通过,2:拒绝
@@ -364,7 +363,7 @@ export default {
         })
         .then((res) => {
           this.$message.success('操作成功')
-          this.forms.pageIndex = 1
+          this.forms.current = 1
           this.getOrderList()
         })
         .catch((err) => {

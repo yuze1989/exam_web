@@ -62,8 +62,13 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   } else {
-    console.log(to.path,'to.path')
-    next();
+    if (whiteList.indexOf(to.path) !== -1) {
+      next();
+    } else {
+      console.log('error login')
+      next({ path: "/login" });
+      NProgress.done();
+    }
   }
 });
 

@@ -62,13 +62,8 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    //const res = response.data;
-    // if(parseInt(res.code) === 111){
-    //     $router.push()
-    // }
     let res = {}
     res = response.data || {}
-    
     if(response.config.url.includes("exportExcel")){
       console.log(response,'aaa')
       const blob = new Blob([res], {type: "application/vnd.ms-excel;charset=utf-8"});//处理文档流
@@ -84,22 +79,19 @@ service.interceptors.response.use(
       document.body.removeChild(elink);
       return
     }
-
-    //res = {code:'111',message:'adfdsafdsafd'}
     console.log(res,'http')
     if (res.code == 200) {
       return Promise.resolve(res);
     } else if (res.code == 111 || res.code == 103) {
       router.push({ path: '/login' })
     } else {
-      console.log(res+"http-error")
       Message({
         type: "error",
         message: res.message,
       })
       res = null
     }
-    return Promise.resolve(res);
+    return Promise.reject(res);
   },
   error => {
     console.log(error.message,'error.message');
