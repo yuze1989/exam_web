@@ -1,54 +1,42 @@
 import router from "./router";
 import store from "./store";
-import NProgress from "nprogress"; // progress bar
-import "nprogress/nprogress.css"; // progress bar style
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import {
   getToken,
   getMenu
-} from "@/utils/auth"; // get token from cookie
+} from "@/utils/auth";
 NProgress.configure({
   showSpinner: false
-}); // NProgress Configuration
+});
 
-const whiteList = ["/login"]; // no redirect whitelist
+const whiteList = ["/login"];
 
 router.beforeEach(async (to, from, next) => {
-  // start progress bar
   NProgress.start();
-  // set page title
   document.title = ("考试后台管理");
-  // determine whether the user has logged in
   const hasToken = getToken();
   // // 如果 Cookie 里面有登录凭证，说明已经登录过了
   if (hasToken) {
     if (to.path === "/login") {
-      // if is logged in, redirect to the home page
       next();
       NProgress.done();
     } else {
-      //determine whether the user has obtained his permission roles through getInfo
       const hasRoles = store.getters.roles && store.getters.roles.length > 0;
       const menus = getMenu();
       if (hasRoles) {
         next()
       } else {
         try {
-          // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           const {
             roles,
             routes
           } = await store.dispatch("user/getInfo");
-          // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch("permission/generateRoutes", {
             menus,
             routes
           });
-          // dynamically add accessible routes
           router.addRoutes(accessRoutes);
-          // hack method to ensure that addRoutes is complete
-          // set the replace: true, so the navigation will not leave a history record
-          // next({ path: "/", replace: true });
-          //console.log(to)
           next({
             ...to,
             replace: true
