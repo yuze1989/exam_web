@@ -38,8 +38,6 @@ module.exports = {
     }
   },
 
-
-
   configureWebpack: config => {
     // webpack配置，值位对象时会合并配置，为方法时会改写配置
     if (debug) {
