@@ -1,13 +1,17 @@
 const API = {
 
 
-    examinfo: {
-      allProvince:"examinfo/allProvince", //GET 获取全部省列
-      create:"examinfo/create",//考试新增
-      delete:"examinfo/delete",//考试新增
-      detail:"examinfo/detail", //考试详情
+    examinfo: { //考试管理
+      allProvince:"/examinfo/allProvince", //GET 获取全部省列
+      create:"/examinfo/create",//考试新增
+      delete:"/examinfo/delete",//考试新增
+      detail:"/examinfo/detail", //考试详情
+      invite:"/examinfo/invite",// 邀请画室
       getProvinceByExamId: "/examinfo/getProvinceByExamId",//获取该考试下省列表
       list:"/examinfo/list" ,//考试列表
+      union: "/examinfo/union",//联合考试操作(状态:1、同意;2、拒绝;3、禁用)
+      unionExamList:"/examinfo/unionExamList",//"查询本机构下联合考试"
+      update: "/examinfo/update",//考试修改
     },
 
 

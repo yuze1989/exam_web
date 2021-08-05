@@ -10,7 +10,7 @@
   >
     <div slot="title">新增考试信息</div>
     <el-form
-      label-width="100px"
+      label-width="120px"
       :model="from"
       label-position="right"
       class="demo-ruleForm"
@@ -128,8 +128,13 @@ export default {
           name: "",
           price: "",
           remark: "",
-          address: [""],
-          subject: [""],
+          address: [{
+            examNum: 0,
+            examAddress:"",
+            province: "string",
+            provinceCode: "string"
+          }],
+          subject: [{}]
         };
       } else {
         console.log(this.editItem.address.split(","),'pp')
