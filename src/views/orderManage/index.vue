@@ -170,7 +170,7 @@ export default {
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
       isAdd: false,
       isCheck: false,
-      isAddType: 1, //1新增  0编辑
+      isAddType: 1,
       editItemData: {},
     };
   },
@@ -179,7 +179,6 @@ export default {
   },
 
   methods: {
-    // 新增
     add() {
       this.isAddType = 1;
       this.isAdd = true;
@@ -217,7 +216,6 @@ export default {
     },
 
     //0正常、1 待审核 、2 已拒绝、3用户删除  4 被系统拒绝  5 禁用
-
     getStateString(state) {
       let stateString = "";
       switch (state) {

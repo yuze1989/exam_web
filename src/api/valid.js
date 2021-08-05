@@ -7,8 +7,6 @@
  *    {validator: this.$rules.ipAddress, trigger: 'blur'}
  *  ]
  * }
- *
- 
  */
 export const validater = {
  
