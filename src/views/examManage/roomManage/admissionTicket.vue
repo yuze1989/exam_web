@@ -1,10 +1,26 @@
 <template>
    <section class="form_border">
     <div class="header">
-        <el-input v-model="form.examNo" style="width:200px"  placeholder="考试编号"
+        <el-button class="meiyuan_btn" type="primary" size="medium" @click="exportQR"
+          >生成和导出二维码</el-button
+        >
+        <el-button class="association_btn" type="primary" size="medium" @click="exportTicket"
+          >导出准考证</el-button
+        >
+        <el-input v-model="form.examName" style="width:200px;margin-left:50px;" placeholder="考试名称"
         ></el-input>
-        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试编名称"
+        <el-input v-model="form.examNo" style="width:200px;margin-left:50px;"  placeholder="输入考场"
         ></el-input>
+         <el-input v-model="form.studentName" style="width:200px;margin-left:50px;"  placeholder="学生姓名"
+        ></el-input>
+       <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择生源省份" @change="studioAreaChange">
+          <el-option
+            v-for="item in studentAreaOption"
+            :key="item.provinceCode"
+            :label="item.province"
+            :value="item.provinceCode">
+          </el-option>
+        </el-select>
        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button
       >
@@ -25,25 +41,83 @@
         label="考试编码"
         header-align="center"
         align="center"
-        prop="no"
+        prop="examCode"
       >
       </el-table-column>
       <el-table-column
         label="考试名称"
         header-align="center"
         align="center"
+        prop="examName"
+      >
+      </el-table-column>
+       <el-table-column
+        label="考试类型"
+        header-align="center"
+        align="center"
+      >
+          <template slot-scope="scope">
+            <div>{{ scope.row.examTypeStr == 0 ? '画室考试' :scope.row.examTypeStr == 1 ? '联合考试' :'线下考试'  }}</div>
+          </template>
+      </el-table-column>
+       <el-table-column
+        label="准考证号"
+        header-align="center"
+        align="center"
+        prop="admissionTicketCode"
+      >
+      </el-table-column>
+       <el-table-column
+        label="姓名"
+        header-align="center"
+        align="center"
         prop="name"
       >
       </el-table-column>
        <el-table-column
-        label="画室数量"
+        label="身份证号"
         header-align="center"
         align="center"
-        prop="studioNum"
+        prop="identification"
       >
       </el-table-column>
-      
        <el-table-column
+        label="画室编码"
+        header-align="center"
+        align="center"
+        prop="studioCode"
+      >
+      </el-table-column>
+       <el-table-column
+        label="画室名称"
+        header-align="center"
+        align="center"
+        prop="studioName"
+      >
+      </el-table-column>
+       <el-table-column
+        label="所属省份"
+        header-align="center"
+        align="center"
+        prop="province"
+      >
+      </el-table-column> <el-table-column
+        label="考场"
+        header-align="center"
+        align="center"
+        prop="examinationRoomCode"
+      >
+      </el-table-column>
+       <!-- <el-table-column
+        label="二维码"
+        header-align="center"
+        align="center"
+      >
+         <template slot-scope="scope">
+            <img :src="scope.row.url" style="width:100px;height:100px" />
+          </template>
+      </el-table-column> -->
+       <!-- <el-table-column
       fixed="right"
       label="操作"
       width="200">
@@ -51,7 +125,7 @@
         <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联画室</el-button>
         <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
       </template>
-    </el-table-column>
+    </el-table-column> -->
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -87,9 +161,12 @@
 
 <script>
 
-import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
+import { getAllProvince } from '@/api/studioManage.js'
+import { apiUnionExamList } from '@/api/ticket.js'
+
+
 export default {
-  name: "AssociationExam",
+  name: "AdmissionTicket",
   data() {
     return {
        listLoading: false,
@@ -98,14 +175,18 @@ export default {
         name: "",
         mobilePhone: "",
       },
+      studentAreaOption: [],
       dialogTableVisible:false,
       selectRoomIds: [],
       roomOptions: [],
       form: {
         pageIndex: 1,
         pageSize: 10,
-        examNo: "",
-        examName: ""
+        studentAreaName:'',
+        studentAreaCode: '',
+        studentName: '',
+        examName: '',
+        examNo: ''
 
       },
 
@@ -120,36 +201,45 @@ export default {
     };
   },
   created() {
-      this.getRoomList()
+      this.getAllProvinces()
      this.getList();
   },
 
   methods: {
-  // 获取画室
-  getRoomList(){
-  
-     let params = {
-        current : 1 ,
-        size : 1000 ,
-       
-      };
-      this.$axios
-        .post(this.API.roomManage.list, params)
-        .then((res) => {
-          this.roomOptions = res.result.records;
-        })
-        .catch(() => {});
-  },
+     // 生成和导出二维码
+     exportQR(){
+
+     },
+     // 导出准考证
+     exportTicket(){
+
+     },
+        // 区域改变监听
+    studioAreaChange(e){
+      this.studentAreaOption.map(item =>{
+        if(item.provinceCode == e){
+          this.from.studentAreaName = item.province
+        }
+      })
+    },
+         // 获取所有区域
+     getAllProvinces(){
+      getAllProvince().then(res=>{
+        this.studentAreaOption = res.result
+      })
+    },
   // 获取列表
     getList() {
       let params = {
         current : this.form.pageIndex ,
         size : this.form.pageSize ,
-        name : this.form.examName,
-        no:  this.form.examNo
+        examName : this.form.examName,
+        roomCode :  this.form.examNo,
+        provinceCode : this.form.studentAreaCode,
+        examineeName : this.form.studentName
       };
-      examinationList(params).then((res) => {
-                 this.data.records = res.result.records;
+      apiUnionExamList(params).then((res) => {
+                 this.data.records = res.result.list;
                 this.data.current = res.result.current;
                 this.data.total = res.result.total;
                 (this.data.pageSize = res.result.pageSize), (this.data.pages = res.result.pages);

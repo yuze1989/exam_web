@@ -103,7 +103,7 @@ export default {
 
       form: {
         pageIndex: 1,
-        size: 10,
+        pageSize: 10,
       },
 
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -186,7 +186,7 @@ export default {
     getList() {
       let params = {
         current : this.form.pageIndex ,
-        size : this.form.size ,
+        pageSize : this.form.size ,
        
       };
       this.$axios
@@ -195,7 +195,7 @@ export default {
           this.data.records = res.result.records;
           this.data.current = res.result.current;
           this.data.total = res.result.total;
-          (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
+          (this.data.pageSize = res.result.pageSize), (this.data.pages = res.result.pages);
         })
         .catch(() => {});
     },

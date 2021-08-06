@@ -1,9 +1,16 @@
 <template>
    <section class="form_border">
-    <!-- <div style="height:88px;line-height: 88px;padding-left:20px;color:blue;" @click="goStudentAccont">
-        汇总信息：生源信息汇总
-      </div> -->
-      <!-- <router-link to="/studioStatistics"> 汇总信息：生源信息汇总</router-link> -->
+    <div class="header">
+        <el-input v-model="form.examNo" style="width:200px"  placeholder="考试编号"
+        ></el-input>
+        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试编名称"
+        ></el-input>
+       <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
+        >查询</el-button>
+        <el-button class="association_btn" style="margin-left:200px;" type="primary" size="medium" @click="addTemplate"
+        >新建模板</el-button
+      >
+    </div>
     <!--列表-->
     <el-table
       :data="data.records"
@@ -20,54 +27,31 @@
         label="考试编码"
         header-align="center"
         align="center"
-        prop="examCode"
+        prop="no"
       >
       </el-table-column>
       <el-table-column
         label="考试名称"
         header-align="center"
         align="center"
-        prop="examName"
+        prop="name"
       >
       </el-table-column>
        <el-table-column
-        label="画室编号"
+        label="画室数量"
         header-align="center"
         align="center"
-        prop="studioCode"
+        prop="studioNum"
       >
       </el-table-column>
-       <el-table-column
-        label="画室名称"
-        header-align="center"
-        align="center"
-        prop="studioName"
-      >
-      </el-table-column>
-       <el-table-column
-        label="画室地区"
-        header-align="center"
-        align="center"
-        prop="studioAreaName"
-      >
-      </el-table-column>
-        <el-table-column
-        label="学生总人数"
-        header-align="center"
-        align="center"
-      >
-        
-          <template slot-scope="scope">
-            <div  @click="studentInfo(scope.row)">{{ scope.row.studioNum }}</div>
-          </template>
-      </el-table-column>
+      
        <el-table-column
       fixed="right"
       label="操作"
       width="200">
       <template slot-scope="scope">
-        <el-button @click="studentInfoList(scope.row)" type="text"  size="small" >生源详情</el-button>
-        <el-button @click="goStudentAccont(scope.row)" type="text"  size="small" >考试汇总</el-button>
+        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联画室</el-button>
+        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -81,19 +65,36 @@
         @cb="currentChange"
       />
     </el-col>
-
+     <!--选择关联画室-->
+    <el-dialog title="关联画室" :visible.sync="dialogTableVisible" center>
+      <div style="color:red">
+        当前选择会覆盖之前的选择
+      </div>
+      <el-select v-model="selectRoomIds" multiple placeholder="请选择画室">
+        <el-option
+          v-for="item in roomOptions"
+          :key="item.id"
+          :label="item.studioName"
+          :value="item.id">
+        </el-option>
+  </el-select>
+  <div style="margin-top:30px">
+     <el-button @click="dialogTableVisible = false">取 消</el-button>
+    <el-button type="primary" @click="confirmRltRoom">确 定</el-button>
+   
+  </div>
+   </el-dialog>
   </section>
 </template>
 
 <script>
 
-import { apiStudioStatisticsList } from '@/api/studioManage.js'
+import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
 export default {
-  name: "StudioStatistics",
+  name: "TicketManage",
   data() {
     return {
-      examId: '',
-      listLoading: false,
+       listLoading: false,
       sels: [], //列表选中列
       search: {
         name: "",
@@ -104,7 +105,9 @@ export default {
       roomOptions: [],
       form: {
         pageIndex: 1,
-        pageSize: 10,
+        size: 10,
+        examNo: "",
+        examName: ""
 
       },
 
@@ -119,25 +122,43 @@ export default {
     };
   },
   created() {
-     this.examId =   this.$route.params.examId
+      this.getRoomList()
      this.getList();
   },
 
   methods: {
- 
+    // 新建模板
+    addTemplate(){
+        
+    },
+  // 获取画室
+  getRoomList(){
+  
+     let params = {
+        current : 1 ,
+        size : 1000 ,
+       
+      };
+      this.$axios
+        .post(this.API.roomManage.list, params)
+        .then((res) => {
+          this.roomOptions = res.result.records;
+        })
+        .catch(() => {});
+  },
   // 获取列表
     getList() {
       let params = {
         current : this.form.pageIndex ,
-        pageSize : this.form.size ,
-        examId : this.examId
-       
+        size : this.form.size ,
+        name : this.form.examName,
+        no:  this.form.examNo
       };
-      apiStudioStatisticsList(params).then((res) => {
-                 this.data.records = res.result.list;
-                this.data.pageIndex = res.result.current;
+      examinationList(params).then((res) => {
+                 this.data.records = res.result.records;
+                this.data.current = res.result.current;
                 this.data.total = res.result.total;
-                (this.data.pageSize = res.result.pageSize), (this.data.pages = res.result.pages);
+                (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
             })
             .catch(() => {});
     },
@@ -167,29 +188,15 @@ export default {
           this.dialogTableVisible = true
     }, 
     // 统计信息
-    statisticsInfo(){},
+    statisticsInfo(row){
+      this.$router.push({ name: 'StudioStatistics', params: {
+        examId: row.id
+      }})
+    },
    currentChange() {
       //console.log('index' + index)
       this.getList();
     },
-    // 跳转生源地汇总信息
-    goStudentAccont(row){
-      this.$router.push({ name: 'StudentAccont', params: {
-        itemInfo : JSON.stringify(row)
-      }})
-    },
-    // 跳转生源详情
-    studentInfoList(row){
-        this.$router.push({ name: 'StudentDetailsInfo', params: {
-        itemInfo : JSON.stringify(row)
-      }})
-    },
-    // 跳转学生统计详情
-    studentInfo(row){
-       this.$router.push({ name: 'StudentInfo', params: {
-        itemInfo : JSON.stringify(row)
-      }})
-    }
   },
   mounted() {},
   beforeCreate() {},
@@ -197,7 +204,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "./schoolManage.scss";
+@import "./index.scss";
 .header{
 display: flex;
 padding-left:200px;

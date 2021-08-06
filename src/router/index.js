@@ -210,6 +210,64 @@ export const asyncRouter = [
           icon: 'classmate'
         }
       },
+      {
+        path: "/admissionTicket",
+        id: 90,
+        code: 10090,
+        name: "AdmissionTicket",
+        component: resolve => require(["@/views/examManage/roomManage/admissionTicket.vue"], resolve),
+        meta: {
+          name: '准考证&二维码',
+          icon: 'classmate'
+        }
+      },
+    ]
+  },
+  {
+    path: "/",
+    component: Layout,
+    name: "TemplateManage",
+    id: 89,
+    code: 10089,
+    meta: {
+      name: '模板管理',
+      icon: 'set'
+    },
+    children: [
+      {
+        path: "/templateManage",
+        id: 90,
+        code: 10090,
+        name:'TicketManage',
+        component: resolve => require(["@/views/templateManage/index.vue"], resolve),
+        meta: {
+          name: '准考证管理',
+          icon: 'notice-fill'
+        },
+      },
+      {
+        path: "/qrCodeManage",
+        id: 92,
+        code: 10092,
+        name:'QrcodeManage',
+        component: resolve => require(["@/views/templateManage/qrCodeManage.vue"], resolve),
+        meta: {
+          name: '二维码管理',
+          icon: 'notice-fill'
+        },
+      },
+      {
+        path: "/addTicketTemplate",
+        id: 91,
+        code: 10091,
+        name:'AddTicketTemplate',
+        component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+        meta: {
+          name: '准考证模板',
+          icon: 'notice-fill'
+        },
+      },
+     
     ]
   },
   {
