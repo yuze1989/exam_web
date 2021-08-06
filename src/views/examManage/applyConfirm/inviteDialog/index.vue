@@ -16,7 +16,7 @@
       class="demo-ruleForm"
       center
       :rules="rules"
-      ref="ruleForm"
+      ref="inviteForm"
     >
       <!-- <el-form-item label="考试名称" prop="examType">
         <el-select
@@ -120,7 +120,7 @@ export default {
 
     // api
     commit() {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.inviteForm.validate((valid) => {
         if (valid) {
           let data = {
             ...this.from,

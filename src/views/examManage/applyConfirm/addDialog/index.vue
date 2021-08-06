@@ -392,30 +392,29 @@ export default {
 
     // api
     add() {
-      console.log(this.$refs,'this.$refs.examForm')
-      // this.$refs.ruleForm.validate((valid) => {
-      //   if (valid) {
-      //     let data = {
-      //       ...this.from,
-      //       addressList: this.address,
-      //       subjectList: this.subject,
-      //       price: (this.from.price * 100).toFixed(0),
-      //     }
-      //     this.$axios
-      //       .post(this.API.examinfo.create, data)
-      //       .then((res) => {
-      //         if (res) {
-      //           this.$message({
-      //             message: '新增成功',
-      //             type: 'success',
-      //           })
-      //           this.$emit('addSuccess')
-      //         }
-      //       })
-      //       .catch(() => {})
-      //   } else {
-      //   }
-      // })
+      this.$refs.examForm.validate((valid) => {
+        if (valid) {
+          let data = {
+            ...this.from,
+            addressList: this.address,
+            subjectList: this.subject,
+            price: (this.from.price * 100).toFixed(0),
+          }
+          this.$axios
+            .post(this.API.examinfo.create, data)
+            .then((res) => {
+              if (res) {
+                this.$message({
+                  message: '新增成功',
+                  type: 'success',
+                })
+                this.$emit('addSuccess')
+              }
+            })
+            .catch(() => {})
+        } else {
+        }
+      })
     },
 
     addAddress() {

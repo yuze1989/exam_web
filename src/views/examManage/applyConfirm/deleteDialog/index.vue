@@ -16,7 +16,7 @@
       class="demo-ruleForm"
       center
       :rules="rules"
-      ref="ruleForm"
+      ref="delForm"
     >
       <el-form-item label="管理员账号" prop="username">
         <el-input v-model="from.username" placeholder="请输入"></el-input>
@@ -81,7 +81,7 @@ export default {
     },
     // api
     del() {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.delForm.validate((valid) => {
         if (valid) {
           let data = {
             ...this.from,
