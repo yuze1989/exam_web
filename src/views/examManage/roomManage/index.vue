@@ -60,8 +60,8 @@
       label="操作"
       width="200">
       <template slot-scope="scope">
-        <el-button @click="editItemAction(scope.row)" type="primary" icon="el-icon-edit" size="small" round>编辑</el-button>
-        <el-button  size="small" @click="handleDetele(scope.row)" type="danger" icon="el-icon-delete" round>删除</el-button>
+        <el-button @click="editItemAction(scope.row)" type="text" size="small" >编辑</el-button>
+        <el-button  size="small" @click="handleDetele(scope.row)" type="text"  >删除</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -75,7 +75,6 @@
         @cb="currentChange"
       />
     </el-col>
-
     <addRoomDialog
       :visible.sync="isAdd"
       :isAdd="isAddType"
@@ -103,7 +102,7 @@ export default {
       },
 
       form: {
-        current: 1,
+        pageIndex: 1,
         size: 10,
       },
 
@@ -178,12 +177,15 @@ export default {
     },
     currentChange() {
       //console.log('index' + index)
-      this.getList();
+      setTimeout(() => {
+         this.getList();
+      }, 200);
+     
     },
     // api
     getList() {
       let params = {
-        current : this.form.current ,
+        current : this.form.pageIndex ,
         size : this.form.size ,
        
       };

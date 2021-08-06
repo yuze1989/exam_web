@@ -58,7 +58,7 @@ export function filterAsyncParentRouters(menu, subMenus) {
 
     }
   })
-
+  console.log(router)
   return router
 
 }

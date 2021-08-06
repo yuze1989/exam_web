@@ -66,3 +66,29 @@ export function apiStudioStatisticsList(data) {
     params:data
   })
 }
+
+// 获取生源汇总信息
+export function apiStudentAccountList(data) {
+  return request({
+    url:  '/studio/studentCount',
+    method: 'POST',
+    data
+  })
+}
+// 学生信息详情
+export function apiStudentInfoList(data) {
+  return request({
+    url:  '/studio/studioStudentList',
+    method: 'POST',
+    data
+  })
+}
+
+// 生源详情数据
+export function apiStudentDetailList(data) {
+  return request({
+    url:  '/studio/studentDetailList',
+    method: 'POST',
+    data
+  })
+}

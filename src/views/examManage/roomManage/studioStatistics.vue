@@ -1,8 +1,9 @@
 <template>
    <section class="form_border">
-    <div style="color:bule">
+    <!-- <div style="height:88px;line-height: 88px;padding-left:20px;color:blue;" @click="goStudentAccont">
         汇总信息：生源信息汇总
-      </div>
+      </div> -->
+      <!-- <router-link to="/studioStatistics"> 汇总信息：生源信息汇总</router-link> -->
     <!--列表-->
     <el-table
       :data="data.records"
@@ -54,15 +55,19 @@
         label="学生总人数"
         header-align="center"
         align="center"
-        prop="studioNum"
       >
+        
+          <template slot-scope="scope">
+            <div  @click="studentInfo(scope.row)">{{ scope.row.studioNum }}</div>
+          </template>
       </el-table-column>
        <el-table-column
       fixed="right"
       label="操作"
       width="200">
       <template slot-scope="scope">
-        <el-button @click="relationStudio(scope.row)" type="primary"  size="small" round>生源详情</el-button>
+        <el-button @click="studentInfoList(scope.row)" type="primary"  size="small" round>生源详情</el-button>
+        <el-button @click="goStudentAccont(scope.row)" type="primary"  size="small" round>考试汇总</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -87,8 +92,8 @@ export default {
   name: "StudioStatistics",
   data() {
     return {
-         examId: '',
-       listLoading: false,
+      examId: '',
+      listLoading: false,
       sels: [], //列表选中列
       search: {
         name: "",
@@ -98,7 +103,7 @@ export default {
       selectRoomIds: [],
       roomOptions: [],
       form: {
-        current: 1,
+        pageIndex: 1,
         size: 10,
 
       },
@@ -123,14 +128,14 @@ export default {
   // 获取列表
     getList() {
       let params = {
-        current : this.form.current ,
+        current : this.form.pageIndex ,
         size : this.form.size ,
         examId : this.examId
        
       };
       apiStudioStatisticsList(params).then((res) => {
                  this.data.records = res.result.list;
-                this.data.current = res.result.current;
+                this.data.pageIndex = res.result.current;
                 this.data.total = res.result.total;
                 (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
             })
@@ -167,6 +172,24 @@ export default {
       //console.log('index' + index)
       this.getList();
     },
+    // 跳转生源地汇总信息
+    goStudentAccont(row){
+      this.$router.push({ name: 'StudentAccont', params: {
+        itemInfo : JSON.stringify(row)
+      }})
+    },
+    // 跳转生源详情
+    studentInfoList(row){
+        this.$router.push({ name: 'StudentDetailsInfo', params: {
+        itemInfo : JSON.stringify(row)
+      }})
+    },
+    // 跳转学生统计详情
+    studentInfo(row){
+       this.$router.push({ name: 'StudentInfo', params: {
+        itemInfo : JSON.stringify(row)
+      }})
+    }
   },
   mounted() {},
   beforeCreate() {},

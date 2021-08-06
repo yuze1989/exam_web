@@ -1,14 +1,9 @@
 <template>
    <section class="form_border">
-    <div class="header">
-        <el-input v-model="form.examNo" style="width:200px"  placeholder="考试编号"
-        ></el-input>
-        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试编名称"
-        ></el-input>
-       <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
-        >查询</el-button
-      >
-    </div>
+    <div style="height:88px;line-height: 88px;padding-left:20px;" >
+        学生详情信息
+      </div>
+      <!-- <router-link to="/studioStatistics"> 汇总信息：生源信息汇总</router-link> -->
     <!--列表-->
     <el-table
       :data="data.records"
@@ -25,33 +20,87 @@
         label="考试编码"
         header-align="center"
         align="center"
-        prop="no"
+        prop="examCode"
       >
       </el-table-column>
       <el-table-column
         label="考试名称"
         header-align="center"
         align="center"
+        prop="examName"
+      >
+      </el-table-column>
+       <el-table-column
+        label="姓名"
+        header-align="center"
+        align="center"
         prop="name"
       >
       </el-table-column>
-       <el-table-column
-        label="画室数量"
+      <el-table-column
+        label="身份证号码"
         header-align="center"
         align="center"
-        prop="studioNum"
+        prop="identification"
       >
       </el-table-column>
-      
        <el-table-column
-      fixed="right"
-      label="操作"
-      width="200">
-      <template slot-scope="scope">
-        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联画室</el-button>
-        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
-      </template>
-    </el-table-column>
+        label="画室编号"
+        header-align="center"
+        align="center"
+        prop="studioCode"
+      >
+      </el-table-column>
+       <el-table-column
+        label="画室名称"
+        header-align="center"
+        align="center"
+        prop="studioName"
+      >
+      </el-table-column>
+       <el-table-column
+        label="报名费用"
+        header-align="center"
+        align="center"
+        prop="price"
+      >
+      </el-table-column>
+        <el-table-column
+        label="报名支付状态"
+        header-align="center"
+        align="center"
+      >
+         <template slot-scope="scope">
+            <div>{{ scope.row.payStatusStr == 1 ? '已支付' : '未支付'  }}</div>
+          </template>
+      </el-table-column>
+        <el-table-column
+        label="报名来源"
+        header-align="center"
+        align="center"
+      >
+         <template slot-scope="scope">
+            <div>{{ scope.row.sourceStr == 1 ? '手机' : '后台'  }}</div>
+          </template>
+      </el-table-column>
+         <el-table-column
+        label="照片"
+        header-align="center"
+        align="center"
+      >
+         <template slot-scope="scope">
+            <img :src="scope.row.url" style="width:100px;height:100px" />
+          </template>
+      </el-table-column>
+          <el-table-column
+        label="审核状态"
+        header-align="center"
+        align="center"
+      >
+        <template slot-scope="scope">
+            <div>{{ scope.row.sourceStr == 2 ? '拒绝' : scope.row.sourceStr == 1 ? '通过' : '待审核'  }}</div>
+          </template>
+      </el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -63,35 +112,18 @@
         @cb="currentChange"
       />
     </el-col>
-     <!--选择关联画室-->
-    <el-dialog title="关联画室" :visible.sync="dialogTableVisible" center>
-      <div style="color:red">
-        当前选择会覆盖之前的选择
-      </div>
-      <el-select v-model="selectRoomIds" multiple placeholder="请选择画室">
-        <el-option
-          v-for="item in roomOptions"
-          :key="item.id"
-          :label="item.studioName"
-          :value="item.id">
-        </el-option>
-  </el-select>
-  <div style="margin-top:30px">
-     <el-button @click="dialogTableVisible = false">取 消</el-button>
-    <el-button type="primary" @click="confirmRltRoom">确 定</el-button>
-   
-  </div>
-   </el-dialog>
+
   </section>
 </template>
 
 <script>
 
-import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
+import { apiStudentInfoList } from '@/api/studioManage.js'
 export default {
-  name: "AssociationExam",
+  name: "StudentInfo",
   data() {
     return {
+         examId: '',
        listLoading: false,
       sels: [], //列表选中列
       search: {
@@ -104,8 +136,6 @@ export default {
       form: {
         pageIndex: 1,
         size: 10,
-        examNo: "",
-        examName: ""
 
       },
 
@@ -120,37 +150,25 @@ export default {
     };
   },
   created() {
-      this.getRoomList()
+      if(this.$route.params.itemInfo){
+        this.params = JSON.parse(this.$route.params.itemInfo) 
+      }
      this.getList();
   },
 
   methods: {
-  // 获取画室
-  getRoomList(){
-  
-     let params = {
-        current : 1 ,
-        size : 1000 ,
-       
-      };
-      this.$axios
-        .post(this.API.roomManage.list, params)
-        .then((res) => {
-          this.roomOptions = res.result.records;
-        })
-        .catch(() => {});
-  },
+ 
   // 获取列表
     getList() {
       let params = {
         current : this.form.pageIndex ,
         size : this.form.size ,
-        name : this.form.examName,
-        no:  this.form.examNo
+        examId : this.params.examId ,
+        studioId : this.params.studioId
       };
-      examinationList(params).then((res) => {
-                 this.data.records = res.result.records;
-                this.data.current = res.result.current;
+      apiStudentInfoList(params).then((res) => {
+                 this.data.records = res.result.list;
+                this.data.pageIndex = res.result.current;
                 this.data.total = res.result.total;
                 (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
             })
@@ -182,15 +200,19 @@ export default {
           this.dialogTableVisible = true
     }, 
     // 统计信息
-    statisticsInfo(row){
-      this.$router.push({ name: 'StudioStatistics', params: {
-        examId: row.id
-      }})
-    },
+    statisticsInfo(){},
    currentChange() {
       //console.log('index' + index)
       this.getList();
     },
+    // 跳转生源地汇总信息
+    goStudentAccont(){
+      this.$router.push({ name: 'StudentAccont'})
+    },
+    // 跳转学生统计详情
+    studentInfo(){
+       this.$router.push({ name: 'StudentInfo'})
+    }
   },
   mounted() {},
   beforeCreate() {},

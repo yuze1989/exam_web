@@ -8,7 +8,7 @@
     width="30%"
     center
   >
-    <div slot="title">新增画室信息</div>
+    <div slot="title">{{from.studioCode ? '编辑' : '新增'}}画室信息</div>
     <el-form
       label-width="100px"
       :model="from"
@@ -18,7 +18,9 @@
       :rules="rules"
       ref="ruleForm"
     >
-   
+     <el-form-item label="画室编号" prop="studioName" v-if="from.studioCode">
+       {{ from.studioCode}}
+      </el-form-item>
       <el-form-item label="画室名称" prop="studioName">
         <el-input v-model="from.studioName" placeholder="请输入画室名称"></el-input>
       </el-form-item>
@@ -31,7 +33,6 @@
             :value="item.provinceCode">
           </el-option>
         </el-select>
-        </el-input>
       </el-form-item>
         <el-form-item label="画室联系人" prop="contactName">
         <el-input v-model="from.contactName" placeholder="请输入画室联系人姓名"></el-input>
@@ -39,8 +40,6 @@
          <el-form-item label="手机号码" prop="contactMobile">
         <el-input v-model="from.contactMobile" type="number" placeholder="请输入手机号码"
         ></el-input>
-      </el-form-item>
-  
       </el-form-item>
     </el-form>
 

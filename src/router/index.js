@@ -103,8 +103,8 @@ export const asyncRouter = [
       },
       {
         path: "/roomManage",
-        id: 83,
-        code: 10083,
+        id: 86,
+        code: 10086,
         component: resolve => require(["@/views/examManage/roomManage/index.vue"], resolve),
         meta: {
           name: '画室管理',
@@ -168,12 +168,45 @@ export const asyncRouter = [
       },
       {
         path: "/studioStatistics",
-        id: 107,
-        code: 10107,
+        id: 96,
+        code: 10096,
         name: "StudioStatistics",
         component: resolve => require(["@/views/examManage/roomManage/studioStatistics.vue"], resolve),
         meta: {
           name: '画室统计',
+          icon: 'classmate'
+        }
+      },
+      {
+        path: "/studentAccont",
+        id: 98,
+        code: 10098,
+        name: "StudentAccont",
+        component: resolve => require(["@/views/examManage/roomManage/studentAccont.vue"], resolve),
+        meta: {
+          name: '生源信息汇总',
+          icon: 'classmate'
+        }
+      },
+      {
+        path: "/studentInfo",
+        id: 99,
+        code: 10099,
+        name: "StudentInfo",
+        component: resolve => require(["@/views/examManage/roomManage/studentInfo.vue"], resolve),
+        meta: {
+          name: '学生详情数据',
+          icon: 'classmate'
+        }
+      },
+      {
+        path: "/studentDetailsInfo",
+        id: 100,
+        code: 10100,
+        name: "StudentDetailsInfo",
+        component: resolve => require(["@/views/examManage/roomManage/studentDetailsInfo.vue"], resolve),
+        meta: {
+          name: '生源详细数据',
           icon: 'classmate'
         }
       },
