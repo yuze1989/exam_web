@@ -10,13 +10,13 @@
   >
     <div slot="title">考试信息</div>
     <el-form
-      label-width="120px"
+      label-width="140px"
       :model="from"
       label-position="right"
       class="demo-ruleForm"
       center
       :rules="rules"
-      ref="ruleForm"
+      ref="examForm"
     >
       <el-form-item label="考试名称" prop="name">
         <el-input
@@ -152,6 +152,7 @@
             <el-input
               v-model="item.examNum"
               placeholder="人数限制(输入0为不限制)"
+              onkeyup="value=value.replace(/[^\d]/g,'')"
               style="width: 200px;"
             ></el-input>
           </el-form-item>
@@ -391,30 +392,30 @@ export default {
 
     // api
     add() {
-      console.log(this.$refs,'this.$refs.ruleForm')
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          let data = {
-            ...this.from,
-            addressList: this.address,
-            subjectList: this.subject,
-            price: (this.from.price * 100).toFixed(0),
-          }
-          this.$axios
-            .post(this.API.examinfo.create, data)
-            .then((res) => {
-              if (res) {
-                this.$message({
-                  message: '新增成功',
-                  type: 'success',
-                })
-                this.$emit('addSuccess')
-              }
-            })
-            .catch(() => {})
-        } else {
-        }
-      })
+      console.log(this.$refs,'this.$refs.examForm')
+      // this.$refs.ruleForm.validate((valid) => {
+      //   if (valid) {
+      //     let data = {
+      //       ...this.from,
+      //       addressList: this.address,
+      //       subjectList: this.subject,
+      //       price: (this.from.price * 100).toFixed(0),
+      //     }
+      //     this.$axios
+      //       .post(this.API.examinfo.create, data)
+      //       .then((res) => {
+      //         if (res) {
+      //           this.$message({
+      //             message: '新增成功',
+      //             type: 'success',
+      //           })
+      //           this.$emit('addSuccess')
+      //         }
+      //       })
+      //       .catch(() => {})
+      //   } else {
+      //   }
+      // })
     },
 
     addAddress() {
@@ -430,7 +431,7 @@ export default {
       this.subject.splice(index, 1)
     },
     edit() {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.examForm.validate((valid) => {
         if (valid) {
           this.$axios
             .post(this.API.examinfo.update, {

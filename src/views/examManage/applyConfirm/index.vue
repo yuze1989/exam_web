@@ -148,7 +148,7 @@
             <!-- POST /examinfo/union 联合考试操作(状态:1、同意;2、拒绝;3、禁用) -->
             <el-button
               type="text"
-              v-if="scope.row.status == 0 && scope.examType.type == 1"
+              v-if="scope.row.status == 0 && scope.row.examType == 1"
               size="small"
               @click="enbaleItemAction(scope.row, 1)"
             >
@@ -157,7 +157,7 @@
 
             <el-button
               type="text"
-              v-if="scope.row.status == 0 && scope.examType.type == 1"
+              v-if="scope.row.status == 0 && scope.row.examType == 1"
               size="small"
               @click="enbaleItemAction(scope.row, 2)"
             >

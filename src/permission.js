@@ -36,6 +36,11 @@ router.beforeEach(async (to, from, next) => {
             menus,
             routes
           });
+          if(accessRoutes&&accessRoutes.length<1){ //系统修复
+            next({ path: "/login" });
+            NProgress.done();
+            return
+          }
           router.addRoutes(accessRoutes);
           next({
             ...to,
