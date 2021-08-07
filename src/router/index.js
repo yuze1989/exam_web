@@ -131,16 +131,16 @@ export const asyncRouter = [
           icon: 'classmate'
         }
       },
-        // {
-        //   path: "/xxx",
-        //   id: 86,
-        //   code: 10086,
-        //   // component: resolve => require(["@/views/examManage/studentsManage/index.vue"], resolve),
-        //   meta: {
-        //     name: '考场管理',
-        //     icon: 'classmate'
-        //   }
-        // },
+        {
+          path: "/examRoomManage",
+          id: 86,
+          code: 10086,
+          component: resolve => require(["@/views/examManage/examRoomManage/examRoom.vue"], resolve),
+          meta: {
+            name: '考场管理',
+            icon: 'classmate'
+          }
+        },
         // children: [
         //   {
         //     path: "/roomManage/associationExam",
