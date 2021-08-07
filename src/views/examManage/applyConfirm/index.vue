@@ -172,6 +172,15 @@
             >
               <span>邀请画室</span>
             </el-button>
+
+            <el-button
+              type="text"
+              v-if="scope.row.status == -1 && scope.row.examType == 1"
+              size="small"
+              @click="toUnion(scope.row)"
+            >
+              <span>联合考试状态</span>
+            </el-button>
           </div>
         </template>
       </el-table-column>
@@ -277,6 +286,10 @@ export default {
     this.getOrderList()
   },
   methods: {
+    //去查询联合考试状态
+    toUnion(){
+      
+    },
     // 新增
     add() {
       this.isAddType = 1

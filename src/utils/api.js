@@ -1,6 +1,5 @@
 const API = {
-
-
+    upload: "/file/upload", //上传
     examinfo: { //考试管理
       allProvince:"/examinfo/allProvince", //GET 获取全部省列
       create:"/examinfo/create",//考试新增
@@ -13,103 +12,23 @@ const API = {
       unionExamList:"/examinfo/unionExamList",//"查询本机构下联合考试"
       update: "/examinfo/update",//考试修改
     },
-
-
-
-
-    listRules:'/rules/list', // 规则列表
-    getRulesDetail:'/rules/getRulesDetail', // 规则详情
-    rulesUpdate:'/rules/update', // 规则更新
-    rulesCreate:'/rules/create', // 规则保存
-    rulesDetail:'/rules/detail',  // 根据省份查询科目
-    roomManage: {// 画室管理
-        list: "/studio/list",
-        insert: "/exTemp/studio/add",
-        update: "/studio/update"
-      },
-    messageManage:{// 考试信息管理
-      list: "/exTemp/product/page",
-      insert: "/exTemp/product/add",
-      update: "/exTemp/product/edit"
-    },
-    applyConfirm: {
-      list: "/exTemp/enrollOrder/page",
-      check: "/exTemp/enrollOrder/check",
-      export: "/exTemp/enrollOrder/exportExcel", //导出报名信息
-      import: "/exTemp/enrollOrder/importExcel", //导入报名信息
-    },
-
-    folder: {
-        list: "/train/courseCoursewareFolder/list",
-        insert: "/train/courseCoursewareFolder/insert",
-        insertCourseware: "train/course/insertCourseware",
-        update: "train/courseCoursewareFolder/update",
-        delete: "/train/courseCoursewareFolder/delete"
-    },
-    teacher: {
-        list: "train/teacher/page",
-        insert: "/train/teacher/insert",
-        update: "train/teacher/update",
-        courseTeacher: "/train/teacher/courseTeacher",
-        band: "train/teacher/band",
-        unband: "train/teacher/unband",
-        getById: "train/teacher/getById",
-        delete: "train/teacher/delete",
-    },
-    student: {   //学生管理
-        list: "/train/student/page",
-        update: "/train/student/update",
-        resetPassword: "/train/student/resetPassword",
-        delete: "/train/student/delete"
-
-    },
-    school: {  //校长管理
-        list: "/train/headMaster/page",
-        insert: "/train/headMaster/insert",
-        update: "train/headMaster/update"
-    },
-    class: {
-        list: "/train/class/v2/list",
-        add: "/train/class/v2/addClass",
-        updateClass: "/train/class/v2/updateClass",
-        deleteClass: "/train/class/v2/deleteClass",
-
-        detail: "/train/class/v2/detail"
-
-    },
-    upLoadImageApi: {
-        upLoadImageConfig: 'art/tool/ossAppConfig'
-    },
-    user: {
-        changePwd: "/art/user/changePassword"
-    },
-    roleManage: {
-        trainRoleAdd: "/train/role/add",
-        trainRoleMenuSelect: "/train/role/menuSelect",
-        trainRolePage: "/train/role/page",
-        trainRoleRemove: "/train/role/remove",
-        trainRoleUpdate: "/train/role/update",
-        trainRoleUpdateMenu: "/train/role/updateMenu"
-    },
-    userManage: {
-        trainAdminAdd: "/train/admin/add",
-        trainAdminEnableDisable: "/train/admin/enableDisable",
-        trainAdminPage: "/train/admin/page",
-        trainAdminResetPassword: "/train/admin/resetPassword",
-        trainAdminRoleSelect: "/train/admin/roleSelect",
-        trainAdminUpdate: "/train/admin/update"
-    },
-    order: {
-        page: "/train/trainSchoolPurchaseOrder/page",
-        operateLog: "/train/trainSchoolPurchaseOrder/operateLog",
-        open: "/train/trainSchoolPurchaseOrder/open",
-        delaySelect: "/train/trainSchoolPurchaseOrder/delaySelect",
-        delay: "/train/trainSchoolPurchaseOrder/delay"
-    },
-    organ: {
-        brandSchoolPage: "/train/school/brandSchoolPage",
-        shareInfo: "/train/school/shareInfo",
-        getShareInfo: "/teacher/school/shareInfo"
+    studentsManage: { //学生管理
+      examRoomChange:"/examinee/examRoomChange", //考场分配--考生换考场
+      examRoomCoun:"/examinee/examRoomCoun", //考场分配--考生人数统计
+      examRoomDistribut:"/examinee/examRoomDistribut",  //考场分配
+      examRoomList:"/examinee/examRoomList",//考场信息查询
+      examRoomProvince:"/examinee/examRoomProvince",//获取生源省列表
+      
+      examineeBatchCheck:"/examinee/examineeBatchCheck",//考生信息批量审核(审核状态:0未审核；1通过；2未通过)
+      examineeBatchImport:"/examinee/examineeBatchImport",//学生信息批量导入
+      examineeCheck:"/examinee/examineeCheck",//考生信息审核(审核状态:0未审核；1通过；2未通过)
+      examineeCreate:"/examinee/examineeCreate",//学生信息新增
+      examineeDelete:"/examinee/examineeDelete",// 考生信息删除
+      examineeDetail:"/examinee/examineeDetail",//获取考生信息详情
+      examineeList:"/examinee/examineeList", //学生信息查询
+      examineeUpdate:"/examinee/examineeUpdate",// 学生信息修改
+      ticketGenerate:"/examinee/ticketGenerate",// 准考证号管理--生成准考证号
+      ticketList:"/examinee/ticketList"//准考证号管理--查询
     },
 }
 
