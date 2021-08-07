@@ -106,9 +106,12 @@ module.exports = {
     hotOnly: false,
     proxy: {
       "^/api": {
-        target: 'http://web.369top.top:6098/toparts-app-web/', //'http://train.msjsol.com/toparts-app-web/',//
+        target: 'http://47.96.236.194:8088', //'http://train.msjsol.com/toparts-app-web/',//
         ws: false,
-        changeOrigin: true
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
       }
     }
   },

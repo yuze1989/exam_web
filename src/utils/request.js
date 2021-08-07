@@ -3,6 +3,7 @@ import { Message } from "element-ui";
 import store from "@/store";
 import { getToken } from "@/utils/auth";
 import router from "../router/index"
+import qs from 'qs'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -22,15 +23,17 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-
+    console.log(config,'config')
     if (store.getters.token) {
       config.headers["token"] = getToken();
       config.headers["Art-Token"] = getToken();
       config.headers["Authorization"] = getToken();
-      
     }
-    if(config.url.includes("importExcel")){
-      config.headers["content-type"] = " multipart/form-data";
+    if(config.url.includes("import")){
+      config.headers["content-type"] = "multipart/form-data";
+    }
+    if(config.url.includes("examineeUpdate")||config.url.includes("examineeCreate")||config.url.includes("BatchImport")){
+      config.headers["content-type"] = "multipart/form-data; boundary=----WebKitFormBoundarynw0GeE106ZtdDvHA";
     }
     if(config.url.includes("exportExcel")){
       config.responseType = 'blob';

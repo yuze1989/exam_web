@@ -12,12 +12,19 @@ const API = {
       unionExamList:"/examinfo/unionExamList",//"查询本机构下联合考试"
       update: "/examinfo/update",//考试修改
     },
+    roomManage: {// 画室管理
+      list: "/studio/list",
+      insert: "/exTemp/studio/add",
+      update: "/studio/update"
+    },
     studentsManage: { //学生管理
       examRoomChange:"/examinee/examRoomChange", //考场分配--考生换考场
       examRoomCoun:"/examinee/examRoomCoun", //考场分配--考生人数统计
       examRoomDistribut:"/examinee/examRoomDistribut",  //考场分配
       examRoomList:"/examinee/examRoomList",//考场信息查询
       examRoomProvince:"/examinee/examRoomProvince",//获取生源省列表
+      examlist:"/ticket/examlist", // 新增学生 获取考试列表
+      roomsList:"/studio/getStudioByExamId",// 新增学生 根据考试id获取学生列表
       
       examineeBatchCheck:"/examinee/examineeBatchCheck",//考生信息批量审核(审核状态:0未审核；1通过；2未通过)
       examineeBatchImport:"/examinee/examineeBatchImport",//学生信息批量导入

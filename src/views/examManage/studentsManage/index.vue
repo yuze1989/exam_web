@@ -68,11 +68,15 @@
           :value="item.id"
         ></el-option>
       </el-select>
-
+    </div>
+    <div style="margin-top: -10px;margin-bottom: 10px;">
       <el-button type="primary" style="margin-left: 20px;" @click="onSubmit">
         查询
       </el-button>
       <el-button type="warning" @click="reset">重置</el-button>
+      <el-button type="primary" @click="checkMore">批量审核</el-button>
+      <el-button type="warning" @click="add">新增学生信息</el-button>
+      <el-button type="primary" @click="onImport">批量导入</el-button>
     </div>
     <!-- 导入 导出 -->
     <!-- <div class="export-box">
@@ -99,8 +103,11 @@
         color: '#fff',
         border: 'none',
       }"
+      @selection-change="handleSelectionChange"
+      ref="multipleTable"
     >
       <el-table-column
+        type="selection"
         label="考试编码"
         header-align="center"
         align="center"
@@ -213,27 +220,11 @@
         align="center"
       >
         <template slot-scope="scope">
-          <!-- <el-button
-            v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
-            type="text"
-            size="small"
-            @click="enbaleItemAction(scope.row, 1)"
-          >
-            通过
-          </el-button>
           <el-button
             v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
             type="text"
             size="small"
-            @click="enbaleItemAction(scope.row, 2)"
-          >
-            拒绝
-          </el-button> -->
-          <el-button
-            v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
-            type="text"
-            size="small"
-            @click="enbaleItemAction(scope.row, 2)"
+            @click="toshowCheck(scope.row)"
           >
             审核
           </el-button>
@@ -241,7 +232,7 @@
             v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
             type="text"
             size="small"
-            @click="enbaleItemAction(scope.row, 2)"
+            @click="toEditItem(scope.row)"
           >
             修改
           </el-button>
@@ -249,7 +240,7 @@
             v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
             type="text"
             size="small"
-            @click="enbaleItemAction(scope.row, 2)"
+            @click="del(scope.row)"
           >
             删除
           </el-button>
@@ -268,8 +259,8 @@
     </el-col>
 
     <!--选择审核修改-->
-    <!-- <el-dialog title="审核学生信息" :visible.sync="dialogTableVisible" center>
-      <el-select v-model="selectRoomIds" multiple placeholder="请选择">
+    <el-dialog title="审核学生信息" :visible.sync="showCheck" center>
+      <el-select v-model="selectCheck" placeholder="请选择">
         <el-option
           v-for="item in checkOptions"
           :key="item.id"
@@ -277,18 +268,55 @@
           :value="item.id"
         ></el-option>
       </el-select>
+      <el-input
+        style="margin-top: 10px;"
+        type="textarea"
+        :rows="2"
+        placeholder="请输入内容"
+        v-model="remark"
+      ></el-input>
       <div style="margin-top: 30px;">
-        <el-button @click="dialogTableVisible = false">取 消</el-button>
+        <el-button @click="showCheck = false">取 消</el-button>
         <el-button type="primary" @click="submitCheck">确 定</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
+
+    <addDialog
+      :visible.sync="isAdd"
+      :isAdd="isAddType"
+      :editItem="editItemData"
+      @addSuccess="addSuccess"
+    />
+    <importDialog 
+      :visible.sync="showImport"
+      :editItem="editItemData"
+      @addSuccess="addSuccess" />
   </section>
 </template>
 <script>
+import addDialog from './addDialog'
+import importDialog from './import.vue'
 export default {
-  components: {},
+  components: {
+    addDialog,
+    importDialog
+  },
   data() {
     return {
+      //新增
+      isAddType: true,//true新增 flase修改
+      isAdd: false,
+      editItemData:{},
+      //导入
+      showImport: false,
+      //审核
+      showCheck: false,
+      selectCheck: 1,
+      remark: '',
+      checkId: '',
+      checkIds: [],
+      isCheckMore: false,
+      //列表
       list: [],
       listLoading: false,
       selectRoomIds: [],
@@ -339,14 +367,69 @@ export default {
     this.getOrderList()
   },
   methods: {
+    // 上传文件
+    onImport(file, fileList) {
+      this.showImport = true
+      // var formFile = new FormData()
+      // formFile.append('file', file.file)
+      // this.fileList = []
+      // this.$axios
+      //   .post(this.API.studentsManage.examineeBatchImport, formFile)
+      //   .then((res) => {
+      //     this.$message.success('导入成功')
+      //     this.forms.current = 1
+      //     this.getOrderList()
+      //     this.fileList = []
+      //   })
+      //   .catch((err) => {
+      //     this.listLoading = false
+      //   })
+    },
+    // 新增学生
+    add() {
+      this.isAddType = true
+      this.isAdd = true
+    },
+    //修改学生
+    toEditItem(row){
+      console.log(row,'row')
+      this.editItemData = row
+      this.isAddType = false
+      this.isAdd = true
+    },
+    //点击单个审核
+    toshowCheck(row) {
+      this.checkId = row.id
+      this.showCheck = true
+      this.remark = ''
+      this.selectCheck = 1
+      this.isCheckMore = false
+      this.checkIds = []
+      this.$refs.multipleTable.clearSelection()
+    },
+    handleSelectionChange(val) {
+      this.checkIds = val
+    },
+    checkMore() {
+      this.checkId = ''
+      this.showCheck = true
+      this.remark = ''
+      this.selectCheck = 1
+      this.isCheckMore = true
+    },
     reset() {
-      ;(this.forms = {
-        examineeName: '',
-        payStatus: '',
-        checkStatus: -1, //审核状态  0:待审核,1:通过,2:拒绝
-        payStatus: -1, //支付状态 1:待支付,2:成功,3:失败,4:处理
-      }),
-        (this.forms.current = 1)
+      this.forms = {
+        current: 1,
+        size: 10,
+        checkStatus: '', //审核状态:0未审核；1通过；2未通过 ,
+        examName: '', //考试名称
+        examineeName: '', //考生姓名
+        payStatus: '', //支付状态:0未支付；1已支付 ,
+        provinceCode: '',
+        schoolId: '', // 机构id ,
+        source: '', //报名来源:1手机；2后台 ,
+        studioName: '', //: 画室名称
+      }
       this.getOrderList()
     },
     changeStatus() {},
@@ -422,41 +505,64 @@ export default {
       this.forms.current = 1
       this.getOrderList()
     },
-
+    //审核
     submitCheck() {
-      // let params = {
-      //   studioIds: this.selectRoomIds,
-      //   examId: this.sels.id,
-      // }
-      // this.$axios
-      //   .post(`${this.API.studentsManage.examineeCheck}`, params)
-      //   .then((res) => {
-      //     this.$message.success('操作成功')
-      //     console.log(res,'res')
-      //     // this.forms.current = 1
-      //     // this.getOrderList()
-      //     // this.fileList = []
-      //   })
-      //   .catch((err) => {
-      //     this.listLoading = false
-      //   })
-    },
-    // 上传文件
-    onImport(file, fileList) {
-      var formFile = new FormData()
-      formFile.append('file', file.file)
-      this.fileList = []
+      let params = {
+        checkStatus: this.selectCheck,
+        remark: this.remark,
+      }
+      if (this.isCheckMore) {
+        params.ids = [...this.checkIds].map((res) => res.id)
+      } else {
+        params.id = this.checkId
+      }
+      let api = this.isCheckMore? this.API.studentsManage.examineeBatchCheck: this.API.studentsManage.examineeCheck
       this.$axios
-        .post(this.API.studentsManage.examineeBatchImport, formFile)
+        .post(`${api}`, params)
         .then((res) => {
-          this.$message.success('导入成功')
-          this.forms.current = 1
-          this.getOrderList()
-          this.fileList = []
+          if (res.code == 200) {
+            this.$message.success('操作成功')
+            this.showCheck = false
+            this.getOrderList()
+            this.checkIds = []
+            this.checkId = ''
+          }
         })
         .catch((err) => {
           this.listLoading = false
         })
+    },
+    // 删除
+    del(row) {
+      let that = this
+      this.$confirm('删除后学生信息不可恢复, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          let params = {
+            id: row.id,
+          }
+          that.$axios
+            .post(`${this.API.studentsManage.examineeDelete}?id=${row.id}`, {})
+            .then((res) => {
+              if (res.code == 200) {
+                that.$message.success('操作成功')
+                that.showCheck = false
+                that.getOrderList()
+              }
+            })
+        })
+        .catch((err) => {
+          console.log(err, 'err')
+        })
+    },
+    addSuccess() {
+      this.isAdd = false
+      this.showInvite = false
+      this.showDel = false
+      this.getOrderList()
     },
   },
 }
