@@ -122,12 +122,12 @@ export const asyncRouter = [
         },
       },
       {
-        path: "/x",
+        path: "/examNum",
         id: 92,
         code: 10092,
-        // component: resolve => require(["@/views/examManage/studentsManage/index.vue"], resolve),
+        component: resolve => require(["@/views/examManage/examNum/index.vue"], resolve),
         meta: {
-          name: '准考证&二维码',
+          name: '准考证号',
           icon: 'classmate'
         }
       },
