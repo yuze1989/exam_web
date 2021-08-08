@@ -13,8 +13,7 @@
             v-for="item in options"
             :key="item.provinceCode"
             :label="item.province"
-            :value="item"
-        >
+            :value="item">
         </el-option>
     </el-select>
   </div>
@@ -48,7 +47,7 @@ export default {
             this.$emit('province', this.currentProvince)
         },
         getProvinceList() {
-            this.axios.get(this.Ap.listProvince).then(res=>{
+            this.$axios.get(this.API.studentsManage.examRoomProvince).then(res=>{
                 this.options = res.result || []
             }).catch(()=>{})
         }
