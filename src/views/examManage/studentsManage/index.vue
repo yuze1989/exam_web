@@ -195,7 +195,7 @@
 
       <el-table-column label="照片" header-align="center" align="center">
         <template slot-scope="scope">
-          <img :src="scope.row.url" style="width: 100px; height: 100px;" />
+          <img :src="scope.row.url" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
 

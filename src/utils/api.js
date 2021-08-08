@@ -19,7 +19,7 @@ const API = {
     },
     studentsManage: { //学生管理
       examRoomChange:"/examinee/examRoomChange", //考场分配--考生换考场
-      examRoomCoun:"/examinee/examRoomCoun", //考场分配--考生人数统计
+      examRoomCount:"/examinee/examRoomCount", //考场分配--考生人数统计
       examRoomDistribut:"/examinee/examRoomDistribut",  //考场分配
       examRoomList:"/examinee/examRoomList",//考场信息查询
       examRoomProvince:"/examinee/examRoomProvince",//获取生源省列表
@@ -35,7 +35,7 @@ const API = {
       examineeList:"/examinee/examineeList", //学生信息查询
       examineeUpdate:"/examinee/examineeUpdate",// 学生信息修改
       ticketGenerate:"/examinee/ticketGenerate",// 准考证号管理--生成准考证号
-      ticketList:"/examinee/ticketList"//准考证号管理--查询
+      ticketList:"/examinee/ticketList",//准考证号管理--查询
     },
     ticketManage:{ //准考证管理
       getTicketExamlist:'/ticket/examlist',// 获取准考证下考试

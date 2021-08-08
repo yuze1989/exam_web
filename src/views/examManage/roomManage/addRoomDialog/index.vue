@@ -132,7 +132,6 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
         console.log(this.API)
-        debugger
         creatStudio(this.from).then((res) => {
               if (res) {
                 this.$message({
