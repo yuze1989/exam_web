@@ -83,6 +83,53 @@ export const asyncRouter = [
   {
     path: "/",
     component: Layout,
+    name: "teacherManage",
+    id: 102,
+    code: 10102,
+    meta: {
+      name: '教师管理',
+      icon: 'classmate'
+    },
+    children: [
+      {
+        path: "/rolerManage",
+        id: 102,
+        code: 10103,
+        name:'rolerManage',
+        component: resolve => require(["@/views/teacherManage/roleManage/index.vue"], resolve),
+        meta: {
+          name: '角色管理',
+          icon: 'classmate'
+        },
+      },
+      {
+        path: "/teacherManage",
+        id: 104,
+        code: 10104,
+        name:'teacherManage',
+        component: resolve => require(["@/views/teacherManage/teacherManage/index.vue"], resolve),
+        meta: {
+          name: '教师用户',
+          icon: 'classmate'
+        },
+      },
+      {
+        path: "/addTicketTemplate",
+        id: 105,
+        code: 10105,
+        name:'AddTicketTemplate',
+        component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+        meta: {
+          name: '关联考试',
+          icon: 'classmate'
+        },
+      },
+     
+    ]
+  },
+  {
+    path: "/",
+    component: Layout,
     name: "examManage",
     id: 84,
     code: 10084,

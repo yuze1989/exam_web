@@ -1,5 +1,22 @@
 const API = {
     upload: "/file/upload", //上传
+    role: {//角色管理
+      create:"/role/create",
+      delete:"/role/delete",
+      detail:"/role/detail",
+      list:"/role/roleList",
+      update:"/role/update"
+    },
+    teacher: { //教师管理
+      create:"/teacher/create",
+      detail:"/teacher/detail",
+      examList:"/teacher/examList",
+      examTeacherList:"/teacher/examTeacherList",
+      list:"/teacher/list",
+      relationTeacher:"/teacher/relationTeacher",
+      setState:"/teacher/setState",
+      update:"/teacher/update"
+    },
     examinfo: { //考试管理
       allProvince:"/examinfo/allProvince", //GET 获取全部省列
       create:"/examinfo/create",//考试新增

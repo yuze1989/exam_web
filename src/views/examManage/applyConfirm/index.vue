@@ -115,7 +115,14 @@
         prop="status"
       >
         <template slot-scope="scope">
-          <span>{{ getStateString(scope.row) }}</span>
+          <el-button
+            type="text"
+            v-if="scope.row.examType == 1"
+            size="small"
+            @click="toUnion(scope.row)"
+          >
+            <span>联合考试状态</span>
+          </el-button>
         </template>
       </el-table-column>
 
@@ -146,7 +153,7 @@
             </el-button>
 
             <!-- POST /examinfo/union 联合考试操作(状态:1、同意;2、拒绝;3、禁用) -->
-            <el-button
+            <!-- <el-button
               type="text"
               v-if="scope.row.status == 0 && scope.row.examType == 1"
               size="small"
@@ -162,7 +169,7 @@
               @click="enbaleItemAction(scope.row, 2)"
             >
               <span>拒绝联合考试</span>
-            </el-button>
+            </el-button> -->
 
             <el-button
               type="text"
@@ -173,14 +180,14 @@
               <span>邀请画室</span>
             </el-button>
 
-            <el-button
+            <!-- <el-button
               type="text"
               v-if="scope.row.status == -1 && scope.row.examType == 1"
               size="small"
               @click="toUnion(scope.row)"
             >
               <span>联合考试状态</span>
-            </el-button>
+            </el-button> -->
           </div>
         </template>
       </el-table-column>
