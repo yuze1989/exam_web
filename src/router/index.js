@@ -140,11 +140,11 @@ export const asyncRouter = [
     children: [
       {
         path: "/applyConfirm",
-        id: 80,
+        id: 85,
         code: 10080,
         component: resolve => require(["@/views/examManage/applyConfirm/index.vue"], resolve),
         meta: {
-          name: '考试信息管理',
+          name: '考试管理',
           icon: 'classmate'
         }
       },

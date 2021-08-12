@@ -19,10 +19,11 @@
       ref="teacherForm"
     >
       <el-form-item label="角色名称" prop="role">
-        <el-select v-model="from.role" placeholder="请选择">
+        <el-select v-model="from.role" placeholder="请选择" @change="changeRole">
           <el-option
             v-for="(item, index) in roleList"
             :key="index"
+            value-key="roleId"
             :label="item.roleName"
             :value="item.id"
           ></el-option>
@@ -112,10 +113,16 @@ export default {
       console.log(payload, 'payload')
       this.from.provinceList = payload
     },
+    changeRole(payload) {
+      const role = this.roleList.filter((item)=>item.id == payload)
+      this.from.roleId = payload
+      this.from.role = role[0].roleName
+    },
     close() {
       this.$emit('update:visible', false)
     },
     open() {
+      this.from = {}
       this.getRoleList()
       this.getProvinceList() 
       if (!this.isAdd) {
@@ -124,21 +131,19 @@ export default {
           .then((res) => {
             if ((res.code = 200)) {
               console.log(res, 'rr')
-              this.from = {
-                id: this.editItem.id,
-                loginCode: this.editItem.loginCode,
-                password: this.editItem.password,
-                // province: "北京",
-                // provinceCode: "北京",
-                role: this.editItem.role,
-                roleId: this.editItem.roleId,
-                provinceList: this.editItem.provinceList,
-                userName: this.editItem.userName,
-              }
+              // this.from = {
+              //   id: this.editItem.id,
+              //   loginCode: this.editItem.loginCode,
+              //   password: this.editItem.password,
+              //   // province: "北京",
+              //   // provinceCode: "北京",
+              //   role: this.editItem.role,
+              //   roleId: this.editItem.roleId,
+              //   provinceList: this.editItem.provinceList,
+              //   userName: this.editItem.userName,
+              // }
             }
           })
-      } else {
-        this.from = {}
       }
     },
     getProvinceList() {

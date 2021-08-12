@@ -44,12 +44,30 @@
             ></el-input>
           </el-form-item>
 
-          <el-form-item>
+          <!-- <el-form-item>
             <select-province
               @province="selectedProvince"
               placeholder="选择生源省份"
             />
+          </el-form-item> -->
+
+        <el-form-item>
+            <el-select
+              v-model="selections.provinceCode "
+              placeholder="生源省份"
+              value-key="province"
+              clearable
+              filterable
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.provinceCode"
+                :label="item.province"
+                :value="item"
+              ></el-option>
+            </el-select>
           </el-form-item>
+
           <el-form-item>
             <el-button
               type="primary"
@@ -228,6 +246,7 @@ export default {
   components: { examRoomAssgin, myPagination, SelectProvince },
   data() {
     return {
+      options:[],
       from: {},
       listLoading: false,
       dialogVisible: true,
@@ -258,10 +277,10 @@ export default {
     }
   },
   methods: {
-    selectedProvince(payload) {
-      this.selections.provinceCode = payload.provinceCode
-      this.selections.provinceName = payload.province
-    },
+    // selectedProvince(payload) {
+    //   this.selections.provinceCode = payload.provinceCode
+    //   this.selections.provinceName = payload.province
+    // },
     roomassgin() {
       this.roomAssginVisible = true
     },
@@ -328,7 +347,11 @@ export default {
         '',
       )
       this.$axios
-        .post(this.API.studentsManage.examRoomList, this.selections)
+        .post(this.API.studentsManage.examRoomList, {
+          provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
+          examineeName: this.selections.examineeName,
+          examName: this.selections.examName
+        })
         .then((res) => {
           if (res.code == 200) {
             this.data = res.result
@@ -341,6 +364,14 @@ export default {
           this.listLoading = false
         })
     },
+      getProvinceList() {
+    this.$axios
+      .get(this.API.studentsManage.examRoomProvince)
+      .then((res) => {
+        this.options = res.result || []
+      })
+      .catch(() => {})
+  },
     selsChange: function (sels) {
       this.sels = sels
     },
@@ -350,6 +381,7 @@ export default {
   },
   mounted() {
     this.getExamRoomList()
+    this.getProvinceList()
   },
 }
 </script>

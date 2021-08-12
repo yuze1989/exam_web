@@ -39,20 +39,18 @@
         </el-button>
 
         <div class="roomAssgin_number">
-          <p>
-            <span
+            <div
               v-model="forms.examineeCount"
-              style="display: inline-block; width: 200px;"
+              style="display: inline-block; width: 50%;text-align:center"
             >
               考生数：{{ this.forms.examineeCount }}
-            </span>
-            <span
+            </div>
+            <div
               v-model="forms.distributCount"
-              style="display: inline-block; width: 100px;"
+              style="display: inline-block;  width: 50%;text-align:center"
             >
               已分配数：{{ forms.distributCount }}
-            </span>
-          </p>
+            </div>
         </div>
       </el-form-item>
       <el-form-item>
@@ -397,11 +395,14 @@ export default {
 }
 
 .roomAssgin_number {
-  width: 50%;
+  width: 60%;
+  margin-left: 15%;
   display: inline-block;
   margin-top: 1px;
   clear: both;
-
+  display: flex;
+  justify-content: center;
+  align-content: center;
   p {
     font-size: 16px;
     line-height: 18px;

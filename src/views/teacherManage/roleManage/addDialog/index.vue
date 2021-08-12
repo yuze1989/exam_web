@@ -92,6 +92,7 @@ export default {
                 id: res.result.id,
                 roleName: res.result.roleName,
                 roleRemark: res.result.roleRemark,
+                roleType: String(res.result.roleType) 
               }
             }
           })
