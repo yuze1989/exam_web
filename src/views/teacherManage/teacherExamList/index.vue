@@ -40,7 +40,7 @@
               size="medium"
               @click="add"
             >
-              新增老师
+              关联考试
             </el-button>
           </el-form-item>
         </el-col>
@@ -58,8 +58,10 @@
         color: '#fff',
         border: 'none',
       }"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
+        type="selection"
         label="序号"
         header-align="center"
         align="center"
@@ -84,36 +86,23 @@
         prop="province"
       ></el-table-column>
       <el-table-column
-        label="老师类型"
+        label="角色"
         header-align="center"
         align="center"
-        prop="roleTypeStr"
+        prop="role"
       ></el-table-column>
-      <el-table-column label="操作" header-align="center">
-        <template slot-scope="scope">
-          <div class="operate-item">
-            <el-button type="text" size="small" @click="editItem(scope.row)">
-              编辑
-            </el-button>
-            <el-button
-              v-if="scope.row.state == 0"
-              type="text"
-              size="small"
-              @click="del(scope.row)"
-            >
-              禁用
-            </el-button>
-            <el-button
-              v-if="scope.row.state == 1"
-              type="text"
-              size="small"
-              @click="open(scope.row)"
-            >
-              启用
-            </el-button>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="关联考试名称"
+        header-align="center"
+        align="center"
+        prop="examName"
+      ></el-table-column>
+      <el-table-column
+        label="考试科目"
+        header-align="center"
+        align="center"
+        prop="subjectName"
+      ></el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -145,6 +134,7 @@
 import addDialog from './addDialog'
 import deleteDialog from './deleteDialog'
 export default {
+  name: 'TeacherExamList',
   components: {
     addDialog,
     deleteDialog,
@@ -171,11 +161,17 @@ export default {
     }
   },
   created() {
+    this.examId = this.$route.params.examId
+    console.log(this.examId, 'examId考试id')
+    this.getList()
     this.getList()
     this.getProvinceList()
   },
 
   methods: {
+    handleSelectionChange(val) {
+      this.checkIds = val
+    },
     getProvinceList() {
       this.$axios
         .get(this.API.studentsManage.examRoomProvince)
@@ -282,7 +278,7 @@ export default {
           : '',
       }
       this.$axios
-        .post(this.API.teacher.list, params)
+        .post(this.API.teacher.examTeacherList, params)
         .then((res) => {
           this.data.records = res.result.list
           this.data.pageIndex = res.result.pageNum

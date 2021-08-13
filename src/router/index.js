@@ -29,7 +29,7 @@ export const constantRoutes = [
   {
     path: "/login",
     name: "login",
-    component: resolve => require(["@/views/common/login.vue"], resolve),//() => import("@/views/common/login.vue"),
+    component: resolve => require(["@/views/common/login.vue"], resolve),
     meta: {
       name: "登录"
     },
@@ -38,12 +38,12 @@ export const constantRoutes = [
 
   {
     path: "/404",
-    component: resolve => require(["@/views/common/404.vue"], resolve),//() => import("@/views/common/404.vue"),
+    component: resolve => require(["@/views/common/404.vue"], resolve),
     hidden: true
   },
   {
     path: "/401",
-    component: resolve => require(["@/views/common/401.vue"], resolve),//() => import("@/views/common/401.vue"),
+    component: resolve => require(["@/views/common/401.vue"], resolve),
     hidden: true
   },
   {
@@ -114,17 +114,27 @@ export const asyncRouter = [
         },
       },
       {
-        path: "/addTicketTemplate",
+        path: "/teaExamList",
         id: 105,
         code: 10105,
-        name:'AddTicketTemplate',
-        component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+        name:'examList2',
+        component: resolve => require(["@/views/teacherManage/examList/index.vue"], resolve),
         meta: {
           name: '关联考试',
           icon: 'classmate'
         },
       },
-     
+      {
+        path: "/teacherExamList",
+        id: 105,
+        code: 10105,
+        name:'TeacherExamList',
+        component: resolve => require(["@/views/teacherManage/teacherExamList/index.vue"], resolve),
+        meta: {
+          name: "关联老师",
+          icon: 'classmate'
+        }
+      },
     ]
   },
   {
@@ -139,10 +149,10 @@ export const asyncRouter = [
     },
     children: [
       {
-        path: "/applyConfirm",
+        path: "/examList",
         id: 85,
         code: 10080,
-        component: resolve => require(["@/views/examManage/applyConfirm/index.vue"], resolve),
+        component: resolve => require(["@/views/examManage/examList/index.vue"], resolve),
         meta: {
           name: '考试管理',
           icon: 'classmate'

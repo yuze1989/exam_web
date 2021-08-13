@@ -174,9 +174,9 @@
       <myPagination
         :current.sync="selections.current"
         :pages.sync="data.pages"
-        :size.sync="selections.size"
+        :size.sync="selections.pageSize"
         :total.sync="data.total"
-        @cb="getExamRoomList"
+        @cb="handleCurrentChange"
       />
     </el-col>
     <!--编辑界面-->
@@ -273,7 +273,7 @@ export default {
       },
       roomAssginVisible: false, //编辑界面是否显示
       editLoading: false,
-      data: { current: 1, pages: 0, size: 20, total: 0, records: [] },
+      data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
     }
   },
   methods: {
@@ -284,16 +284,15 @@ export default {
     roomassgin() {
       this.roomAssginVisible = true
     },
-    handleCurrentChange(val) {
-      this.page = val
+    handleCurrentChange() {
       this.getExamRoomList()
     },
     exchangeExamRoom(val) {
       this.ruleForm.id = val.id
       this.visible = true
       var selections = {
-        size: 100,
-        current: 1,
+        current: this.selections.current,
+        size: this.data.pageSize,
         provinceCode: val.provinceCode,
         examName: val.examName,
       }
@@ -346,8 +345,11 @@ export default {
         /\s|[\r\n]/gi,
         '',
       )
+      console.log('1111222')
       this.$axios
         .post(this.API.studentsManage.examRoomList, {
+          current: this.selections.current,
+          size: this.data.pageSize,
           provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
           examineeName: this.selections.examineeName,
           examName: this.selections.examName
