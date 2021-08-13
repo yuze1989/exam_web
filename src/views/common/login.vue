@@ -384,6 +384,7 @@ export default {
               } else {
                 this.$message.error('该账号暂未开放权限')
               }
+              localStorage.setItem("user_name",this.ruleForm2.account)
             })
             .catch((err) => {
               this.logining = false

@@ -45,20 +45,17 @@ export function filterAsyncParentRouters(menu, subMenus) {
 
   let router = null
   asyncRouter.forEach((item, index) => {
-    if (menu.code == item.code) {
-
+    if (menu.id == item.id) {
       let childenRouter = filterAsyncChildenRouters(item.children, subMenus)
       if (index == 0 && childenRouter && childenRouter.length > 0) {
         let child = childenRouter[0]
         router = { redirect: child.path, ...item, children: childenRouter, meta: { ...item.meta, name: menu.nameCn, usable: menu.usable } }
       } else {
         router = { ...item, children: childenRouter, meta: { ...item.meta, name: menu.nameCn, usable: menu.usable } }
-
       }
-
     }
   })
-  console.log(router)
+
   return router
 
 }
@@ -66,10 +63,13 @@ export function filterAsyncParentRouters(menu, subMenus) {
 export function filterAsyncChildenRouters(childens, subMenus) {
 
   let childenRouter = [];
+
   subMenus.forEach((item, index) => {
     childens.forEach((router, index) => {
-      if (item.code == router.code) {
-      //  console.log(JSON.stringify(item))
+
+      if (item.id == router.id) {
+        console.log(item);
+        console.log(router);
         childenRouter.push({ ...router, meta: { ...router.meta, name: item.nameCn, usable: item.usable } })
       }
 
@@ -99,27 +99,24 @@ const actions = {
   }, data) {
 
     const menus = data.menus;
-
     let realRoutes = new Array()
     let parentMenus = new Array()
+
     menus.forEach((item, index) => {
-      if (item.parentId == 0) {
+      if (item.usable == 0) {
         parentMenus.push(item)
       }
-
     })
 
     let subMenus = new Array()
     menus.forEach((item, index) => {
-      if (item.parentId > 0)
+      if (item.usable == 1)
         subMenus.push(item)
     })
-
+    console.log(parentMenus);
     parentMenus.forEach((item, index) => {
-
       let router = filterAsyncParentRouters(item, subMenus)
       if (router) {
-       // console.log("roter:" + JSON.stringify(router));
         realRoutes.push(router)
       }
     })

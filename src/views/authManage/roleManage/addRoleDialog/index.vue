@@ -153,6 +153,7 @@ export default {
       parentMenus.forEach((item, index) => {
         let childrens = this.filtersChilren(item, childrenMenus);
         dataMenu.push({ id: item.id, label: item.nameCn, children: childrens });
+        console.log('--------------------'+dataMenu)
       });
 
       this.data = dataMenu;
@@ -165,6 +166,7 @@ export default {
         if (item.id == children.parentId) {
           childrens.push({ id: children.id, label: children.nameCn });
         }
+        console.log('--------------------'+childrenMenus)
       });
       return childrens;
     },
