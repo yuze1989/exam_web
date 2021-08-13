@@ -2,12 +2,13 @@
   <section class="form_border">
     <div class="header">
       <div class="from-wrap">
-        <el-form :inline="true" :model="search" class="demo-form-inline">
+        <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent>
           <el-col :span="5">
             <el-form-item>
               <el-input
                 v-model="search.admissionTicketCode"
                 placeholder="准考证号码"
+                @keyup.enter.native="onSubmit"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -187,9 +188,7 @@ export default {
       let params = {
         pageIndex: this.form.pageIndex,
         pageSize: this.form.pageSize,
-        model: {
-          admissionTicketCode: this.search.admissionTicketCode,
-        },
+        admissionTicketCode: this.search.admissionTicketCode,
       };
       this.$axios
         .post('/score/scoreList', params)
@@ -200,6 +199,7 @@ export default {
           this.dataList.records = res.result.list;
         })
         .catch(() => {});
+      this.search.admissionTicketCode = ""
       this.dataList.records = this.dataList.records.map(item => {
         if (item.subjectList.length == 1) {
           item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName})
@@ -214,6 +214,7 @@ export default {
           item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName}, {subjectName3: item.subjectList[2].subjectName}, {subjectName4: item.subjectList[3].subjectName})
         }
           item = item.subjectList.forEach(s => {
+            console.log(s);
             if (s.subjectName == '素描分数') {
               this.subjectName1 = true
             }

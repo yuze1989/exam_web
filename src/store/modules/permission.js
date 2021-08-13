@@ -103,7 +103,7 @@ const actions = {
     let parentMenus = new Array()
 
     menus.forEach((item, index) => {
-      if (item.usable == 0) {
+      if (item.parentId == 0) {
         parentMenus.push(item)
       }
     })

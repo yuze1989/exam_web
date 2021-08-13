@@ -101,16 +101,7 @@ export const asyncRouter = [
                     icon: 'classmate'
                 }
             },
-            {
-                path: "/roomManage",
-                id: 86,
-                code: 10086,
-                component: resolve => require(["@/views/examManage/roomManage/index.vue"], resolve),
-                meta: {
-                    name: '画室管理',
-                    icon: 'classmate'
-                }
-            },
+
             {
                 path: "/studentsManage",
                 id: 87,
@@ -257,7 +248,7 @@ export const asyncRouter = [
                 },
             },
             {
-                path: "/403",
+                path: "/addTicketTemplate",
                 id: 105,
                 code: 10105,
                 name:'AddTicketTemplate',
@@ -518,20 +509,20 @@ export const asyncRouter = [
         },
         children: [
 			{
-			    path: "/503",
+			    path: "/roomManage",
 			    id: 112,
 			    code: 10112,
-			    // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/examManage/roomManage/index.vue"], resolve),
 			    meta: {
 			        name: '画室信息',
 			        icon: 'classmate'
 			    },
 			},
 			{
-			    path: "/504",
+			    path: "/AssociationExam",
 			    id: 113,
 			    code: 10113,
-			    // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/examManage/roomManage/associationExam.vue"], resolve),
 			    meta: {
 			        name: '画室关联考试',
 			        icon: 'classmate'
