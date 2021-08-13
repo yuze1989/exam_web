@@ -604,16 +604,16 @@ export const asyncRouter = [
                     icon: 'classtime'
                 },
             },
-            {
-                path: "/8999",
-                id: 101,
-                code: 101,
-                component: resolve => require(["@/views/authManage/gradesManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
-                meta: {
-                    name: '成绩手工录入',
-                    icon: 'classtime'
-                },
-            }
+            // {
+            //     path: "/8999",
+            //     id: 101,
+            //     code: 101,
+            //     component: resolve => require(["@/views/authManage/gradesManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+            //     meta: {
+            //         name: '成绩手工录入',
+            //         icon: 'classtime'
+            //     },
+            // }
         ]
     }
 ];

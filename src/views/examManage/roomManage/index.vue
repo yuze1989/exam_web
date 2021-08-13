@@ -4,9 +4,9 @@
       <el-button class="meiyuan_btn" type="primary" size="medium" @click="addStudio"
         >新增画室信息</el-button
       >
-       <el-button class="association_btn" type="primary" size="medium" @click="associationExam"
-        >关联考试</el-button
-      >
+<!--       <el-button class="association_btn" type="primary" size="medium" @click="associationExam"-->
+<!--        >关联考试</el-button-->
+<!--      >-->
     </div>
     <!--列表-->
     <el-table

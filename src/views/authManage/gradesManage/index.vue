@@ -86,45 +86,11 @@
         prop="province"
       >
       </el-table-column>
-      <el-table-column
-        label="素描分数"
-        header-align="center"
-        align="center"
-        prop="subjectName1"
-        v-if="subjectName1"
-      >
+      <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
         <template slot-scope="scope">
-            <el-input v-model="scope.row.subjectName1"></el-input>
+          <el-input v-model="scope.row.subjectList[index].score"></el-input>
         </template>
       </el-table-column>
-      <el-table-column
-        label="色彩分数"
-        header-align="center"
-        align="center"
-        prop="subjectName2"
-        v-if="subjectName2"
-      >
-      <el-input v-model="scope.row.subjectName2"></el-input>
-      </el-table-column>
-      <el-table-column
-        label="速写分数"
-        header-align="center"
-        align="center"
-        prop="subjectName3"
-        v-if="subjectName3"
-      >
-      <el-input v-model="scope.row.subjectName3"></el-input>
-      </el-table-column>
-      <el-table-column
-        label="设计分数"
-        header-align="center"
-        align="center"
-        prop="subjectName4"
-        v-if="subjectName4"
-      >
-      <el-input v-model="scope.row.subjectName4"></el-input>
-      </el-table-column>
-
       <el-table-column label="操作" width="130" header-align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="save(scope.row)"
@@ -182,6 +148,9 @@ export default {
     onSubmit() {
       this.getList();
     },
+    currentChange(){
+      this.getList();
+    },
 
     getList() {
       let roleId = this.search.state == -1 ? null : this.search.state;
@@ -200,35 +169,37 @@ export default {
         })
         .catch(() => {});
       this.search.admissionTicketCode = ""
-      this.dataList.records = this.dataList.records.map(item => {
-        if (item.subjectList.length == 1) {
-          item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName})
-        }
-        if (item.subjectList.length == 2) {
-          item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName})
-        }
-        if (item.subjectList.length == 3) {
-          item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName}, {subjectName3: item.subjectList[2].subjectName})
-        }
-        if (item.subjectList.length == 4) {
-          item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName}, {subjectName3: item.subjectList[2].subjectName}, {subjectName4: item.subjectList[3].subjectName})
-        }
-          item = item.subjectList.forEach(s => {
-            console.log(s);
-            if (s.subjectName == '素描分数') {
-              this.subjectName1 = true
-            }
-            if (s.subjectName == '色彩分数') {
-              this.subjectName2 = true
-            }
-            if (s.subjectName == '速写分数') {
-              this.subjectName3 = true
-            }
-            if (s.subjectName == '设计分数') {
-              this.subjectName4 = true
-            }
-          })
-        })
+      // this.dataList.records = this.dataList.records.forEach()(item => {
+      //   console.log(item);
+      //   if (item.subjectList.length == 1) {
+      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName})
+      //   }
+      //   if (item.subjectList.length == 2) {
+      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName})
+      //   }
+      //   if (item.subjectList.length == 3) {
+      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName}, {subjectName3: item.subjectList[2].subjectName})
+      //   }
+      //   if (item.subjectList.length == 4) {
+      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName}, {subjectName3: item.subjectList[2].subjectName}, {subjectName4: item.subjectList[3].subjectName})
+      //   }
+      //
+      //   item = item.subjectList.forEach(s => {
+      //       console.log(s);
+      //       if (s.subjectName == '素描分数') {
+      //         this.subjectName1 = true
+      //       }
+      //       if (s.subjectName == '色彩分数') {
+      //         this.subjectName2 = true
+      //       }
+      //       if (s.subjectName == '速写分数') {
+      //         this.subjectName3 = true
+      //       }
+      //       if (s.subjectName == '设计分数') {
+      //         this.subjectName4 = true
+      //       }
+      //     })
+      //   })
     },
 
     save (row) {
