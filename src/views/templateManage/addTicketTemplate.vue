@@ -10,12 +10,12 @@
             <div class="basic-info">
                 <div class="display-center">
                     <div class="title">考试名称</div>
-                     <el-select v-model="form.examNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+                     <el-select v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
                         <el-option
                             v-for="item in examNameOption"
-                                :key="item.provinceCode"
-                                :label="item.province"
-                                :value="item.provinceCode">
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
                             </el-option>
                     </el-select>
                 </div>
@@ -41,11 +41,10 @@
             </div>
              <!--列表-->
             <el-table
-            :data="data.records"
+            :data="examDetails.subjectList"
             highlight-current-row
             v-loading="listLoading"
             border
-            style="width: 60%;"
             :header-cell-style="{
                 background: '#08223c',
                 color: '#fff',
@@ -56,34 +55,38 @@
                 label="科目"
                 header-align="center"
                 align="center"
-                prop="no"
+                prop="subjectName"
             >
             </el-table-column>
             <el-table-column
                 label="考试日期"
                 header-align="center"
                 align="center"
-                prop="name"
+                prop="subjectDate"
             >
             </el-table-column>
             <el-table-column
                 label="考试开始时间"
                 header-align="center"
                 align="center"
-                prop="studioNum"
+                prop="subjectStarttime"
             >
             </el-table-column>
              <el-table-column
                 label="考试结束时间"
                 header-align="center"
                 align="center"
-                prop="studioNum"
+                prop="subjectEndtime"
             >
             </el-table-column>
             </el-table>
             <!-- 注意事项 -->
             <div class="careful-matter">
-                <textarea name="" id="" cols="30" rows="10"></textarea>
+                <textarea v-model="form.carefulMatter" name="" id="" placeholder="多行输入"></textarea>
+            </div>
+            <!-- 保存 -->
+            <div class="confirm">
+              <el-button type="primary" @click="examConfirm"> 保存</el-button>
             </div>
         </div>
         <!-- 模板示例 -->
@@ -107,7 +110,7 @@
 </template>
 
 <script>
-
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails } from '@/api/ticket.js'
 import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
 export default {
   name: "AddTicketTemplate",
@@ -115,6 +118,9 @@ export default {
     return {
        listLoading: false,
       sels: [], //列表选中列
+      examDetails: {
+        subjectList: []
+      }, // 考试详情
       search: {
         name: "",
         mobilePhone: "",
@@ -127,7 +133,10 @@ export default {
         studentAreaName: "",
         studentAreaCode: "",
         examName: "",
-        examNo:""
+        examNo:"",
+        examNameNo: "",
+        carefulMatter: '',
+        examTitle: ''
       },
 
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -141,10 +150,45 @@ export default {
     };
   },
   created() {
+     this.getExamList()
      this.getList();
   },
 
-  methods: {
+  methods: { 
+    // 查询考试详情
+    getExamDetails(){
+      apiGetExamDetails({
+        id: this.form.examNameNo
+      }).then(res=>{
+        this.examDetails = res.result
+      })
+    },
+    // 查询考试下的省份
+    getProvinceByExamId(){
+      apiGetProvinceByExamId({
+        examId: this.form.examNameNo
+      }).then(res=>{
+        this.studentAreaOption = res.result
+      })
+    },
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 保存
+    examConfirm(){
+      let data = {
+        examId : this.form.examNameNo,
+        province: this.form.studentAreaName,
+        provinceCode: this.studentAreaCode,
+        organizer: this.form.organizer,
+        examTitle : this.form.examTitle,
+        remark: this.form.carefulMatter
+      }
+      let formData = new FormData();
+    },
     // 新建模板
     addTemplate(){
         
@@ -158,18 +202,23 @@ export default {
         no:  this.form.examNo
       };
       examinationList(params).then((res) => {
-                 this.data.records = res.result.records;
-                this.data.current = res.result.current;
-                this.data.total = res.result.total;
-                (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
-            })
-            .catch(() => {});
+        this.data.records = res.result.records;
+        this.data.current = res.result.current;
+        this.data.total = res.result.total;
+        (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
+      })
+      .catch(() => {});
     },
   // 考试改变监听
-    studioAreaChange(e){
+    examNameChange(e){
       this.examNameOption.map(item =>{
-        if(item.code == e){
-          this.from.examName = item.name
+        if(item.id == e){
+          this.form.examName = item.name
+          this.form.studentAreaName = ''
+          this.form.studentAreaCode = ''
+          this.studentAreaOption = []
+          this.getExamDetails()
+          this.getProvinceByExamId()
         }
       })
     },
@@ -177,7 +226,7 @@ export default {
     studentChange(e){
       this.studentAreaOption.map(item =>{
         if(item.provinceCode == e){
-          this.from.studentAreaName = item.province
+          this.form.studentAreaName = item.province
         }
       })
     },
