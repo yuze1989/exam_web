@@ -382,6 +382,49 @@ export const asyncRouter = [
   //     }
   //   ]
   // },
+  {
+    path: "/",
+    component: Layout,
+    name: "authManage",
+    id: 9,
+    code: 10008,
+    meta: {
+      name: '系统设置',
+      icon: 'set'
+    },
+    children: [
+      {
+        path: "/userManage",
+        id: 17,
+        code: 10017,
+        component: resolve => require(["@/views/authManage/userManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+        meta: {
+          name: '用户管理',
+          icon: 'classtime'
+        },
+      },
+      {
+        path: "/gradeManage",
+        id: 16,
+        code: 10016,
+        component: resolve => require(["@/views/authManage/gradeManage/gradeRule.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+        meta: {
+          name: '打分规则',
+          icon: 'classtime'
+        },
+      },
+      {
+        path: "/gradesManage",
+        id: 101,
+        code: 10016,
+        component: resolve => require(["@/views/authManage/gradesManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+        meta: {
+          name: '成绩手工录入',
+          icon: 'classtime'
+        },
+      }
+    ]
+  }
 ];
 
 const createRouter = () =>

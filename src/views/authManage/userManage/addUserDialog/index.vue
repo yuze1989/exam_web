@@ -40,7 +40,7 @@
         </el-col>
       </el-form-item>
 
-      <el-form-item label="用户手机" prop="phone">
+      <!-- <el-form-item label="用户手机" prop="phone">
         <el-col :span="24">
           <el-input
             class="brand-input"
@@ -48,7 +48,7 @@
             placeholder="请输入有效的手机号"
           ></el-input>
         </el-col>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item v-if="isAdd" label="用户密码" prop="password">
         <el-col :span="24">
           <el-input
@@ -58,7 +58,7 @@
           ></el-input>
         </el-col>
       </el-form-item>
-      <el-form-item label="角色" prop="useType">
+      <!-- <el-form-item label="角色" prop="useType">
         <el-select
           v-model="from.useType"
           placeholder="请选择角色"
@@ -72,7 +72,7 @@
           >
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
     <div slot="footer">
@@ -158,13 +158,13 @@ export default {
 
           let params = {
             userName: this.from.name,
-            roleId: this.from.useType,
+            // roleId: this.from.useType,
             loginCode: this.from.account,
-            mobilePhone: this.from.phone,
+            // mobilePhone: this.from.phone,
             password: this.from.password,
           };
           this.$axios
-            .post(this.API.userManage.trainAdminAdd, params)
+            .post('/user/create', params)
             .then((res) => {
               if (res) {
                 this.$message({
@@ -197,12 +197,12 @@ export default {
 
       let params = {
         userName: this.from.name,
-        roleId: this.from.useType,
-        mobilePhone: this.from.phone,
+        // roleId: this.from.useType,
+        // mobilePhone: this.from.phone,
         id: this.editItem.id,
       };
       this.$axios
-        .post(this.API.userManage.trainAdminUpdate, params)
+        .post('/user/update', params)
         .then((res) => {
           if (res) {
             this.$message({
