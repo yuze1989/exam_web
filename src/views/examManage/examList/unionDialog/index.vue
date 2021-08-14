@@ -129,7 +129,7 @@ export default {
     getList() {
       this.$axios
         // .post(this.API.examinfo.unionList, {examId:this.examId})
-        .post(this.API.examinfo.list, {})
+        .post(`${this.API.examinfo.unionList}?examId=${this.examId}`)
         .then((res) => {
           this.list = res.result.records
           console.log(res,'ppppp')
