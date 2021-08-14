@@ -3,7 +3,7 @@
     <div class="header">
       <div class="from-wrap">
         <el-form :inline="true" :model="search" class="demo-form-inline">
-          <el-col :span="5">
+          <!-- <el-col :span="5">
             <el-select v-model="search.state" placeholder="请选择">
               <el-option
                 v-for="(item, index) in options"
@@ -12,7 +12,7 @@
                 :value="item.id"
               ></el-option>
             </el-select>
-          </el-col>
+          </el-col> -->
           <el-col :span="5">
             <el-form-item>
               <el-input
@@ -25,7 +25,7 @@
           <el-col :span="4">
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查询</el-button>
-              <el-button type="warning" @click="reset">重置</el-button>
+              <!-- <el-button type="warning" @click="reset">重置</el-button> -->
             </el-form-item>
           </el-col>
         </el-form>
@@ -38,7 +38,7 @@
     </div>
     <!--列表-->
     <el-table
-      :data="data.records"
+      :data="dataList.records"
       highlight-current-row
       v-loading="listLoading"
       border
@@ -48,11 +48,11 @@
         border: 'none',
       }"
     >
-      <el-table-column label="序列" header-align="center" align="center">
+      <!-- <el-table-column label="序列" header-align="center" align="center">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 + (form.pageIndex - 1) * 10 }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="用户ID"
         header-align="center"
@@ -83,13 +83,13 @@
         prop="roleName"
       >
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="手机号"
         header-align="center"
         align="center"
         prop="mobilePhone"
       >
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="创建时间"
         header-align="center"
@@ -127,9 +127,9 @@
     <el-col :span="24" class="toolbar">
       <myPagination
         :current.sync="form.pageIndex"
-        :pages.sync="data.pages"
+        :pages.sync="dataList.pages"
         :size.sync="form.pageSize"
-        :total.sync="data.total"
+        :total.sync="dataList.total"
         @cb="currentChange"
       />
     </el-col>
@@ -164,7 +164,8 @@ export default {
       },
       options: [{ roleName: "全部", id: -1 }],
 
-      data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
+      dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
+      dataListCopy: [],
       isAddBrand: false,
       isAdd: 1, //1新增  0编辑
       editItemData: {},
@@ -172,7 +173,7 @@ export default {
   },
   created() {
     this.getList();
-    this.getRoleList();
+    // this.getRoleList();
   },
 
   methods: {
@@ -274,12 +275,12 @@ export default {
         },
       };
       this.$axios
-        .post(this.API.userManage.trainAdminPage, params)
+        .post('/user/userList', params)
         .then((res) => {
-          this.data.records = res.records;
-          this.data.pageIndex = res.pageIndex;
-          this.data.total = res.total;
-          (this.data.pageSize = res.pageSize), (this.data.pages = res.pages);
+          this.dataList.pageIndex = res.result.pageNum;
+          this.dataList.total = res.result.total;
+          (this.dataList.pageSize = res.result.pageSize), (this.dataList.pages = res.result.pageNum);
+          this.dataList.records = res.result.list;
         })
         .catch(() => {});
     },
@@ -322,6 +323,11 @@ export default {
         })
         .catch(() => {});
     },
+  },
+  watch: {
+    dataList (val) {
+      console.log(val,'val---------')
+    }
   },
   mounted() {},
   beforeCreate() {},

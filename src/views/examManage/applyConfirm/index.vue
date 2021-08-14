@@ -115,7 +115,14 @@
         prop="status"
       >
         <template slot-scope="scope">
-          <span>{{ getStateString(scope.row) }}</span>
+          <el-button
+            type="text"
+            v-if="scope.row.examType == 1"
+            size="small"
+            @click="toUnion(scope.row)"
+          >
+            <span>联合考试状态</span>
+          </el-button>
         </template>
       </el-table-column>
 
@@ -146,7 +153,7 @@
             </el-button>
 
             <!-- POST /examinfo/union 联合考试操作(状态:1、同意;2、拒绝;3、禁用) -->
-            <el-button
+            <!-- <el-button
               type="text"
               v-if="scope.row.status == 0 && scope.row.examType == 1"
               size="small"
@@ -162,7 +169,7 @@
               @click="enbaleItemAction(scope.row, 2)"
             >
               <span>拒绝联合考试</span>
-            </el-button>
+            </el-button> -->
 
             <el-button
               type="text"
@@ -173,14 +180,14 @@
               <span>邀请画室</span>
             </el-button>
 
-            <el-button
+            <!-- <el-button
               type="text"
               v-if="scope.row.status == -1 && scope.row.examType == 1"
               size="small"
               @click="toUnion(scope.row)"
             >
               <span>联合考试状态</span>
-            </el-button>
+            </el-button> -->
           </div>
         </template>
       </el-table-column>
@@ -321,16 +328,25 @@ export default {
     changeStatus() {},
     changeCheckStatus() {},
     getStateString(item) {
-      switch (item.status) {
-        case 1:
-          return '同意'
-          break
-        case 2:
-          return '拒绝'
-          break
-        case 3:
-          return '禁用'
-          break
+      // examType (integer, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
+      // examTypeStr 联合考试状态:-1,表示自己建的联合考试;0、未确认;1、同意;2、拒绝;3、禁用
+      if(item.examType == 1){
+        switch (item.status) {
+          case 0:
+            return '未确认'
+            break
+          case 1:
+            return '同意'
+            break
+          case 2:
+            return '拒绝'
+            break
+          case 3:
+            return '禁用'
+            break
+        }
+      }else{
+        return ''
       }
     },
     updateList() {

@@ -95,7 +95,7 @@
   </section>
 </template>
 <script>
-// import { Message } from '_element-ui@2.15.5@element-ui'
+import { Message } from "element-ui";
 export default {
   components: {},
   data() {

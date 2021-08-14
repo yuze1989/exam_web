@@ -25,9 +25,7 @@ service.interceptors.request.use(
   config => {
     console.log(config,'config')
     if (store.getters.token) {
-      config.headers["token"] = getToken();
       config.headers["Art-Token"] = getToken();
-      config.headers["Authorization"] = getToken();
     }
     if(config.url.includes("import")){
       config.headers["content-type"] = "multipart/form-data";
@@ -37,6 +35,9 @@ service.interceptors.request.use(
     }
     if(config.url.includes("exportExcel")){
       config.responseType = 'blob';
+    }
+    if(config.url.includes("ticketCreate")){
+      config.headers["content-type"] = "multipart/form-data";
     }
     
     // if (address[config.url]) {

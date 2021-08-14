@@ -1,0 +1,36 @@
+.logo{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+.header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header-img{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.brand-select{
+    width: 1.5rem;
+}
+.address-item {
+  margin: 10px 0px;
+}
+.flex{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.btn-blue{
+  color: #409eff;
+  font-size: 12px;
+  width: 50px;
+  cursor: pointer;
+  margin-left: 10px;
+}

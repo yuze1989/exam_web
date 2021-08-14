@@ -32,6 +32,7 @@
           v-model="from.examType"
           placeholder="考试类型"
           value-key="value"
+          :disabled="!isAdd"
         >
           <el-option
             v-for="item in examTypeStatus"
@@ -178,7 +179,7 @@
         </el-button>
       </div>
 
-      <div v-for="(item, index) in subject" :key="index+'-'" :value="item">
+      <div v-for="(item, index) in subject" :key="index + '-'" :value="item">
         <el-form
           :inline="true"
           :model="item"
@@ -218,7 +219,7 @@
             <el-button
               type="text"
               style="width: 50px;"
-              @click="delSubject(index2)"
+              @click="delSubject(index)"
             >
               移除
             </el-button>
@@ -335,6 +336,8 @@ export default {
   created() {
     this.getProvinceList()
   },
+  mounted() {
+  },
   methods: {
     getProvinceList() {
       this.$axios
@@ -373,8 +376,8 @@ export default {
               examEndTime: result.examEndTime, // 考试结束时间 ,
               examStartTime: result.examStartTime, // 考试开始时间 ,
             }
-            this.address = result.addressList?result.addressList:[{}]
-            this.subject = result.subjectList?result.subjectList:[{}]
+            this.address = result.addressList ? result.addressList : [{}]
+            this.subject = result.subjectList ? result.subjectList : [{}]
           })
       }
     },

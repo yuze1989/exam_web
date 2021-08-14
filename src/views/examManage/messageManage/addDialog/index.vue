@@ -199,6 +199,7 @@ export default {
       this.subject = [...this.subject.push("")] 
     },
     delSubject(index){
+      console.log(index,'index')
       this.subject.splice(index,1);
     },
     edit() {

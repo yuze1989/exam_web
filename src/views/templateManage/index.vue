@@ -38,20 +38,39 @@
       >
       </el-table-column>
        <el-table-column
-        label="画室数量"
+        label="所属省份"
         header-align="center"
         align="center"
         prop="studioNum"
       >
       </el-table-column>
-      
+         <el-table-column
+        label="主办单位"
+        header-align="center"
+        align="center"
+        prop="studioNum"
+      >
+      </el-table-column>
+         <el-table-column
+        label="考试标题"
+        header-align="center"
+        align="center"
+        prop="studioNum"
+      >
+      </el-table-column>
+         <el-table-column
+        label="创建时间"
+        header-align="center"
+        align="center"
+        prop="studioNum"
+      >
+      </el-table-column>
        <el-table-column
       fixed="right"
       label="操作"
       width="200">
       <template slot-scope="scope">
-        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联画室</el-button>
-        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
+        <el-button @click="bindEidt(scope.row)" type="text" size="small" >编辑</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -90,11 +109,20 @@
 <script>
 
 import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
+import addTicketTemplate from './addTicketTemplate.vue'
 export default {
   name: "TicketManage",
+    props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    }
+   
+  },
   data() {
     return {
        listLoading: false,
+       showTemplate: false,
       sels: [], //列表选中列
       search: {
         name: "",
@@ -121,6 +149,9 @@ export default {
       editItemData: {},
     };
   },
+    components: {
+    addTicketTemplate
+  },
   created() {
       this.getRoomList()
      this.getList();
@@ -129,7 +160,8 @@ export default {
   methods: {
     // 新建模板
     addTemplate(){
-        
+      // this.$router.push({ name: 'AddTicketTemplate'})
+      this.showTemplate = true
     },
   // 获取画室
   getRoomList(){
@@ -182,13 +214,8 @@ export default {
         .catch(() => {});
     
     },
-    // 关联画室
-    relationStudio(row){
-         this.sels = row
-          this.dialogTableVisible = true
-    }, 
-    // 统计信息
-    statisticsInfo(row){
+    // 编辑模版信息
+    bindEidt(row){
       this.$router.push({ name: 'StudioStatistics', params: {
         examId: row.id
       }})
