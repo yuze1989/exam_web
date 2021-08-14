@@ -64,8 +64,14 @@ export function filterAsyncChildenRouters(childens, subMenus) {
 
   let childenRouter = [];
 
-  subMenus.forEach((item, index) => {
+
+
     childens.forEach((router, index) => {
+      subMenus.forEach((item, index) => {
+        if(item.parentId == 106 && item.id == router.id){
+          console.log(router);
+          console.log(item);
+        }
       if (item.id == router.id) {
         childenRouter.push({ ...router, meta: { ...router.meta, name: item.nameCn, usable: item.usable } })
       }
