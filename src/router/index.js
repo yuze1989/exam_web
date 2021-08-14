@@ -396,17 +396,17 @@ export const asyncRouter = [
                 path: "/authManage",
                 id: 120,
                 code: 10120,
-                // component: resolve => require(["@/views/authManage/userManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
                 meta: {
                     name: '角色管理',
                     icon: 'classtime'
                 },
             },
             {
-                path: "/7777",
+                path: "/userManage",
                 id: 108,
                 code: 10108,
-                component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/authManage/userManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
                 meta: {
                     name: '用户管理',
                     icon: 'classmate'

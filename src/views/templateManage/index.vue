@@ -1,15 +1,19 @@
 <template>
    <section class="form_border">
-    <div class="header">
-        <el-input v-model="form.examNo" style="width:200px"  placeholder="考试编号"
+    <div class="header" style="position: relative">
+      <el-button class="association_btn" style="float: left" type="primary" size="medium" @click="addTemplate"
+      >新建模板</el-button>
+      <div style="position: absolute;right: 0;padding-right: 20px">
+        <el-input v-model="form.examNo" style="width:200px;"  placeholder="考试编号"
         ></el-input>
-        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试编名称"
+        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"
         ></el-input>
-       <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
+        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button>
-        <el-button class="association_btn" style="margin-left:200px;" type="primary" size="medium" @click="addTemplate"
-        >新建模板</el-button
-      >
+      </div>
+
+
+
     </div>
     <!--列表-->
     <el-table
@@ -160,7 +164,7 @@ export default {
   methods: {
     // 新建模板
     addTemplate(){
-      // this.$router.push({ name: 'AddTicketTemplate'})
+      this.$router.push({ name: 'AddTicketTemplate'})
       this.showTemplate = true
     },
   // 获取画室

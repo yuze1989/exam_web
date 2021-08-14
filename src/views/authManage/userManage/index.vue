@@ -31,9 +31,9 @@
         </el-form>
       </div>
       <div>
-        <el-button class="meiyuan_btn" type="primary" size="medium" @click="add"
-          >新增用户</el-button
-        >
+<!--        <el-button class="meiyuan_btn" type="primary" size="medium" @click="add"-->
+<!--          >新增用户</el-button-->
+<!--        >-->
       </div>
     </div>
     <!--列表-->
@@ -113,9 +113,9 @@
       </el-table-column>
       <el-table-column label="操作" width="130" header-align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="editItem(scope.row)"
-            >编辑</el-button
-          >
+<!--          <el-button type="text" size="small" @click="editItem(scope.row)"-->
+<!--            >编辑</el-button-->
+<!--          >-->
 
           <el-button type="danger" size="small" @click="restItem(scope.row)"
             >密码重置</el-button
@@ -247,7 +247,11 @@ export default {
         type: "warning",
       })
         .then(() => {
-          this.resetPWD(item);
+          // this.resetPWD(item);
+          this.$message({
+            type: "success",
+            message: "已重置",
+          });
         })
         .catch(() => {
           this.$message({

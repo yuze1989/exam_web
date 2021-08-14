@@ -82,7 +82,7 @@
             </el-table>
             <!-- 注意事项 -->
             <div class="careful-matter">
-                <textarea v-model="form.carefulMatter" style="margin-top:30px"  name="" id="" placeholder="多行输入"></textarea>
+                <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px"  name="" id="" placeholder="多行输入"></textarea>
             </div>
             <!-- 保存 -->
                 <el-button
@@ -96,59 +96,69 @@
         </div>
         <!-- 模板示例 -->
         <div class="template-example" >
-              <div class="template-example-dom" ref="ticketFile">
-                  <div class="title">
-                    <div>准考证</div>
-                    <div style="font-size: 24px;">{{form.examTitle}}</div>
-                  </div>
-                  <div class="student-info">
-                    <div class="warp">
-                      <div class="name">
-                        <div class="left">姓名</div>
-                        <div class="right"></div>
-                      </div>
-                       <div class="zkz">
-                        <div class="left">准考证号</div>
-                        <div class="right"></div>
-                      </div>
-                       <div class="sfz">
-                        <div class="left">身份证号</div>
-                        <div class="right"></div>
-                      </div>
-                    </div>
-                    <div class="student-img">
-                      <div>照</div>
-                      <div>片</div>
-                    </div>
-                  </div>
-                  <div class="zbdw">
-                    <div class="left">主办单位</div>
+          <div class="bg" style="    background: #ddd;margin-left: 100px; padding: 20px;">
+            <div class="template-example-dom" ref="ticketFile">
+              <div class="title" style="height: 200px;background: #4a4a98">
+                <div style="font-size: 70px;
+    font-weight: 700;
+    letter-spacing: 40px;
+    padding-left: 40px;">准考证</div>
+                <div style="font-size: 24px;" v-show="isShow">{{form.examTitle}}</div>
+              </div>
+              <div class="student-info">
+                <div class="warp">
+                  <div class="name">
+                    <div class="left">姓名</div>
                     <div class="right"></div>
                   </div>
-                  <div class="room">
-                  <div class="left">画室</div>
-                  <div class="right"></div>
-                </div>
-                <div class="subject-warp">
-                  <div class="title1">
-                    <div class="line1">考试科目</div>
-                    <div class="line2">检录/考试地点</div>
-                    <div class="line3">考场号</div>
-                    <div class="line4">座位号</div>
-                    <div class="line5">考试时间</div>
+                  <div class="zkz">
+                    <div class="left">准考证号</div>
+                    <div class="right"></div>
                   </div>
-                  <div class="title1" v-for="item in examDetails.subjectList" :key="item.message">
-                     <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
-                    <div class="line4"></div>
-                    <div class="line5"></div>
-
+                  <div class="sfz">
+                    <div class="left">身份证号</div>
+                    <div class="right"></div>
                   </div>
                 </div>
-
+                <div class="student-img">
+                  <div>照</div>
+                  <div>片</div>
+                </div>
               </div>
-          
+              <div class="zbdw">
+                <div class="left">主办单位</div>
+                <div class="right" style="padding-left: 20px" v-show="isShow">{{form.organizer}}</div>
+              </div>
+              <div class="room">
+                <div class="left">画室</div>
+                <div class="right"></div>
+              </div>
+              <div class="subject-warp">
+                <div class="title1">
+                  <div class="line1" style="width: 86px">考试科目</div>
+                  <div class="line2">检录/考试地点</div>
+                  <div class="line3">考场号</div>
+                  <div class="line4">座位号</div>
+                  <div class="line5">考试时间</div>
+                </div>
+                <div class="title1" v-for="item in examDetails.subjectList" :key="item.message" style="height: 80px">
+                  <div class="line1" style="height: 80px;line-height: 80px;width: 86px;" v-show="isShow">{{item.subjectName}}</div>
+                  <div class="line2" style="height: 80px"></div>
+                  <div class="line3" style="height: 80px"></div>
+                  <div class="line4" style="height: 80px"></div>
+                  <div class="line5" style="height: 80px;padding-top: 12px;line-height: 27px" v-show="isShow">
+                    {{item.subjectDate}}
+                    {{item.subjectStarttime}} - {{item.subjectEndtime}}
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+            <div v-html="form.carefulMatter.replace(/\n|\r\n/g, '<br>')" style="padding-top: 15px">
+            </div>
+          </div>
+
               <!-- <img class="real_pic" :src="imgUrl" /> -->
         </div>
      
@@ -187,6 +197,7 @@ export default {
         carefulMatter: '',
         examTitle: ''
       },
+      isShow:true,
 
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
         {
@@ -219,6 +230,7 @@ export default {
       return new Blob([ab], { type: fileType});
     },
     getImage() {
+      this.isShow = false;
       html2canvas(this.$refs.ticketFile).then(canvas => {
           this.$message({
               message: '图片已生成可以保存模版',
@@ -226,6 +238,7 @@ export default {
             })
         let dataURL = canvas.toDataURL("image/png");
         this.imgUrl = dataURL;
+        this.isShow = true;
       });
     } ,
     // 查询考试详情
@@ -241,6 +254,7 @@ export default {
       apiGetProvinceByExamId({
         examId: this.form.examNameNo
       }).then(res=>{
+        console.log(res.result);
         this.studentAreaOption = res.result
       })
     },
@@ -280,8 +294,15 @@ export default {
       let formData = new FormData();
       let file = this.base64toFile(this.imgUrl);
       formData.append('ticketFile', file);
+      for( let key  in data){
+        
+      }
+      data.forEach((item,index)=>{
+        console.log(item);
+        console.log(index);
+      })
       let str = this.transformRequest(data)
-      let url = `/ticket/ticketCreate?${str}`
+      let url = `/ticket/ticketCreate?remark=`+ this.form.carefulMatter;
       this.$axios
         .post(url, formData)
         .then((res) => {
@@ -367,8 +388,7 @@ padding-left:200px;
 .template-example-dom{
   background: #fff;
   border: 1px #333 solid;
-  width: 600px;
-  margin-left: 100px;
+  width: 560px;
   .title{
     background: blue;
     display: flex;
