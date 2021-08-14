@@ -89,7 +89,7 @@
       <div       v-if="dataList.records.length>0">
         <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.subjectList[index].score"></el-input>
+            <el-input v-model="scope.row.subjectList[index].score" @keyup.enter.native="save(scope.row)"></el-input>
           </template>
         </el-table-column>
       </div>
@@ -160,14 +160,13 @@ export default {
       let iscontu = true;
       this.arr.push(timenow);
       let i;
-      console.log(this.arr)
       for(i in this.arr){
         if(Math.ceil(this.arr[this.arr.length-1]) - Math.ceil(this.arr[this.arr.length-2]) < 3000){
           iscontu = true;
-          console.log('扫码枪')
+
         }else{
           iscontu = false;
-          console.log('手动')
+
         }
         if(i>0 && this.arr.length == parseInt(i)+1){
           if(iscontu == true){
@@ -206,7 +205,7 @@ export default {
       this.$axios
         .post('/score/scoreSave', params)
         .then((res) => {
-          if(res.code === 0) {
+          if(res.code === 200) {
             this.$message({
                 message: '保存成功',
                 type: 'success',

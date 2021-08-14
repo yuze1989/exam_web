@@ -66,10 +66,7 @@ export function filterAsyncChildenRouters(childens, subMenus) {
 
   subMenus.forEach((item, index) => {
     childens.forEach((router, index) => {
-
       if (item.id == router.id) {
-        console.log(item);
-        console.log(router);
         childenRouter.push({ ...router, meta: { ...router.meta, name: item.nameCn, usable: item.usable } })
       }
 
@@ -108,6 +105,17 @@ const actions = {
       }
     })
 
+    //父标签重排
+    let newA = [];
+    asyncRouter.forEach((item,index) =>{
+      newA.push(item.id)
+    })
+
+    parentMenus.sort((a,b)=>{
+      let order= newA;
+      return order.indexOf(a.id)-order.indexOf(b.id);
+    });
+
     let subMenus = new Array()
     menus.forEach((item, index) => {
       if (item.usable == 1)
@@ -119,8 +127,9 @@ const actions = {
         realRoutes.push(router)
       }
     })
-    console.log(parentMenus);
-    console.log(realRoutes);
+
+
+
 
     //console.log("realRoutes" + realRoutes)
 

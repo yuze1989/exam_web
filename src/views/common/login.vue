@@ -413,8 +413,8 @@ export default {
   padding: 0 0;
   width: 100%;
   height: 100%;
-  // background-image: url(../../assets/bg-star.jpg);
-  background: #4fa9e6;
+   background-image: url(../../assets/logo_bg.jpg);
+  //background: #4fa9e6;
   -moz-background-size: 100% 100%;
   background-size: 100% 100%;
 
