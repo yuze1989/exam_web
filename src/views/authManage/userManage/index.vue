@@ -2,7 +2,7 @@
   <section class="form_border">
     <div class="header">
       <div class="from-wrap">
-        <el-form :inline="true" :model="search" class="demo-form-inline">
+        <el-form :inline="true" :model="search" class="demo-form-inline" style="display: flex;justify-content: flex-end;height: 36px">
           <!-- <el-col :span="5">
             <el-select v-model="search.state" placeholder="请选择">
               <el-option
@@ -13,21 +13,17 @@
               ></el-option>
             </el-select>
           </el-col> -->
-          <el-col :span="5">
-            <el-form-item>
-              <el-input
+          <el-form-item>
+            <el-input
                 v-model="search.userName"
                 placeholder="用户名"
-              ></el-input>
-            </el-form-item>
-          </el-col>
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <!-- <el-button type="warning" @click="reset">重置</el-button> -->
+          </el-form-item>
 
-          <el-col :span="4">
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit">查询</el-button>
-              <!-- <el-button type="warning" @click="reset">重置</el-button> -->
-            </el-form-item>
-          </el-col>
         </el-form>
       </div>
       <div>

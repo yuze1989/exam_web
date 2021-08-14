@@ -457,11 +457,11 @@ export const asyncRouter = [
                 },
             },
             {
-                path: "/addTicketTemplate",
+                path: "/77777",
                 id: 105,
                 code: 10105,
                 name:'AddTicketTemplate',
-                component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+                // component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
                 meta: {
                     name: '关联考试',
                     icon: 'classmate'

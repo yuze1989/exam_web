@@ -2,22 +2,17 @@
   <section class="form_border">
     <div class="header">
       <div class="from-wrap">
-        <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent>
-          <el-col :span="5">
-            <el-form-item>
-              <el-input
+        <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
+          <el-form-item>
+            <el-input
                 v-model="search.admissionTicketCode"
                 placeholder="准考证号码"
                 @keyup.enter.native="inputNum"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="4">
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit">查询</el-button>
-            </el-form-item>
-          </el-col>
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+          </el-form-item>
         </el-form>
       </div>
       <div>
