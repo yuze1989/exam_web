@@ -18,16 +18,12 @@
             <el-input
               v-model="forms.model.teacherName"
               placeholder="姓名"
-                v-model="forms.model.teacherName"
-                placeholder="姓名"
+
             ></el-input>
           </el-form-item>
         </el-col>
               <!-- multiple -->
         <el-col :span="4">
-
-
-
           <el-form-item>
             <el-select
               v-model="forms.model.provinceCode"
@@ -35,21 +31,12 @@
               value-key="province"
               clearable
               filterable
-                v-model="forms.model.provinceCode"
-                placeholder="生源省份"
-                value-key="province"
-                clearable
-                filterable
             >
               <el-option
                 v-for="item in options"
                 :key="item.provinceCode"
                 :label="item.province"
                 :value="item"
-                  v-for="item in options"
-                  :key="item.provinceCode"
-                  :label="item.province"
-                  :value="item"
               ></el-option>
             </el-select>
           </el-form-item>
