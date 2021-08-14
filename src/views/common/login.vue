@@ -376,15 +376,18 @@ export default {
             .dispatch('user/login', loginParams)
             .then((res) => {
               this.logining = false
-              resetRouter()
+              // resetRouter()
               let path = '/'
               if (res.result.menuList && res.result.menuList.length > 0) {
-                path = this.findPath(res.result.menuList)
-                this.$router.push({ path: path })
+                // path = this.findPath(res.result.menuList)
+                // this.$router.push({ path: path })
+                this.$router.push('/')
               } else {
                 this.$message.error('该账号暂未开放权限')
               }
-              localStorage.setItem("user_name",this.ruleForm2.account)
+              localStorage.setItem("user_name",res.result.userInfo.name)
+              localStorage.setItem("user_logo",res.result.logo)
+              localStorage.setItem("user_school",res.result.schoolName)
             })
             .catch((err) => {
               this.logining = false

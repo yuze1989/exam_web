@@ -113,13 +113,14 @@ const actions = {
       if (item.usable == 1)
         subMenus.push(item)
     })
-    console.log(parentMenus);
     parentMenus.forEach((item, index) => {
       let router = filterAsyncParentRouters(item, subMenus)
       if (router) {
         realRoutes.push(router)
       }
     })
+    console.log(parentMenus);
+    console.log(realRoutes);
 
     //console.log("realRoutes" + realRoutes)
 

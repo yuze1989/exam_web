@@ -284,17 +284,6 @@ export const asyncRouter = [
             //     },
             // },
             {
-                path: "/qrCodeManage",
-                id: 90,
-                code: 10090,
-                name:'QrcodeManage',
-                component: resolve => require(["@/views/templateManage/qrCodeManage.vue"], resolve),
-                meta: {
-                    name: '二维码模板',
-                    icon: 'notice-fill'
-                },
-            },
-            {
                 path: "/addTicketTemplate",
                 id: 91,
                 code: 10091,
@@ -305,6 +294,18 @@ export const asyncRouter = [
                     icon: 'notice-fill'
                 },
             },
+            {
+                path: "/qrCodeManage",
+                id: 90,
+                code: 10090,
+                name:'QrcodeManage',
+                component: resolve => require(["@/views/templateManage/qrCodeManage.vue"], resolve),
+                meta: {
+                    name: '二维码模板',
+                    icon: 'notice-fill'
+                },
+            },
+
 
         ]
     },

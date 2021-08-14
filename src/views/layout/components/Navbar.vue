@@ -13,7 +13,7 @@
     <div class="right-menu">
       <div class="titleContain">
         <span class="titleName" style="cursor: default"
-          >欢迎回来，{{ user && user.name ? "" : ""}}
+          >欢迎回来，{{user.name}}
         </span>
 
         <span class="titleTip" style="cursor: default">考试管理系统 </span>
@@ -24,7 +24,7 @@
       >
         <div class="avatar-wrapper">
           <img
-            :src="user.imgs ? user.imgs : './img/mr.png'"
+            :src="getLogo()"
             class="user-avatar"
           />
         </div>
@@ -68,8 +68,8 @@ export default {
     return {
       visible: false,
       user: {
-        name: "888",
-        imgs: require("../../../assets/school/tx.png"),
+        name: localStorage.getItem("user_name"),
+        imgs: localStorage.getItem("user_logo")?"../../../assets/school/tx.png":localStorage.getItem("user_logo"),
         loginCode: "",
       },
     };
@@ -93,6 +93,10 @@ export default {
     }
   },
   methods: {
+    getLogo(){
+      let img = localStorage.getItem("user_logo")?require("../../../assets/school/tx.png"):localStorage.getItem("user_logo")
+      return img;
+    },
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
