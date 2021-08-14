@@ -168,16 +168,16 @@ export const asyncRouter = [
                 }
             },
          
-            // {
-            //     path: "/examRoomManage",
-            //     id: 109,
-            //     code: 10086,
-            //     component: resolve => require(["@/views/examManage/examRoomManage/examRoom.vue"], resolve),
-            //     meta: {
-            //         name: '考场管理',
-            //         icon: 'classmate'
-            //     }
-            // },
+            {
+                path: "/examRoomManage",
+                id: 109,
+                code: 10086,
+                component: resolve => require(["@/views/examManage/examRoomManage/examRoom.vue"], resolve),
+                meta: {
+                    name: '考场管理',
+                    icon: 'classmate'
+                }
+            },
             {
                 path: "/admissionTicket",
                 id: 121,

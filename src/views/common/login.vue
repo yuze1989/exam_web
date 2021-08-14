@@ -3,9 +3,11 @@
     <div class="login-container">
       <el-col class="title-bg" :span="8">
         <el-col class="title-content">
-          <div>
+          <div style="padding-top: 20px">
             <span class="title"></span>
-            <div><span class="title">考试管理系统</span></div>
+            <div><span class="title" style="font-size: 50px">Hello.</span></div>
+            <div><span class="title" style="font-size: 16px">欢迎进入TOP美术</span></div>
+            <div><span class="title" style="font-size: 16px">考试管理系统后台</span></div>
           </div>
           <!-- <span class="content"
             >Smart campus Institution Management System</span
@@ -434,7 +436,8 @@ export default {
     border: solid 0px #fff;
     font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
     .title-bg {
-      background-image: url(../../assets/title-bg.png);
+      border-radius: 8px 0 0 8px;
+      background-image: url(../../assets/left_bg.jpg);
       -moz-background-size: 100% 100%;
       background-size: 100% 100%;
       padding: 1.5rem 2rem 1.5rem 2rem;
