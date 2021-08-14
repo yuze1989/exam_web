@@ -133,6 +133,7 @@
               v-model="item.province"
               style="width: 180px;"
               placeholder="选择省份"
+              @change="dataChange"
             >
               <el-option
                 v-for="(item, i) in provinceList"
@@ -339,6 +340,9 @@ export default {
   mounted() {
   },
   methods: {
+    dataChange(event,ss){
+      console.log(event,ss);
+    },
     getProvinceList() {
       this.$axios
         .get(this.API.examinfo.allProvince)
@@ -354,7 +358,6 @@ export default {
       rows.splice(index, 1)
     },
     open() {
-      console.log(this.editItem, this.isAdd, 'this.isAdd')
       if (this.isAdd) {
         this.from = {}
         this.address = [{}]
@@ -363,8 +366,7 @@ export default {
         this.$axios
           .get(this.API.examinfo.detail + '?id=' + this.editItem.id)
           .then((res) => {
-            console.log(res, '详情')
-            let result = res.result
+            let result = res.result;
             this.from = {
               id: result.id, //id
               name: result.name, //考试名称
@@ -394,6 +396,7 @@ export default {
     },
 
     // api
+
     add() {
       this.$refs.examForm.validate((valid) => {
         if (valid) {

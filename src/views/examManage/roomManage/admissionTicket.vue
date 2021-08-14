@@ -220,7 +220,22 @@ export default {
      },
      // 导出准考证
      exportTicket(){
-
+       let params = {
+         current : this.form.pageIndex ,
+         size : this.form.pageSize ,
+         examName : this.form.examName,
+         roomCode :  this.form.examNo,
+         provinceCode : this.form.studentAreaCode,
+         examineeName : this.form.studentName,
+         schoolId :this.form.schoolId,
+         admissionTicketCode:this.form.admissionTicketCode
+       }
+       this.$axios
+           .post('/ticket/unionExamExport', params)
+           .then((res) => {
+             // this.getList();
+           })
+           .catch(() => {});
      },
         // 区域改变监听
     studioAreaChange(e){

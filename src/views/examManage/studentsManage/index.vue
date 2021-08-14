@@ -76,8 +76,8 @@
 
 <!--      <el-button type="warning" @click="reset">重置</el-button>-->
       <el-button type="primary" @click="add" style="margin-left: 15px">新增学生信息</el-button>
-      <el-button type="primary" @click="checkMore">批量审核</el-button>
       <el-button type="primary" @click="onImport">批量导入</el-button>
+      <el-button type="primary" @click="checkMore">批量审核</el-button>
     </div>
     <!-- 导入 导出 -->
     <!-- <div class="export-box">

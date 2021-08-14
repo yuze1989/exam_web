@@ -1,23 +1,23 @@
 <template>
   <section class="form_border">
-    <div class="header">
-      <div class="from-wrap">
-        <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
-          <el-form-item>
-            <el-input
-                v-model="search.admissionTicketCode"
-                placeholder="请扫码或者输入准考证号"
-                @keyup.enter.native="inputNum"
-            ></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div>
-      </div>
-    </div>
+<!--    <div class="header">-->
+<!--      <div class="from-wrap">-->
+<!--        <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">-->
+<!--          <el-form-item>-->
+<!--            <el-input-->
+<!--                v-model="search.admissionTicketCode"-->
+<!--                placeholder="请扫码或者输入准考证号"-->
+<!--                @keyup.enter.native="inputNum"-->
+<!--            ></el-input>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item>-->
+<!--            <el-button type="primary" @click="onSubmit">查询</el-button>-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+<!--      </div>-->
+<!--      <div>-->
+<!--      </div>-->
+<!--    </div>-->
     <!--列表-->
     <el-table
       :data="dataList.records"
@@ -61,7 +61,7 @@
       >
       </el-table-column>
       <el-table-column
-        label="身份证号"
+        label="身份证号码"
         header-align="center"
         align="center"
         prop="identification"
@@ -75,10 +75,58 @@
       >
       </el-table-column>
       <el-table-column
-        label="所属省份"
+        label="生源省份"
         header-align="center"
         align="center"
         prop="province"
+      >
+      </el-table-column>
+      <el-table-column
+          label="素描分数"
+          header-align="center"
+          align="center"
+          prop="province"
+      >
+      </el-table-column>
+      <el-table-column
+          label="色彩分数"
+          header-align="center"
+          align="center"
+          prop="province"
+      >
+      </el-table-column>
+      <el-table-column
+          label="速写分数"
+          header-align="center"
+          align="center"
+          prop="province"
+      >
+      </el-table-column><el-table-column
+        label="设计分数"
+        header-align="center"
+        align="center"
+        prop="province"
+    >
+    </el-table-column>
+      <el-table-column
+          label="总分"
+          header-align="center"
+          align="center"
+          prop="province"
+      >
+      </el-table-column>
+      <el-table-column
+          label="机构内排名"
+          header-align="center"
+          align="center"
+          prop="province"
+      >
+      </el-table-column>
+      <el-table-column
+          label="总排名"
+          header-align="center"
+          align="center"
+          prop="province"
       >
       </el-table-column>
       <div       v-if="dataList.records.length>0">
@@ -89,13 +137,13 @@
         </el-table-column>
       </div>
 
-      <el-table-column label="操作" width="130" header-align="center">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="save(scope.row)"
-            >保存</el-button
-          >
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="操作" width="130" header-align="center">-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-button type="text" size="small" @click="save(scope.row)"-->
+<!--            >详情</el-button-->
+<!--          >-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -172,21 +220,21 @@ export default {
     },
 
     getList() {
-      let roleId = this.search.state == -1 ? null : this.search.state;
-      let params = {
-        current: this.form.pageIndex,
-        size: this.form.pageSize,
-        admissionTicketCode: this.search.admissionTicketCode,
-      };
-      this.$axios
-        .post('/score/scoreList', params)
-        .then((res) => {
-          this.dataList.pageIndex = res.result.pageNum;
-          this.dataList.total = res.result.total;
-          (this.dataList.pageSize = res.result.pageSize), (this.dataList.pages = res.result.pageNum);
-          this.dataList.records = res.result.list;
-        })
-        .catch(() => {});
+      // let roleId = this.search.state == -1 ? null : this.search.state;
+      // let params = {
+      //   current: this.form.pageIndex,
+      //   size: this.form.pageSize,
+      //   admissionTicketCode: this.search.admissionTicketCode,
+      // };
+      // this.$axios
+      //   .post('/score/scoreList', params)
+      //   .then((res) => {
+      //     this.dataList.pageIndex = res.result.pageNum;
+      //     this.dataList.total = res.result.total;
+      //     (this.dataList.pageSize = res.result.pageSize), (this.dataList.pages = res.result.pageNum);
+      //     this.dataList.records = res.result.list;
+      //   })
+      //   .catch(() => {});
       // this.search.admissionTicketCode = ""
     },
 
