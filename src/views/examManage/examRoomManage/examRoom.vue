@@ -1,19 +1,19 @@
 <template>
   <section>
-    <el-row>
-      <div
-        style="
-          margin: 0 0 10px;
-          margin-left: 10px;
-          font-size: 18px;
-          font-weigth: 800;
-        "
-      >
-        考场管理
-      </div>
-    </el-row>
+<!--    <el-row>-->
+<!--      <div-->
+<!--        style="-->
+<!--          margin: 0 0 10px;-->
+<!--          margin-left: 10px;-->
+<!--          font-size: 18px;-->
+<!--          font-weigth: 800;-->
+<!--        "-->
+<!--      >-->
+<!--        考场管理-->
+<!--      </div>-->
+<!--    </el-row>-->
     <!--工具条-->
-    <el-row class="toolbar" style="padding-bottom: 0px;" type="flex">
+    <el-row class="toolbar" style="padding-bottom: 0px;height: 66px;padding-top: 15px" type="flex">
       <el-col :span="6">
         <el-button
           type="primary"
@@ -26,6 +26,7 @@
       </el-col>
       <el-col :span="18" style="float: right;">
         <el-form :inline="true" :model="selections" style="float: right;">
+
           <el-form-item>
             <el-input
               v-model="selections.examName"
@@ -37,10 +38,28 @@
 
           <el-form-item>
             <el-input
+                v-model="selections.admissionTicketCode"
+                style="width: 140px;"
+                placeholder="请输入准考证号"
+                onKeyUp="value=value.replace(/\s|[\r\n]/ig,'')"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item>
+            <el-input
               v-model="selections.examineeName"
               style="width: 140px;"
               placeholder="请输入学生姓名"
               onKeyUp="value=value.replace(/\s|[\r\n]/ig,'')"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item>
+            <el-input
+                v-model="selections.studioName"
+                style="width: 140px;"
+                placeholder="请输入所属机构"
+                onKeyUp="value=value.replace(/\s|[\r\n]/ig,'')"
             ></el-input>
           </el-form-item>
 
@@ -141,7 +160,7 @@
 
         <el-table-column
           prop="studioName"
-          label="所属画室"
+          label="所属机构"
           header-align="center"
           width="160"
           align="center"
@@ -266,6 +285,8 @@ export default {
         provinceCode: '',
         roomCode: '',
         schoolId: '',
+        admissionTicketCode:"",//准考证号
+        studioName:"",//机构名称
       },
       ruleForm: {
         id: '',
@@ -352,7 +373,9 @@ export default {
           size: this.selections.size,
           provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
           examineeName: this.selections.examineeName,
-          examName: this.selections.examName
+          examName: this.selections.examName,
+          studioName:this.selections.studioName,
+          admissionTicketCode:this.selections.admissionTicketCode
         })
         .then((res) => {
           if (res.code == 200) {

@@ -3,9 +3,11 @@
     <div class="login-container">
       <el-col class="title-bg" :span="8">
         <el-col class="title-content">
-          <div>
+          <div style="padding-top: 20px">
             <span class="title"></span>
-            <div><span class="title">考试管理系统</span></div>
+            <div><span class="title" style="font-size: 50px">Hello.</span></div>
+            <div><span class="title" style="font-size: 16px">欢迎进入TOP美术</span></div>
+            <div><span class="title" style="font-size: 16px">考试管理系统后台</span></div>
           </div>
           <!-- <span class="content"
             >Smart campus Institution Management System</span
@@ -376,15 +378,18 @@ export default {
             .dispatch('user/login', loginParams)
             .then((res) => {
               this.logining = false
-              resetRouter()
+              // resetRouter()
               let path = '/'
               if (res.result.menuList && res.result.menuList.length > 0) {
-                path = this.findPath(res.result.menuList)
-                this.$router.push({ path: path })
+                // path = this.findPath(res.result.menuList)
+                // this.$router.push({ path: path })
+                this.$router.push('/')
               } else {
                 this.$message.error('该账号暂未开放权限')
               }
-              localStorage.setItem("user_name",this.ruleForm2.account)
+              localStorage.setItem("user_name",res.result.userInfo.name)
+              localStorage.setItem("user_logo",res.result.logo)
+              localStorage.setItem("user_school",res.result.schoolName)
             })
             .catch((err) => {
               this.logining = false
@@ -410,8 +415,8 @@ export default {
   padding: 0 0;
   width: 100%;
   height: 100%;
-  // background-image: url(../../assets/bg-star.jpg);
-  background: #4fa9e6;
+   background-image: url(../../assets/logo_bg.jpg);
+  //background: #4fa9e6;
   -moz-background-size: 100% 100%;
   background-size: 100% 100%;
 
@@ -431,7 +436,8 @@ export default {
     border: solid 0px #fff;
     font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
     .title-bg {
-      background-image: url(../../assets/title-bg.png);
+      border-radius: 8px 0 0 8px;
+      background-image: url(../../assets/left_bg.jpg);
       -moz-background-size: 100% 100%;
       background-size: 100% 100%;
       padding: 1.5rem 2rem 1.5rem 2rem;

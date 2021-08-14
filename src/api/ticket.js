@@ -9,3 +9,40 @@ export function apiUnionExamList(data) {
     data
     })
   }
+
+  // 考试查询
+  export function apiExamList(data) {
+    return request({
+      url: '/ticket/examlist',
+      method: 'POST',
+    data
+    })
+  }
+ // 查询考试下的省份
+
+ export function apiGetProvinceByExamId(data) {
+  return request({
+    url: '/examinfo/getProvinceByExamId',
+    method: 'GET',
+    params: data
+  })
+}
+
+// 获取考试详情
+
+export function apiGetExamDetails(data) {
+  return request({
+    url: '/examinfo/detail',
+    method: 'GET',
+    params: data
+  })
+}
+
+// 新增准考证模版
+export function apiTicketCreate(data) {
+  return request({
+    url: '/ticket/ticketCreate',
+    method: 'POST',
+    data
+  })
+}

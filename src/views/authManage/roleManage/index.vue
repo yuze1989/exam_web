@@ -24,9 +24,9 @@
       </el-form>
     </div> -->
     <div class="header">
-      <el-button class="meiyuan_btn" type="primary" size="medium" @click="add"
-        >新增角色</el-button
-      >
+<!--      <el-button class="meiyuan_btn" type="primary" size="medium" @click="add"-->
+<!--        >新增角色</el-button-->
+<!--      >-->
     </div>
     <!--列表-->
     <el-table

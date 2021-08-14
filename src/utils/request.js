@@ -36,6 +36,9 @@ service.interceptors.request.use(
     if(config.url.includes("exportExcel")){
       config.responseType = 'blob';
     }
+    if(config.url.includes("ticketCreate")){
+      config.headers["content-type"] = "multipart/form-data";
+    }
     
     // if (address[config.url]) {
     //   config.url = address[config.url] + config.url;

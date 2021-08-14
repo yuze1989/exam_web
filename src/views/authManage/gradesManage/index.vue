@@ -8,7 +8,7 @@
               <el-input
                 v-model="search.admissionTicketCode"
                 placeholder="准考证号码"
-                @keyup.enter.native="onSubmit"
+                @keyup.enter.native="inputNum"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -73,7 +73,7 @@
       >
       </el-table-column>
       <el-table-column
-        label="所属画室"
+        label="所属机构"
         header-align="center"
         align="center"
         prop="studioName"
@@ -86,11 +86,14 @@
         prop="province"
       >
       </el-table-column>
-      <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
-        <template slot-scope="scope">
-          <el-input v-model="scope.row.subjectList[index].score"></el-input>
-        </template>
-      </el-table-column>
+      <div       v-if="dataList.records.length>0">
+        <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.subjectList[index].score" @keyup.enter.native="save(scope.row)"></el-input>
+          </template>
+        </el-table-column>
+      </div>
+
       <el-table-column label="操作" width="130" header-align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="save(scope.row)"
@@ -137,7 +140,8 @@ export default {
       subjectName1: false,
       subjectName2: false,
       subjectName3: false,
-      subjectName4: false
+      subjectName4: false,
+      arr:[]
     };
   },
   created() {
@@ -151,12 +155,32 @@ export default {
     currentChange(){
       this.getList();
     },
+    inputNum(target){
+      let timenow = target.timeStamp;
+      let iscontu = true;
+      this.arr.push(timenow);
+      let i;
+      for(i in this.arr){
+        if(Math.ceil(this.arr[this.arr.length-1]) - Math.ceil(this.arr[this.arr.length-2]) < 3000){
+          iscontu = true;
+
+        }else{
+          iscontu = false;
+
+        }
+        if(i>0 && this.arr.length == parseInt(i)+1){
+          if(iscontu == true){
+            return
+          }
+        }
+      }
+    },
 
     getList() {
       let roleId = this.search.state == -1 ? null : this.search.state;
       let params = {
-        pageIndex: this.form.pageIndex,
-        pageSize: this.form.pageSize,
+        current: this.form.pageIndex,
+        size: this.form.pageSize,
         admissionTicketCode: this.search.admissionTicketCode,
       };
       this.$axios
@@ -168,38 +192,7 @@ export default {
           this.dataList.records = res.result.list;
         })
         .catch(() => {});
-      this.search.admissionTicketCode = ""
-      // this.dataList.records = this.dataList.records.forEach()(item => {
-      //   console.log(item);
-      //   if (item.subjectList.length == 1) {
-      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName})
-      //   }
-      //   if (item.subjectList.length == 2) {
-      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName})
-      //   }
-      //   if (item.subjectList.length == 3) {
-      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName}, {subjectName3: item.subjectList[2].subjectName})
-      //   }
-      //   if (item.subjectList.length == 4) {
-      //     item = Object.assign({}, item, {subjectName1: item.subjectList[0].subjectName}, {subjectName2: item.subjectList[1].subjectName}, {subjectName3: item.subjectList[2].subjectName}, {subjectName4: item.subjectList[3].subjectName})
-      //   }
-      //
-      //   item = item.subjectList.forEach(s => {
-      //       console.log(s);
-      //       if (s.subjectName == '素描分数') {
-      //         this.subjectName1 = true
-      //       }
-      //       if (s.subjectName == '色彩分数') {
-      //         this.subjectName2 = true
-      //       }
-      //       if (s.subjectName == '速写分数') {
-      //         this.subjectName3 = true
-      //       }
-      //       if (s.subjectName == '设计分数') {
-      //         this.subjectName4 = true
-      //       }
-      //     })
-      //   })
+      // this.search.admissionTicketCode = ""
     },
 
     save (row) {
@@ -212,7 +205,7 @@ export default {
       this.$axios
         .post('/score/scoreSave', params)
         .then((res) => {
-          if(res.code === 0) {
+          if(res.code === 200) {
             this.$message({
                 message: '保存成功',
                 type: 'success',

@@ -8,7 +8,7 @@
         provinceCode:'',
         schoolId:'',// 机构id ,
         source:'',//报名来源:1手机；2后台 ,
-        studioName:'',//: 画室名称 -->
+        studioName:'',//: 机构名称 -->
       <el-input
         style="width: 200px; margin-right: 20px; margin-bottom: 5px"
         v-model="forms.examineeName"
@@ -18,7 +18,7 @@
       <el-input
         style="width: 200px; margin-right: 20px;margin-bottom: 5px"
         v-model="forms.studioName"
-        placeholder="画室名称"
+        placeholder="机构名称"
       ></el-input>
 
       <el-input
@@ -143,14 +143,14 @@
       ></el-table-column>
 
       <el-table-column
-        label="画室编码"
+        label="机构编码"
         header-align="center"
         align="center"
         prop="studioCode"
       ></el-table-column>
 
       <el-table-column
-        label="画室名称"
+        label="机构名称"
         header-align="center"
         align="center"
         prop="studioName"
@@ -331,7 +331,7 @@ export default {
         provinceCode: '',
         schoolId: '', // 机构id ,
         source: '', //报名来源:1手机；2后台 ,
-        studioName: '', //: 画室名称
+        studioName: '', //: 机构名称
       },
       checkStatusList: [
         { name: '全部审核状态', id: -1 },
@@ -429,7 +429,7 @@ export default {
         provinceCode: '',
         schoolId: '', // 机构id ,
         source: '', //报名来源:1手机；2后台 ,
-        studioName: '', //: 画室名称
+        studioName: '', //: 机构名称
       }
       this.getOrderList()
     },

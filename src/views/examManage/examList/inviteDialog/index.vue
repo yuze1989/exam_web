@@ -8,7 +8,7 @@
     width="50%"
     center
   >
-    <div slot="title">邀请画室</div>
+    <div slot="title">邀请机构</div>
     <el-form
       label-width="120px"
       :model="from"
@@ -57,7 +57,7 @@
     </el-form>
 
     <div slot="footer">
-      <el-button type="primary" @click="confirm">邀请画室</el-button>
+      <el-button type="primary" @click="confirm">邀请机构</el-button>
     </div>
   </el-dialog>
 </template>

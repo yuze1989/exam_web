@@ -2,14 +2,14 @@
    <section class="form_border">
     <div class="header" style="display: flex;
     justify-content: flex-end;">
-<!--        <el-button class="meiyuan_btn" type="primary" size="medium" @click="exportQR"-->
-<!--          >生成和导出二维码</el-button-->
-<!--        >-->
-        <el-button class="association_btn" type="primary" size="medium" @click="exportTicket" style="position: absolute;
+        <el-button class="meiyuan_btn" type="primary" size="medium" @click="exportQR"  style="position: absolute;
     left: 15px;
     height: 40px;"
-          >导出准考证</el-button
+          >导出二维码</el-button
         >
+<!--        <el-button class="association_btn" type="primary" size="medium" @click="exportTicket"-->
+<!--          >导出准考证</el-button-->
+<!--        >-->
         <el-input v-model="form.examName" style="width:200px;margin-left:50px;" placeholder="考试名称"
         ></el-input>
         <el-input v-model="form.examNo" style="width:200px;margin-left:15px;"  placeholder="输入考场"

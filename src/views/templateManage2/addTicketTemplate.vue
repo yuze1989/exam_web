@@ -277,12 +277,11 @@ export default {
     examConfirm(){
       let data = {
         examId : this.form.examNameNo,
-        province: '天津',
-        provinceCode: '120000',
+        province: this.form.studentAreaName,
+        provinceCode: this.form.studentAreaCode,
         organizer: this.form.organizer,
         examTitle : this.form.examTitle,
-        remark: this.form.carefulMatter,
-        schoolId:"111"
+        remark: this.form.carefulMatter
       }
     
        if(!this.imgUrl){
@@ -293,18 +292,12 @@ export default {
             return
       }
       let formData = new FormData();
-
-
       let file = this.base64toFile(this.imgUrl);
-
       formData.append('ticketFile', file);
-      // for( let key  in data){
-      //   formData.append(key, data[key]);
-      // }
-
-      console.log(file);
-
-      let url = `/ticket/ticketCreate?`+this.transformRequest(data);
+      for( let key  in data){
+        formData.append(key, data[key]);
+      }
+      let url = `/ticket/ticketCreate`;
       this.$axios
         .post(url, formData)
         .then((res) => {

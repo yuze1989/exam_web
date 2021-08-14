@@ -55,7 +55,7 @@
         provinceList:provinceCodeList,
         forms: {
           province:'',
-          studioname:'画室名',
+          studioname:'机构名',
           provice:'省',
           contact:'联系人',
           phone:'电话号码',
@@ -65,7 +65,7 @@
         examrooms:[],
         rules: {
           studioname: [
-            { required: true, message: '输入画室名称', trigger: 'blur' },
+            { required: true, message: '输入机构名称', trigger: 'blur' },
           ],
           provice: [
             { required: true, message: '输入省份', trigger: 'blur' },

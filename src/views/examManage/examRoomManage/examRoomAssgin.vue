@@ -173,7 +173,7 @@ export default {
         provinceCode: '', //省
         province: '', //省
         examrooms: [],
-        studioAreaName: '', //画室名
+        studioAreaName: '', //机构名
         examineeCount: '', //考生数
         distributCount: '', //已分配考考生
         maxExamCode: '', //已分配考场数
@@ -257,9 +257,9 @@ export default {
     },
 
     handleAdd() {
-      if (this.forms.provinceCode == '') {
-        alert('请选择省份')
-      } else {
+      // if (this.forms.provinceCode == '') {
+      //   alert('请选择省份')
+      // } else {
         const obj = { st: '', en: '', Count: '' }
         if (this.formsData.examrooms.length) {
           const preObj = this.formsData.examrooms[
@@ -273,7 +273,7 @@ export default {
           obj.st = this.forms.maxExamCode + 1
           this.formsData.examrooms.push(obj)
         }
-      }
+      // }
     },
     upok(response, file, fileList) {
       this.studio.url = file.name
@@ -298,13 +298,13 @@ export default {
       this.forms.maxExamCode += n2
     },
     submitForm(formName) {
-      if (!this.forms.provinceCode) {
-        this.$message({
-          type: 'error',
-          message: '请选择省份',
-        })
-        return
-      }
+      // if (!this.forms.provinceCode) {
+      //   this.$message({
+      //     type: 'error',
+      //     message: '请选择省份1',
+      //   })
+      //   return
+      // }
       this.loading = true
       this.$refs[formName].validate((valid) => {
         if (valid) {

@@ -12,38 +12,38 @@
 
     <div class="right-menu">
       <div class="titleContain">
-        <span class="titleName" style="cursor: default"
-          >欢迎回来，{{ user && user.name ? "" : ""}}
+        <span class="titleName" style="cursor: default;padding-right: 20px"
+          >欢迎登录，{{user.name}}
         </span>
 
-        <span class="titleTip" style="cursor: default">考试管理系统 </span>
+<!--        <span class="titleTip" style="cursor: default">考试管理系统 </span>-->
       </div>
-      <el-dropdown
-        class="avatar-container right-menu-item hover-effect"
-        trigger="click"
-      >
-        <div class="avatar-wrapper">
-          <img
-            :src="user.imgs ? user.imgs : './img/mr.png'"
-            class="user-avatar"
-          />
-        </div>
-        <el-dropdown-menu slot="dropdown">
-          <!-- <router-link to="/profile/index">
-            <el-dropdown-item icon="el-icon-setting">账户设置</el-dropdown-item>
-          </router-link> -->
+<!--      <el-dropdown-->
+<!--        class="avatar-container right-menu-item hover-effect"-->
+<!--        trigger="click"-->
+<!--      >-->
+<!--        <div class="avatar-wrapper">-->
+<!--          <img-->
+<!--            :src="getLogo()"-->
+<!--            class="user-avatar"-->
+<!--          />-->
+<!--        </div>-->
+<!--        <el-dropdown-menu slot="dropdown">-->
+<!--          &lt;!&ndash; <router-link to="/profile/index">-->
+<!--            <el-dropdown-item icon="el-icon-setting">账户设置</el-dropdown-item>-->
+<!--          </router-link> &ndash;&gt;-->
 
-          <!-- <el-dropdown-item icon="el-icon-setting">
-            <span @click="pushProfile">账户设置</span>
-          </el-dropdown-item>
-          <el-dropdown-item icon="el-icon-setting">
-            <span @click="changePwd">修改密码</span>
-          </el-dropdown-item> -->
-          <el-dropdown-item icon="el-icon-circle-close" divided>
-            <span @click="logout">退出登录</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+<!--          &lt;!&ndash; <el-dropdown-item icon="el-icon-setting">-->
+<!--            <span @click="pushProfile">账户设置</span>-->
+<!--          </el-dropdown-item>-->
+<!--          <el-dropdown-item icon="el-icon-setting">-->
+<!--            <span @click="changePwd">修改密码</span>-->
+<!--          </el-dropdown-item> &ndash;&gt;-->
+<!--          <el-dropdown-item icon="el-icon-circle-close" divided>-->
+<!--            <span @click="logout">退出登录</span>-->
+<!--          </el-dropdown-item>-->
+<!--        </el-dropdown-menu>-->
+<!--      </el-dropdown>-->
     </div>
   </div>
 </template>
@@ -68,8 +68,8 @@ export default {
     return {
       visible: false,
       user: {
-        name: "888",
-        imgs: require("../../../assets/school/tx.png"),
+        name: localStorage.getItem("user_school"),
+        imgs: localStorage.getItem("user_logo")?"../../../assets/school/tx.png":localStorage.getItem("user_logo"),
         loginCode: "",
       },
     };
@@ -80,12 +80,12 @@ export default {
   created() {
     this.$bus.$on("upDateUserInfo", (params) => {
       console.log("navibar upDateUserInfo");
-      this.user.name = localStorage.getItem("user_name");
+      this.user.name = localStorage.getItem("user_school");
       if (localStorage.getItem("user_avatar") !== "null") {
         this.user.imgs = localStorage.getItem("user_avatar");
       }
     });
-    this.user.name = localStorage.getItem("user_name");
+    this.user.name = localStorage.getItem("user_school");
 
     this.user.loginCode = localStorage.getItem("user_loginCode");
     if (localStorage.getItem("user_avatar") !== "null") {
@@ -93,6 +93,10 @@ export default {
     }
   },
   methods: {
+    getLogo(){
+      let img = localStorage.getItem("user_logo")?require("../../../assets/school/tx.png"):localStorage.getItem("user_logo")
+      return img;
+    },
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },

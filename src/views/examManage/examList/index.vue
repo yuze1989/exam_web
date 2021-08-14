@@ -3,50 +3,51 @@
     <div class="header">
       <el-form :inline="true" class="demo-form-inline">
         <el-col :span="4">
-          <el-form-item>
-            <el-input
-              v-model="forms.model.name"
-              placeholder="考试名称"
-            ></el-input>
-          </el-form-item>
+          <el-button
+              type="primary"
+              @click="add"
+          >
+            新增考试
+          </el-button>
+        </el-col>
+        <el-col :span="20" style="display: flex;justify-content: flex-end;">
+          <el-col :span="4">
+            <el-form-item>
+              <el-input
+                  v-model="forms.model.name"
+                  placeholder="考试名称"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="4">
+            <el-form-item>
+              <el-select
+                  v-model="forms.model.examStatus"
+                  placeholder="考试状态"
+                  @change="changeStatus"
+              >
+                <el-option
+                    v-for="(item, index) in examStatus"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="2">
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">查询</el-button>
+<!--              <el-button type="warning" @click="reset">重置</el-button>-->
+            </el-form-item>
+          </el-col>
         </el-col>
 
-        <el-col :span="4">
-          <el-form-item>
-            <el-select
-              v-model="forms.model.examStatus"
-              placeholder="考试状态"
-              @change="changeStatus"
-            >
-              <el-option
-                v-for="(item, index) in examStatus"
-                :key="index"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button type="warning" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-col>
       </el-form>
     </div>
-    <!-- 导入 导出 -->
-    <div class="export-box">
-      <el-button
-        style="margin: -10px 0px 10px 20px;"
-        size="small"
-        type="primary"
-        @click="add"
-      >
-        新增考试
-      </el-button>
-    </div>
+
     <!--列表-->
     <el-table
       :data="list"
@@ -179,7 +180,7 @@
               size="small"
               @click="toShowInvite(scope.row)"
             >
-              <span>邀请画室</span>
+              <span>邀请机构</span>
             </el-button>
 
             <!-- <el-button
@@ -234,8 +235,8 @@
     id (integer, optional): id ,
     no (string, optional): 考试编码 ,
     name (string, optional): 考试名称 ,
-    examType (integer, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
-    examTypeStr (string, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
+    examType (integer, optional): 考试类型:0、机构考试;1、联合考试;2、线下考试 ,
+    examTypeStr (string, optional): 考试类型:0、机构考试;1、联合考试;2、线下考试 ,
     examStatus (integer, optional): 考试状态:0、未开始;1、正在进行;2、结束考试 ,
     examStatusStr (string, optional): 考试状态:0、未开始;1、正在进行;2、结束考试 ,
     examStartTime (string, optional): 考试开始时间 ,
@@ -339,7 +340,7 @@ export default {
     changeStatus() {},
     changeCheckStatus() {},
     getStateString(item) {
-      // examType (integer, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
+      // examType (integer, optional): 考试类型:0、机构考试;1、联合考试;2、线下考试 ,
       // examTypeStr 联合考试状态:-1,表示自己建的联合考试;0、未确认;1、同意;2、拒绝;3、禁用
       if(item.examType == 1){
         switch (item.status) {

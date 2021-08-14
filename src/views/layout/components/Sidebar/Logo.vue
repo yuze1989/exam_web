@@ -9,16 +9,57 @@
       >
         <div class="coll-avatar-wrapper">
           <!-- <img :src="user.imgs?user.imgs:'./img/mr.png'" class="user-avatar" /> -->
-          <h1 class="sidebar-title">{{ "    " }}</h1>
+          <h1 class="sidebar-title">{{ "" }}</h1>
         </div>
-        <!-- <h1 class="sidebar-title">{{ user.name }}</h1> -->
+         <h1 class="sidebar-title">{{ user.name }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <div class="avatar-wrapper">
-          <!-- <img :src="user.imgs?user.imgs:''" class="user-avatar" /> -->
+<!--           <img :src="user.imgs?user.imgs:''" class="user-avatar" />-->
           <h1 class="sidebar-title">{{ title }}</h1>
         </div>
+        <div style="height: 40px;
+    position: relative;
+    border-bottom: 1px solid #313131;
+    padding-bottom: 20px;
+    box-sizing: content-box;">
+          <el-dropdown
+              style="position: absolute;left: 0"
+              class="avatar-container right-menu-item hover-effect"
+              trigger="click"
+          >
+            <div class="avatar-wrapper">
+              <img
+                  :src="getLogo()"
+                  class="user-avatar"
+              />
+            </div>
+
+            <el-dropdown-menu slot="dropdown">
+              <!-- <router-link to="/profile/index">
+                <el-dropdown-item icon="el-icon-setting">账户设置</el-dropdown-item>
+              </router-link> -->
+
+              <!-- <el-dropdown-item icon="el-icon-setting">
+                <span @click="pushProfile">账户设置</span>
+              </el-dropdown-item>
+              <el-dropdown-item icon="el-icon-setting">
+                <span @click="changePwd">修改密码</span>
+              </el-dropdown-item> -->
+              <el-dropdown-item icon="el-icon-circle-close" divided>
+                <span @click="logout">退出登录</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <div style="position: absolute;left:66px;width: 100px;height: 44px;">
+            <div class="admin" style="font-size: 15px">管理员</div>
+            <div class="admin" style="font-size: 13px">{{user.name}}</div>
+          </div>
+        </div>
       </router-link>
+
+
+
     </transition>
   </div>
 </template>
@@ -45,10 +86,19 @@ export default {
       this.user.imgs = localStorage.getItem("user_avatar");
     }
   },
-  methods: {},
+  methods: {
+    getLogo(){
+      let img = localStorage.getItem("user_logo")?require("../../../../assets/school/tx.png"):localStorage.getItem("user_logo")
+      return img;
+    },
+    async logout() {
+      // await this.$store.dispatch("user/logout");
+      this.$router.push("/login");
+    },
+  },
   data() {
     return {
-      title: "考试管理后台",
+      title: 'TOP考试系统',
       user: { name: "", imgs: require("../../../../assets/school/tx.png") },
     };
   },
@@ -59,14 +109,22 @@ export default {
 .sidebarLogoFade-enter-active {
   transition: opacity 1.5s;
 }
-
+.admin{
+  width: 100px;
+  height: 22px;
+  line-height: 22px;
+  color: #f1f1f1 !important;
+  opacity: 1;
+  font-size: 14px;
+  text-align: left;
+}
 .sidebarLogoFade-enter,
 .sidebarLogoFade-leave-to {
   opacity: 0;
 }
 
 .avatar-wrapper {
-  display: flex;
+  text-align: center;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -104,8 +162,6 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
   background: #00152a;
   text-align: center;
   overflow: hidden;

@@ -64,12 +64,15 @@ export function filterAsyncChildenRouters(childens, subMenus) {
 
   let childenRouter = [];
 
-  subMenus.forEach((item, index) => {
-    childens.forEach((router, index) => {
 
+
+    childens.forEach((router, index) => {
+      subMenus.forEach((item, index) => {
+        if(item.parentId == 106 && item.id == router.id){
+          console.log(router);
+          console.log(item);
+        }
       if (item.id == router.id) {
-        console.log(item);
-        console.log(router);
         childenRouter.push({ ...router, meta: { ...router.meta, name: item.nameCn, usable: item.usable } })
       }
 
@@ -108,18 +111,31 @@ const actions = {
       }
     })
 
+    //父标签重排
+    let newA = [];
+    asyncRouter.forEach((item,index) =>{
+      newA.push(item.id)
+    })
+
+    parentMenus.sort((a,b)=>{
+      let order= newA;
+      return order.indexOf(a.id)-order.indexOf(b.id);
+    });
+
     let subMenus = new Array()
     menus.forEach((item, index) => {
       if (item.usable == 1)
         subMenus.push(item)
     })
-    console.log(parentMenus);
     parentMenus.forEach((item, index) => {
       let router = filterAsyncParentRouters(item, subMenus)
       if (router) {
         realRoutes.push(router)
       }
     })
+
+
+
 
     //console.log("realRoutes" + realRoutes)
 

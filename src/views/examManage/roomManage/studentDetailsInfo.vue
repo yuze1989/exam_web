@@ -1,7 +1,7 @@
 <template>
    <section class="form_border">
     <div style="color:bule;height:88px;line-height: 88px;padding-left:20px">
-        关联画室详情信息
+        关联机构详情信息
       </div>
     <!--列表-->
     <el-table
@@ -16,14 +16,14 @@
       }"
     >
       <el-table-column
-        label="画室编号"
+        label="机构编号"
         header-align="center"
         align="center"
         prop="studioCode"
       >
       </el-table-column>
        <el-table-column
-        label="画室名称"
+        label="机构名称"
         header-align="center"
         align="center"
         prop="studioName"

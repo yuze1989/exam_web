@@ -1,30 +1,37 @@
 <template>
   <section class="form_border">
-    <div class="header">
-      <el-input
-        style="width: 200px;"
-        v-model="form.examineeName"
-        placeholder="姓名"
-      ></el-input>
+    <div class="header" style="height: 66px">
+      <el-button type="primary" @click="ticketGenerate" style="float: left">生成准考证号</el-button>
+
+      <el-button type="primary" style="margin-left: 20px;float: right" @click="pageReset">
+        查询
+      </el-button>
 
       <el-select
-        v-model="form.ticketStatus"
-        style="width: 200px; margin-left: 20px;"
-        placeholder="准考状态"
+          v-model="form.ticketStatus"
+          style="width: 200px; margin-left: 20px;float: right"
+          placeholder="准考证号状态"
       >
         <el-option
-          v-for="item in ticketStatusList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+            v-for="item in ticketStatusList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
         ></el-option>
       </el-select>
 
-      <el-button type="primary" style="margin-left: 20px;" @click="pageReset">
-        查询
-      </el-button>
-      <el-button type="warning" @click="reset">重置</el-button>
-      <el-button type="primary" @click="ticketGenerate">生成准考证</el-button>
+      <el-input
+        style="width: 200px;float: right"
+        v-model="form.examineeName"
+        placeholder="姓名"
+
+      ></el-input>
+
+
+
+
+<!--      <el-button type="warning" @click="reset">重置</el-button>-->
+
     </div>
     <!-- 导入 导出 -->
 
@@ -76,7 +83,7 @@
       ></el-table-column>
 
       <el-table-column
-        label="画室名称"
+        label="机构名称"
         header-align="center"
         align="center"
         prop="studioName"
