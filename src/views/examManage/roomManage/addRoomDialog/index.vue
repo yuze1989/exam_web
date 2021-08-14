@@ -8,7 +8,7 @@
     width="30%"
     center
   >
-    <div slot="title">{{from.studioCode ? '编辑' : '新增'}}画室信息</div>
+    <div slot="title">{{from.studioCode ? '编辑' : '新增'}}机构信息</div>
     <el-form
       label-width="100px"
       :model="from"
@@ -18,13 +18,13 @@
       :rules="rules"
       ref="ruleForm"
     >
-     <el-form-item label="画室编号" prop="studioName" v-if="from.studioCode">
+     <el-form-item label="机构编号" prop="studioName" v-if="from.studioCode">
        {{ from.studioCode}}
       </el-form-item>
-      <el-form-item label="画室名称" prop="studioName">
-        <el-input v-model="from.studioName" placeholder="请输入画室名称"></el-input>
+      <el-form-item label="机构名称" prop="studioName">
+        <el-input v-model="from.studioName" placeholder="请输入机构名称"></el-input>
       </el-form-item>
-         <el-form-item label="画室地区" prop="studioAreaCode">
+         <el-form-item label="机构地区" prop="studioAreaCode">
         <el-select v-model="from.studioAreaCode" placeholder="请选择" @change="studioAreaChange">
           <el-option
             v-for="item in studioAreaOption"
@@ -34,8 +34,8 @@
           </el-option>
         </el-select>
       </el-form-item>
-        <el-form-item label="画室联系人" prop="contactName">
-        <el-input v-model="from.contactName" placeholder="请输入画室联系人姓名"></el-input>
+        <el-form-item label="机构联系人" prop="contactName">
+        <el-input v-model="from.contactName" placeholder="请输入机构联系人姓名"></el-input>
       </el-form-item>
          <el-form-item label="手机号码" prop="contactMobile">
         <el-input v-model="from.contactMobile" type="number" placeholder="请输入手机号码"
@@ -104,12 +104,12 @@ export default {
         };
       } else {
         this.from = {
-          studioName: this.editItem.studioName,  // 画室名称 
-           studioCode : this.editItem.studioCode, //画室编码
-          studioAreaName: this.editItem.studioAreaName, // 画室区域名称
-          studioAreaCode : this.editItem.studioAreaCode, // 画室区域编码
-          contactName : this.editItem.contactName , //画室联系人姓名
-          contactMobile :this.editItem.contactMobile , // 画室联系人手机号
+          studioName: this.editItem.studioName,  // 机构名称
+           studioCode : this.editItem.studioCode, //机构编码
+          studioAreaName: this.editItem.studioAreaName, // 机构区域名称
+          studioAreaCode : this.editItem.studioAreaCode, // 机构区域编码
+          contactName : this.editItem.contactName , //机构联系人姓名
+          contactMobile :this.editItem.contactMobile , // 机构联系人手机号
           id:this.editItem.id 
         };
       }
@@ -176,15 +176,15 @@ export default {
       },
       studioAreaOption: [],
       rules: {
-        studioName: [{ required: true, message: "请输入画室名称", trigger: "blur" }],
+        studioName: [{ required: true, message: "请输入机构名称", trigger: "blur" }],
          studioAreaCode: [
-          { required: true, message: "请输入画室区域", trigger: "blur" },
+          { required: true, message: "请输入机构区域", trigger: "blur" },
         ],
          contactName : [
-          { required: true, message: "请输入画室联系人", trigger: "blur" },
+          { required: true, message: "请输入机构联系人", trigger: "blur" },
         ],
          contactMobile  : [
-          { required: true, message: "请输入画室联系人手机号", trigger: "blur" },
+          { required: true, message: "请输入机构联系人手机号", trigger: "blur" },
           {validator: this.$rules.phoneNumber, trigger: 'blur'}
         ],
       },

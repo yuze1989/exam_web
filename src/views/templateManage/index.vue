@@ -84,12 +84,12 @@
         @cb="currentChange"
       />
     </el-col>
-     <!--选择关联画室-->
-    <el-dialog title="关联画室" :visible.sync="dialogTableVisible" center>
+     <!--选择关联机构-->
+    <el-dialog title="关联机构" :visible.sync="dialogTableVisible" center>
       <div style="color:red">
         当前选择会覆盖之前的选择
       </div>
-      <el-select v-model="selectRoomIds" multiple placeholder="请选择画室">
+      <el-select v-model="selectRoomIds" multiple placeholder="请选择机构">
         <el-option
           v-for="item in roomOptions"
           :key="item.id"
@@ -163,7 +163,7 @@ export default {
       // this.$router.push({ name: 'AddTicketTemplate'})
       this.showTemplate = true
     },
-  // 获取画室
+  // 获取机构
   getRoomList(){
   
      let params = {
@@ -194,7 +194,7 @@ export default {
             })
             .catch(() => {});
     },
-    // 确认关联画室
+    // 确认关联机构
     confirmRltRoom(){
     let list = []
        let params = {

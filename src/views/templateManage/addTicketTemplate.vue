@@ -126,7 +126,7 @@
                     <div class="right"></div>
                   </div>
                   <div class="room">
-                  <div class="left">画室</div>
+                  <div class="left">机构</div>
                   <div class="right"></div>
                 </div>
                 <div class="subject-warp">

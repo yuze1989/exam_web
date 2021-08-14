@@ -10,7 +10,7 @@ export function getAllProvince(data) {
     })
   }
 
-// 新增画室
+// 新增机构
 export function creatStudio(data) {
     return request({
       url:  '/studio/create',
@@ -20,7 +20,7 @@ export function creatStudio(data) {
 }
 
 
-// 删除画室
+// 删除机构
 export function deteleStudio(data) {
   return request({
     url:  '/studio/delete',
@@ -29,7 +29,7 @@ export function deteleStudio(data) {
   })
 }
 
-// 编辑画室
+// 编辑机构
 export function updateStudio(data) {
   return request({
     url:  '/studio/update',
@@ -47,8 +47,7 @@ export function examinationList(data) {
   })
 }
 
-// 关联画室
-
+// 关联机构
 export function apiRelationStudio(data) {
   return request({
     url:  '/studio/relationStudio',
@@ -58,7 +57,7 @@ export function apiRelationStudio(data) {
 }
 
 
-// 画室统计信息
+// 机构统计信息
 export function apiStudioStatisticsList(data) {
   return request({
     url:  '/studio/studioStatisticsList',

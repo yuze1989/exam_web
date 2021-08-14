@@ -36,7 +36,7 @@
       >
       </el-table-column>
        <el-table-column
-        label="画室数量"
+        label="机构数量"
         header-align="center"
         align="center"
         prop="studioNum"
@@ -48,7 +48,7 @@
       label="操作"
       width="200">
       <template slot-scope="scope">
-        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联画室</el-button>
+        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联机构</el-button>
         <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
       </template>
     </el-table-column>
@@ -63,12 +63,12 @@
         @cb="currentChange"
       />
     </el-col>
-     <!--选择关联画室-->
-    <el-dialog title="关联画室" :visible.sync="dialogTableVisible" center>
+     <!--选择关联机构-->
+    <el-dialog title="关联机构" :visible.sync="dialogTableVisible" center>
       <div style="color:red">
         当前选择会覆盖之前的选择
       </div>
-      <el-select v-model="selectRoomIds" multiple placeholder="请选择画室">
+      <el-select v-model="selectRoomIds" multiple placeholder="请选择机构">
         <el-option
           v-for="item in roomOptions"
           :key="item.id"
@@ -125,7 +125,7 @@ export default {
   },
 
   methods: {
-  // 获取画室
+  // 获取机构
   getRoomList(){
   
      let params = {
@@ -156,7 +156,7 @@ export default {
             })
             .catch(() => {});
     },
-    // 确认关联画室
+    // 确认关联机构
     confirmRltRoom(){
     let list = []
        let params = {
@@ -176,7 +176,7 @@ export default {
         .catch(() => {});
     
     },
-    // 关联画室
+    // 关联机构
     relationStudio(row){
          this.sels = row
           this.dialogTableVisible = true

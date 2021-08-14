@@ -2,7 +2,7 @@
   <section class="form_border">
     <div class="header">
       <el-button class="meiyuan_btn" type="primary" size="medium" @click="addStudio"
-        >新增画室信息</el-button
+        >新增机构信息</el-button
       >
 <!--       <el-button class="association_btn" type="primary" size="medium" @click="associationExam"-->
 <!--        >关联考试</el-button-->
@@ -21,14 +21,14 @@
       }"
     >
       <el-table-column
-        label="画室编号"
+        label="机构编号"
         header-align="center"
         align="center"
         prop="studioCode"
       >
       </el-table-column>
       <el-table-column
-        label="画室名称"
+        label="机构名称"
         header-align="center"
         align="center"
         prop="studioName"
@@ -49,7 +49,7 @@
       >
       </el-table-column>
        <el-table-column
-        label="画室地区"
+        label="机构地区"
         header-align="center"
         align="center"
         prop="studioAreaName"

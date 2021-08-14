@@ -35,11 +35,11 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="画室名称" prop="studioName">
+      <el-form-item label="机构名称" prop="studioName">
         <el-select
           style="width: 250px;"
           v-model="from.studioName"
-          placeholder="画室名称"
+          placeholder="机构名称"
           value-key="value"
           @change="roomChange"
         >
@@ -168,7 +168,7 @@ export default {
         id: '',
         examId: '', //考试id
         examName: '', //考试id
-        studioId: '', // 画室id
+        studioId: '', // 机构id
         studioName: '',
         contactName: '', //联系人
         name: '',
@@ -183,7 +183,7 @@ export default {
       examTypeStatus: [
         {
           value: '0',
-          label: '画室考试',
+          label: '机构考试',
         },
         {
           value: '1',
@@ -196,7 +196,7 @@ export default {
       ],
       rules: {
         examName: [{ required: true, message: '请选择', trigger: 'blur' }], //考试id
-        studioName: [{ required: true, message: '请选择', trigger: 'blur' }], // 画室id
+        studioName: [{ required: true, message: '请选择', trigger: 'blur' }], // 机构id
         name: [{ required: true, message: '请输入', trigger: 'blur' }],
         identification: [
           { required: true, message: '请输入', trigger: 'blur' },
@@ -333,7 +333,7 @@ export default {
           let data = {
             id: this.from.id,
             examId: this.from.examId,
-            studioId: this.from.studioId, // 画室id
+            studioId: this.from.studioId, // 机构id
             contactName: this.from.contactName, //联系人
             name: this.from.name,
             identification: this.from.identification,
@@ -372,7 +372,7 @@ export default {
         console.log(
           {
             examId: this.from.examId, //考试id
-            studioId: this.from.studioId, // 画室id
+            studioId: this.from.studioId, // 机构id
             contactName: this.from.contactName, //联系人
             name: this.from.name,
             identification: this.from.identification,
@@ -389,7 +389,7 @@ export default {
           let data = {
             id: this.from.id,
             examId: this.from.examId,
-            studioId: this.from.studioId, // 画室id
+            studioId: this.from.studioId, // 机构id
             contactName: this.from.contactName, //联系人
             name: this.from.name,
             identification: this.from.identification,

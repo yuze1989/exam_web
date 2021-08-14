@@ -173,7 +173,7 @@ export default {
         provinceCode: '', //省
         province: '', //省
         examrooms: [],
-        studioAreaName: '', //画室名
+        studioAreaName: '', //机构名
         examineeCount: '', //考生数
         distributCount: '', //已分配考考生
         maxExamCode: '', //已分配考场数

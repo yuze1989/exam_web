@@ -220,7 +220,7 @@ export const asyncRouter = [
             //   name: "StudioStatistics",
             //   component: resolve => require(["@/views/examManage/roomManage/studioStatistics.vue"], resolve),
             //   meta: {
-            //     name: '画室统计',
+            //     name: '机构统计',
             //     icon: 'classmate'
             //   }
             // },
@@ -584,7 +584,7 @@ export const asyncRouter = [
         id: 115,
         code: 10008,
         meta: {
-            name: '画室统计',
+            name: '机构统计',
             icon: 'set'
         },
         children: [
@@ -604,7 +604,7 @@ export const asyncRouter = [
 			    code: 10118,
 			    // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
 			    meta: {
-			        name: '按画室统计',
+			        name: '按机构统计',
 			        icon: 'classmate'
 			    },
 			},
@@ -614,7 +614,7 @@ export const asyncRouter = [
 			    code: 10119,
 			    // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
 			    meta: {
-			        name: '画室信息汇总',
+			        name: '机构信息汇总',
 			        icon: 'classmate'
 			    },
 			},
