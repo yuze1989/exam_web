@@ -113,11 +113,11 @@ export const asyncRouter = [
                 },
             },
             {
-                path: "/qrCodeManage",
+                path: "/templateManage2",
                 id: 123,
                 code: 10123,
                 name:'QrcodeManage',
-                component: resolve => require(["@/views/templateManage/qrCodeManage.vue"], resolve),
+                component: resolve => require(["@/views/templateManage2/index.vue"], resolve),
                 meta: {
                     name: '二维码模板',
                     icon: 'notice-fill'

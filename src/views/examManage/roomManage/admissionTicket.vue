@@ -1,19 +1,26 @@
 <template>
    <section class="form_border">
-    <div class="header">
+    <div class="header" style="display: flex;
+    justify-content: flex-end;">
 <!--        <el-button class="meiyuan_btn" type="primary" size="medium" @click="exportQR"-->
 <!--          >生成和导出二维码</el-button-->
 <!--        >-->
-        <el-button class="association_btn" type="primary" size="medium" @click="exportTicket"
+        <el-button class="association_btn" type="primary" size="medium" @click="exportTicket" style="position: absolute;
+    left: 15px;
+    height: 40px;"
           >导出准考证</el-button
         >
         <el-input v-model="form.examName" style="width:200px;margin-left:50px;" placeholder="考试名称"
         ></el-input>
-        <el-input v-model="form.examNo" style="width:200px;margin-left:50px;"  placeholder="输入考场"
+        <el-input v-model="form.examNo" style="width:200px;margin-left:15px;"  placeholder="输入考场"
         ></el-input>
-         <el-input v-model="form.studentName" style="width:200px;margin-left:50px;"  placeholder="学生姓名"
+         <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="学生姓名"
         ></el-input>
-       <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择生源省份" @change="studioAreaChange">
+      <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="准考证号"
+      ></el-input>
+      <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
+      ></el-input>
+       <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
           <el-option
             v-for="item in studentAreaOption"
             :key="item.provinceCode"
