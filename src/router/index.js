@@ -284,13 +284,13 @@ export const asyncRouter = [
             //     },
             // },
             {
-                path: "/addTicketTemplate",
+                path: "/templateManage",
                 id: 91,
                 code: 10091,
-                name:'AddTicketTemplate',
-                component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+                name:'TicketManage',
+                component: resolve => require(["@/views/templateManage/index.vue"], resolve),
                 meta: {
-                    name: '准考证模板',
+                    name: '准考证管理',
                     icon: 'notice-fill'
                 },
             },
@@ -305,7 +305,6 @@ export const asyncRouter = [
                     icon: 'notice-fill'
                 },
             },
-
 
         ]
     },
