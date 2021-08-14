@@ -177,7 +177,7 @@
               size="small"
               @click="toShowInvite(scope.row)"
             >
-              <span>邀请画室</span>
+              <span>邀请机构</span>
             </el-button>
 
             <!-- <el-button
@@ -227,8 +227,8 @@
     id (integer, optional): id ,
     no (string, optional): 考试编码 ,
     name (string, optional): 考试名称 ,
-    examType (integer, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
-    examTypeStr (string, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
+    examType (integer, optional): 考试类型:0、机构考试;1、联合考试;2、线下考试 ,
+    examTypeStr (string, optional): 考试类型:0、机构考试;1、联合考试;2、线下考试 ,
     examStatus (integer, optional): 考试状态:0、未开始;1、正在进行;2、结束考试 ,
     examStatusStr (string, optional): 考试状态:0、未开始;1、正在进行;2、结束考试 ,
     examStartTime (string, optional): 考试开始时间 ,
@@ -328,7 +328,7 @@ export default {
     changeStatus() {},
     changeCheckStatus() {},
     getStateString(item) {
-      // examType (integer, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
+      // examType (integer, optional): 考试类型:0、机构考试;1、联合考试;2、线下考试 ,
       // examTypeStr 联合考试状态:-1,表示自己建的联合考试;0、未确认;1、同意;2、拒绝;3、禁用
       if(item.examType == 1){
         switch (item.status) {

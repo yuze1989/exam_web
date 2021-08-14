@@ -76,7 +76,7 @@
       ></el-table-column>
 
       <el-table-column
-        label="画室名称"
+        label="机构名称"
         header-align="center"
         align="center"
         prop="studioName"

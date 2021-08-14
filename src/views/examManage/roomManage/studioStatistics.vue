@@ -31,21 +31,21 @@
       >
       </el-table-column>
        <el-table-column
-        label="画室编号"
+        label="机构编号"
         header-align="center"
         align="center"
         prop="studioCode"
       >
       </el-table-column>
        <el-table-column
-        label="画室名称"
+        label="机构名称"
         header-align="center"
         align="center"
         prop="studioName"
       >
       </el-table-column>
        <el-table-column
-        label="画室地区"
+        label="机构地区"
         header-align="center"
         align="center"
         prop="studioAreaName"
@@ -141,7 +141,7 @@ export default {
             })
             .catch(() => {});
     },
-    // 确认关联画室
+    // 确认关联机构
     confirmRltRoom(){
     let list = []
        let params = {
@@ -161,7 +161,7 @@ export default {
         .catch(() => {});
     
     },
-    // 关联画室
+    // 关联机构
     relationStudio(row){
          this.sels = row
           this.dialogTableVisible = true

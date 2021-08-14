@@ -141,7 +141,7 @@
 
         <el-table-column
           prop="studioName"
-          label="所属画室"
+          label="所属机构"
           header-align="center"
           width="160"
           align="center"
