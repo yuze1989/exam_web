@@ -174,7 +174,7 @@
       <myPagination
         :current.sync="selections.current"
         :pages.sync="data.pages"
-        :size.sync="selections.pageSize"
+        :size.sync="selections.size"
         :total.sync="data.total"
         @cb="handleCurrentChange"
       />
@@ -292,7 +292,7 @@ export default {
       this.visible = true
       var selections = {
         current: this.selections.current,
-        size: this.data.pageSize,
+        size: this.selections.size,
         provinceCode: val.provinceCode,
         examName: val.examName,
       }
@@ -349,7 +349,7 @@ export default {
       this.$axios
         .post(this.API.studentsManage.examRoomList, {
           current: this.selections.current,
-          size: this.data.pageSize,
+          size: this.selections.size,
           provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
           examineeName: this.selections.examineeName,
           examName: this.selections.examName

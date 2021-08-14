@@ -160,8 +160,8 @@ export default {
     // api
     getList() {
       let params = {
-        pageIndex: this.form.pageIndex,
-        pageSize: this.form.pageSize,
+        current: this.form.pageIndex,
+        size: this.form.pageSize,
         model: {
           name: this.search.name,
           mobilePhone: this.search.mobilePhone,

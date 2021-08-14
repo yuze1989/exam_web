@@ -118,9 +118,9 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar">
       <myPagination
-        :current.sync="forms.current"
+        :current.sync="data.current"
         :pages.sync="data.pages"
-        :size.sync="forms.pageSize"
+        :size.sync="data.pageSize"
         :total.sync="data.total"
         @cb="currentChange"
       />
@@ -163,7 +163,7 @@ export default {
           provinceCode: '', //0、未开始;1、正在进行;2、结束考试
         },
       },
-      data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
+      data: { current: 1, pages: 0, pageSize: 10, total: 0, records: [] },
       isAdd: false,
       showDel: false,
       isAddType: 1, //1新增  0编辑
@@ -274,8 +274,8 @@ export default {
     // api
     getList() {
       let params = {
-        pageIndex: this.data.pageIndex,
-        pageSize: this.data.pageSize,
+        current: this.data.current,
+        size: this.data.pageSize,
         teacherName: this.forms.model.teacherName,
         provinceCode: this.forms.model.provinceCode
           ? this.forms.model.provinceCode.provinceCode
@@ -285,7 +285,7 @@ export default {
         .post(this.API.teacher.list, params)
         .then((res) => {
           this.data.records = res.result.list
-          this.data.pageIndex = res.result.pageNum
+          this.data.current = res.result.pageNum
           this.data.total = res.result.total
           this.data.pageSize = res.result.pageSize
         })

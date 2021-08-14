@@ -49,7 +49,7 @@
       width="200">
       <template slot-scope="scope">
         <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联画室</el-button>
-        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
+<!--        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>-->
       </template>
     </el-table-column>
     </el-table>

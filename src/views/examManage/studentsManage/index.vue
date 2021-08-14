@@ -10,26 +10,26 @@
         source:'',//报名来源:1手机；2后台 ,
         studioName:'',//: 画室名称 -->
       <el-input
-        style="width: 200px;"
+        style="width: 200px; margin-right: 20px; margin-bottom: 5px"
         v-model="forms.examineeName"
         placeholder="姓名"
       ></el-input>
 
       <el-input
-        style="width: 200px; margin-left: 20px;"
+        style="width: 200px; margin-right: 20px;margin-bottom: 5px"
         v-model="forms.studioName"
         placeholder="画室名称"
       ></el-input>
 
       <el-input
-        style="width: 200px; margin-left: 20px;"
+        style="width: 200px; margin-right: 20px;margin-bottom: 5px"
         v-model="forms.examName"
         placeholder="考试名称"
       ></el-input>
 
       <el-select
         v-model="forms.checkStatus"
-        style="width: 200px; margin-left: 20px;"
+        style="width: 200px; margin-right: 20px;margin-bottom: 5px"
         placeholder="审核状态"
         @change="changeCheckStatus"
       >
@@ -43,7 +43,7 @@
 
       <el-select
         v-model="forms.payStatus"
-        style="width: 200px; margin-left: 20px;"
+        style="width: 200px; margin-right: 20px;"
         placeholder="支付状态"
         @change="changeStatus"
       >
@@ -57,7 +57,7 @@
 
       <el-select
         v-model="forms.source"
-        style="width: 200px; margin-left: 20px;"
+        style="width: 200px; margin-right: 20px;"
         placeholder="报名来源"
         @change="changeStatus"
       >
@@ -260,7 +260,7 @@
 
     <!--选择审核修改-->
     <el-dialog title="审核学生信息" :visible.sync="showCheck" center>
-      <el-select v-model="selectCheck" placeholder="请选择">
+      <el-select style="width: 350px;" v-model="selectCheck" placeholder="请选择">
         <el-option
           v-for="item in checkOptions"
           :key="item.id"
@@ -268,14 +268,15 @@
           :value="item.id"
         ></el-option>
       </el-select>
+      <br/>
       <el-input
-        style="margin-top: 10px;"
+        style="width: 350px;margin-top: 10px;"
         type="textarea"
-        :rows="2"
+        :rows="5"
         placeholder="请输入内容"
         v-model="remark"
       ></el-input>
-      <div style="margin-top: 30px;">
+      <div slot="footer" style="margin-top: 30px;">
         <el-button @click="showCheck = false">取 消</el-button>
         <el-button type="primary" @click="submitCheck">确 定</el-button>
       </div>

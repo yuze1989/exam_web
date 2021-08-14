@@ -68,7 +68,7 @@ export default {
     return {
       visible: false,
       user: {
-        name: "",
+        name: "888",
         imgs: require("../../../assets/school/tx.png"),
         loginCode: "",
       },

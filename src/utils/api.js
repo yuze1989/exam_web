@@ -5,7 +5,8 @@ const API = {
       delete:"/role/delete",
       detail:"/role/detail",
       list:"/role/roleList",
-      update:"/role/update"
+      update:"/role/update",
+      teacherRoles:"/role/teacherRoles"
     },
     teacher: { //教师管理
       create:"/teacher/create",
@@ -28,6 +29,7 @@ const API = {
       union: "/examinfo/union",//联合考试操作(状态:1、同意;2、拒绝;3、禁用)
       unionExamList:"/examinfo/unionExamList",//"查询本机构下联合考试"
       update: "/examinfo/update",//考试修改
+      unionList: "/examinfo/unionList",//联合考试状态
     },
     roomManage: {// 画室管理
       list: "/studio/list",
