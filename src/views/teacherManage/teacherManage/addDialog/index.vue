@@ -156,14 +156,11 @@ export default {
     },
     getRoleList() {
       this.$axios
-        .post(`${this.API.role.list}`, {
-          pageIndex: 1,
-          pageSize: 1000,
-        })
+        .post(`${this.API.role.teacherRoles}`)
         .then((res) => {
           if ((res.code = 200)) {
-            this.roleList = res.result.list
-            console.log(res.result.list, 'res.result.list')
+            this.roleList = res.result
+            console.log(res.result, 'res.result.list')
           }
         })
     },

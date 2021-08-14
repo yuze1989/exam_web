@@ -8,35 +8,33 @@
     width="30%"
     center
   >
-    <div slot="title">角色</div>
-
-    <!-- // id (integer, optional): 角色ID(新增的时候不用传) ,
-// roleName (string, optional): 角色名称(管理员、阅卷老师、监考老师) ,
-// roleRemark (string, optional): 角色说明 ,
-// roleType (integer, optional): 角色类型：0,管理员;1阅卷老师;2教辅老师;3阅卷组长 -->
+    <div slot="title">选择考试</div>
     <el-form
-      label-width="100px"
+      label-width="120px"
       :model="from"
       label-position="right"
       class="demo-ruleForm"
       center
       :rules="rules"
-      ref="roleForm"
+      ref="teacherForm"
     >
-      <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="from.roleName" placeholder="请输入"></el-input>
-      </el-form-item>
-      <el-form-item label="角色类型" prop="roleType">
-        <el-select v-model="from.roleType" placeholder="请选择">
-          <el-option label="管理员" value="0"></el-option>
-          <el-option label="阅卷老师" value="1"></el-option>
-          <el-option label="教辅老师" value="2"></el-option>
-          <el-option label="阅卷组长" value="3"></el-option>
+     <el-form-item label="考试名称" prop="examName">
+        <el-select
+          style="width: 250px;"
+          v-model="from.examName"
+          placeholder="考试名称"
+          value-key="value"
+          @change="examChange"
+        >
+          <el-option
+            v-for="item in examList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="备注" prop="roleRemark">
-        <el-input v-model="from.roleRemark" placeholder="请输入"></el-input>
-      </el-form-item>
+
     </el-form>
 
     <div slot="footer">
@@ -47,7 +45,9 @@
 </template>
 
 <script>
+import SelectProvince from '@/components/SelectProvinceMultiple'
 export default {
+  components: { SelectProvince },
   name: 'addRole',
   props: {
     visible: {
@@ -67,37 +67,77 @@ export default {
   },
   data() {
     return {
+      examList: [],
+      options:[],
       from: {
-        roleName: '',
-        roleRemark: '',
+        role: '',
+        roleId: '',
+        userName: '',
+        provinceList: [],
       },
       rules: {
-        roleName: [{ required: true, message: '请输入', trigger: 'blur' }],
-        roleRemark: [{ required: true, message: '请输入', trigger: 'blur' }],
-        roleType: [{ required: true, message: '请选择', trigger: 'blur' }],
+        role: [{ required: true, message: '请选择', trigger: 'blur' }],
+        userName: [{ required: true, message: '请输入', trigger: 'blur' }],
       },
     }
   },
   methods: {
+    examChange(e){
+      console.log(e)
+    },
+    changeRole(payload) {
+      const role = this.roleList.filter((item)=>item.id == payload)
+      this.from.roleId = payload
+      this.from.role = role[0].roleName
+    },
     close() {
       this.$emit('update:visible', false)
     },
     open() {
+      this.from = {}
+      this.getExamList()
+      this.getRoleList()
       if (!this.isAdd) {
         this.$axios
-          .get(`${this.API.role.detail}?id=${this.editItem.id}`)
+          .get(`${this.API.teacher.detail}?id=${this.editItem.id}`)
           .then((res) => {
             if ((res.code = 200)) {
-              this.from = {
-                id: res.result.id,
-                roleName: res.result.roleName,
-                roleRemark: res.result.roleRemark,
-              }
+              console.log(res, 'rr')
+              // this.from = {
+              //   // province: "北京",
+              //   // provinceCode: "北京",
+              //   role: this.editItem.role,
+              //   roleId: this.editItem.roleId,
+              //   provinceList: this.editItem.provinceList,
+              //   userName: this.editItem.userName,
+              // }
             }
           })
-      } else {
-        this.from = {}
       }
+    },
+    getExamList() {
+      this.$axios
+        .post(this.API.studentsManage.examlist, {})
+        .then((res) => {
+          this.examList = res.result.map((item) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        })
+        .catch(() => {})
+    },
+    getRoleList() {
+      this.$axios
+        .post(`${this.API.role.list}`, {
+          pageIndex: 1,
+          pageSize: 1000,
+        })
+        .then((res) => {
+          if ((res.code = 200)) {
+            this.roleList = res.result.list
+            console.log(res.result.list, 'res.result.list')
+          }
+        })
     },
     confirm() {
       if (this.isAdd) {
@@ -113,10 +153,11 @@ export default {
 
     // api
     add() {
-      this.$refs.roleForm.validate((valid) => {
+      this.$refs.teacherForm.validate((valid) => {
+        console.log(this.from, '')
         if (valid) {
           this.$axios
-            .post(this.API.role.create, this.from)
+            .post(this.API.teacher.create, this.from)
             .then((res) => {
               if ((res.code = 200)) {
                 this.$message({
@@ -124,6 +165,7 @@ export default {
                   type: 'success',
                 })
                 this.$emit('addSuccess')
+                this.from = {}
               }
             })
             .catch(() => {})
@@ -132,10 +174,12 @@ export default {
       })
     },
     edit() {
-      this.$refs.roleForm.validate((valid) => {
+      this.$refs.teacherForm.validate((valid) => {
         if (valid) {
           this.$axios
-            .post(this.API.role.update, this.from)
+            .post(this.API.teacher.update, {
+              ...this.from,
+            })
             .then((res) => {
               if ((res.code = 200)) {
                 this.$message({
@@ -143,6 +187,7 @@ export default {
                   type: 'success',
                 })
                 this.$emit('addSuccess')
+                this.from = {}
               }
             })
             .catch(() => {})

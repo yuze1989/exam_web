@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     :before-close="handleClose"
     @open="open"
-    width="1000px"
+    width="600px"
     center
   >
     <div slot="title">学生信息</div>
@@ -57,6 +57,7 @@
           v-model="from.name"
           style="width: 250px;"
           placeholder="请输入"
+          maxlength="10"
         ></el-input>
       </el-form-item>
 
@@ -65,6 +66,7 @@
           v-model="from.contactName"
           style="width: 250px;"
           placeholder="请输入"
+          maxlength="10"
         ></el-input>
       </el-form-item>
 
@@ -84,6 +86,7 @@
         <el-input
           v-model="from.identification"
           style="width: 250px;"
+          maxlength="18"
           placeholder="请输入"
         ></el-input>
       </el-form-item>
@@ -92,7 +95,9 @@
         <el-input
           v-model="from.mobile"
           style="width: 250px;"
+          type="number"
           placeholder="请输入"
+          maxlength="11"
         ></el-input>
       </el-form-item>
 
@@ -112,7 +117,14 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="上传图片" prop="url">
+      <el-form-item label="上传图片"  v-if="from.url" prop="url">
+        <template slot-scope="scope">
+          <img :src="from.url" style="width: 150px; height: 150px;" />
+          <el-button @click="changeImage" style="margin-left:20px" >更换</el-button>
+        </template>
+      </el-form-item>
+
+      <el-form-item  v-if="!from.url" label="上传图片" prop="url">
         <el-upload
           list-type="picture-card"
           name="image"
@@ -208,6 +220,9 @@ export default {
   },
   created() {},
   methods: {
+    changeImage(){
+      this.from.url = ""
+    },
     handleChange(file, fileList) {
       this.file = file
     },
@@ -301,8 +316,18 @@ export default {
         this.from = {}
       } else {
         this.from = { ...this.editItem }
+        this.getDetail(this.editItem.id)
       }
     },
+    getDetail(id){
+      this.$axios
+        .get(`${this.API.studentsManage.examineeDetail}?id=${id}`, {})
+        .then((res) => {
+          this.from.contactName =  res.result && res.result.contactName
+        })
+        .catch(() => {})
+    },
+
     confirm() {
       if (this.isAdd) {
         this.add()

@@ -92,10 +92,10 @@ export const asyncRouter = [
         },
         children: [
             {
-                path: "/applyConfirm",
-                id: 125,
-                code: 10125,
-                component: resolve => require(["@/views/examManage/applyConfirm/index.vue"], resolve),
+                path: "/examList",
+                id: 85,
+                code: 10080,
+                component: resolve => require(["@/views/examManage/examList/index.vue"], resolve),
                 meta: {
                     name: '考试信息',
                     icon: 'classmate'
@@ -456,17 +456,6 @@ export const asyncRouter = [
                     icon: 'classmate'
                 },
             },
-            {
-                path: "/77777",
-                id: 105,
-                code: 10105,
-                name:'AddTicketTemplate',
-                // component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
-                meta: {
-                    name: '关联考试',
-                    icon: 'classmate'
-                },
-            },
 
         ]
     },
@@ -677,7 +666,9 @@ const createRouter = () =>
 const router = createRouter();
 
 export function resetRouter() {
-    const newRouter = createRouter();
+    const newRouter = createRouter({
+      mode: 'history'
+    });
     router.matcher = newRouter.matcher; // reset router
 }
 

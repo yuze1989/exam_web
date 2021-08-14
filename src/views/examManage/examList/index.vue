@@ -138,6 +138,7 @@
         <template slot-scope="scope">
           <div>
             <el-button
+              v-if="scope.row.status == -1"
               type="text"
               size="small"
               @click="editItemAction(scope.row)"
@@ -146,6 +147,7 @@
             </el-button>
 
             <el-button
+              v-if="scope.row.status == -1"
               type="text"
               size="small"
               @click="del(scope.row)"
@@ -222,6 +224,11 @@
       :visible.sync="showInvite"
       :editItem="editItemData"
       @addSuccess="addSuccess" />
+
+     <unionDialog 
+      :visible.sync="showUnion"
+      :editItem="editItemData"
+      @addSuccess="addSuccess" />
   </section>
 </template>
 <!-- 
@@ -247,12 +254,14 @@
 <script>
 import addDialog from './addDialog'
 import inviteDialog from './inviteDialog'
+import unionDialog from './unionDialog'
 import deleteDialog from "./deleteDialog"
 export default {
   components: {
     addDialog,
     inviteDialog,
-    deleteDialog
+    deleteDialog,
+    unionDialog
   },
   data() {
     return {
@@ -283,6 +292,7 @@ export default {
       isAddType: 1, //1新增  0编辑
       showInvite: false, //邀请弹窗
       showDel: false,//删除弹窗
+      showUnion: false,//展示弹窗
       editItemData: {
         name: '',
         id: 0,
@@ -295,8 +305,9 @@ export default {
   },
   methods: {
     //去查询联合考试状态
-    toUnion(){
-      
+    toUnion(item){
+      this.showUnion = true,
+      this.editItemData = item;
     },
     // 新增
     add() {
@@ -353,7 +364,7 @@ export default {
     updateList() {
       this.getOrderList()
     },
-    currentChange() {
+    currentChange(e) {
       this.getOrderList()
     },
     auditItem(scope) {},
@@ -362,7 +373,7 @@ export default {
       this.listLoading = true
       let params = {
         current: this.forms.current,
-        pageSize: this.forms.pageSize,
+        size: this.forms.pageSize,
         name: this.forms.model.name,
         examStatus:
           this.forms.model.examStatus == -1
@@ -383,22 +394,6 @@ export default {
     onSubmit() {
       this.forms.current = 1
       this.getOrderList()
-    },
-    // 1:通过,2:拒绝
-    enbaleItemAction(item, status) {
-      this.$axios
-        .post(`${this.API.examinfo.union}`, {
-          status,
-          id: item.id,
-        })
-        .then((res) => {
-          this.$message.success('操作成功')
-          this.forms.current = 1
-          this.getOrderList()
-        })
-        .catch((err) => {
-          this.listLoading = false
-        })
     },
     //删除
     del(item){

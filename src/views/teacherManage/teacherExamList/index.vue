@@ -2,32 +2,16 @@
   <section class="form_border">
     <div class="header">
       <el-form :inline="true" class="demo-form-inline">
-
         <el-col :span="4">
-          <el-button
-              class="meiyuan_btn"
-              type="primary"
-              size="medium"
-              @click="add"
-          >
-            新增老师
-          </el-button>
-        </el-col>
-        <el-col :span="20" style="display: flex;justify-content: flex-end">
           <el-form-item>
             <el-input
               v-model="forms.model.teacherName"
               placeholder="姓名"
-                v-model="forms.model.teacherName"
-                placeholder="姓名"
             ></el-input>
           </el-form-item>
         </el-col>
-              <!-- multiple -->
+        <!-- multiple -->
         <el-col :span="4">
-
-
-
           <el-form-item>
             <el-select
               v-model="forms.model.provinceCode"
@@ -35,21 +19,12 @@
               value-key="province"
               clearable
               filterable
-                v-model="forms.model.provinceCode"
-                placeholder="生源省份"
-                value-key="province"
-                clearable
-                filterable
             >
               <el-option
                 v-for="item in options"
                 :key="item.provinceCode"
                 :label="item.province"
                 :value="item"
-                  v-for="item in options"
-                  :key="item.provinceCode"
-                  :label="item.province"
-                  :value="item"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -65,10 +40,8 @@
               size="medium"
               @click="add"
             >
-              新增老师
+              关联考试
             </el-button>
-            <!--            <el-button type="warning" @click="reset">重置</el-button>-->
-
           </el-form-item>
         </el-col>
       </el-form>
@@ -85,8 +58,10 @@
         color: '#fff',
         border: 'none',
       }"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
+        type="selection"
         label="序号"
         header-align="center"
         align="center"
@@ -111,36 +86,23 @@
         prop="province"
       ></el-table-column>
       <el-table-column
-        label="老师类型"
+        label="角色"
         header-align="center"
         align="center"
-        prop="roleTypeStr"
+        prop="role"
       ></el-table-column>
-      <el-table-column label="操作" header-align="center">
-        <template slot-scope="scope">
-          <div class="operate-item">
-            <el-button type="text" size="small" @click="editItem(scope.row)">
-              编辑
-            </el-button>
-            <el-button
-              v-if="scope.row.state == 0"
-              type="text"
-              size="small"
-              @click="del(scope.row)"
-            >
-              禁用
-            </el-button>
-            <el-button
-              v-if="scope.row.state == 1"
-              type="text"
-              size="small"
-              @click="open(scope.row)"
-            >
-              启用
-            </el-button>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column
+        label="关联考试名称"
+        header-align="center"
+        align="center"
+        prop="examName"
+      ></el-table-column>
+      <el-table-column
+        label="考试科目"
+        header-align="center"
+        align="center"
+        prop="subjectName"
+      ></el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -172,6 +134,7 @@
 import addDialog from './addDialog'
 import deleteDialog from './deleteDialog'
 export default {
+  name: 'TeacherExamList',
   components: {
     addDialog,
     deleteDialog,
@@ -198,11 +161,17 @@ export default {
     }
   },
   created() {
+    this.examId = this.$route.params.examId
+    console.log(this.examId, 'examId考试id')
+    this.getList()
     this.getList()
     this.getProvinceList()
   },
 
   methods: {
+    handleSelectionChange(val) {
+      this.checkIds = val
+    },
     getProvinceList() {
       this.$axios
         .get(this.API.studentsManage.examRoomProvince)
@@ -212,8 +181,7 @@ export default {
         .catch(() => {})
     },
     reset() {
-      this.forms.model = {
-      }
+      this.forms.model = {}
       this.forms.current = 1
       this.getList()
     },
@@ -305,10 +273,12 @@ export default {
         pageIndex: this.data.pageIndex,
         pageSize: this.data.pageSize,
         teacherName: this.forms.model.teacherName,
-        provinceCode: this.forms.model.provinceCode?  this.forms.model.provinceCode.provinceCode: ''
+        provinceCode: this.forms.model.provinceCode
+          ? this.forms.model.provinceCode.provinceCode
+          : '',
       }
       this.$axios
-        .post(this.API.teacher.list, params)
+        .post(this.API.teacher.examTeacherList, params)
         .then((res) => {
           this.data.records = res.result.list
           this.data.pageIndex = res.result.pageNum
