@@ -1,13 +1,5 @@
 <template>
   <div class="upload-container">
-    <el-button
-      :style="{ background: color, borderColor: color }"
-      icon="el-icon-upload"
-      size="mini"
-      type="primary"
-      @click="imageAction"
-      >上传图片</el-button
-    >
     <el-dialog title="上传图片" :visible.sync="dialogVisible" :modal="false">
       <AliOssMultiUpload :image="images" :limit="1000" @input="upload" />
     </el-dialog>

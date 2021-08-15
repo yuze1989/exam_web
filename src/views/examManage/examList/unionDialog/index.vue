@@ -60,7 +60,7 @@
           <div>
             <el-button
               type="text"
-              v-if="scope.row.status == 0"
+              v-if="scope.row.currentSchoolId != scope.row.masterSchoolId"
               size="small"
               @click="enbaleItemAction(scope.row, 1)"
             >
@@ -69,7 +69,7 @@
 
             <el-button
               type="text"
-              v-if="scope.row.status == 0"
+              v-if="scope.row.currentSchoolId != scope.row.masterSchoolId"
               size="small"
               @click="enbaleItemAction(scope.row, 2)"
             >
@@ -143,11 +143,10 @@ export default {
       this.$axios
         .post(`${this.API.examinfo.union}`, {
           status,
-          id: item.id,
+          id: item.examId,
         })
         .then((res) => {
           this.$message.success('操作成功')
-          this.forms.current = 1
           this.getList()
         })
         .catch((err) => {

@@ -99,13 +99,14 @@
       </el-form-item>
 
       <el-form-item label="考试说明" prop="remark">
-        <el-input
+        <tinymce v-if="visible" v-model="from.remark" :height="100" />
+        <!-- <el-input
           maxlength="680"
           type="textarea"
           :autosize="{ minRows: 4, maxRows: 10 }"
           placeholder="请输入内容"
           v-model="from.remark"
-        ></el-input>
+        ></el-input> -->
       </el-form-item>
 
       <div>
@@ -237,7 +238,9 @@
 </template>
 
 <script>
+import Tinymce from "@/components/TinymceText/index";
 export default {
+  components: { Tinymce },
   name: 'addRoom',
   props: {
     visible: {
@@ -484,6 +487,52 @@ export default {
     edit() {
       this.$refs.examForm.validate((valid) => {
         if (valid) {
+          if(this.from.enrollEndTime < this.from.enrollStartTime){
+            this.$message({
+              message: '报名结束时间应大于开始时间',
+            })
+            return
+          }
+          if(this.from.examEndTime < this.from.examStartTime){
+            this.$message({
+              message: '考试结束时间应大于开始时间',
+            })
+            return
+          }
+          if(this.from.examStartTime < this.from.enrollEndTime||this.from.examStartTime == this.from.enrollEndTime){
+            this.$message({
+              message: '考试时间应大于报名时间',
+            })
+            return
+          }
+
+          if(this.address.length<0){
+            this.$message({
+              message: '请添加考试地址',
+            })
+            return
+          }
+
+          if(this.subject.length<0){
+            this.$message({
+              message: '请添加考试科目',
+            })
+            return
+          }
+
+          let errCount = 0
+          this.subject.map((item,index)=>{
+            if(item.subjectEndtime < item.subjectStarttime){
+              errCount += 1
+            }
+          })
+          if(errCount>0){
+            this.$message({
+              message: '考试科目结束时间应大于开始时间',
+            })
+            return
+          }
+
           this.$axios
             .post(this.API.examinfo.update, {
               ...this.from,
@@ -525,6 +574,19 @@ export default {
   width: 50px;
   cursor: pointer;
   margin-left: 10px;
+}
+
+.Tinymce_box {
+  display: flex;
+}
+.editor-content {
+  margin-left: 30px;
+  flex-grow: 1;
+  border: 2px dashed #f1f1f1;
+  padding:0 20px;
+}
+h3 {
+  color: #808080;
 }
 </style>
 <style lang="scss" scoped>
