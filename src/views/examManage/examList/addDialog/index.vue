@@ -45,7 +45,7 @@
 
       <el-form-item label="报名开始时间" prop="enrollStartTime">
         <el-date-picker
-          type="date"
+          type="datetime"
           placeholder="选择日期"
           v-model="from.enrollStartTime"
           style="width: 250px;"
@@ -56,7 +56,7 @@
       </el-form-item>
       <el-form-item label="报名结束时间" prop="enrollEndTime">
         <el-date-picker
-          type="date"
+          type="datetime"
           placeholder="选择日期"
           v-model="from.enrollEndTime"
           style="width: 250px;"
@@ -68,7 +68,7 @@
 
       <el-form-item label="考试开始时间" prop="examStartTime">
         <el-date-picker
-          type="date"
+          type="datetime"
           placeholder="选择日期"
           v-model="from.examStartTime"
           style="width: 250px;"
@@ -79,7 +79,7 @@
       </el-form-item>
       <el-form-item label="考试结束时间" prop="examEndTime">
         <el-date-picker
-          type="date"
+          type="datetime"
           placeholder="选择日期"
           v-model="from.examEndTime"
           style="width: 250px;"
@@ -397,6 +397,52 @@ export default {
     add() {
       this.$refs.examForm.validate((valid) => {
         if (valid) {
+          if(this.from.enrollEndTime < this.from.enrollStartTime){
+            this.$message({
+              message: '报名结束时间应大于开始时间',
+            })
+            return
+          }
+          if(this.from.examEndTime < this.from.examStartTime){
+            this.$message({
+              message: '考试结束时间应大于开始时间',
+            })
+            return
+          }
+          if(this.from.examStartTime < this.from.enrollEndTime||this.from.examStartTime == this.from.enrollEndTime){
+            this.$message({
+              message: '考试时间应大于报名时间',
+            })
+            return
+          }
+
+          if(this.address.length<0){
+            this.$message({
+              message: '请添加考试地址',
+            })
+            return
+          }
+
+          if(this.subject.length<0){
+            this.$message({
+              message: '请添加考试科目',
+            })
+            return
+          }
+
+          let errCount = 0
+          this.subject.map((item,index)=>{
+            if(item.subjectEndtime < item.subjectStarttime){
+              errCount += 1
+            }
+          })
+          if(errCount>0){
+            this.$message({
+              message: '考试科目结束时间应大于开始时间',
+            })
+            return
+          }
+
           let data = {
             ...this.from,
             addressList: this.address,

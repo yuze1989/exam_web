@@ -93,12 +93,12 @@ export const asyncRouter = [
         children: [
             {
                 path: "/examList",
-                id: 85,
-                code: 10080,
+                id: 125,
+                code: 10125,
                 component: resolve => require(["@/views/examManage/examList/index.vue"], resolve),
                 meta: {
                     name: '考试信息',
-                    icon: 'classmate'
+                    icon: 'notice-fill'
                 }
             },
             {

@@ -106,6 +106,7 @@ export default {
       name: '', //考试名称
       list:[],
       examId:"",
+      listLoading: false
     }
   },
 
@@ -131,7 +132,7 @@ export default {
         // .post(this.API.examinfo.unionList, {examId:this.examId})
         .post(`${this.API.examinfo.unionList}?examId=${this.examId}`)
         .then((res) => {
-          this.list = res.result.records
+          this.list = res.result
           console.log(res,'ppppp')
         })
         .catch(() => {})
