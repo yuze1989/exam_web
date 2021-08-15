@@ -16,9 +16,9 @@
         ></el-input>
          <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="学生姓名"
         ></el-input>
-      <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="准考证号"
+      <el-input v-model="form.admissionTicketCode" style="width:200px;margin-left:15px;"  placeholder="准考证号"
       ></el-input>
-      <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
+      <el-input v-model="form.studioName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
       ></el-input>
        <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
           <el-option
@@ -193,8 +193,9 @@ export default {
         studentAreaCode: '',
         studentName: '',
         examName: '',
-        examNo: ''
-
+        examNo: '',
+        admissionTicketCode:"",
+        studioName:""
       },
 
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -219,7 +220,22 @@ export default {
      },
      // 导出准考证
      exportTicket(){
-
+       let params = {
+         current : this.form.pageIndex ,
+         size : this.form.pageSize ,
+         examName : this.form.examName,
+         roomCode :  this.form.examNo,
+         provinceCode : this.form.studentAreaCode,
+         examineeName : this.form.studentName,
+         schoolId :this.form.schoolId,
+         admissionTicketCode:this.form.admissionTicketCode
+       }
+       this.$axios
+           .post('/ticket/unionExamExport', params)
+           .then((res) => {
+             // this.getList();
+           })
+           .catch(() => {});
      },
         // 区域改变监听
     studioAreaChange(e){
@@ -243,7 +259,9 @@ export default {
         examName : this.form.examName,
         roomCode :  this.form.examNo,
         provinceCode : this.form.studentAreaCode,
-        examineeName : this.form.studentName
+        examineeName : this.form.studentName,
+        studioName:this.form.studioName,
+        admissionTicketCode:this.form.admissionTicketCode
       };
       apiUnionExamList(params).then((res) => {
                  this.data.records = res.result.list;

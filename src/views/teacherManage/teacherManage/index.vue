@@ -2,15 +2,27 @@
   <section class="form_border">
     <div class="header">
       <el-form :inline="true" class="demo-form-inline">
+
         <el-col :span="4">
+          <el-button
+              class="meiyuan_btn"
+              type="primary"
+              size="medium"
+              @click="add"
+          >
+            新增老师
+          </el-button>
+        </el-col>
+        <el-col :span="20" style="display: flex;justify-content: flex-end">
           <el-form-item>
             <el-input
               v-model="forms.model.teacherName"
               placeholder="姓名"
+
             ></el-input>
           </el-form-item>
         </el-col>
-        <!-- multiple -->
+              <!-- multiple -->
         <el-col :span="4">
           <el-form-item>
             <el-select
@@ -42,6 +54,8 @@
             >
               新增老师
             </el-button>
+            <!--            <el-button type="warning" @click="reset">重置</el-button>-->
+
           </el-form-item>
         </el-col>
       </el-form>
@@ -118,9 +132,9 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar">
       <myPagination
-        :current.sync="data.current"
+        :current.sync="forms.current"
         :pages.sync="data.pages"
-        :size.sync="data.pageSize"
+        :size.sync="forms.pageSize"
         :total.sync="data.total"
         @cb="currentChange"
       />
@@ -163,7 +177,7 @@ export default {
           provinceCode: '', //0、未开始;1、正在进行;2、结束考试
         },
       },
-      data: { current: 1, pages: 0, pageSize: 10, total: 0, records: [] },
+      data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
       isAdd: false,
       showDel: false,
       isAddType: 1, //1新增  0编辑
@@ -185,7 +199,8 @@ export default {
         .catch(() => {})
     },
     reset() {
-      this.forms.model = {}
+      this.forms.model = {
+      }
       this.forms.current = 1
       this.getList()
     },
@@ -274,18 +289,16 @@ export default {
     // api
     getList() {
       let params = {
-        current: this.data.current,
-        size: this.data.pageSize,
+        pageIndex: this.data.pageIndex,
+        pageSize: this.data.pageSize,
         teacherName: this.forms.model.teacherName,
-        provinceCode: this.forms.model.provinceCode
-          ? this.forms.model.provinceCode.provinceCode
-          : '',
+        provinceCode: this.forms.model.provinceCode?  this.forms.model.provinceCode.provinceCode: ''
       }
       this.$axios
         .post(this.API.teacher.list, params)
         .then((res) => {
           this.data.records = res.result.list
-          this.data.current = res.result.pageNum
+          this.data.pageIndex = res.result.pageNum
           this.data.total = res.result.total
           this.data.pageSize = res.result.pageSize
         })

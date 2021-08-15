@@ -207,27 +207,54 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
+      examId:""
     };
   },
   created() {
      this.getExamList()
      this.getList();
+    //接收参数
+    this.examId = this.$route.params.examId;
+    if(this.examId != undefined){
+      this.get_mb();
+    }
   },
 
-  methods: { 
-    base64toFile(base64Data) {
-      //去掉base64的头部信息，并转换为byte
-      let split = base64Data.split(',');
-      let bytes = window.atob(split[1]);
-        //获取文件类型
-        let fileType = split[0].match(/:(.*?);/)[1];
-      //处理异常,将ascii码小于0的转换为大于0
-      let ab = new ArrayBuffer(bytes.length);
-      let ia = new Uint8Array(ab);
-      for (let i = 0; i < bytes.length; i++) {
-        ia[i] = bytes.charCodeAt(i);
+  methods: {
+    //获取模板详情
+    get_mb(){
+      let params = {id:this.examId};
+      this.$axios
+          .post('/ticket/ticketDetail', params)
+          .then((res) => {
+            this.getList();
+          })
+          .catch(() => {});
+    },
+    addImg(event){
+      let inputDOM = this.$refs.inputer;
+      // 通过DOM取文件数据
+      this.file = inputDOM.files[0];
+    },
+    base64toFile(dataurl) {
+      // //去掉base64的头部信息，并转换为byte
+      // let split = base64Data.split(',');
+      // let bytes = window.atob(split[1]);
+      //   //获取文件类型
+      //   let fileType = split[0].match(/:(.*?);/)[1];
+      // //处理异常,将ascii码小于0的转换为大于0
+      // let ab = new ArrayBuffer(bytes.length);
+      // let ia = new Uint8Array(ab);
+      // for (let i = 0; i < bytes.length; i++) {
+      //   ia[i] = bytes.charCodeAt(i);
+      // }
+      // return new Blob([ab], { type: fileType});
+      var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+      while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
       }
-      return new Blob([ab], { type: fileType});
+      return new File([u8arr], '截图.png', {type:mime});
     },
     getImage() {
       this.isShow = false;
@@ -273,16 +300,16 @@ export default {
       }
       return str.join('&')
     },
-    // 保存
+      // 保存
     examConfirm(){
       let data = {
-        examId : this.form.examNameNo,
-        province: '天津',
-        provinceCode: '120000',
+        examId : this.examId,
+        province: this.form.studentAreaCode,
+        provinceCode: this.form.studentAreaCode,
         organizer: this.form.organizer,
         examTitle : this.form.examTitle,
         remark: this.form.carefulMatter,
-        schoolId:"111"
+        schoolId:""
       }
     
        if(!this.imgUrl){
@@ -294,15 +321,15 @@ export default {
       }
       let formData = new FormData();
 
-
       let file = this.base64toFile(this.imgUrl);
 
-      formData.append('ticketFile', file);
-      // for( let key  in data){
-      //   formData.append(key, data[key]);
-      // }
 
-      console.log(file);
+
+      formData.append('ticketFile', file);
+
+
+
+
 
       let url = `/ticket/ticketCreate?`+this.transformRequest(data);
       this.$axios
@@ -365,7 +392,9 @@ export default {
     },
   },
   mounted() {},
-  beforeCreate() {},
+  beforeCreate() {
+
+  },
 };
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <section class="form_border">
-    <div class="header">
+    <div class="header" style="display: flex;justify-content: flex-end">
       <!-- checkStatus:'',//审核状态:0未审核；1通过；2未通过 ,
         examName:'',//考试名称 
         examineeName: '',//考生姓名
@@ -68,15 +68,16 @@
           :value="item.id"
         ></el-option>
       </el-select>
-    </div>
-    <div style="margin-top: -10px;margin-bottom: 10px;">
       <el-button type="primary" style="margin-left: 20px;" @click="onSubmit">
         查询
       </el-button>
-      <el-button type="warning" @click="reset">重置</el-button>
-      <el-button type="primary" @click="checkMore">批量审核</el-button>
-      <el-button type="warning" @click="add">新增学生信息</el-button>
+    </div>
+    <div style="margin-top: -10px;margin-bottom: 10px;">
+
+<!--      <el-button type="warning" @click="reset">重置</el-button>-->
+      <el-button type="primary" @click="add" style="margin-left: 15px">新增学生信息</el-button>
       <el-button type="primary" @click="onImport">批量导入</el-button>
+      <el-button type="primary" @click="checkMore">批量审核</el-button>
     </div>
     <!-- 导入 导出 -->
     <!-- <div class="export-box">

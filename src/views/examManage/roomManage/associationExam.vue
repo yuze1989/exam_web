@@ -1,9 +1,9 @@
 <template>
    <section class="form_border">
-    <div class="header">
+    <div class="header" style="display: flex;justify-content: flex-end">
         <el-input v-model="form.examNo" style="width:200px"  placeholder="考试编号"
         ></el-input>
-        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试编名称"
+        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"
         ></el-input>
        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button

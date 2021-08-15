@@ -1,7 +1,7 @@
 <template>
   <section class="form_border">
     <div class="header">
-      二维码模板
+      脱敏设置
     </div>
     <div class="container">
       <!-- 模板信息 -->
@@ -9,7 +9,6 @@
         <!-- 基本信息 -->
         <div class="basic-info">
           <div class="display-center">
-            <div class="title">考试名称</div>
             <el-select v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
               <el-option
                   v-for="item in examNameOption"
@@ -20,128 +19,34 @@
             </el-select>
           </div>
           <div class="display-center">
-            <div class="title">生源省份</div>
-            <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
-              <el-option
-                  v-for="item in studentAreaOption"
-                  :key="item.provinceCode"
-                  :label="item.province"
-                  :value="item.provinceCode">
-              </el-option>
-            </el-select>
-          </div>
-          <div class="display-center">
-            <div class="title">二维码名称</div>
-            <el-input v-model="form.organizer" style="width:200px;margin-left:50px;"  placeholder="请输入主办单位"></el-input>
-          </div>
             <div class="display-center">
-              <div class="title">二维码字段</div>
-<!--              <el-input v-model="form.examTitle" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题" ></el-input>-->
+              <!--              <el-input v-model="form.examTitle" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题" ></el-input>-->
               <div>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>准考证号</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
+
+                <el-row style="width:200px;text-align: left;padding-left: 0px">
                   <el-checkbox>身份证号码</el-checkbox>
                 </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-row style="width:200px;text-align: left;padding-left:0px">
                   <el-checkbox>姓名</el-checkbox>
                 </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>科目</el-checkbox>
+                <el-row style="width:200px;text-align: left;padding-left: 0px">
+                  <el-checkbox>手机</el-checkbox>
                 </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>考场</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>性别</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>考试编号</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox>考试地址</el-checkbox>
-              </el-row>
+
 
               </div>
             </div>
-        </div>
-        <!--列表-->
-<!--        <el-table-->
-<!--            :data="examDetails.subjectList"-->
-<!--            highlight-current-row-->
-<!--            v-loading="listLoading"-->
-<!--            border-->
-<!--            :header-cell-style="{-->
-<!--                background: '#08223c',-->
-<!--                color: '#fff',-->
-<!--                border: 'none',-->
-<!--            }"-->
-<!--        >-->
-<!--          <el-table-column-->
-<!--              label="科目"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectName"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--              label="考试日期"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectDate"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--              label="考试开始时间"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectStarttime"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--              label="考试结束时间"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectEndtime"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--        </el-table>-->
-        <!-- 注意事项 -->
-<!--        <div class="careful-matter">-->
-<!--          <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px"  name="" id="" placeholder="多行输入"></textarea>-->
-<!--        </div>-->
-        <!-- 保存 -->
-<!--        <el-button-->
-<!--            @click='getImage'-->
-<!--            type="primary"-->
-<!--        >生成图片</el-button-->
-<!--        >-->
-        <div class="confirm">
-          <el-button type="primary" style="margin-top:30px;margin-left: 150px" @click="examConfirm"> 保存</el-button>
+          </div>
+          <div class="display-center">
+            <el-button type="primary" style="margin-top: 30px;
+    margin-left: 50px;
+    width: 200px;" @click="examConfirm"> 保存</el-button>
+          </div>
         </div>
       </div>
       <!-- 模板示例 -->
       <div class="template-example" >
-        <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
-          <div class="template-example-dom" ref="ticketFile">
-            <div class="title" style="height: 600px;background: #fff">
-              <div style="font-size: 70px;
-    font-weight: 700;
-    letter-spacing: 40px;
-    padding-left: 40px;">二维码</div>
-              <img src="@/assets/erweima.png" alt="" style="width: 120px;height: 120px;position: absolute;left: 60px;top: 270px">
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考试编号：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考试名称：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">准考证：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">身份证号码：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">姓名：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">科目：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考场：XXXXXXXX</div>
-            </div>
-            </div>
 
-        </div>
 
         <!-- <img class="real_pic" :src="imgUrl" /> -->
       </div>

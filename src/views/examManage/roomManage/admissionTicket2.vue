@@ -16,9 +16,9 @@
         ></el-input>
          <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="学生姓名"
         ></el-input>
-      <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="准考证号"
+      <el-input v-model="form.admissionTicketCode" style="width:200px;margin-left:15px;"  placeholder="准考证号"
       ></el-input>
-      <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
+      <el-input v-model="form.studioName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
       ></el-input>
        <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
           <el-option
@@ -193,7 +193,9 @@ export default {
         studentAreaCode: '',
         studentName: '',
         examName: '',
-        examNo: ''
+        examNo: '',
+        admissionTicketCode:"",
+        studioName:""
 
       },
 
@@ -243,7 +245,9 @@ export default {
         examName : this.form.examName,
         roomCode :  this.form.examNo,
         provinceCode : this.form.studentAreaCode,
-        examineeName : this.form.studentName
+        examineeName : this.form.studentName,
+        studioName:this.form.studioName,
+        admissionTicketCode:this.form.admissionTicketCode
       };
       apiUnionExamList(params).then((res) => {
                  this.data.records = res.result.list;

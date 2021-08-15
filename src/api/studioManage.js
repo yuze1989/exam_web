@@ -47,6 +47,15 @@ export function examinationList(data) {
   })
 }
 
+// 准考证模板列表
+export function examinationList2(data) {
+  return request({
+    url:  '/ticket/ticketList',
+    method: 'POST',
+    data
+  })
+}
+
 // 关联机构
 export function apiRelationStudio(data) {
   return request({

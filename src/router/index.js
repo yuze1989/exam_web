@@ -35,12 +35,12 @@ export const constantRoutes = [
         },
         hidden: true
     },
-
     {
         path: "/404",
         component: resolve => require(["@/views/common/404.vue"], resolve),//() => import("@/views/common/404.vue"),
         hidden: true
     },
+
     {
         path: "/401",
         component: resolve => require(["@/views/common/401.vue"], resolve),//() => import("@/views/common/401.vue"),
@@ -123,6 +123,7 @@ export const asyncRouter = [
                     icon: 'notice-fill'
                 },
             },
+
 
         ]
     },
@@ -282,10 +283,10 @@ export const asyncRouter = [
                 },
             },
             {
-                path: "/498",
+                path: "/gradesManage2",
                 id: 98,
                 code: 10098,
-                // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/authManage/gradesManage/index2.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
                 meta: {
                     name: '成绩查询',
                     icon: 'classmate'
@@ -326,20 +327,20 @@ export const asyncRouter = [
         },
         children: [
             {
-                path: "/499",
+                path: "/gradesManage3",
                 id: 128,
                 code: 10128,
-                // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/authManage/gradesManage/index3.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
                 meta: {
                     name: '成绩数据归档',
                     icon: 'classmate'
                 },
             },
             {
-                path: "/500",
+                path: "/templateManage3",
                 id: 127,
                 code: 10127,
-                // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/templateManage2/index2.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
                 meta: {
                     name: '成绩数据导出',
                     icon: 'classmate'
@@ -412,14 +413,15 @@ export const asyncRouter = [
                     icon: 'classmate'
                 },
             }, {
-                path: "/7778",
+                path: "/templateManage4",
                 id: 129,
                 code: 10129,
-                // component: resolve => require(["@/views/authManage/userManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                component: resolve => require(["@/views/templateManage2/index3.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
                 meta: {
                     name: '脱敏设置',
                     icon: 'classtime'
                 },
+
             }
         ]
     },
@@ -456,17 +458,17 @@ export const asyncRouter = [
                     icon: 'classmate'
                 },
             },
-            // {
-            //     path: "/teacherExamList",
-            //     id: 105,
-            //     code: 10105,
-            //     name:'teacherExamList',
-            //     component: resolve => require(["@/views/teacherManage/teacherExamList/index.vue"], resolve),
-            //     meta: {
-            //         name: '关联考试',
-            //         icon: 'classmate'
-            //     },
-            // },
+            {
+                path: "/addTicketTemplate",
+                id: 105,
+                code: 10105,
+                name:'AddTicketTemplate',
+                component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+                meta: {
+                    name: '关联考试',
+                    icon: 'classmate'
+                },
+            },
 
         ]
     },

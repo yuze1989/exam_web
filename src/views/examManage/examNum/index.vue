@@ -48,7 +48,7 @@
       }"
     >
       <el-table-column
-        label="考场编码"
+        label="考试编码"
         header-align="center"
         align="center"
         prop="examCode"

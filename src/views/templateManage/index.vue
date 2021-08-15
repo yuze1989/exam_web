@@ -31,46 +31,47 @@
         label="考试编码"
         header-align="center"
         align="center"
-        prop="no"
+        prop="examCode"
       >
       </el-table-column>
       <el-table-column
         label="考试名称"
         header-align="center"
         align="center"
-        prop="name"
+        prop="examName"
       >
       </el-table-column>
        <el-table-column
         label="所属省份"
         header-align="center"
         align="center"
-        prop="studioNum"
+        prop="province"
       >
       </el-table-column>
          <el-table-column
         label="主办单位"
         header-align="center"
         align="center"
-        prop="studioNum"
+        prop="organizer"
       >
       </el-table-column>
          <el-table-column
         label="考试标题"
         header-align="center"
         align="center"
-        prop="studioNum"
+        prop="examTitle"
       >
       </el-table-column>
          <el-table-column
         label="创建时间"
         header-align="center"
         align="center"
-        prop="studioNum"
+        prop="createAt"
       >
       </el-table-column>
        <el-table-column
       fixed="right"
+      align="center"
       label="操作"
       width="200">
       <template slot-scope="scope">
@@ -112,7 +113,7 @@
 
 <script>
 
-import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
+import { examinationList2,apiRelationStudio } from '@/api/studioManage.js'
 import addTicketTemplate from './addTicketTemplate.vue'
 export default {
   name: "TicketManage",
@@ -164,7 +165,7 @@ export default {
   methods: {
     // 新建模板
     addTemplate(){
-      this.$router.push({ name: 'AddTicketTemplate'})
+      this.$router.push({path: '/AddTicketTemplate'})
       this.showTemplate = true
     },
   // 获取机构
@@ -190,8 +191,8 @@ export default {
         name : this.form.examName,
         no:  this.form.examNo
       };
-      examinationList(params).then((res) => {
-                 this.data.records = res.result.records;
+      examinationList2(params).then((res) => {
+                 this.data.records = res.result.list;
                 this.data.current = res.result.current;
                 this.data.total = res.result.total;
                 (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
@@ -220,12 +221,11 @@ export default {
     },
     // 编辑模版信息
     bindEidt(row){
-      this.$router.push({ name: 'StudioStatistics', params: {
+      this.$router.push({ name: 'AddTicketTemplate', params: {
         examId: row.id
       }})
     },
    currentChange() {
-      //console.log('index' + index)
       this.getList();
     },
   },
