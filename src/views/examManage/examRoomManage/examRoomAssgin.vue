@@ -79,7 +79,7 @@
               min="1"
               max="50"
               style="width: 100px;"
-              @change="inpStudent"
+              @change="inpStudent('st',idx)"
               v-model="examroom.st"
               placeholder="考场编号"
             ></el-input>
@@ -97,7 +97,7 @@
               max="50"
               @focus="removal"
               @blur="number()"
-              @change="inpStudent"
+              @change="inpStudent('en',idx)"
               style="width: 100px; margin-right: 10px;"
               v-model="examroom.en"
               placeholder="考场编号"
@@ -116,7 +116,7 @@
               v-model="examroom.Count"
               style="width: 150px;"
               placeholder="请设置考场人数"
-              @change="inpStudent"
+              @change="inpStudent('Count',idx)"
             ></el-input>
           </el-form-item>
         </div>
@@ -192,6 +192,7 @@ export default {
         Count: [{ required: true, message: '输入正确人数', trigger: 'blur' }],
       },
       count: 0,
+      unDistributCount2: 0
     }
   },
   methods: {
@@ -230,7 +231,9 @@ export default {
             this.forms.unDistributCount =
               parseInt(res.result.examineeCount) -
               parseInt(res.result.distributCount)
-            // this.forms = res.data.result
+            this.unDistributCount2 =
+              parseInt(res.result.examineeCount) -
+              parseInt(res.result.distributCount) //unDistributCount2 总待分配人数,不改变
             this.origionObj = { ...this.forms }
             this.formsData = { examrooms: [] }
             this.inpStudent()
@@ -262,6 +265,10 @@ export default {
     },
 
     handleAdd() {
+      if(!this.forms.unDistributCount || this.forms.unDistributCount<1){
+        this.$message.error("无可分配人数")
+        return
+      }
       // if (this.forms.provinceCode == '') {
       //   alert('请选择省份')
       // } else {
@@ -283,9 +290,9 @@ export default {
     upok(response, file, fileList) {
       this.studio.url = file.name
     },
-    inpStudent() {
-      let n = 0
-      let n2 = 0
+    inpStudent(type,index) {
+      let n = 0 //考场数量
+      let n2 = 0 //总分配人数
       this.formsData.examrooms.forEach((item, index) => {
         if (item.st && item.en) {
           if (item.Count) {
@@ -294,7 +301,14 @@ export default {
           n2 += +item.en - +item.st + 1
         }
       })
+      // console.log(`当前操作第${index}行,当前操作-${type},总分配人数${this.forms.maxExamCode += n2},总待分配人数${this.forms.unDistributCount -= n}`)
       const { distributCount, unDistributCount, maxExamCode } = this.origionObj
+      let un = unDistributCount
+      if((un - n) < 0){
+        this.$message.error("超出待分配人数")
+        this.formsData.examrooms[index][type] = ""
+        return
+      }
       this.forms.distributCount = +distributCount
       this.forms.unDistributCount = +unDistributCount
       this.forms.maxExamCode = +maxExamCode

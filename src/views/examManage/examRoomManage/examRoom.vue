@@ -1,18 +1,5 @@
 <template>
   <section>
-<!--    <el-row>-->
-<!--      <div-->
-<!--        style="-->
-<!--          margin: 0 0 10px;-->
-<!--          margin-left: 10px;-->
-<!--          font-size: 18px;-->
-<!--          font-weigth: 800;-->
-<!--        "-->
-<!--      >-->
-<!--        考场管理-->
-<!--      </div>-->
-<!--    </el-row>-->
-    <!--工具条-->
     <el-row class="toolbar" style="padding-bottom: 0px;height: 66px;padding-top: 15px" type="flex">
       <el-col :span="6">
         <el-button
@@ -63,14 +50,7 @@
             ></el-input>
           </el-form-item>
 
-          <!-- <el-form-item>
-            <select-province
-              @province="selectedProvince"
-              placeholder="选择生源省份"
-            />
-          </el-form-item> -->
-
-        <el-form-item>
+          <el-form-item>
             <el-select
               v-model="selections.provinceCode"
               placeholder="生源省份"

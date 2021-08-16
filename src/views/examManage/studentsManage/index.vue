@@ -413,6 +413,10 @@ export default {
       this.checkIds = val
     },
     checkMore() {
+      if(!this.checkIds || (this.checkIds&&this.checkIds.length<1)){
+        this.$message.error('请选择要审核的学生')
+        return
+      }
       this.checkId = ''
       this.showCheck = true
       this.remark = ''

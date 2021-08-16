@@ -2,23 +2,11 @@
   <section class="form_border">
     <div class="header">
       <el-form :inline="true" class="demo-form-inline">
-
-        <el-col :span="4">
-          <el-button
-              class="meiyuan_btn"
-              type="primary"
-              size="medium"
-              @click="add"
-          >
-            新增老师
-          </el-button>
-        </el-col>
-        <el-col :span="20" style="display: flex;justify-content: flex-end">
+        <el-col :span="4" style="display: flex;justify-content: flex-end">
           <el-form-item>
             <el-input
               v-model="forms.model.teacherName"
               placeholder="姓名"
-
             ></el-input>
           </el-form-item>
         </el-col>
@@ -132,9 +120,9 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar">
       <myPagination
-        :current.sync="forms.current"
+        :current.sync="data.pageIndex"
         :pages.sync="data.pages"
-        :size.sync="forms.pageSize"
+        :size.sync="data.pageSize"
         :total.sync="data.total"
         @cb="currentChange"
       />
@@ -289,8 +277,8 @@ export default {
     // api
     getList() {
       let params = {
-        pageIndex: this.data.pageIndex,
-        pageSize: this.data.pageSize,
+        current: this.data.pageIndex,
+        size: this.data.pageSize,
         teacherName: this.forms.model.teacherName,
         provinceCode: this.forms.model.provinceCode?  this.forms.model.provinceCode.provinceCode: ''
       }

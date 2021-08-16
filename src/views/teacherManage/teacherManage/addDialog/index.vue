@@ -30,7 +30,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="省份(支持多选)" prop="roleType">
+      <el-form-item label="省份(支持多选)" prop="provinceList">
         <el-select
           multiple
           v-model="from.provinceList"
@@ -126,24 +126,29 @@ export default {
       this.getRoleList()
       this.getProvinceList() 
       if (!this.isAdd) {
+        this.rules.password = [{ required: false, message: '请输入', trigger: 'blur' }],
+        console.log(this.editItem,'this.editItem')
         this.$axios
           .get(`${this.API.teacher.detail}?id=${this.editItem.id}`)
           .then((res) => {
             if ((res.code = 200)) {
               console.log(res, 'rr')
-              // this.from = {
-              //   id: this.editItem.id,
-              //   loginCode: this.editItem.loginCode,
-              //   password: this.editItem.password,
-              //   // province: "北京",
-              //   // provinceCode: "北京",
-              //   role: this.editItem.role,
-              //   roleId: this.editItem.roleId,
-              //   provinceList: this.editItem.provinceList,
-              //   userName: this.editItem.userName,
-              // }
+              this.from = {
+                id: this.editItem.id,
+                loginCode: this.editItem.loginCode,
+                password: this.editItem.password,
+                // province: "北京",
+                // provinceCode: "北京",
+                role: this.editItem.role,
+                roleId: this.editItem.roleId,
+                provinceList: res.result.provinceList,
+                userName: this.editItem.userName,
+              }
+              console.log(this.from,' this.from')
             }
           })
+      }else{
+        this.from={}
       }
     },
     getProvinceList() {

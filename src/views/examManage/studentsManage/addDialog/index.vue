@@ -130,7 +130,7 @@
           name="image"
           :file-list="fileList"
           :multiple="false"
-          :limit="2"
+          :limit="1"
           :on-change="handleChange"
           action="https://exam-new.msjsol.com/exam-manager/file/upload"
           accept=".jpg,.jpeg,.png"
