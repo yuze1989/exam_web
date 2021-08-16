@@ -2,7 +2,9 @@
   <section class="form_border">
     <div class="header">
       <div class="from-wrap">
-
+        <el-form :inline="true" :model="search" class="demo-form-inline" style="display: flex;justify-content: flex-start;height: 70px;padding: 16px">
+          <el-button class="meiyuan_btn" type="primary" size="medium" @click="add">新建打分规则</el-button>
+        </el-form>
       </div>
     </div>
     <!--列表-->
@@ -141,9 +143,7 @@ export default {
     },
     // 新增
     add() {
-
-      this.isAdd = 1;
-      this.isAddBrand = true;
+      this.$router.push({path: '/gradeManageAdd'})
     },
 
     addUserSuccess() {

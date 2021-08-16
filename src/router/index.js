@@ -77,6 +77,7 @@ export const constantRoutes = [
         },
         ]
     },
+
 ];
 //  require(["@/views/manager/ruleList.vue"] 规则
 export const asyncRouter = [
@@ -143,6 +144,17 @@ export const asyncRouter = [
                 meta: {
                     name: '关联考试',
                     icon: 'classmate'
+                },
+            },
+            {
+                path: "/gradeManageAdd",
+                id: 107,
+                code: 10107,
+                name:"gradeManageAdd",
+                component: resolve => require(["@/views/authManage/gradeManage/gradeRule.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                meta: {
+                    name: '打分规则',
+                    icon: 'classtime'
                 },
             },
 
