@@ -38,6 +38,15 @@ export function apiGetExamDetails(data) {
   })
 }
 
+// 获取科目详情
+export function apiGetSubjectList(data) {
+    return request({
+        url: '/examsubject/listByExamId',
+        method: 'GET',
+        params: data
+    })
+}
+
 // 新增准考证模版
 export function apiTicketCreate(data) {
   return request({

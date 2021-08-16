@@ -1,136 +1,141 @@
 <template>
   <section class="form_border">
-    <div class="header">
-      二维码模板
-    </div>
-    <div class="container">
-      <!-- 模板信息 -->
-      <div class="template">
-        <!-- 基本信息 -->
-        <div class="basic-info">
-          <div class="display-center">
-            <div class="title">考试名称</div>
-            <el-select v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
-              <el-option
-                  v-for="item in examNameOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-              </el-option>
-            </el-select>
-          </div>
-          <div class="display-center">
-            <div class="title">生源省份</div>
-            <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
-              <el-option
-                  v-for="item in studentAreaOption"
-                  :key="item.provinceCode"
-                  :label="item.province"
-                  :value="item.provinceCode">
-              </el-option>
-            </el-select>
-          </div>
-          <div class="display-center">
-            <div class="title">二维码名称</div>
-            <el-input v-model="form.organizer" style="width:200px;margin-left:34px;"  placeholder="请输入二维码名称"></el-input>
-          </div>
-            <div class="display-center">
-              <div class="title">二维码字段</div>
-<!--              <el-input v-model="form.examTitle" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题" ></el-input>-->
-              <div>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>准考证号</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>身份证号码</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>姓名</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>科目</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>考场</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>性别</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                  <el-checkbox>考试编号</el-checkbox>
-                </el-row>
-                <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox>考试地址</el-checkbox>
-              </el-row>
-
-              </div>
-            </div>
-        </div>
-        <div class="confirm">
-          <el-button type="primary" style="margin-top:30px;margin-left: 150px" @click="examConfirm"> 保存</el-button>
-        </div>
-      </div>
-      <!-- 模板示例 -->
-      <div class="template-example" >
-        <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
-          <div class="template-example-dom" ref="ticketFile">
-            <div class="title" style="height: 600px;background: #fff">
-              <div style="font-size: 70px;
-    font-weight: 700;
-    letter-spacing: 40px;
-    padding-left: 40px;margin-bottom: 20px">二维码</div>
-              <img src="@/assets/erweima.png" alt="" style="width: 120px;height: 120px;position: absolute;left: 60px;top: 270px">
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考试编号：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考试名称：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">准考证：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">身份证号码：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">姓名：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">科目：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考场：XXXXXXXX</div>
-            </div>
-            </div>
-
-        </div>
-
-        <!-- <img class="real_pic" :src="imgUrl" /> -->
+    <div class="header" style="position: relative">
+      <el-button class="association_btn" style="float: left" type="primary" size="medium" @click="addTemplate"
+      >新建模板</el-button>
+      <div style="position: absolute;right: 0;padding-right: 20px">
+<!--        <el-input v-model="form.examNo" style="width:200px;"  placeholder="考试编号"-->
+<!--        ></el-input>-->
+        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"
+        ></el-input>
+        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
+        >查询</el-button>
       </div>
 
+
+
     </div>
+    <!--列表-->
+    <el-table
+        :data="data.records"
+        highlight-current-row
+        v-loading="listLoading"
+        border
+        :header-cell-style="{
+        background: '#08223c',
+        color: '#fff',
+        border: 'none',
+      }"
+    >
+      <el-table-column
+          label="考试编码"
+          header-align="center"
+          align="center"
+          prop="examCode"
+      >
+      </el-table-column>
+      <el-table-column
+          label="考试名称"
+          header-align="center"
+          align="center"
+          prop="examName"
+      >
+      </el-table-column>
+      <el-table-column
+          label="所属省份"
+          header-align="center"
+          align="center"
+          prop="province"
+      >
+      </el-table-column>
+      <el-table-column
+          label="二维码标题"
+          header-align="center"
+          align="center"
+          prop="qrcodeName"
+      >
+      </el-table-column>
+      <el-table-column
+          label="创建时间"
+          header-align="center"
+          align="center"
+          prop="createAt"
+      >
+      </el-table-column>
+      <el-table-column
+          fixed="right"
+          align="center"
+          label="操作"
+          width="200">
+        <template slot-scope="scope">
+          <el-button @click="bindEidt(scope.row)" type="text" size="small" >编辑</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!--工具条-->
+    <el-col :span="24" class="toolbar">
+      <myPagination
+          :current.sync="form.pageIndex"
+          :pages.sync="data.pages"
+          :size.sync="form.pageSize"
+          :total.sync="data.total"
+          @cb="currentChange"
+      />
+    </el-col>
+    <!--选择关联机构-->
+    <el-dialog title="关联机构" :visible.sync="dialogTableVisible" center>
+      <div style="color:red">
+        当前选择会覆盖之前的选择
+      </div>
+      <el-select v-model="selectRoomIds" multiple placeholder="请选择机构">
+        <el-option
+            v-for="item in roomOptions"
+            :key="item.id"
+            :label="item.studioName"
+            :value="item.id">
+        </el-option>
+      </el-select>
+      <div style="margin-top:30px">
+        <el-button @click="dialogTableVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmRltRoom">确 定</el-button>
+
+      </div>
+    </el-dialog>
   </section>
 </template>
 
 <script>
-import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
-import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
-import html2canvas from "html2canvas";
+
+import { examinationList3,apiRelationStudio } from '@/api/studioManage.js'
+import addTicketTemplate from './addTicketTemplate.vue'
 export default {
-  name: "AddTicketTemplate",
+  name: "TicketManage",
+  props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    }
+
+  },
   data() {
     return {
-      imgUrl: '',
       listLoading: false,
+      showTemplate: false,
       sels: [], //列表选中列
-      examDetails: {
-        subjectList: []
-      }, // 考试详情
       search: {
         name: "",
         mobilePhone: "",
       },
-      studentAreaOption: [],
-      examNameOption: [],
+      dialogTableVisible:false,
+      selectRoomIds: [],
+      roomOptions: [],
       form: {
         pageIndex: 1,
         size: 10,
-        studentAreaName: "",
-        studentAreaCode: "",
-        examName: "",
-        examNo:"",
-        examNameNo: "",
-        carefulMatter: '',
-        examTitle: ''
+        examNo: "",
+        examName: ""
+
       },
-      isShow:true,
 
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
           {
@@ -140,340 +145,92 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
-      examId:""
     };
   },
+  components: {
+    addTicketTemplate
+  },
   created() {
-    this.getExamList()
+    this.getRoomList()
     this.getList();
-    //接收参数
-    this.examId = this.$route.params.examId;
-    if(this.examId != undefined){
-      this.get_mb();
-    }
   },
 
   methods: {
-    //获取模板详情
-    get_mb(){
-      let params = {id:this.examId};
-      this.$axios
-          .post('/ticket/ticketDetail', params)
-          .then((res) => {
-            this.getList();
-          })
-          .catch(() => {});
-    },
-    addImg(event){
-      let inputDOM = this.$refs.inputer;
-      // 通过DOM取文件数据
-      this.file = inputDOM.files[0];
-    },
-    base64toFile(dataurl) {
-      // //去掉base64的头部信息，并转换为byte
-      // let split = base64Data.split(',');
-      // let bytes = window.atob(split[1]);
-      //   //获取文件类型
-      //   let fileType = split[0].match(/:(.*?);/)[1];
-      // //处理异常,将ascii码小于0的转换为大于0
-      // let ab = new ArrayBuffer(bytes.length);
-      // let ia = new Uint8Array(ab);
-      // for (let i = 0; i < bytes.length; i++) {
-      //   ia[i] = bytes.charCodeAt(i);
-      // }
-      // return new Blob([ab], { type: fileType});
-      var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-      while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], '截图.png', {type:mime});
-    },
-    getImage() {
-      this.isShow = false;
-      html2canvas(this.$refs.ticketFile).then(canvas => {
-        this.$message({
-          message: '图片已生成可以保存模版',
-          type: 'success',
-        })
-        let dataURL = canvas.toDataURL("image/png");
-        this.imgUrl = dataURL;
-        this.isShow = true;
-      });
-    } ,
-    // 查询考试详情
-    getExamDetails(){
-      apiGetExamDetails({
-        id: this.form.examNameNo
-      }).then(res=>{
-        this.examDetails = res.result
-      })
-    },
-    // 查询考试下的省份
-    getProvinceByExamId(){
-      apiGetProvinceByExamId({
-        examId: this.form.examNameNo
-      }).then(res=>{
-        console.log(res.result);
-        this.studentAreaOption = res.result
-      })
-    },
-    // 查询考试列表
-    getExamList(){
-      apiExamList().then(res=>{
-        this.examNameOption = res.result
-      })
-    },
-    transformRequest(obj) {
-      var str = []
-      for (var p in obj) {
-        if (obj[p]) {
-          str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
-        }
-      }
-      return str.join('&')
-    },
-    // 保存
-    examConfirm(){
-      let data = {
-        examId : this.examId,
-        province: this.form.studentAreaCode,
-        provinceCode: this.form.studentAreaCode,
-        organizer: this.form.organizer,
-        examTitle : this.form.examTitle,
-        remark: this.form.carefulMatter,
-        schoolId:""
-      }
-
-      if(!this.imgUrl){
-        this.$message({
-          message: '请点击生成图片之后再保存',
-          type: 'error',
-        })
-        return
-      }
-      let formData = new FormData();
-
-      let file = this.base64toFile(this.imgUrl);
-
-
-
-      formData.append('ticketFile', file);
-
-
-
-
-
-      let url = `/ticket/ticketCreate?`+this.transformRequest(data);
-      this.$axios
-          .post(url, formData)
-          .then((res) => {
-            if (res) {
-              this.$message({
-                message: '修改成功',
-                type: 'success',
-              })
-              this.$emit('addSuccess')
-            }
-          })
-          .catch(() => {})
-    },
     // 新建模板
     addTemplate(){
+      this.$router.push({path: '/AddTicketTemplate2'})
+      this.showTemplate = true
+    },
+    // 获取机构
+    getRoomList(){
+      let params = {
+        current : 1 ,
+        size : 1000 ,
 
+      };
+      this.$axios
+          .post(this.API.roomManage.list, params)
+          .then((res) => {
+            this.roomOptions = res.result.records;
+          })
+          .catch(() => {});
     },
     // 获取列表
     getList() {
       let params = {
         current : this.form.pageIndex ,
         size : this.form.size ,
-        name : this.form.examName,
-        no:  this.form.examNo
+        // name : this.form.examName,
+        examName : this.form.examName
       };
-      examinationList(params).then((res) => {
-        this.data.records = res.result.records;
+      examinationList3(params).then((res) => {
+        this.data.records = res.result.list;
         this.data.current = res.result.current;
         this.data.total = res.result.total;
         (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
       })
           .catch(() => {});
     },
-    // 考试改变监听
-    examNameChange(e){
-      this.examNameOption.map(item =>{
-        if(item.id == e){
-          this.form.examName = item.name
-          this.form.studentAreaName = ''
-          this.form.studentAreaCode = ''
-          this.studentAreaOption = []
-          this.getExamDetails()
-          this.getProvinceByExamId()
-        }
+    // 确认关联机构
+    confirmRltRoom(){
+      let list = []
+      let params = {
+        studioIds  : this.selectRoomIds ,
+        examId  : this.sels.id
+
+      };
+      apiRelationStudio(params).then((res) => {
+        this.$message({
+          message: "关联成功",
+          type: "success",
+        });
+        this.selectRoomIds = []
+        this.dialogTableVisible = false
+        this.getList()
       })
+          .catch(() => {});
+
     },
-    // 考生省份改变监听
-    studentChange(e){
-      this.studentAreaOption.map(item =>{
-        if(item.provinceCode == e){
-          this.form.studentAreaName = item.province
-        }
-      })
+    // 编辑模版信息
+    bindEidt(row){
+      this.$router.push({ name: 'addTicketTemplate2', params: {
+          examId: row.id
+        }})
     },
     currentChange() {
-      //console.log('index' + index)
       this.getList();
     },
   },
   mounted() {},
-  beforeCreate() {
-
-  },
+  beforeCreate() {},
 };
 </script>
 
 <style lang="scss" scoped>
 @import "./index.scss";
-
 .header{
   display: flex;
   padding-left:200px;
-}
-.display-center{
-  display: flex;
-  align-items: center;
-  padding-left: 50px;
-  margin-bottom: 20px;
-
-}
-.container{
-  display: flex;
-  padding-left: 30px;
-}
-.template-example-dom{
-  background: #fff;
-  border: 1px #333 solid;
-  width: 500px;
-  .title{
-    background: blue;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    color:#000;
-    font-size: 30px;
-  }
-  .zbdw,.room{
-    display: flex;
-    align-items: center;
-    border: 1px blue solid;
-    height: 40px;
-    .left{
-      text-align: center;
-      width: 80px;
-      border-right: 1px blue solid;
-      height: 40px;
-      line-height: 40px;
-    }
-  }
-  .student-info{
-    display: flex;
-    .warp{
-      display: flex;
-      flex-direction: column;
-      width: 80%;
-      .zkz{
-        display: flex;
-        align-items: center;
-        border: 1px blue solid;
-        height: 40px;
-        .left{
-          text-align: center;
-          width: 80px;
-          border-right: 1px blue solid;
-          height: 40px;
-          line-height: 40px;
-        }
-      }
-      .name{
-        display: flex;
-        align-items: center;
-        border: 1px blue solid;
-        height: 40px;
-        .left{
-          text-align: center;
-          width: 80px;
-          border-right: 1px blue solid;
-          height: 40px;
-          line-height: 40px;
-        }
-      }
-      .sfz{
-        display: flex;
-        align-items: center;
-        border: 1px blue solid;
-        height: 40px;
-
-
-        .left{
-          text-align: center;
-          width: 80px;
-          border-right: 1px blue solid;
-          height: 40px;
-          line-height: 40px;
-        }
-      }
-    }
-
-    .student-img{
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 20%;
-      flex-direction: column;
-    }
-  }
-  .subject-warp{
-    .title1{
-      display: flex;
-      align-items: center;
-      border: 1px blue solid;
-      height: 40px;
-      .line1{
-        text-align: center;
-        width: 80px;
-        border-right: 1px blue solid;
-        height: 40px;
-        line-height: 40px;
-      }
-      .line2{
-        text-align: center;
-        width: 150px;
-        border-right: 1px blue solid;
-        height: 40px;
-        line-height: 40px;
-      }
-      .line5{
-        text-align: center;
-        width: 110px;
-
-        height: 40px;
-        line-height: 40px;
-      }
-      .line3{
-        text-align: center;
-        width: 130px;
-        border-right: 1px blue solid;
-        height: 40px;
-        line-height: 40px;
-      }
-      .line4{
-        text-align: center;
-        width: 125px;
-        border-right: 1px blue solid;
-        height: 40px;
-        line-height: 40px;
-      }
-    }
-  }
 }
 </style>
 

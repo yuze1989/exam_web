@@ -77,6 +77,7 @@ export const constantRoutes = [
         },
         ]
     },
+
 ];
 //  require(["@/views/manager/ruleList.vue"] 规则
 export const asyncRouter = [
@@ -125,13 +126,35 @@ export const asyncRouter = [
             },
             {
                 path: "/addTicketTemplate",
-                id: 123,
+                id: 124,
                 code: 10105,
                 name:'AddTicketTemplate',
                 component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
                 meta: {
                     name: '关联考试',
                     icon: 'classmate'
+                },
+            },
+            {
+                path: "/addTicketTemplate2",
+                id: 123,
+                code: 10105,
+                name:'addTicketTemplate2',
+                component: resolve => require(["@/views/templateManage2/addTicketTemplate.vue"], resolve),
+                meta: {
+                    name: '关联考试',
+                    icon: 'classmate'
+                },
+            },
+            {
+                path: "/gradeManageAdd",
+                id: 107,
+                code: 10107,
+                name:"gradeManageAdd",
+                component: resolve => require(["@/views/authManage/gradeManage/gradeRule.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                meta: {
+                    name: '打分规则',
+                    icon: 'classtime'
                 },
             },
 
@@ -404,16 +427,16 @@ export const asyncRouter = [
             icon: 'set'
         },
         children: [
-            {
-                path: "/authManage",
-                id: 120,
-                code: 10120,
-                component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
-                meta: {
-                    name: '角色管理',
-                    icon: 'classtime'
-                },
-            },
+            // {
+            //     path: "/authManage",
+            //     id: 120,
+            //     code: 10120,
+            //     component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+            //     meta: {
+            //         name: '角色管理',
+            //         icon: 'classtime'
+            //     },
+            // },
             {
                 path: "/userManage",
                 id: 108,
@@ -423,7 +446,18 @@ export const asyncRouter = [
                     name: '用户管理',
                     icon: 'classmate'
                 },
-            }, {
+            },
+            {
+                path: "/gradeManage",
+                id: 107,
+                code: 10107,
+                component: resolve => require(["@/views/authManage/gradeManage/index.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                meta: {
+                    name: '打分规则',
+                    icon: 'classtime'
+                },
+            },
+            {
                 path: "/templateManage4",
                 id: 129,
                 code: 10129,

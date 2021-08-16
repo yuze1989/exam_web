@@ -78,72 +78,45 @@
         label="生源省份"
         header-align="center"
         align="center"
-        prop="province"
-      >
+        prop="province">
       </el-table-column>
-      <el-table-column
-          label="素描分数"
-          header-align="center"
-          align="center"
-          prop="province"
-      >
-      </el-table-column>
-      <el-table-column
-          label="色彩分数"
-          header-align="center"
-          align="center"
-          prop="province"
-      >
-      </el-table-column>
-      <el-table-column
-          label="速写分数"
-          header-align="center"
-          align="center"
-          prop="province"
-      >
-      </el-table-column><el-table-column
-        label="设计分数"
-        header-align="center"
-        align="center"
-        prop="province"
-    >
-    </el-table-column>
+      <template v-if="dataList.records.length>0">
+        <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
+          <template slot-scope="scope">
+            <div v-text="scope.row.subjectList[index].score"></div>
+<!--            <el-input  @keyup.enter.native="save(scope.row)"></el-input>-->
+          </template>
+        </el-table-column>
+      </template>
+
       <el-table-column
           label="总分"
           header-align="center"
           align="center"
-          prop="province"
+          prop="score"
       >
       </el-table-column>
       <el-table-column
           label="机构内排名"
           header-align="center"
           align="center"
-          prop="province"
+          prop="rankInStudio"
       >
       </el-table-column>
       <el-table-column
           label="总排名"
           header-align="center"
           align="center"
-          prop="province"
+          prop="rankInProvince"
       >
       </el-table-column>
-      <div       v-if="dataList.records.length>0">
-        <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.subjectList[index].score" @keyup.enter.native="save(scope.row)"></el-input>
-          </template>
-        </el-table-column>
-      </div>
-
-<!--      <el-table-column label="操作" width="130" header-align="center">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button type="text" size="small" @click="save(scope.row)"-->
-<!--            >详情</el-button-->
-<!--          >-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="操作" width="130" header-align="center" align="center">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="save(scope.row)"
+          >详情</el-button
+          >
+        </template>
+      </el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -220,33 +193,26 @@ export default {
     },
 
     getList() {
-      // let roleId = this.search.state == -1 ? null : this.search.state;
-      // let params = {
-      //   current: this.form.pageIndex,
-      //   size: this.form.pageSize,
-      //   admissionTicketCode: this.search.admissionTicketCode,
-      // };
-      // this.$axios
-      //   .post('/score/scoreList', params)
-      //   .then((res) => {
-      //     this.dataList.pageIndex = res.result.pageNum;
-      //     this.dataList.total = res.result.total;
-      //     (this.dataList.pageSize = res.result.pageSize), (this.dataList.pages = res.result.pageNum);
-      //     this.dataList.records = res.result.list;
-      //   })
-      //   .catch(() => {});
-      // this.search.admissionTicketCode = ""
+      let roleId = this.search.state == -1 ? null : this.search.state;
+      let params = {
+        current: this.form.pageIndex,
+        size: this.form.pageSize,
+        admissionTicketCode: this.search.admissionTicketCode,
+      };
+      this.$axios
+          .post('/score/scoreList', params)
+          .then((res) => {
+            this.dataList.pageIndex = res.result.pageNum;
+            this.dataList.total = res.result.total;
+            (this.dataList.pageSize = res.result.pageSize), (this.dataList.pages = res.result.pageNum);
+            this.dataList.records = res.result.list;
+          })
+          .catch(() => {});
     },
 
     save (row) {
-      let params = {
-        admissionTicketCode: '',
-        id: row.id,
-        schoolId: 0,
-        subjectList: row.subjectList
-      }
       this.$axios
-        .post('/score/scoreSave', params)
+        .get('/score/scoreDetail?ticketCode='+row.admissionTicketCode)
         .then((res) => {
           if(res.code === 200) {
             this.$message({

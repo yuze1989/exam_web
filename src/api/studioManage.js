@@ -55,6 +55,14 @@ export function examinationList2(data) {
     data
   })
 }
+// 二维码模板列表
+export function examinationList3(data) {
+  return request({
+    url:  '/ticket/qrCodeList',
+    method: 'POST',
+    data
+  })
+}
 
 // 关联机构
 export function apiRelationStudio(data) {
