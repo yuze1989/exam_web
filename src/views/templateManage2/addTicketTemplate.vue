@@ -38,7 +38,7 @@
             <div class="title">二维码字段</div>
             <div>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.zkzh">准考证号</el-checkbox>
+                <el-checkbox disabled v-model="form.subjectList.zkzh">准考证号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox v-model="form.subjectList.sfzhm">身份证号码</el-checkbox>
@@ -47,7 +47,7 @@
                 <el-checkbox v-model="form.subjectList.xm">姓名</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.km"> 科目</el-checkbox>
+                <el-checkbox disabled v-model="form.subjectList.km"> 科目</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox v-model="form.subjectList.kc">考场</el-checkbox>
@@ -56,7 +56,7 @@
                 <el-checkbox v-model="form.subjectList.xb">性别</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.ksbh">考试编号</el-checkbox>
+                <el-checkbox disabled v-model="form.subjectList.ksbh">考试编号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox v-model="form.subjectList.ksdz">考试地址</el-checkbox>

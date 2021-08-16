@@ -8,7 +8,8 @@
     width="40%"
     center
   >
-    <div class="header-title" slot="title">新增</div>
+    <div class="header-title" v-if="isAdd==1" slot="title">新增</div>
+    <div class="header-title" v-if="isAdd==0" slot="title">编辑</div>
     <el-form
       label-width="100px"
       :model="from"
@@ -49,7 +50,7 @@
           ></el-input>
         </el-col>
       </el-form-item> -->
-      <el-form-item v-if="isAdd" label="用户密码" prop="password">
+      <el-form-item label="用户密码" prop="password">
         <el-col :span="24">
           <el-input
             class="brand-input"
@@ -107,8 +108,7 @@ export default {
       this.$emit("update:visible", false);
     },
     open() {
-      //console.log(this.editItem)
-      this.getRoleList();
+
       if (this.isAdd) {
         this.from = {
           name: "",
@@ -150,17 +150,9 @@ export default {
     add() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          // if (!this.from.useType) {
-          //   this.$message.error("请选择类型");
-          //
-          //   return;
-          // }
-
           let params = {
             userName: this.from.name,
-            // roleId: this.from.useType,
             loginCode: this.from.account,
-            // mobilePhone: this.from.phone,
             password: this.from.password,
           };
           this.$axios
@@ -185,21 +177,12 @@ export default {
         this.$message.error("输入用户名");
         return;
       }
-      if (!this.from.useType) {
-        this.$message.error("请选择角色");
-        return;
-      }
-
-      if (!this.from.phone) {
-        this.$message.error("请输入手机号");
-        return;
-      }
 
       let params = {
+        loginCode:this.from.account,
         userName: this.from.name,
-        // roleId: this.from.useType,
-        // mobilePhone: this.from.phone,
         id: this.editItem.id,
+        password:this.from.password
       };
       this.$axios
         .post('/user/update', params)

@@ -2,10 +2,11 @@
   <section class="form_border">
     <div class="header">
       <div class="from-wrap">
-        <el-button class="meiyuan_btn" type="primary" size="medium" @click="add" style="position: absolute"
-        >新增用户</el-button
-        >
-        <el-form :inline="true" :model="search" class="demo-form-inline" style="display: flex;justify-content: flex-end;height: 36px">
+
+        <el-form :inline="true" :model="search" class="demo-form-inline" style="display: flex;justify-content: flex-start;height: 36px">
+          <el-button class="meiyuan_btn" type="primary" size="medium" @click="add" style="position: absolute"
+          >新增用户</el-button
+          >
           <!-- <el-col :span="5">
             <el-select v-model="search.state" placeholder="请选择">
               <el-option
@@ -17,16 +18,16 @@
             </el-select>
           </el-col> -->
 
-          <el-form-item>
-            <el-input
-                v-model="search.userName"
-                placeholder="用户名"
-            ></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-            <!-- <el-button type="warning" @click="reset">重置</el-button> -->
-          </el-form-item>
+<!--          <el-form-item>-->
+<!--            <el-input-->
+<!--                v-model="search.userName"-->
+<!--                placeholder="用户名"-->
+<!--            ></el-input>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item>-->
+<!--            <el-button type="primary" @click="onSubmit">查询</el-button>-->
+<!--            &lt;!&ndash; <el-button type="warning" @click="reset">重置</el-button> &ndash;&gt;-->
+<!--          </el-form-item>-->
         </el-form>
       </div>
     </div>
@@ -242,11 +243,15 @@ export default {
         type: "warning",
       })
         .then(() => {
-          // this.resetPWD(item);
-          this.$message({
-            type: "success",
-            message: "已重置",
-          });
+          this.editItemData = item;
+          this.account = item.loginCode;
+          this.username = item.userName;
+          this.isAdd = 0;
+          this.isAddBrand = true;
+          // this.$message({
+          //   type: "success",
+          //   message: "已重置",
+          // });
         })
         .catch(() => {
           this.$message({
@@ -325,7 +330,7 @@ export default {
   },
   watch: {
     dataList (val) {
-      console.log(val,'val---------')
+
     }
   },
   mounted() {},
