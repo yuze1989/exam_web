@@ -21,10 +21,10 @@
           style="margin-left: 10px;"
         >
           <el-option
-            v-for="province in provinceList"
-            :key="province.province"
-            :value="province.id"
-            :label="province.province"
+            v-for="item in provinceList"
+            :key="item.provinceCode"
+            :label="item.province"
+            :value="item.provinceCode"
           ></el-option>
         </el-select>
 
@@ -160,7 +160,7 @@ export default {
   data() {
     return {
       Allocated: 'forms.maxExamCode',
-      provinceList: provinceCodeList,
+      provinceList: [],
       formsData: {
         examrooms: [],
       },
@@ -205,6 +205,11 @@ export default {
           }))
         })
         .catch(() => {})
+    },
+    getProvinceList() {
+        this.$axios.get(this.API.studentsManage.examRoomProvince).then(res=>{
+            this.provinceList = res.result || []
+        }).catch(()=>{})
     },
     getExamCount() {},
     search(payload) {
@@ -370,6 +375,7 @@ export default {
   },
   mounted() {
     this.getExamList()
+    this.getProvinceList()
   },
 }
 </script>

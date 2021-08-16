@@ -134,7 +134,7 @@
               v-model="item.province"
               style="width: 180px;"
               placeholder="选择省份"
-              @change="dataChange"
+              @change="dataChange(item,index)"
             >
               <el-option
                 v-for="(item, i) in provinceList"
@@ -343,8 +343,14 @@ export default {
   mounted() {
   },
   methods: {
-    dataChange(event,ss){
-      console.log(event,ss);
+    dataChange(item,index){
+      console.log(item,index,'item,index')
+      this.provinceList.map(j =>{
+        if(item.province == j.provinceCode){
+          this.address[index].province = j.province
+          this.address[index].provinceCode = j.provinceCode
+        }
+      })
     },
     getProvinceList() {
       this.$axios
@@ -401,6 +407,7 @@ export default {
     // api
 
     add() {
+      console.log(this.address,'this.address,')
       this.$refs.examForm.validate((valid) => {
         if (valid) {
           if(this.from.enrollEndTime < this.from.enrollStartTime){
@@ -485,6 +492,7 @@ export default {
       this.subject.splice(index, 1)
     },
     edit() {
+      console.log(this.address,'this.address,')
       this.$refs.examForm.validate((valid) => {
         if (valid) {
           if(this.from.enrollEndTime < this.from.enrollStartTime){

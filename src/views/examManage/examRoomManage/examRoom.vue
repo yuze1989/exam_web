@@ -72,7 +72,7 @@
 
         <el-form-item>
             <el-select
-              v-model="selections.provinceCode "
+              v-model="selections.provinceCode"
               placeholder="生源省份"
               value-key="province"
               clearable
