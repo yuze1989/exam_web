@@ -32,7 +32,7 @@
           </div>
           <div class="display-center">
             <div class="title">二维码名称</div>
-            <el-input v-model="form.organizer" style="width:200px;margin-left:50px;"  placeholder="请输入主办单位"></el-input>
+            <el-input v-model="form.organizer" style="width:200px;margin-left:34px;"  placeholder="请输入二维码名称"></el-input>
           </div>
             <div class="display-center">
               <div class="title">二维码字段</div>
@@ -66,57 +66,6 @@
               </div>
             </div>
         </div>
-        <!--列表-->
-<!--        <el-table-->
-<!--            :data="examDetails.subjectList"-->
-<!--            highlight-current-row-->
-<!--            v-loading="listLoading"-->
-<!--            border-->
-<!--            :header-cell-style="{-->
-<!--                background: '#08223c',-->
-<!--                color: '#fff',-->
-<!--                border: 'none',-->
-<!--            }"-->
-<!--        >-->
-<!--          <el-table-column-->
-<!--              label="科目"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectName"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--              label="考试日期"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectDate"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--              label="考试开始时间"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectStarttime"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--          <el-table-column-->
-<!--              label="考试结束时间"-->
-<!--              header-align="center"-->
-<!--              align="center"-->
-<!--              prop="subjectEndtime"-->
-<!--          >-->
-<!--          </el-table-column>-->
-<!--        </el-table>-->
-        <!-- 注意事项 -->
-<!--        <div class="careful-matter">-->
-<!--          <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px"  name="" id="" placeholder="多行输入"></textarea>-->
-<!--        </div>-->
-        <!-- 保存 -->
-<!--        <el-button-->
-<!--            @click='getImage'-->
-<!--            type="primary"-->
-<!--        >生成图片</el-button-->
-<!--        >-->
         <div class="confirm">
           <el-button type="primary" style="margin-top:30px;margin-left: 150px" @click="examConfirm"> 保存</el-button>
         </div>
@@ -129,7 +78,7 @@
               <div style="font-size: 70px;
     font-weight: 700;
     letter-spacing: 40px;
-    padding-left: 40px;">二维码</div>
+    padding-left: 40px;margin-bottom: 20px">二维码</div>
               <img src="@/assets/erweima.png" alt="" style="width: 120px;height: 120px;position: absolute;left: 60px;top: 270px">
               <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考试编号：XXXXXXXX</div>
               <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;">考试名称：XXXXXXXX</div>
