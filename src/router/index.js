@@ -98,7 +98,7 @@ export const asyncRouter = [
                 component: resolve => require(["@/views/examManage/examList/index.vue"], resolve),
                 meta: {
                     name: '考试信息',
-                    icon: 'classmate'
+                    icon: 'notice-fill'
                 }
             },
             {
