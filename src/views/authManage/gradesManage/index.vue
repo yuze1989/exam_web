@@ -151,24 +151,7 @@ export default {
       this.getList();
     },
     inputNum(target){
-      let timenow = target.timeStamp;
-      let iscontu = true;
-      this.arr.push(timenow);
-      let i;
-      for(i in this.arr){
-        if(Math.ceil(this.arr[this.arr.length-1]) - Math.ceil(this.arr[this.arr.length-2]) < 3000){
-          iscontu = true;
-
-        }else{
-          iscontu = false;
-
-        }
-        if(i>0 && this.arr.length == parseInt(i)+1){
-          if(iscontu == true){
-            return
-          }
-        }
-      }
+      this.getList();
     },
 
     getList() {

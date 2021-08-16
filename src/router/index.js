@@ -123,6 +123,17 @@ export const asyncRouter = [
                     icon: 'notice-fill'
                 },
             },
+            {
+                path: "/addTicketTemplate",
+                id: 123,
+                code: 10105,
+                name:'AddTicketTemplate',
+                component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+                meta: {
+                    name: '关联考试',
+                    icon: 'classmate'
+                },
+            },
 
 
         ]
@@ -458,18 +469,6 @@ export const asyncRouter = [
                     icon: 'classmate'
                 },
             },
-            {
-                path: "/addTicketTemplate",
-                id: 105,
-                code: 10105,
-                name:'AddTicketTemplate',
-                component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
-                meta: {
-                    name: '关联考试',
-                    icon: 'classmate'
-                },
-            },
-
         ]
     },
 
