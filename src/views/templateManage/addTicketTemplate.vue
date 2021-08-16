@@ -21,7 +21,7 @@
                 </div>
                <div class="display-center">
                     <div class="title">考生省份</div>
-                      <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
+                      <el-select v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
                         <el-option
                             v-for="item in studentAreaOption"
                             :key="item.provinceCode"
@@ -210,16 +210,20 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
-      examId:""
+      examId:"",
+      oddCode:"",
+      oddPro:"",
     };
   },
   created() {
-     this.getExamList()
-     this.getList();
+
     //接收参数
     this.examId = this.$route.params.examId;
     if(this.examId != undefined){
       this.get_mb();
+    }else{
+      this.getExamList()
+      this.getList();
     }
   },
 
@@ -229,13 +233,15 @@ export default {
       this.$axios
           .post('/ticket/ticketDetail?id='+this.examId)
           .then((res) => {
-            this.form.examNameNo = res.result.examName;
             this.form.studentAreaName =res.result.province;
             this.form.studentAreaCode =res.result.provinceCode;
             this.form.organizer =res.result.organizer;
             this.form.examTitle =res.result.examTitle;
             this.form.carefulMatter =res.result.remark;
-
+            this.oddCode = res.result.examId;
+            this.oddPro = res.result.provinceCode;
+            this.getExamList()
+            this.getList();
           })
           .catch(() => {});
     },
@@ -292,13 +298,19 @@ export default {
       apiGetProvinceByExamId({
         examId: this.form.examNameNo
       }).then(res=>{
-        this.studentAreaOption = res.result
+        this.studentAreaOption = res.result;
+        if(this.oddPro){
+          this.studentChange(this.oddPro)
+        }
       })
     },
     // 查询考试列表
     getExamList(){
       apiExamList().then(res=>{
-        this.examNameOption = res.result
+        this.examNameOption = res.result;
+        if(this.oddCode){
+          this.examNameChange(this.oddCode)
+        }
       })
     },
      transformRequest(obj) {
@@ -321,6 +333,7 @@ export default {
         remark: this.form.carefulMatter,
         schoolId:""
       }
+
 
       let formData = new FormData();
       let file = this.base64toFile(this.imgUrl);
@@ -386,6 +399,7 @@ export default {
     examNameChange(e){
       this.examNameOption.map(item =>{
         if(item.id == e){
+          this.form.examNameNo = item.id;
           this.form.examName = item.name
           this.form.studentAreaName = ''
           this.form.studentAreaCode = ''
@@ -400,7 +414,7 @@ export default {
       this.studentAreaOption.map(item =>{
         if(item.provinceCode == e){
           this.form.studentAreaName = item.province
-          this.form.suudentAreaCode = item.provinceCode
+          this.form.studentAreaCode = item.provinceCode
         }
       })
     },
