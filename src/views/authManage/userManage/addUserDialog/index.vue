@@ -150,11 +150,11 @@ export default {
     add() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          if (!this.from.useType) {
-            this.$message.error("请选择类型");
-
-            return;
-          }
+          // if (!this.from.useType) {
+          //   this.$message.error("请选择类型");
+          //
+          //   return;
+          // }
 
           let params = {
             userName: this.from.name,

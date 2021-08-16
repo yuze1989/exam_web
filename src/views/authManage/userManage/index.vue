@@ -2,6 +2,9 @@
   <section class="form_border">
     <div class="header">
       <div class="from-wrap">
+        <el-button class="meiyuan_btn" type="primary" size="medium" @click="add" style="position: absolute"
+        >新增用户</el-button
+        >
         <el-form :inline="true" :model="search" class="demo-form-inline" style="display: flex;justify-content: flex-end;height: 36px">
           <!-- <el-col :span="5">
             <el-select v-model="search.state" placeholder="请选择">
@@ -13,6 +16,7 @@
               ></el-option>
             </el-select>
           </el-col> -->
+
           <el-form-item>
             <el-input
                 v-model="search.userName"
@@ -23,13 +27,7 @@
             <el-button type="primary" @click="onSubmit">查询</el-button>
             <!-- <el-button type="warning" @click="reset">重置</el-button> -->
           </el-form-item>
-
         </el-form>
-      </div>
-      <div>
-<!--        <el-button class="meiyuan_btn" type="primary" size="medium" @click="add"-->
-<!--          >新增用户</el-button-->
-<!--        >-->
       </div>
     </div>
     <!--列表-->
@@ -76,7 +74,7 @@
         label="用户角色"
         header-align="center"
         align="center"
-        prop="roleName"
+        prop="role"
       >
       </el-table-column>
       <!-- <el-table-column
@@ -86,16 +84,16 @@
         prop="mobilePhone"
       >
       </el-table-column> -->
-      <el-table-column
-        label="创建时间"
-        header-align="center"
-        align="center"
-        prop="regTime"
-      >
-      </el-table-column>
-      <el-table-column label="状态" width="130" header-align="center">
+<!--      <el-table-column-->
+<!--        label="创建时间"-->
+<!--        header-align="center"-->
+<!--        align="center"-->
+<!--        prop="regTime"-->
+<!--      >-->
+<!--      </el-table-column>-->
+      <el-table-column label="状态" width="130" header-align="center" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.state == 0 ? "正常" : "禁用" }}</span>
+          <span style="margin: 0 auto">{{ scope.row.state == 0 ? "正常" : "禁用" }}</span>
           <el-switch
             v-model="scope.row.state"
             :active-value="0"
@@ -103,6 +101,7 @@
             active-color="#13ce66"
             inactive-color="#494949"
             @change="stopItem(scope.row)"
+            style="display: flex;justify-content: center"
           >
           </el-switch>
         </template>

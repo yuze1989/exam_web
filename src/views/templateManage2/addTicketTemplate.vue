@@ -21,7 +21,7 @@
           </div>
           <div class="display-center">
             <div class="title">生源省份</div>
-            <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
+            <el-select v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
               <el-option
                   v-for="item in studentAreaOption"
                   :key="item.provinceCode"
@@ -170,7 +170,7 @@ export default {
       this.$axios
           .post('/ticket/qrCodeDetail?id='+this.examId)
           .then((res) => {
-            this.form.examNameNo = res.result.examName;
+            this.form.examNameNo = res.result.examId;
             this.form.studentAreaName =res.result.province;
             this.form.studentAreaCode =res.result.provinceCode;
             this.form.qrcodeName =res.result.qrcodeName;
@@ -350,6 +350,7 @@ export default {
       this.studentAreaOption.map(item =>{
         if(item.provinceCode == e){
           this.form.studentAreaName = item.province
+          this.form.studentAreaCode = item.provinceCode
         }
       })
     },
