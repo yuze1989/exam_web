@@ -293,6 +293,7 @@ export default {
                   type: 'success',
                 })
                 this.$emit('addSuccess')
+                this.$router.go(-1);
               }
             })
             .catch(() => {})
@@ -307,6 +308,7 @@ export default {
                   type: 'success',
                 })
                 this.$emit('addSuccess')
+                this.$router.go(-1);
               }
             })
             .catch(() => {})

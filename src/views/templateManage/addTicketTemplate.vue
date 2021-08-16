@@ -229,7 +229,7 @@ export default {
       this.$axios
           .post('/ticket/ticketDetail?id='+this.examId)
           .then((res) => {
-            this.form.examNameNo = res.result.examCode;
+            this.form.examNameNo = res.result.examName;
             this.form.studentAreaName =res.result.province;
             this.form.studentAreaCode =res.result.provinceCode;
             this.form.organizer =res.result.organizer;
@@ -337,6 +337,7 @@ export default {
                   message: '修改成功',
                   type: 'success',
                 })
+                this.$router.go(-1);
                 this.$emit('addSuccess')
               }
             })
@@ -348,9 +349,10 @@ export default {
             .then((res) => {
               if (res) {
                 this.$message({
-                  message: '修改成功',
+                  message: '添加成功',
                   type: 'success',
                 })
+                this.$router.go(-1);
                 this.$emit('addSuccess')
               }
             })

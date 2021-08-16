@@ -434,7 +434,18 @@ export const asyncRouter = [
                     name: '用户管理',
                     icon: 'classmate'
                 },
-            }, {
+            },
+            {
+                path: "/gradeManage",
+                id: 107,
+                code: 10107,
+                component: resolve => require(["@/views/authManage/gradeManage/gradeRule.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                meta: {
+                    name: '打分规则',
+                    icon: 'classtime'
+                },
+            },
+            {
                 path: "/templateManage4",
                 id: 129,
                 code: 10129,
