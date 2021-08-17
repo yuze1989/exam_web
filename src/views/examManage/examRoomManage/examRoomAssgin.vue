@@ -1,11 +1,12 @@
 <template>
   <div style="width: 100%; text-align: center;">
-    <el-form :model="formsData" :rules="rules" ref="formsData" style="">
+    <el-form :model="formsData" :rules="rules" ref="ruleForm" style="">
       <el-form-item>
         <el-select
           v-model="forms.examId"
           placeholder="考试名称"
           value-key="value"
+          @change="examChange"
         >
           <el-option
             v-for="item in examList"
@@ -19,6 +20,7 @@
           placeholder="选择省份"
           v-model="forms.provinceCode"
           style="margin-left: 10px;"
+          @change="provinceChange"
         >
           <el-option
             v-for="item in provinceList"
@@ -31,7 +33,7 @@
         <el-button
           type="primary"
           :loading="loading"
-          @click="search()"
+          @click="search('ruleForm')"
           class="meiyuan_btn"
           style="margin-left: 10px;"
         >
@@ -207,10 +209,47 @@ export default {
         })
         .catch(() => {})
     },
-    getProvinceList() {
-        this.$axios.get(this.API.studentsManage.examRoomProvince).then(res=>{
-            this.provinceList = res.result || []
-        }).catch(()=>{})
+    init(type){ //1.选择考试 不清考试id, 清省provinceList  province provinceCode; 2.选择省份  不清考试id 省provinceList  province provinceCode
+      let newForms = {
+        ...this.forms,
+        examName: '', //考试名
+        examrooms: [],
+        studioAreaName: '', //机构名
+        examineeCount: '', //考生数
+        distributCount: '', //已分配考考生
+        maxExamCode: '', //已分配考场数
+        unDistributCount: '', //未分配学生
+      }
+      if(type==1){
+        newForms.provinceCode = '' //省
+        newForms.province = '' //省
+        this.provinceList = []
+      }
+      this.forms = newForms
+      this.origionObj = {
+        unDistributCount: '',
+        maxExamCode: '',
+        distributCount: '',
+      }
+      this.examrooms = []
+      this.unDistributCount2 = 0
+      this.count= 0
+      this.formsData = {
+        examrooms: [],
+      }
+    },
+    examChange(value){
+      console.log(value,'value')
+      this.init('1')
+      this.getProvinceList(value)
+    },
+    provinceChange(value){
+      this.init('2')
+    },
+    getProvinceList(examId) {
+      this.$axios.get(`${this.API.examinfo.getProvinceByExamId}?examId=${examId}`).then(res=>{
+        this.provinceList = res.result || []
+      }).catch(()=>{})
     },
     getExamCount() {},
     search(payload) {
@@ -218,6 +257,15 @@ export default {
         examId: this.forms.examId,
         provinceCode: this.forms.provinceCode,
       }
+      if(!this.forms.examId){
+        this.$message.error("请先选择查询的考试")
+        return
+      }
+      if(!this.forms.provinceCode){
+        this.$message.error("请先选择查询的省份")
+        return
+      }
+      this.forms.maxExamCode=0
       this.$axios
         .get(
           `${this.API.studentsManage.examRoomCount}?examId=${this.forms.examId}&provinceCode=${this.forms.provinceCode}`,
@@ -320,7 +368,7 @@ export default {
       // if (!this.forms.provinceCode) {
       //   this.$message({
       //     type: 'error',
-      //     message: '请选择省份1',
+      //     message: '请选择省份',
       //   })
       //   return
       // }
@@ -380,6 +428,8 @@ export default {
             .catch(() => {
               this.loading = false
             })
+        }else{
+           this.loading = false
         }
       })
     },
@@ -389,7 +439,6 @@ export default {
   },
   mounted() {
     this.getExamList()
-    this.getProvinceList()
   },
 }
 </script>
