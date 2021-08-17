@@ -19,17 +19,17 @@
                             </el-option>
                     </el-select>
                 </div>
-               <div class="display-center">
-                    <div class="title">考生省份</div>
-                      <el-select v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
-                        <el-option
-                            v-for="item in studentAreaOption"
-                            :key="item.provinceCode"
-                            :label="item.province"
-                            :value="item.provinceCode">
-                        </el-option>
-                    </el-select>
-               </div>
+<!--               <div class="display-center">-->
+<!--                    <div class="title">考生省份</div>-->
+<!--                      <el-select v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">-->
+<!--                        <el-option-->
+<!--                            v-for="item in studentAreaOption"-->
+<!--                            :key="item.provinceCode"-->
+<!--                            :label="item.province"-->
+<!--                            :value="item.provinceCode">-->
+<!--                        </el-option>-->
+<!--                    </el-select>-->
+<!--               </div>-->
               <div class="display-center">
                    <div class="title">主办单位</div>
                    <el-input v-model="form.organizer" style="width:200px;margin-left:50px;"  placeholder="请输入主办单位"></el-input>
@@ -82,7 +82,7 @@
             </el-table>
             <!-- 注意事项 -->
             <div class="careful-matter">
-                <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px"  name="" id="" placeholder="多行输入"></textarea>
+                <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px;padding: 10px;border-radius: 4px;border: 1px solid #ece9e9;font-size: 14px;"  name="" id="" placeholder="多行输入"></textarea>
             </div>
             <!-- 保存 -->
                 <el-button

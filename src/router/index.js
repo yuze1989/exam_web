@@ -503,6 +503,17 @@ export const asyncRouter = [
                     icon: 'classmate'
                 },
             },
+            {
+                path: "/teacherManageAbout",
+                id: 105,
+                code: 10105,
+                name:'teacherManageAbout',
+                component: resolve => require(["@/views/teacherManage/examList/index.vue"], resolve),
+                meta: {
+                    name: '教师关联考试',
+                    icon: 'classmate'
+                },
+            },
         ]
     },
 

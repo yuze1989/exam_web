@@ -41,13 +41,13 @@
           prop="examName"
       >
       </el-table-column>
-      <el-table-column
-          label="所属省份"
-          header-align="center"
-          align="center"
-          prop="province"
-      >
-      </el-table-column>
+<!--      <el-table-column-->
+<!--          label="所属省份"-->
+<!--          header-align="center"-->
+<!--          align="center"-->
+<!--          prop="province"-->
+<!--      >-->
+<!--      </el-table-column>-->
       <el-table-column
           label="二维码标题"
           header-align="center"
