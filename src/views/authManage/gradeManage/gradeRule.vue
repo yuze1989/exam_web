@@ -19,9 +19,59 @@
           <selectProvince ref="selectProvinceRef" v-show="!form.rule.id"></selectProvince>
         </el-col>
       </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span v-if="!form.rule.id">请选择</span>区域:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.rule.provinceCode" placeholder="请选择区域" size="medium" @change="selArea" v-if="false">
+            <el-option v-for="province in provinceList" :key="province.province" :value="province.id" :label="province.province">
+            </el-option>
+          </el-select>
+          <span v-if="form.rule.id" class="title18">{{form.rule.province}}</span>
+          <selectProvince ref="selectProvinceRef" v-show="!form.rule.id"></selectProvince>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span v-if="!form.rule.id">打分</span>算法:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.rule.provinceCode" placeholder="请选择打分算法" size="medium" @change="selArea" v-if="false">
+            <el-option v-for="province in provinceList" :key="province.province" :value="province.id" :label="province.province">
+            </el-option>
+          </el-select>
+          <span v-if="form.rule.id" class="title18">{{form.rule.province}}</span>
+          <selectProvince ref="selectProvinceRef" v-show="!form.rule.id"></selectProvince>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span v-if="!form.rule.id">二维码隐藏</span>区域:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.rule.provinceCode" placeholder="请选择二维码隐藏区域" size="medium" @change="selArea" v-if="false">
+            <el-option v-for="province in provinceList" :key="province.province" :value="province.id" :label="province.province">
+            </el-option>
+          </el-select>
+          <span v-if="form.rule.id" class="title18">{{form.rule.province}}</span>
+          <selectProvince ref="selectProvinceRef" v-show="!form.rule.id"></selectProvince>
+        </el-col>
+      </el-row>
       <el-row class="mt-20" v-if="!$route.query.id">
-        <span class="title18 mr-25">设置科目分数:</span>
+        <span class="title18 mr-25" style="color: #204BD6">设置科目分类:</span>
         <span class="title18" style="color: #204BD6">请选择考试科目并设置单科总分</span>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span v-if="!form.rule.id">科目</span>名称:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.rule.provinceCode" placeholder="请选择考试科目" size="medium" @change="selArea" v-if="false">
+            <el-option v-for="province in provinceList" :key="province.province" :value="province.id" :label="province.province">
+            </el-option>
+          </el-select>
+          <span v-if="form.rule.id" class="title18">{{form.rule.province}}</span>
+          <selectProvince ref="selectProvinceRef" v-show="!form.rule.id"></selectProvince>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span v-if="!form.rule.id">科目</span>分数:</el-col>
+        <el-col :span="12">
+          <el-input placeholder="请输入科目分数" v-model="form.rule.provinceCode"></el-input>
+        </el-col>
       </el-row>
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18">设置评分阶梯</el-col>
@@ -31,22 +81,29 @@
         </el-col>
         <span class="title18" :span="4">个阶梯</span>
       </el-row>
-      <el-row class="mt-20" style="width: 1000px">
-        <el-col :span="6" v-for="(course, idx) in scoreRulers" :key="idx" class="radioBox">
-          <!-- <el-checkbox :checked="course.used"></el-checkbox> -->
-          <el-radio v-model="form.rule.course" :label="course.text" class="radioItem" style="margin-right:5px;">{{course.text}}</el-radio>
-          <!-- <span>{{ course.text }}</span> -->
-          <el-input class="radioInp" style="width: 166px" placeholder="请设置科目分数" v-model="course.value"></el-input>
-        </el-col>
-      </el-row>
+<!--      <el-row class="mt-20" style="width: 1000px">-->
+<!--        <el-col :span="6" v-for="(course, idx) in scoreRulers" :key="idx" class="radioBox">-->
+<!--          &lt;!&ndash; <el-checkbox :checked="course.used"></el-checkbox> &ndash;&gt;-->
+<!--          <el-radio v-model="form.rule.course" :label="course.text" class="radioItem" style="margin-right:5px;">{{course.text}}</el-radio>-->
+<!--          &lt;!&ndash; <span>{{ course.text }}</span> &ndash;&gt;-->
+<!--          <el-input class="radioInp" style="width: 166px" placeholder="请设置科目分数" v-model="course.value"></el-input>-->
+<!--        </el-col>-->
+<!--      </el-row>-->
 
       <div class="lablestyle fw-b" style="width: 100%;color:#3E3D3D">
         填写说明：多条要求请分号隔开
       </div>
 
-      <div class="lablestyle fw-b" style="width: 100%; line-height: 8px;color:#3E3D3D">
+      <div class="lablestyle fw-b" style="width: 100%; line-height: 8px;color:#3E3D3D;position: relative;height: 60px">
+        填写示例：<span style="font-weight: 700;color: #000;font-size: 15px;">分级A:</span>
+        <div style="position: absolute;
+    left: 124px;
+    top: -14px;">
+          <p>符合实际规定及要求；造型标准；有较强表现塑造力。</p>
+          <p>占比：5%</p>
+          <p>打分范围 90 - 100</p>
+        </div>
 
-        填写示例：（A:90+；符合实际规定及要求；造型标准；有较强表现塑造力；占比：5%）
       </div>
 
       <div class="ruleGroup">
@@ -62,6 +119,15 @@
               <el-input v-model="exam.percentage" type="number" :min="0">
                 <template slot="append">%</template>
               </el-input>
+              <el-row>
+                <el-col :span="10">
+                  <el-input v-model="exam.percentage" type="number" :min="0"> </el-input>
+                </el-col>
+                <el-col :span="4" style="text-align: center;line-height: 40px">至</el-col>
+                <el-col :span="10">
+                  <el-input v-model="exam.percentage" type="number" :min="0"> </el-input>
+                </el-col>
+              </el-row>
             </div>
             <div class="rulePic">
               <el-image :src="exam.imgUrl" v-if="exam.imgUrl" class="ruleImage"></el-image>
@@ -103,7 +169,7 @@
 </template>
 
 <script>
-import { ossup } from '@/api/ossUp'
+// import { ossup } from '@/api/ossUp'
 import provinceCodeList from '../../../utils/provinceCode'
 import selectProvince from '@/components/SelectProvince'
 
@@ -141,18 +207,32 @@ export default {
   methods: {
     uploadchanged() {
       let file = this.$refs.fileup.files[0]
-      ossup('web/rules/', file).then((res) => {
-        const url = res.url
-        this.$refs.fileup.value = null; // 解决input[type='file']上传相同附件只传一次问题
-        if (this.tempExam) {
-          this.tempExam.imgUrl = url
-        } else {
-          this.form.rule.picUrl = url
+      var fromDate = new FormData();
+      fromDate.append("file",file)
+      this.$axios.post('/file/upload',fromDate).then(res=>{
+        if(res){
+          console.log(res.result);
+          this.tempExam.imgUrl = res.result;
+          // this.$message({
+          //   message: '添加成功',
+          //   type: 'success',
+          // })
+          // this.$router.go(-1)
         }
-      })
+      }).catch(()=>{})
+      // ossup('web/rules/', file).then((res) => {
+      //   const url = res.url
+      //   this.$refs.fileup.value = null; // 解决input[type='file']上传相同附件只传一次问题
+      //   if (this.tempExam) {
+      //     this.tempExam.imgUrl = url
+      //   } else {
+      //     this.form.rule.picUrl = url
+      //   }
+      // })
     },
     upToOss(exam) {
       this.tempExam = exam
+      console.log(exam);
       this.$refs.fileup.click()
     },
     //评分阶梯
@@ -346,11 +426,12 @@ export default {
         // margin: auto;
         .ruleInput {
           width: 272px;
-          height: 132px;
+          height: 90px;
           margin: 13px 16px 10px;
           textarea {
             border: none !important;
             resize: none;
+            height: 100%;
           }
         }
       }

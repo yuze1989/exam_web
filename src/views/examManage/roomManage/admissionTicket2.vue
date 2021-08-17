@@ -217,7 +217,22 @@ export default {
   methods: {
      // 生成和导出二维码
      exportQR(){
-
+       let params = {
+         current : this.form.pageIndex ,
+         size : this.form.pageSize ,
+         examName : this.form.examName,
+         roomCode :  this.form.examNo,
+         provinceCode : this.form.studentAreaCode,
+         examineeName : this.form.studentName,
+         schoolId :this.form.schoolId,
+         admissionTicketCode:this.form.admissionTicketCode
+       }
+       this.$axios
+           .post('/ticket/unionExamQRcode', params)
+           .then((res) => {
+             window.open(res.result)
+           })
+           .catch(() => {});
      },
      // 导出准考证
      exportTicket(){

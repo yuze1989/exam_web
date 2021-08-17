@@ -233,7 +233,7 @@ export default {
        this.$axios
            .post('/ticket/unionExamExport', params)
            .then((res) => {
-             // this.getList();
+             window.open(res.result)
            })
            .catch(() => {});
      },
