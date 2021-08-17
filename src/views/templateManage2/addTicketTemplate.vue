@@ -19,17 +19,17 @@
               </el-option>
             </el-select>
           </div>
-          <div class="display-center">
-            <div class="title">生源省份</div>
-            <el-select v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">
-              <el-option
-                  v-for="item in studentAreaOption"
-                  :key="item.provinceCode"
-                  :label="item.province"
-                  :value="item.provinceCode">
-              </el-option>
-            </el-select>
-          </div>
+<!--          <div class="display-center">-->
+<!--            <div class="title">生源省份</div>-->
+<!--            <el-select v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">-->
+<!--              <el-option-->
+<!--                  v-for="item in studentAreaOption"-->
+<!--                  :key="item.provinceCode"-->
+<!--                  :label="item.province"-->
+<!--                  :value="item.provinceCode">-->
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </div>-->
           <div class="display-center">
             <div class="title">二维码名称</div>
             <el-input v-model="form.qrcodeName" style="width:200px;margin-left:34px;"  placeholder="请输入二维码名称"></el-input>
@@ -61,6 +61,9 @@
               <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox v-model="form.subjectList.ksdz">考试地址</el-checkbox>
               </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.zwh">座位号</el-checkbox>
+              </el-row>
 
             </div>
           </div>
@@ -74,10 +77,7 @@
         <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
           <div class="template-example-dom" ref="ticketFile">
             <div class="title" style="height: 600px;background: #fff">
-              <div style="font-size: 70px;
-    font-weight: 700;
-    letter-spacing: 40px;
-    padding-left: 40px;margin-bottom: 20px">二维码</div>
+
               <img src="@/assets/erweima.png" alt="" style="width: 120px;height: 120px;position: absolute;left: 60px;top: 270px">
               <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.zkzh">准考证：XXXXXXXX</div>
               <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.km">科目：XXXXXXXX</div>
@@ -87,6 +87,7 @@
               <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;" v-show="form.subjectList.ksbh">考试编号：XXXXXXXX</div>
               <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;" v-show="form.subjectList.xb">性别：XXXXXXXX</div>
               <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.ksdz">考试地址：XXXXXXXX</div>
+              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.zwh">座位号：XXXXXXXX</div>
             </div>
           </div>
 
@@ -138,7 +139,8 @@ export default {
           kc:false,
           xb:false,
           ksbh:true,
-          ksdz:false
+          ksdz:false,
+          zwh:false
         },
       },
       isShow:true,
@@ -185,6 +187,7 @@ export default {
               xb:"性别",
               xm:"姓名",
               zkzh:"准考证号",
+              zwh:"座位号",
             }
             for(let i = 0 ; i < dArr.length; i++){
               for(let a in zdArr){
@@ -230,7 +233,7 @@ export default {
       apiGetSubjectList({
         examId: this.form.examNameNo
       }).then(res=>{
-        console.log(res.result);
+
         // this.studentAreaOption = res.result
       })
     },
@@ -268,6 +271,7 @@ export default {
         xb:"性别",
         xm:"姓名",
         zkzh:"准考证号",
+        zwh:"座位号",
       }
 
 

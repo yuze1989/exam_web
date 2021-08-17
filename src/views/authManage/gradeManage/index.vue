@@ -21,7 +21,7 @@
     >
 
       <el-table-column
-          label="用户ID"
+          label="序号"
           header-align="center"
           align="center"
           prop="id"
@@ -29,65 +29,44 @@
       </el-table-column>
 
       <el-table-column
-          label="账号"
+          label="考试编号"
           header-align="center"
           align="center"
-          prop="loginCode"
+          prop="examCode"
       >
       </el-table-column>
 
       <el-table-column
-          label="用户名"
+          label="考试名称"
           header-align="center"
           align="center"
-          prop="userName"
+          prop="examName"
       >
       </el-table-column>
       <el-table-column
-          label="用户角色"
+          label="省份"
           header-align="center"
           align="center"
-          prop="role"
+          prop="province"
       >
       </el-table-column>
-      <!-- <el-table-column
-        label="手机号"
-        header-align="center"
-        align="center"
-        prop="mobilePhone"
+      <el-table-column
+          label="科目"
+          header-align="center"
+          align="center"
+          prop="course"
       >
-      </el-table-column> -->
-      <!--      <el-table-column-->
-      <!--        label="创建时间"-->
-      <!--        header-align="center"-->
-      <!--        align="center"-->
-      <!--        prop="regTime"-->
-      <!--      >-->
-      <!--      </el-table-column>-->
-      <el-table-column label="状态" width="130" header-align="center" align="center">
-        <template slot-scope="scope">
-          <span style="margin: 0 auto">{{ scope.row.state == 0 ? "正常" : "禁用" }}</span>
-          <el-switch
-              v-model="scope.row.state"
-              :active-value="0"
-              :inactive-value="5"
-              active-color="#13ce66"
-              inactive-color="#494949"
-              @change="stopItem(scope.row)"
-              style="display: flex;justify-content: center"
-          >
-          </el-switch>
-        </template>
       </el-table-column>
-      <el-table-column label="操作" width="130" header-align="center">
+      <el-table-column
+          label="编辑日期"
+          header-align="center"
+          align="center"
+          prop="modifyAt"
+      >
+      </el-table-column>
+      <el-table-column label="操作" width="130" header-align="center" align="center">
         <template slot-scope="scope">
-          <!--          <el-button type="text" size="small" @click="editItem(scope.row)"-->
-          <!--            >编辑</el-button-->
-          <!--          >-->
-
-          <el-button type="danger" size="small" @click="restItem(scope.row)"
-          >密码重置</el-button
-          >
+             <el-button type="text" size="small" @click="editItem(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -137,7 +116,6 @@ export default {
 
   methods: {
     reset() {
-
       this.search.userName = "";
       this.getList();
     },
@@ -154,9 +132,7 @@ export default {
       this.getList();
     },
     editItem(item) {
-      this.editItemData = item;
-      this.isAdd = 0;
-      this.isAddBrand = true;
+      this.$router.push({ name: 'gradeManageAdd', params: {id: item.id}})
     },
     getStateString(state) {
       if (state == 0) {

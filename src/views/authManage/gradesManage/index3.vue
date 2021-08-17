@@ -222,10 +222,11 @@ export default {
                 .then((res) => {
                   if(res.code === 200) {
                     this.$message({
-                      message: '保存成功',
+                      message: '提交成功',
                       type: 'success',
                       duration: 1500,
                     })
+                    this.getList()
                   }
                 })
                 .catch(() => {});

@@ -182,11 +182,9 @@ export default {
       this.isAdd = true
     },
     editItemAction(item) {
-      console.log(item,'pppp')
       this.$router.push({ name: 'TeacherExamList', params: {
         examId: item.id
       }})
-      //StudioStatistics
       this.$router.push("/teacherExamList")
     },
     toShowInvite(item) {
@@ -251,7 +249,7 @@ export default {
             : this.forms.model.examStatus,
       }
       this.$axios
-        .post(this.API.teacher.examList, params)
+        .post('/teacher/examList', params)
         .then((res) => {
           this.list = res.result.records
           this.data = res.result

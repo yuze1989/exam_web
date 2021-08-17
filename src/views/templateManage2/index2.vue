@@ -24,10 +24,10 @@
           <div class="display-center">
             <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择画室名称" @change="studentChange">
               <el-option
-                  v-for="item in studentAreaOption"
-                  :key="item.provinceCode"
-                  :label="item.province"
-                  :value="item.provinceCode">
+                  v-for="item in examDetails"
+                  :key="item.studioId"
+                  :label="item.studioName"
+                  :value="item.studioId">
               </el-option>
             </el-select>
           </div>
@@ -36,11 +36,11 @@
     margin-left: 50px;
     width: 200px;" @click="examConfirm"> 导出成绩</el-button>
           </div>
-          <div class="display-center">
-            <el-button type="primary" style="margin-top: 0px;
-    margin-left: 50px;
-    width: 200px;" @click="examConfirm"> 导出作品</el-button>
-          </div>
+<!--          <div class="display-center">-->
+<!--            <el-button type="primary" style="margin-top: 0px;-->
+<!--    margin-left: 50px;-->
+<!--    width: 200px;" @click="examConfirm"> 导出作品</el-button>-->
+<!--          </div>-->
         </div>
       </div>
       <!-- 模板示例 -->
@@ -65,9 +65,7 @@ export default {
       imgUrl: '',
       listLoading: false,
       sels: [], //列表选中列
-      examDetails: {
-        subjectList: []
-      }, // 考试详情
+      examDetails: [], // 考试详情
       search: {
         name: "",
         mobilePhone: "",
@@ -164,13 +162,10 @@ export default {
         this.examDetails = res.result
       })
     },
-    // 查询考试下的省份
+    // 查询考试下的画室
     getProvinceByExamId(){
-      apiGetProvinceByExamId({
-        examId: this.form.examNameNo
-      }).then(res=>{
-        console.log(res.result);
-        this.studentAreaOption = res.result
+      this.$axios.get('/studio/getStudioByExamId?examId='+this.form.examNameNo).then(res=>{
+        this.examDetails = res.result
       })
     },
     // 查询考试列表
@@ -190,45 +185,17 @@ export default {
     },
     // 保存
     examConfirm(){
-      let data = {
-        examId : this.examId,
-        province: this.form.studentAreaCode,
-        provinceCode: this.form.studentAreaCode,
-        organizer: this.form.organizer,
-        examTitle : this.form.examTitle,
-        remark: this.form.carefulMatter,
-        schoolId:""
-      }
-
-      if(!this.imgUrl){
-        this.$message({
-          message: '请点击生成图片之后再保存',
-          type: 'error',
-        })
-        return
-      }
-      let formData = new FormData();
-
-      let file = this.base64toFile(this.imgUrl);
-
-
-
-      formData.append('ticketFile', file);
-
-
-
-
-
-      let url = `/ticket/ticketCreate?`+this.transformRequest(data);
+      let url = `score/scoreExport?examId=`+this.form.examNameNo+"&studioId="+this.form.studentAreaCode;
       this.$axios
-          .post(url, formData)
+          .get(url)
           .then((res) => {
             if (res) {
               this.$message({
-                message: '修改成功',
+                message: '导出成功',
                 type: 'success',
               })
-              this.$emit('addSuccess')
+              window.open(res.result)
+              // this.$emit('addSuccess')
             }
           })
           .catch(() => {})
@@ -261,7 +228,7 @@ export default {
           this.form.studentAreaName = ''
           this.form.studentAreaCode = ''
           this.studentAreaOption = []
-          this.getExamDetails()
+          // this.getExamDetails()
           this.getProvinceByExamId()
         }
       })

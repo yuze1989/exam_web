@@ -9,19 +9,67 @@
         <el-button type="primary" @click="back" size="mini" class="btn">返回</el-button>
       </el-row>
       <el-row class="w200 mt-20">
-        <el-col :span="8" class="title18"><span v-if="!form.rule.id">考试</span>名称:</el-col>
+        <el-col :span="8" class="title18"><span>考试</span>名称:</el-col>
         <el-col :span="12">
-          <el-select v-model="form.rule.provinceCode" placeholder="请选择考试" size="medium" @change="selArea" v-if="false">
-            <el-option v-for="province in provinceList" :key="province.province" :value="province.id" :label="province.province">
+          <el-select v-model="form.rule.examId" placeholder="请选择考试" size="medium" @change="examNameChange">
+            <el-option v-for="item in examIdList" :key="item.id" :value="item.id" :label="item.name">
             </el-option>
           </el-select>
-          <span v-if="form.rule.id" class="title18">{{form.rule.province}}</span>
-          <selectProvince ref="selectProvinceRef" v-show="!form.rule.id"></selectProvince>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span>请选择</span>区域:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.studentAreaName" style="width:200px;" placeholder="请选择区域" @change="studentChange">
+            <el-option
+                v-for="item in studentAreaOption"
+                :key="item.provinceCode"
+                :label="item.province"
+                :value="item.provinceCode">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span>打分</span>算法:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.gradeRule" placeholder="请选择打分算法" size="medium">
+            <el-option v-for="item in gradeRuleList" :key="item.id" :value="item.id" :label="item.name">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span>二维码隐藏</span>区域:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.hideSite" placeholder="请选择二维码隐藏区域" size="medium">
+            <el-option v-for="item in hideSiteList" :key="item.id" :value="item.id" :label="item.name">
+            </el-option>
+          </el-select>
         </el-col>
       </el-row>
       <el-row class="mt-20" v-if="!$route.query.id">
-        <span class="title18 mr-25">设置科目分数:</span>
+        <span class="title18 mr-25" style="color: #204BD6">设置科目分类:</span>
         <span class="title18" style="color: #204BD6">请选择考试科目并设置单科总分</span>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span>科目</span>名称:</el-col>
+        <el-col :span="12">
+          <el-select v-model="form.course" style="width:200px;" placeholder="请选择科目">
+            <el-option
+                v-for="item in courseList"
+                :key="item.subjectName"
+                :label="item.subjectName"
+                :value="item.subjectName">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span>科目</span>分数:</el-col>
+        <el-col :span="12">
+          <el-input placeholder="请输入科目分数" v-model="form.rule.score"></el-input>
+        </el-col>
       </el-row>
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18">设置评分阶梯</el-col>
@@ -31,28 +79,27 @@
         </el-col>
         <span class="title18" :span="4">个阶梯</span>
       </el-row>
-      <el-row class="mt-20" style="width: 1000px">
-        <el-col :span="6" v-for="(course, idx) in scoreRulers" :key="idx" class="radioBox">
-          <!-- <el-checkbox :checked="course.used"></el-checkbox> -->
-          <el-radio v-model="form.rule.course" :label="course.text" class="radioItem" style="margin-right:5px;">{{course.text}}</el-radio>
-          <!-- <span>{{ course.text }}</span> -->
-          <el-input class="radioInp" style="width: 166px" placeholder="请设置科目分数" v-model="course.value"></el-input>
-        </el-col>
-      </el-row>
 
       <div class="lablestyle fw-b" style="width: 100%;color:#3E3D3D">
         填写说明：多条要求请分号隔开
       </div>
 
-      <div class="lablestyle fw-b" style="width: 100%; line-height: 8px;color:#3E3D3D">
+      <div class="lablestyle fw-b" style="width: 100%; line-height: 8px;color:#3E3D3D;position: relative;height: 60px">
+        填写示例：<span style="font-weight: 700;color: #000;font-size: 15px;">分级A:</span>
+        <div style="position: absolute;
+    left: 124px;
+    top: -14px;">
+          <p>符合实际规定及要求；造型标准；有较强表现塑造力。</p>
+          <p>占比：5%</p>
+          <p>打分范围 90 - 100</p>
+        </div>
 
-        填写示例：（A:90+；符合实际规定及要求；造型标准；有较强表现塑造力；占比：5%）
       </div>
 
       <div class="ruleGroup">
         <div class="ruleCard mt-20" v-for="(exam, idx) in form.examples" :key="idx">
           <div class="ruleHead">
-            <span>{{ exam.grade }}</span>
+            <span>{{exam.grade}}</span>
             <span>:请添加评分描述</span>
           </div>
           <div class="ruleBody">
@@ -62,6 +109,15 @@
               <el-input v-model="exam.percentage" type="number" :min="0">
                 <template slot="append">%</template>
               </el-input>
+              <el-row>
+                <el-col :span="10">
+                  <el-input v-model="exam.scoreStart" type="number" :min="0"> </el-input>
+                </el-col>
+                <el-col :span="4" style="text-align: center;line-height: 40px">至</el-col>
+                <el-col :span="10">
+                  <el-input v-model="exam.scoreEnd" type="number" :min="0"> </el-input>
+                </el-col>
+              </el-row>
             </div>
             <div class="rulePic">
               <el-image :src="exam.imgUrl" v-if="exam.imgUrl" class="ruleImage"></el-image>
@@ -81,7 +137,7 @@
       <div class="sample">
         <el-input class="sampleInput" type="textarea" :rows="9" placeholder="请输入内容" v-model="form.rule.takePic">
         </el-input>
-        <div class="uploadCtn" @click="upToOss()">
+        <div class="uploadCtn" @click="upToOss2()">
           <div class="uploadIcon">
             +
             <span class="uploadDes" v-show="!form.rule.picUrl">上传图片</span>
@@ -93,8 +149,8 @@
         </div> -->
 
       </div>
-      <div style="width:100%;margin-top:50px">
-        <el-button type="primary" class="meiyuan_btn" @click="saveRule" style="float: right">保存</el-button>
+      <div style="width:100%;margin-top:50px;padding-bottom: 50px">
+        <el-button type="primary" class="meiyuan_btn" @click="saveRule" style="float: left">保存</el-button>
       </div>
       <input id="fileup" type="file" v-show="false" @change="uploadchanged" ref="fileup" />
     </div>
@@ -103,13 +159,17 @@
 </template>
 
 <script>
-import { ossup } from '@/api/ossUp'
+// import { ossup } from '@/api/ossUp'
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import provinceCodeList from '../../../utils/provinceCode'
 import selectProvince from '@/components/SelectProvince'
 
 export default {
   data() {
     return {
+      id:"",
+      one:false,
+      result:"",
       provinceList: provinceCodeList,
       scoreRulers: [
         { value: '', text: '色彩', used: true },
@@ -118,6 +178,25 @@ export default {
         { value: '', text: '设计', used: true },
       ],
       tempExam: null,
+      examIdList:[],
+      studentAreaOption: [],
+      gradeRuleList: [
+        {id:0,name:'算术平均算法'},
+        {id:1,name:'加权平均算法'},
+      ],
+      hideSiteList: [
+        {id:"",name:'不隐藏'},
+        {id:0,name:'左上'},
+        {id:1,name:'右上'},
+        {id:2,name:'左下'},
+        {id:3,name:'右下'},
+        {id:4,name:'上中'},
+        {id:5,name:'左中'},
+        {id:6,name:'右中'},
+        {id:7,name:'下中'},
+      ],
+      courseList:[],
+      isOne:false,
       form: {
         rule: {
           provinceCode: '',
@@ -126,33 +205,121 @@ export default {
           gradeLevel: 1,
           takePic: '',
           picUrl: '',
-          score: ''
+          score: '',
+          gradeRule:"",
+          hideSite:"",
         },
-        examples: []
+        examples: [],
+        studentAreaName: "",
+        studentAreaCode: "",
+        examName: "",
+        examNo:"",
+        examNameNo: "",
+        carefulMatter: '',
+        examTitle: ''
       }
     }
   },
+  created() {
+
+  },
   mounted() {
-    if (this.$route.query.id) {
+    if (this.$route.params.id) {
+      this.id = this.$route.params.id;
+      this.one = true;
       this.queryData()
+    }else{
+      this.one = false;
+      this.getKsList()
+      this.gradeChange()
     }
-    this.gradeChange()
   },
   methods: {
-    uploadchanged() {
-      let file = this.$refs.fileup.files[0]
-      ossup('web/rules/', file).then((res) => {
-        const url = res.url
-        this.$refs.fileup.value = null; // 解决input[type='file']上传相同附件只传一次问题
-        if (this.tempExam) {
-          this.tempExam.imgUrl = url
-        } else {
-          this.form.rule.picUrl = url
+    //获取考试列表
+    getKsList(){
+      this.$axios
+          .post('/ticket/examlist')
+          .then((res) => {
+            this.examIdList = res.result;
+            if(this.one && this.id){
+              this.examNameChange(this.result.examId)
+            }
+          })
+          .catch(() => {});
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examIdList.map(item =>{
+        if(item.id == e){
+          this.form.examNameNo = item.id;
+          this.form.examName = item.name;
+          this.form.rule.examId = item.id;
+          this.form.studentAreaName = ''
+          this.form.studentAreaCode = ''
+          this.studentAreaOption = []
+          this.getExamDetails()
+          this.getProvinceByExamId()
         }
       })
     },
+    // 查询考试下的省份
+    getProvinceByExamId(){
+      apiGetProvinceByExamId({
+        examId: this.form.examNameNo
+      }).then(res=>{
+        this.studentAreaOption = res.result;
+        if(this.one && this.id){
+          this.studentChange(this.result.provinceCode)
+        }
+      })
+    },
+    // 查询考试下的科目
+    getExamDetails(){
+      this.$axios.get(
+          '/examsubject/listByExamId?examId='+this.form.examNameNo
+      ).then(res=>{
+        this.courseList = res.result;
+
+      })
+      apiGetProvinceByExamId({
+        examId: this.form.examNameNo
+      }).then(res=>{
+        this.studentAreaOption = res.result;
+        if(this.oddPro){
+          this.studentChange(this.oddPro)
+        }
+      })
+    },
+    // 考生省份改变监听
+    studentChange(e){
+      this.studentAreaOption.map(item =>{
+        if(item.provinceCode == e){
+          this.form.studentAreaName = item.province
+          this.form.studentAreaCode = item.provinceCode
+        }
+      })
+    },
+    uploadchanged() {
+      let file = this.$refs.fileup.files[0]
+      var fromDate = new FormData();
+      fromDate.append("file",file)
+      this.$axios.post('/file/upload',fromDate).then(res=>{
+        if(res){
+          if(this.isOne){
+            this.form.rule.picUrl = res.result;
+          }else{
+            this.tempExam.imgUrl = res.result;
+          }
+        }
+      }).catch(()=>{})
+    },
     upToOss(exam) {
+      this.isOne = false;
       this.tempExam = exam
+      this.$refs.fileup.click()
+    },
+    upToOss2() {
+      this.isOne = true;
       this.$refs.fileup.click()
     },
     //评分阶梯
@@ -169,16 +336,14 @@ export default {
     },
     saveRule() {
       let params = { ...this.form }
-      if (!this.$refs.selectProvinceRef.currentProvince) {
+      if (!params.examNameNo) {
         this.$message({
           message: '请选择考试',
           type: 'info'
         })
         return false
       }
-      params.rule.province = this.$refs.selectProvinceRef.currentProvince.province
-      params.rule.provinceCode = this.$refs.selectProvinceRef.currentProvince.provinceCode
-      if (!params.rule.course) {
+      if (!params.course) {
         this.$message({
           message: '请选择科目',
           type: 'info'
@@ -188,11 +353,31 @@ export default {
       let n = 0
       for (let i = 0; i < params.examples.length; i++) {
         const item = params.examples[i]
-        item.course = params.rule.course
-        item.provinceCode = params.rule.provinceCode
+        item.course = params.course
         if (!item.imgUrlDesc) {
           this.$message({
             message: '请填写阶梯对应内容',
+            type: 'warning'
+          })
+          return false
+        }
+        if (!item.imgUrl) {
+          this.$message({
+            message: '请上传阶梯对应范例图',
+            type: 'warning'
+          })
+          return false
+        }
+        if (!item.scoreStart) {
+          this.$message({
+            message: '请填写阶梯对应范围最低值',
+            type: 'warning'
+          })
+          return false
+        }
+        if (!item.scoreEnd) {
+          this.$message({
+            message: '请填写阶梯对应范围最高值',
             type: 'warning'
           })
           return false
@@ -225,19 +410,60 @@ export default {
         })
         return false
       }
-      let url = null;
-      if (this.form.rule.id) {
-        url = this.stateUrl.rulesUpdate;
-      } else {
-        url = this.stateUrl.rulesCreate;
+      if (!params.rule.takePic) {
+        this.$message({
+          message: '请填写作品照片要求',
+          type: 'info'
+        })
+        return false
       }
-      this.axios.post(url,params).then(res=>{
+      if (!params.rule.takePic) {
+        this.$message({
+          message: '请填写作品照片要求',
+          type: 'info'
+        })
+        return false
+      }
+      if (!params.rule.picUrl) {
+        this.$message({
+          message: '请上传作品照片示例图',
+          type: 'info'
+        })
+        return false
+      }
+      let url = null;
+
+      let data = {
+        "course": params.course,
+        "examId": params.examNameNo,
+        "exampleList": params.examples,
+        "gradeLevel": params.rule.gradeLevel,
+        "gradeRule": params.gradeRule,
+        "hideSite": params.hideSite,
+        "picUrl": params.rule.picUrl,
+        "province": params.studentAreaName,
+        "provinceCode": params.studentAreaCode,
+        "score": params.rule.score,
+        "takePic": params.rule.takePic
+      }
+
+      if (this.id) {
+        url = '/rules/update'
+        data.id = this.id;
+      } else {
+        url = '/rules/create';
+      }
+
+      this.$axios.post(url,data).then(res=>{
         if(res){
             this.$message({
-                message: '添加成功',
+                message: '提交成功',
                 type: 'success',
               })
-        this.$router.go(-1)
+            let that = this;
+          setTimeout(function (){
+            that.$router.go(-1)
+          },2000)
         }
       
       }).catch(()=>{})
@@ -253,15 +479,21 @@ export default {
       this.$router.go(-1);
     },
     queryData() {
-      const id = this.$route.query.id;
-      this.axios.get(`${this.stateUrl.getRulesDetail}?id=${id}`).then(res=>{
-        this.form = { ...res.result }
-          this.$refs.selectProvinceRef.currentProvince = { province: this.form.rule.province, provinceCode: this.form.rule.provinceCode }
-          this.scoreRulers.forEach(item => {
-            if (item.text == this.form.rule.course) {
-              item.value = this.form.rule.score
-            }
-          })
+      const id = this.id;
+      this.$axios.get('/rules/detail?id='+id).then(res=>{
+        this.result = res.result;
+        this.form.gradeRule = 0;
+        this.form.hideSite = 4;
+        this.form.course = res.result.course
+        this.form.rule.score = res.result.score
+        this.form.rule.gradeLevel = res.result.gradeLevel;
+        this.form.rule.takePic =res.result.takePic;
+        this.form.rule.picUrl =res.result.picUrl;
+        res.result.exampleList.forEach((item,index)=>{
+          this.form.examples.push({ grade: item.grade, provinceCode: res.result.provinceCode,scoreStart:item.scoreStart,scoreEnd:item.scoreEnd, course: res.result.course, percentage: item.percentage, imgUrl: item.imgUrl, imgUrlDesc: item.imgUrlDesc })
+        })
+        this.gradeChange();
+        this.getKsList()
       }).catch(()=>{})
     }
   },
@@ -346,11 +578,12 @@ export default {
         // margin: auto;
         .ruleInput {
           width: 272px;
-          height: 132px;
+          height: 90px;
           margin: 13px 16px 10px;
           textarea {
             border: none !important;
             resize: none;
+            height: 100%;
           }
         }
       }
