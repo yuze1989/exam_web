@@ -413,6 +413,7 @@ export default {
       console.log(this.address,'this.address,')
       this.$refs.examForm.validate((valid) => {
         if (valid) {
+          // 时间校验
           if(this.from.enrollEndTime < this.from.enrollStartTime){
             this.$message({
               message: '报名结束时间应大于开始时间',
@@ -431,24 +432,37 @@ export default {
             })
             return
           }
-
+          // 地址校验
           if(this.address.length<0){
             this.$message({
               message: '请添加考试地址',
             })
             return
           }
-
+          // 地址完整性
+          let errAddress = 0
+          this.address.map((item,index)=>{
+            if(!item.examAddress || !item.province || !item.provinceCode){
+              errAddress += 1
+            }
+          })
+          if(errAddress>0){
+            this.$message({
+              message: '考试地址请填写完整',
+            })
+            return
+          }
+          // 科目校验
           if(this.subject.length<0){
             this.$message({
               message: '请添加考试科目',
             })
             return
           }
-
+          // 科目完整性
           let errEmpty = 0
           this.subject.map((item,index)=>{
-            if(!item.subjectEndtime || !item.subjectStarttime || !subjectDate){
+            if(!item.subjectEndtime || !item.subjectStarttime || !item.subjectDate){
               errEmpty += 1
             }
           })
@@ -458,16 +472,17 @@ export default {
             })
             return
           }
+          // 科目日期  >= 开始日期  科目日期 <= 结束日期
 
-          let errEmpty = 0
+          let errDate = 0
           this.subject.map((item,index)=>{
-            if(!item.subjectEndtime || !item.subjectStarttime || !subjectDate){
-              errEmpty += 1
+            if(item.subjectDate < this.from.examStartTime || item.subjectDate > this.from.examEndTime){
+              errDate += 1
             }
           })
-          if(errEmpty>0){
+          if(errDate>0){
             this.$message({
-              message: '考试科目请填写完整',
+              message: '考试科目时间应在考试开始时间和结束时间范围内',
             })
             return
           }

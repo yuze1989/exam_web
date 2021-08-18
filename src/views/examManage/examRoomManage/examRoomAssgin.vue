@@ -142,7 +142,7 @@
         <el-button
           type="primary"
           :loading="loading"
-          @click="submitForm('formsData')"
+          @click="submitForm('ruleForm')"
           class="meiyuan_btn"
           style="width: 80%; margin-top: 10px;"
         >

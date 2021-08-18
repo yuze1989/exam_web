@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     :before-close="handleClose"
     @open="open"
-    width="600px"
+    width="800px"
     center
   >
     <div slot="title">学生信息</div>
@@ -130,7 +130,7 @@
           name="image"
           :file-list="fileList"
           :multiple="false"
-          :limit="1"
+          :limit="2"
           :on-change="handleChange"
           action="https://exam-new.msjsol.com/exam-manager/file/upload"
           accept=".jpg,.jpeg,.png"
@@ -224,7 +224,10 @@ export default {
       this.from.url = ""
     },
     handleChange(file, fileList) {
+      console.log(file,'file')
+      console.log(fileList,'fileList')
       this.file = file
+      this.fileList = [file]
     },
     provinceChange(value) {
       this.provinceList.forEach((item) => {
@@ -261,7 +264,7 @@ export default {
     },
     getProvinceList() {
       this.$axios
-        .get(this.API.examinfo.allProvince)
+        .get(this.API.studentsManage.examRoomProvince)
         .then((res) => {
           this.provinceList = res.result
         })
