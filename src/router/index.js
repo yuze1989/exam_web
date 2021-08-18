@@ -64,7 +64,6 @@ export const constantRoutes = [
     {
         path: "/",
         component: Layout,
-
         hidden: true,
         children: [{
             path: "/profile",
@@ -75,6 +74,26 @@ export const constantRoutes = [
                 noCache: true
             }
         },
+            {
+                path: "/eaxmUpLoad",
+                name:"eaxmUpLoad",
+                component: resolve => require(["@/views/examList/upLoad.vue"], resolve),//() => import("@/views/profile/index.vue"),
+                meta: {
+                    name: "上传进度",
+                    icon: "user",
+                    noCache: true
+                }
+            },
+            {
+                path: "/paperManage",
+                name:"paperManage",
+                component: resolve => require(["@/views/examList/paperManage.vue"], resolve),//() => import("@/views/profile/index.vue"),
+                meta: {
+                    name: "批改试卷",
+                    icon: "user",
+                    noCache: true
+                }
+            },
         ]
     },
 
@@ -591,30 +610,30 @@ export const asyncRouter = [
         },
         children: [
 			{
-                path: "/407",
+                path: "/markMange",
                 id: 94,
                 code: 10094,
-                // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/examList/list.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
                 meta: {
                     name: '阅卷管理',
                     icon: 'classmate'
                 },
             },
 			{
-			    path: "/402",
+			    path: "/distriBute",
 			    id: 95,
 			    code: 10095,
-			    // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/examList/distribute.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
 			    meta: {
 			        name: '分配试卷',
 			        icon: 'classmate'
 			    },
 			},
 			{
-			    path: "/405",
+			    path: "/correct",
 			    id: 96,
 			    code: 10096,
-			    // component: resolve => require(["@/views/authManage/roleManage/index.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                component: resolve => require(["@/views/examList/correct.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
 			    meta: {
 			        name: '批改试卷',
 			        icon: 'classmate'

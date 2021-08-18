@@ -220,18 +220,18 @@
       @addSuccess="addSuccess"
     />
 
-    <inviteDialog 
+    <inviteDialog
       :visible.sync="showInvite"
       :editItem="editItemData"
       @addSuccess="addSuccess" />
 
-     <unionDialog 
+     <unionDialog
       :visible.sync="showUnion"
       :editItem="editItemData"
       @addSuccess="addSuccess" />
   </section>
 </template>
-<!-- 
+<!--
     id (integer, optional): id ,
     no (string, optional): 考试编码 ,
     name (string, optional): 考试名称 ,
@@ -249,7 +249,7 @@
     -->
 <!--
     ? 1.要显示操作联合考试,怎么判断是否需要操作 showDel
-    ? 2.设计稿只有一个列表, POST /examinfo/list /examinfo/unionExamList查询本机构下联合考试 是不是还有一个页面 
+    ? 2.设计稿只有一个列表, POST /examinfo/list /examinfo/unionExamList查询本机构下联合考试 是不是还有一个页面
     -->
 <script>
 import addDialog from './addDialog'
