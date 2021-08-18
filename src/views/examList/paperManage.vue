@@ -288,17 +288,15 @@ export default {
     },
   },
   created() {
-    if (this.$route.query) {
-      for (const item in this.$route.query) {
-        this.listQuery[item] = this.$route.query[item];
-      }
-    }
-    this.account = sessionStorage.getItem("user")
-      ? JSON.parse(sessionStorage.getItem("user")).account
-      : "";
-    this.queryPaperList();
-    this.queryDealedCount();
-    this.getRulesdetail();
+    // if (this.$route.query) {
+    //   for (const item in this.$route.query) {
+    //     this.listQuery[item] = this.$route.query[item];
+    //   }
+    // }
+    this.account = localStorage.getItem("user_name")
+    this.queryPaperList();  //获取试卷列表
+    this.queryDealedCount();    // 获取已评分/未评分
+    this.getRulesdetail();  //获取打分规则
   },
   methods: {
     // 修改评级 子组件传递数据 type:0 为评级，1为打分
@@ -382,6 +380,23 @@ export default {
     },
     // 获取试卷列表
     queryPaperList(type) {
+      let url1 = '/exampaper/queryGrade'
+      this.$axios.post(url1,{
+        "course": "设计",
+        "current": 1,
+        "examCode": "100114",
+        "examPaperId": "",
+        "grade": "",
+        "provinceCode": "",
+        "schoolId": "",
+        "size": 10,
+        "teacherId": "351"
+      }).then((res)=>{
+        console.log(res);
+      })
+       return false
+
+
       this.paperList = [];
       this.cachedPaperList = [];
       const params = Object.assign({}, this.listQuery);
@@ -424,7 +439,8 @@ export default {
         delete params.score;
       }
 
-      getPaperQueryList(params).then((response) => {
+      let url = '/exampaper/examCorrectPaperList'
+      this.$axios.post(url,params).then((response) => {
         const result = response.result || {};
         this.totalItem = result.total;
         if (result.records && result.records.length) {

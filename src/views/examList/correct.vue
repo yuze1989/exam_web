@@ -17,7 +17,7 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div class="btns">
+      <div class="btns" style="min-height: 40px">
         <!-- course: 素描、色彩、速写、设计  -->
         <div v-if="courseList.length">
           <el-button v-for="item in courseList" :key="item.key" :class="item.color" @click="selectSubject(item.name)">
@@ -81,8 +81,8 @@ export default {
       this.$axios.get(
           '/examsubject/listByExamId?examId='+this.examNameNo
       ).then(res=>{
+        this.courseList = [];
         res.result.forEach((item,index) =>{
-          this.courseList = [];
           this.courseList.push({
             key: index,
             name: item.subjectName,

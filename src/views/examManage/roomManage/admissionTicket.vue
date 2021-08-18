@@ -220,6 +220,13 @@ export default {
      },
      // 导出准考证
      exportTicket(){
+       if(this.form.examName == ""){
+         this.$message({
+           message: "请先填写考试名称！",
+           type: "error",
+         });
+         return false
+       }
        let params = {
          current : this.form.pageIndex ,
          size : this.form.pageSize ,
