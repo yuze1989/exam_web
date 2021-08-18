@@ -94,6 +94,15 @@ export const constantRoutes = [
                     noCache: true
                 }
             },
+            {
+                path: "/ArchiveDetails",
+                name:"ArchiveDetails",
+                component: resolve => require(["@/views/authManage/gradesManage/ArchiveDetails.vue"], resolve),//() => import("@/views/authManage/roleManage/index.vue"),
+                meta: {
+                    name: '成绩数据归档详情',
+                    icon: 'classmate'
+                },
+            },
         ]
     },
 

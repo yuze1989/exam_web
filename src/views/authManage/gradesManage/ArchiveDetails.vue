@@ -17,20 +17,20 @@
               ></el-option>
             </el-select>
           </el-form-item>
-<!--          <el-form-item>-->
-<!--            <el-select-->
-<!--                v-model="search.examType"-->
-<!--                style="width: 130px; margin-right: 20px;"-->
-<!--                placeholder="考试类型"-->
-<!--            >-->
-<!--              <el-option-->
-<!--                  v-for="(item, index) in examType"-->
-<!--                  :key="index"-->
-<!--                  :label="item.name"-->
-<!--                  :value="item.id"-->
-<!--              ></el-option>-->
-<!--            </el-select>-->
-<!--          </el-form-item>-->
+          <el-form-item>
+            <el-select
+                v-model="search.examType"
+                style="width: 130px; margin-right: 20px;"
+                placeholder="考试类型"
+            >
+              <el-option
+                  v-for="(item, index) in examType"
+                  :key="index"
+                  :label="item.name"
+                  :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item>
             <el-input
                 v-model="search.examName"
@@ -163,9 +163,6 @@ export default {
   },
 
   methods: {
-    openXq(row){
-      this.$router.push({name:"ArchiveDetails",query:{id:row.examId}})
-    },
     onSubmit() {
       this.getList();
     },
@@ -195,6 +192,7 @@ export default {
 
     getList() {
       let roleId = this.search.state == -1 ? null : this.search.state;
+
       let params = {
         current: this.form.pageIndex,
         size: this.form.pageSize,
@@ -202,9 +200,18 @@ export default {
         "examName":this.search.examName,
         "examType":this.search.examType,
         "schoolId": "",
+        "admissionTicketCode": "string",
+        "examId": this.$route.query.id,
+        "examineeName": "string",
+        "provinceCode": "string",
+        "scoreEnd": "",
+        "scoreStart": "",
+        "studioId": "",
+        "studioName": "string",
+        "subject": "string"
       };
       this.$axios
-        .post('/score/hisFileList', params)
+        .post('/score/hisFileDetailList', params)
         .then((res) => {
           this.dataList.pageIndex = res.result.pageNum;
           this.dataList.total = res.result.total;
