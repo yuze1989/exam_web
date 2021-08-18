@@ -45,22 +45,22 @@
 
       <el-form-item label="报名开始时间" prop="enrollStartTime">
         <el-date-picker
-          type="datetime"
+          type="date"
           placeholder="选择日期"
           v-model="from.enrollStartTime"
           style="width: 250px;"
-          value-format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd"
           :disabled="false"
           :clearable="false"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="报名结束时间" prop="enrollEndTime">
         <el-date-picker
-          type="datetime"
+          type="date"
           placeholder="选择日期"
           v-model="from.enrollEndTime"
           style="width: 250px;"
-          value-format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd"
           :disabled="false"
           :clearable="false"
         ></el-date-picker>
@@ -68,22 +68,22 @@
 
       <el-form-item label="考试开始时间" prop="examStartTime">
         <el-date-picker
-          type="datetime"
+          type="date"
           placeholder="选择日期"
           v-model="from.examStartTime"
           style="width: 250px;"
-          value-format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd"
           :disabled="false"
           :clearable="true"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="考试结束时间" prop="examEndTime">
         <el-date-picker
-          type="datetime"
+          type="date"
           placeholder="选择日期"
           v-model="from.examEndTime"
           style="width: 250px;"
-          value-format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd"
           :disabled="false"
           :clearable="false"
         ></el-date-picker>
@@ -203,6 +203,9 @@
               placeholder="选择日期"
               v-model="item.subjectDate"
               style="width: 180px;"
+              value-format="yyyy-MM-dd"
+              :disabled="false"
+              :clearable="false"
             ></el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -439,6 +442,32 @@ export default {
           if(this.subject.length<0){
             this.$message({
               message: '请添加考试科目',
+            })
+            return
+          }
+
+          let errEmpty = 0
+          this.subject.map((item,index)=>{
+            if(!item.subjectEndtime || !item.subjectStarttime || !subjectDate){
+              errEmpty += 1
+            }
+          })
+          if(errEmpty>0){
+            this.$message({
+              message: '考试科目请填写完整',
+            })
+            return
+          }
+
+          let errEmpty = 0
+          this.subject.map((item,index)=>{
+            if(!item.subjectEndtime || !item.subjectStarttime || !subjectDate){
+              errEmpty += 1
+            }
+          })
+          if(errEmpty>0){
+            this.$message({
+              message: '考试科目请填写完整',
             })
             return
           }

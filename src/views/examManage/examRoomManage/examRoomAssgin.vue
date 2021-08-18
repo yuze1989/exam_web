@@ -261,10 +261,6 @@ export default {
         this.$message.error("请先选择查询的考试")
         return
       }
-      if(!this.forms.provinceCode){
-        this.$message.error("请先选择查询的省份")
-        return
-      }
       this.forms.maxExamCode=0
       this.$axios
         .get(
@@ -365,14 +361,7 @@ export default {
       this.forms.maxExamCode += n2
     },
     submitForm(formName) {
-      // if (!this.forms.provinceCode) {
-      //   this.$message({
-      //     type: 'error',
-      //     message: '请选择省份',
-      //   })
-      //   return
-      // }
-      this.loading = true
+      // this.loading = true
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(this.formsData.examrooms, 'examrooms')
