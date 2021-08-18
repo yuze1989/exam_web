@@ -446,13 +446,13 @@ export default {
             return
           }
 
-          let errEmpty = 0
+          let cwEmpty = 0
           this.subject.map((item,index)=>{
             if(!item.subjectEndtime || !item.subjectStarttime || !subjectDate){
               errEmpty += 1
             }
           })
-          if(errEmpty>0){
+          if(cwEmpty>0){
             this.$message({
               message: '考试科目请填写完整',
             })

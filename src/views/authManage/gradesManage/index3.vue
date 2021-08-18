@@ -93,8 +93,7 @@
           <el-button type="text" size="small" @click="save(scope.row)" v-if="scope.row.archiveStatus==0"
           >开始归档</el-button
           >
-          <el-button type="text" size="small" @click="save(scope.row)"
-            >归档详情</el-button
+          <el-button type="text" size="small" @click="openXq(scope.row)">归档详情</el-button
           >
         </template>
       </el-table-column>
@@ -110,6 +109,15 @@
       />
     </el-col>
   </section>
+
+<!--  归档详情-->
+<!--  <el-dialog title="收货地址" :visible.sync="dialogTableVisible">-->
+<!--    <el-table :data="gridData">-->
+<!--      <el-table-column property="date" label="日期" width="150"></el-table-column>-->
+<!--      <el-table-column property="name" label="姓名" width="200"></el-table-column>-->
+<!--      <el-table-column property="address" label="地址"></el-table-column>-->
+<!--    </el-table>-->
+<!--  </el-dialog>-->
 </template>
 
 <script>
@@ -120,6 +128,8 @@ export default {
   data() {
     return {
       listLoading: false,
+      dialogTableVisible:false,
+      gridData:[],
       //新增界面数据
       search: {
         admissionTicketCode : "",
@@ -160,6 +170,9 @@ export default {
   },
 
   methods: {
+    openXq(row){
+      console.log(row);
+    },
     onSubmit() {
       this.getList();
     },
