@@ -239,7 +239,8 @@ export default {
         "roleId": "",
         "schoolId": "",
         "size": 100,
-        "teacherName": ""
+        "teacherName": "",
+        roleType:1
       }
       this.$axios.post(
           '/teacher/list',data

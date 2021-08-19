@@ -464,9 +464,7 @@ export default {
                 type: 'success',
               })
             let that = this;
-          setTimeout(function (){
-            that.$router.go(-1)
-          },2000)
+           that.$router.go(-1)
         }
       
       }).catch(()=>{})

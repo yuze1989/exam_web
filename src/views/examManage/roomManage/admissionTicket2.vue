@@ -217,6 +217,13 @@ export default {
   methods: {
      // 生成和导出二维码
      exportQR(){
+       if(this.form.examName == ""){
+         this.$message({
+           message: "请先填写考试名称！",
+           type: "error",
+         });
+         return false
+       }
        let params = {
          current : this.form.pageIndex ,
          size : this.form.pageSize ,
@@ -225,7 +232,8 @@ export default {
          provinceCode : this.form.studentAreaCode,
          examineeName : this.form.studentName,
          schoolId :this.form.schoolId,
-         admissionTicketCode:this.form.admissionTicketCode
+         admissionTicketCode:this.form.admissionTicketCode,
+         studioName:this.form.studioName
        }
        this.$axios
            .post('/ticket/unionExamQRcode', params)
@@ -248,9 +256,12 @@ export default {
     },
          // 获取所有区域
      getAllProvinces(){
-      getAllProvince().then(res=>{
-        this.studentAreaOption = res.result
-      })
+       this.$axios
+           .get(this.API.studentsManage.examRoomProvince)
+           .then((res) => {
+             this.studentAreaOption = res.result || []
+           })
+           .catch(() => {})
     },
   // 获取列表
     getList() {

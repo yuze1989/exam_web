@@ -76,18 +76,21 @@
       <div class="template-example" >
         <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
           <div class="template-example-dom" ref="ticketFile">
-            <div class="title" style="height: 600px;background: #fff">
+            <div class="title">
+              <div class="top" style="height: 117px;padding-top: 15px">
+                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.zkzh">准考证：E0000000001</div>
+                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.sfzhm">身份证号码：330591208808080808</div>
+                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
+              </div>
 
-              <img src="@/assets/erweima.png" alt="" style="width: 120px;height: 120px;position: absolute;left: 60px;top: 270px">
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.zkzh">准考证：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.km">科目：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.sfzhm">身份证号码：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.xm">姓名：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.kc">考场：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;" v-show="form.subjectList.ksbh">考试编号：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;" v-show="form.subjectList.xb">性别：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.ksdz">考试地址：XXXXXXXX</div>
-              <div style="padding-left: 180px;font-size: 22px;width: 500px;padding:5px 0 5px 180px;"  v-show="form.subjectList.zwh">座位号：XXXXXXXX</div>
+              <img src="@/assets/erweima.png" alt="" style="width: 220px;height: 220px;position: absolute;left: 30px;top: 140px">
+
+              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;margin-top: 10px" v-show="form.subjectList.ksbh">考试编号：100101</div>
+              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.xm">姓名：张三</div>
+              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.km">科目：素描</div>
+              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.kc">考场：001</div>
+              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;" v-show="form.subjectList.xb">性别：男</div>
+              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.zwh">座位号：01</div>
             </div>
           </div>
 
@@ -392,10 +395,11 @@ export default {
 }
 .template-example-dom{
   background: #fff;
-  border: 1px #333 solid;
+  border: 1px #c0c4cc solid;
   width: 500px;
+  height: 400px;
+  border-radius: 6px;
   .title{
-    background: blue;
     display: flex;
     align-items: center;
     flex-direction: column;

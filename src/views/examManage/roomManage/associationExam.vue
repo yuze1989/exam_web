@@ -158,11 +158,11 @@ export default {
     },
     // 确认关联机构
     confirmRltRoom(){
-    let list = []
+
+      let list = []
        let params = {
         studioIds  : this.selectRoomIds ,
-        examId  : this.sels.id 
-       
+        examId  : this.sels.id
       };
       apiRelationStudio(params).then((res) => {
            this.$message({
@@ -178,9 +178,18 @@ export default {
     },
     // 关联机构
     relationStudio(row){
-         this.sels = row
-          this.dialogTableVisible = true
-    }, 
+         this.sels = row;
+         this.$axios.get("/studio/getStudioByExamId?examId="+row.id).then((res)=>{
+           let list = [];
+           res.result.forEach((item,index)=>{
+             list.push(item.studioId)
+           })
+           this.selectRoomIds = list;
+
+           this.dialogTableVisible = true
+
+         })
+    },
     // 统计信息
     statisticsInfo(row){
       this.$router.push({ name: 'StudioStatistics', params: {
