@@ -284,7 +284,7 @@ export default {
     },
     getProvinceList() {
       this.$axios
-        .get(this.API.studentsManage.examRoomProvince)
+        .get(this.API.examinfo.allProvince)
         .then((res) => {
           this.provinceList = res.result
         })
