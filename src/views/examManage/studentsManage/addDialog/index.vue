@@ -39,12 +39,28 @@
         <el-select
           style="width: 250px;"
           v-model="from.studioName"
-          placeholder="机构名称"
+          placeholder="选择机构名称"
           value-key="value"
           @change="roomChange"
         >
           <el-option
             v-for="item in roomList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="考试地址" prop="address">
+        <el-select
+          style="width: 250px;"
+          v-model="from.address"
+          placeholder="选择考试地址"
+          value-key="value"
+        >
+          <el-option
+            v-for="item in addressList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -174,6 +190,7 @@ export default {
       examList: [],
       roomList: [],
       fileList: [],
+      addressList:[],
       file:"",
       currentProvinceCode: '',
       from: {
@@ -191,6 +208,7 @@ export default {
         gender: '', //:男，女，其他
         source: 2, //报名来源:1手机；2后台
         examineeFile: '', // 文件
+        address:"",
       },
       examTypeStatus: [
         {
@@ -209,6 +227,7 @@ export default {
       rules: {
         examName: [{ required: true, message: '请选择', trigger: 'blur' }], //考试id
         studioName: [{ required: true, message: '请选择', trigger: 'blur' }], // 机构id
+        address: [{ required: true, message: '请选择', trigger: 'blur' }], //考试地址
         name: [{ required: true, message: '请输入', trigger: 'blur' }],
         identification: [
           { required: true, message: '请输入', trigger: 'blur' },
@@ -239,6 +258,7 @@ export default {
     },
     examChange(value) {
       this.getRoomList(value)
+      this.getAddressList(value)
       this.examList.forEach((item) => {
         if (item.value == value) {
           this.from = {
@@ -297,6 +317,18 @@ export default {
         })
         .catch(() => {})
     },
+    getAddressList(examId){
+      this.$axios
+        .get(`${this.API.studentsManage.getAddressByExamId}?examId=${examId}`, {})
+        .then((res) => {
+          console.log(res,'res')
+          this.addressList = res.result.map((item) => ({
+            value: item.examAddress,
+            label: item.examAddress,
+          }))
+        })
+        .catch(() => {})
+    },
     addSuccess() {
       this.isAdd = false
       this.showInvite = false
@@ -320,6 +352,8 @@ export default {
       } else {
         this.from = { ...this.editItem }
         this.getDetail(this.editItem.id)
+        this.getRoomList(this.editItem.examId)
+        this.getAddressList(this.editItem.examId)
       }
     },
     getDetail(id){
@@ -327,6 +361,7 @@ export default {
         .get(`${this.API.studentsManage.examineeDetail}?id=${id}`, {})
         .then((res) => {
           this.from.contactName =  res.result && res.result.contactName
+          this.from.address = res.result && res.result.address
         })
         .catch(() => {})
     },
@@ -370,6 +405,7 @@ export default {
             provinceCode: this.from.provinceCode,
             gender: this.from.gender, //:男，女，其他
             source: 2, //报名来源:1手机；2后台
+            address:this.from.address,
           }
           let str = this.transformRequest(data)
           let param = new FormData()
@@ -409,6 +445,7 @@ export default {
             provinceCode: this.from.provinceCode,
             gender: this.from.gender, //:男，女，其他
             examineeFile: this.from.examineeFile, // 文件
+            address:this.from.address,
           },
           '提交信息',
         )
@@ -425,6 +462,7 @@ export default {
             province: this.from.province,
             provinceCode: this.from.provinceCode,
             gender: this.from.gender, //:男，女，其他
+            address:this.from.address,
           }
           let str = this.transformRequest(data)
           let param = new FormData()

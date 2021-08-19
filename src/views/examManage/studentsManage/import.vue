@@ -18,14 +18,31 @@
       :rules="rules"
       ref="inviteForm"
     >
-      <el-form-item label="考试名称" style="width: 400px;">
+      <el-form-item label="考试名称"  prop="examId" style="width: 400px;">
         <el-select
-          style="width: 100%;"
+          style="width: 250px;"
           v-model="from.examId"
           placeholder="考试名称"
+          @change="examChange"
         >
           <el-option
             v-for="item in examList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="考试地址" prop="address">
+        <el-select
+          style="width: 250px;"
+          v-model="from.address"
+          placeholder="选择考试地址"
+          value-key="value"
+        >
+          <el-option
+            v-for="item in addressList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -82,11 +99,14 @@ export default {
     return {
       file: '',
       fileList:[],
+      addressList:[],
       from: {
         examId: '', //考试id
+        address:'',
       },
       rules: {
         examId: [{ required: true, message: '请输入', trigger: 'blur' }], //考试id
+        // address: [{ required: true, message: '请输入', trigger: 'blur' }], 
       },
       examList: [],
     }
@@ -101,12 +121,40 @@ export default {
     },
     open() {
       this.from = {
-        examId: ''
+        examId: '',
+        address:'',
       }
       this.fileList =[]
+      this.addressList=[]
       this.file=""
       this.name = this.editItem.name
       this.getExamList()
+    },
+    examChange(value) {
+      this.getAddressList(value)
+      // this.examList.forEach((item) => {
+      //   if (item.value == value) {
+      //     this.from = {
+      //       ...this.from,
+      //       examId: item.value,
+      //       examName: item.label,
+      //       studioId: '',
+      //       studioName: '',
+      //     }
+      //   }
+      // })
+    },
+    getAddressList(examId){
+      this.$axios
+        .get(`${this.API.studentsManage.getAddressByExamId}?examId=${examId}`, {})
+        .then((res) => {
+          console.log(res,'res')
+          this.addressList = res.result.map((item) => ({
+            value: item.examAddress,
+            label: item.examAddress,
+          }))
+        })
+        .catch(() => {})
     },
     getExamList() {
       this.$axios
@@ -149,7 +197,7 @@ export default {
           param.append('examineeFile', this.file.raw)
           this.$axios
             .post(
-              `${this.API.studentsManage.examineeBatchImport}?examId=${this.from.examId}`,
+              `${this.API.studentsManage.examineeBatchImport}?examId=${this.from.examId}&address=${this.from.address}`,
               param,
             )
             .then((res) => {

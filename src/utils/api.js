@@ -55,6 +55,7 @@ const API = {
       examineeUpdate:"/examinee/examineeUpdate",// 学生信息修改
       ticketGenerate:"/examinee/ticketGenerate",// 准考证号管理--生成准考证号
       ticketList:"/examinee/ticketList",//准考证号管理--查询
+      getAddressByExamId: "/examinee/getAddressByExamId",//获取地址
     },
     ticketManage:{ //准考证管理
       getTicketExamlist:'/ticket/examlist',// 获取准考证下考试
