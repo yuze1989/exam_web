@@ -390,7 +390,7 @@ export default {
         "provinceCode": "",
         "schoolId": "",
         "size": 10,
-        "teacherId": "351"
+        "teacherId": "379"
       }).then((res)=>{
         console.log(res);
       })

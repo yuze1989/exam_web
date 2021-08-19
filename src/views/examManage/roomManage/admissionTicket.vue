@@ -235,7 +235,8 @@ export default {
          provinceCode : this.form.studentAreaCode,
          examineeName : this.form.studentName,
          schoolId :this.form.schoolId,
-         admissionTicketCode:this.form.admissionTicketCode
+         admissionTicketCode:this.form.admissionTicketCode,
+         studioName:this.form.studioName
        }
        this.$axios
            .post('/ticket/unionExamExport', params)
@@ -252,11 +253,15 @@ export default {
         }
       })
     },
-         // 获取所有区域
+     // 获取所有区域
      getAllProvinces(){
-      getAllProvince().then(res=>{
-        this.studentAreaOption = res.result
-      })
+       this.$axios
+           .get(this.API.studentsManage.examRoomProvince)
+           .then((res) => {
+             this.studentAreaOption = res.result || []
+           })
+           .catch(() => {})
+
     },
   // 获取列表
     getList() {

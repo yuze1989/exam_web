@@ -2,50 +2,53 @@
   <section class="form_border">
     <div class="header">
       <el-form :inline="true" class="demo-form-inline">
-        <el-col :span="4" style="display: flex;justify-content: flex-end">
-          <el-form-item>
-            <el-input
-              v-model="forms.model.teacherName"
-              placeholder="姓名"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-              <!-- multiple -->
         <el-col :span="4">
-          <el-form-item>
-            <el-select
-              v-model="forms.model.provinceCode"
-              placeholder="生源省份"
-              value-key="province"
-              clearable
-              filterable
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.provinceCode"
-                :label="item.province"
-                :value="item"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="8">
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button type="warning" @click="reset">重置</el-button>
-            <el-button
+          <el-button
               class="meiyuan_btn"
               type="primary"
               size="medium"
               @click="add"
-            >
-              新增老师
-            </el-button>
+          >
+            新增老师
+          </el-button>
+        </el-col>
+        <el-col :span="20" style="display: flex;justify-content: flex-end;margin-bottom: 10px">
+
+            <el-form-item style="margin-bottom: 0">
+              <el-input
+                  v-model="forms.model.teacherName"
+                  placeholder="姓名"
+              ></el-input>
+            </el-form-item>
+
+          <!-- multiple -->
+            <el-form-item style="margin-bottom: 0">
+              <el-select
+                  v-model="forms.model.provinceCode"
+                  placeholder="生源省份"
+                  value-key="province"
+                  clearable
+                  filterable
+              >
+                <el-option
+                    v-for="item in options"
+                    :key="item.provinceCode"
+                    :label="item.province"
+                    :value="item"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+
+
+          <el-form-item  style="margin-bottom: 0">
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <!--            <el-button type="warning" @click="reset">重置</el-button>-->
+
             <!--            <el-button type="warning" @click="reset">重置</el-button>-->
 
           </el-form-item>
         </el-col>
+
       </el-form>
     </div>
 

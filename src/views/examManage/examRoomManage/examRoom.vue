@@ -109,7 +109,7 @@
         <el-table-column
           prop="examName"
           label="考试名称"
-          width="220"
+
           header-align="center"
           align="center"
         ></el-table-column>
@@ -117,7 +117,7 @@
         <el-table-column
           prop="admissionTicketCode"
           label="准考证号"
-          width="120"
+
           header-align="center"
           align="center"
         ></el-table-column>
@@ -125,7 +125,7 @@
         <el-table-column
           prop="name"
           label="姓名"
-          width="120"
+
           header-align="center"
           align="center"
         ></el-table-column>
@@ -133,8 +133,6 @@
         <el-table-column
           prop="identification"
           label="身份证号"
-          width="220"
-          maxlength="18"
           header-align="center"
           align="center"
         ></el-table-column>
@@ -143,30 +141,30 @@
           prop="studioName"
           label="所属机构"
           header-align="center"
-          width="160"
+
           align="center"
         ></el-table-column>
 
         <el-table-column
           prop="province"
           label="所属省份"
-          width="120"
+
           header-align="center"
           align="center"
         ></el-table-column>
 
-        <!-- //审核状态  0:待审核,1:通过,2:拒绝 支付状态 1:待支付,2:成功,3:失败,4:处理 -->
-        <el-table-column label="操作" header-align="center" align="center">
-          <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="exchangeExamRoom(scope.row)"
-            >
-              换考场
-            </el-button>
-          </template>
-        </el-table-column>
+<!--         //审核状态  0:待审核,1:通过,2:拒绝 支付状态 1:待支付,2:成功,3:失败,4:处理-->
+<!--        <el-table-column label="操作" header-align="center" align="center">-->
+<!--          <template slot-scope="scope">-->
+<!--            <el-button-->
+<!--              type="text"-->
+<!--              size="small"-->
+<!--              @click="exchangeExamRoom(scope.row)"-->
+<!--            >-->
+<!--              换考场-->
+<!--            </el-button>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
       </el-table>
     </div>
 

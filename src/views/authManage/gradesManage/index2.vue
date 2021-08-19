@@ -1,23 +1,75 @@
 <template>
   <section class="form_border">
-<!--    <div class="header">-->
-<!--      <div class="from-wrap">-->
-<!--        <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">-->
-<!--          <el-form-item>-->
-<!--            <el-input-->
-<!--                v-model="search.admissionTicketCode"-->
-<!--                placeholder="请扫码或者输入准考证号"-->
-<!--                @keyup.enter.native="inputNum"-->
-<!--            ></el-input>-->
-<!--          </el-form-item>-->
-<!--          <el-form-item>-->
-<!--            <el-button type="primary" @click="onSubmit">查询</el-button>-->
-<!--          </el-form-item>-->
-<!--        </el-form>-->
-<!--      </div>-->
-<!--      <div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <div class="header">
+      <div class="from-wrap">
+        <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
+          <el-form-item>
+            <el-row style="margin-right: 20px">
+              <el-col :span="10" style="position: relative;left: -10px">
+                <el-input v-model="search.min" placeholder="分数1" style="width: 80px" type="number" class="nn"></el-input>
+              </el-col>
+              <el-col :span="4" style="text-align: center">至</el-col>
+              <el-col :span="10">
+                <el-input
+                    class="nn"
+                    v-model="search.max"
+                    placeholder="分数2"
+                    style="width: 80px"
+                    type="number"
+                ></el-input>
+              </el-col>
+            </el-row>
+
+
+          </el-form-item>
+          <el-form-item>
+            <el-select
+                v-model="selections.provinceCode"
+                placeholder="生源省份"
+                value-key="province"
+                clearable
+                filterable
+            >
+              <el-option
+                  v-for="item in options"
+                  :key="item.provinceCode"
+                  :label="item.province"
+                  :value="item"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+                v-model="search.studioName"
+                placeholder="请输入机构名称"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+                v-model="search.score"
+                placeholder="请输入科目"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+                v-model="search.admissionTicketCode"
+                placeholder="请输入准考证号"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+                v-model="search.examineeName"
+                placeholder="请输入姓名"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">查询</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div>
+      </div>
+    </div>
     <!--列表-->
     <el-table
       :data="dataList.records"
@@ -128,6 +180,20 @@
         @cb="currentChange"
       />
     </el-col>
+    <!--    查看试卷-->
+    <el-dialog title="试卷信息" :visible.sync="dialogTableVisible">
+      <el-row>
+        <el-col :span="8" v-for="(o, index) in sjList" :key="o" style="padding: 10px">
+          <el-card :body-style="{ padding: '0px' }">
+            <img :src="o.img" class="image" style="max-width: 210px">
+            <div style="padding: 14px;">
+              <div>科目名称：{{o.subjectName}}</div>
+              <div>分数：{{o.score}}</div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </section>
 </template>
 
@@ -138,7 +204,10 @@ export default {
   },
   data() {
     return {
+      options:[],
       listLoading: false,
+      dialogTableVisible:false,
+      sjList:[],
       //新增界面数据
       search: {
         admissionTicketCode : "",
@@ -146,6 +215,21 @@ export default {
       form: {
         pageIndex: 1,
         pageSize: 10,
+      },
+      selections: {
+        size: 10,
+        current: 1,
+        proviceName: '', //选择省份
+        examineeName: '', //学生姓名
+        examName: '',
+        provinceCode: '',
+        roomCode: '',
+        schoolId: '',
+        admissionTicketCode:"",//准考证号
+        studioName:"",//机构名称
+        score:"",//科目
+        min:"",//科目
+        max:"",//科目
       },
 
       dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -162,9 +246,18 @@ export default {
   },
   created() {
     this.getList();
+    this.getProvinceList()
   },
 
   methods: {
+    getProvinceList() {
+      this.$axios
+          .get(this.API.studentsManage.examRoomProvince)
+          .then((res) => {
+            this.options = res.result || []
+          })
+          .catch(() => {})
+    },
     onSubmit() {
       this.getList();
     },
@@ -198,6 +291,15 @@ export default {
         current: this.form.pageIndex,
         size: this.form.pageSize,
         admissionTicketCode: this.search.admissionTicketCode,
+        "examId": "",
+        "examineeName": this.search.examineeName,
+        "provinceCode":this.selections.provinceCode,
+        "schoolId": "",
+        "scoreEnd": this.search.max,
+        "scoreStart": this.search.min,
+        "studioId": "",
+        "studioName": this.search.studioName,
+        "subject": this.search.score
       };
       this.$axios
           .post('/score/scoreList', params)
@@ -215,11 +317,8 @@ export default {
         .get('/score/scoreDetail?ticketCode='+row.admissionTicketCode)
         .then((res) => {
           if(res.code === 200) {
-            this.$message({
-                message: '保存成功',
-                type: 'success',
-                duration: 1500,
-              })
+            this.sjList = res.result;
+            this.dialogTableVisible = true
           }
         })
         .catch(() => {});
@@ -236,6 +335,14 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "./gradesManage.scss";
+.nn{
+  input{
+    padding: 0;
+    padding-left: 10px;
+
+  }
+
+}
 </style>

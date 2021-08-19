@@ -103,6 +103,15 @@ export const constantRoutes = [
                     icon: 'classmate'
                 },
             },
+            {
+                path: "/TeacherExamList",
+                name:'TeacherExamList',
+                component: resolve => require(["@/views/teacherManage/examList/index2.vue"], resolve),
+                meta: {
+                    name: '教师关联考试',
+                    icon: 'classmate'
+                },
+            },
         ]
     },
 

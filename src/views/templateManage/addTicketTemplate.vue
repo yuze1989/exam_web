@@ -82,7 +82,7 @@
             </el-table>
             <!-- 注意事项 -->
             <div class="careful-matter">
-                <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px;padding: 10px;border-radius: 4px;border: 1px solid #ece9e9;font-size: 14px;"  name="" id="" placeholder="多行输入"></textarea>
+                <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px;padding: 10px;border-radius: 4px;border: 1px solid #ece9e9;font-size: 14px;"  name="" id="" placeholder="备注信息"></textarea>
             </div>
             <!-- 保存 -->
                 <el-button
@@ -198,7 +198,8 @@ export default {
         examNo:"",
         examNameNo: "",
         carefulMatter: '',
-        examTitle: ''
+        examTitle: '',
+        organizer:""
       },
       isShow:true,
 
@@ -216,6 +217,7 @@ export default {
     };
   },
   created() {
+
 
     //接收参数
     this.examId = this.$route.params.examId;

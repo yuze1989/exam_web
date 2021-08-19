@@ -1,20 +1,29 @@
 <template>
   <section class="form_border">
     <div class="header">
-      <el-form :inline="true" class="demo-form-inline" style="    padding-top: 15px;
+      <el-row>
+        <el-col :span="4" style="padding: 10px;padding-top: 15px;">
+          <el-button type="primary" @click="fenpei">分配试卷</el-button>
+        </el-col>
+        <el-col :span="20">
+          <el-form :inline="true" class="demo-form-inline" style="padding-top: 15px;
     padding-bottom: 10px;
     display: flex;
     justify-content: flex-end;">
-        <el-form-item style="margin-bottom: 0">
-          <el-input
-              v-model="forms.model.name"
-              placeholder="考试名称"
-          ></el-input>
-        </el-form-item>
-        <el-form-item style="margin-bottom: 0">
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-        </el-form-item>
-      </el-form>
+
+            <el-form-item style="margin-bottom: 0">
+              <el-input
+                  v-model="forms.model.name"
+                  placeholder="考试名称"
+              ></el-input>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 0">
+              <el-button type="primary" @click="onSubmit">查询</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+
     </div>
     <!-- 导入 导出 -->
     <!--列表-->
@@ -83,6 +92,89 @@
         @cb="currentChange"
       />
     </el-col>
+    <!-- 分配试卷 -->
+    <el-dialog title="分配试卷" :visible.sync="dialogFormVisible" >
+      <el-form v-show="fpjd==1">
+        <el-form-item label="考试名称" :label-width="formLabelWidth">
+          <el-select v-model="examId" placeholder="请选择考试" size="medium" @change="examNameChange">
+            <el-option v-for="item in examIdList" :key="item.id" :value="item.id" :label="item.name">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="考试科目" :label-width="formLabelWidth">
+          <el-select v-model="course" style="width:200px;" placeholder="请选择科目" @change="seletChage">
+            <el-option
+                v-for="item in courseList"
+                :key="item.subjectName"
+                :label="item.subjectName"
+                :value="item.subjectName">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <el-form v-show="fpjd==2">
+        <el-form-item label="分配方式" :label-width="formLabelWidth">
+          <el-cascader
+              v-model="type"
+              :options="options"
+              :props="{ expandTrigger: 'hover' }"
+              @change="modeChange"></el-cascader>
+        </el-form-item>
+
+        <el-table
+            :data="tableData"
+            style="width: 100%">
+          <el-table-column
+              prop="teacherName"
+              label="老师"
+              width="180"
+          >
+          </el-table-column>
+          <el-table-column
+              label="考场"
+              width="280">
+            <template slot-scope="scope">
+              第<el-select style="width:70px;"  v-model="scope.row.start"  placeholder="" clearable @change="selkc(scope.row, 'start')">
+              <el-option
+                  v-for="item in roomList"
+                  :key="item.examinationRoomCode"
+                  :label="item.examinationRoomCode"
+                  :value="item.examinationRoomCode">
+              </el-option>
+            </el-select>
+              至
+              <el-select style="width:70px;"  v-model="scope.row.end"  placeholder="" clearable @change="selkc(scope.row, 'end')">
+                <el-option
+                    v-for="item in roomList"
+                    :key="item.examinationRoomCode"
+                    :label="item.examinationRoomCode"
+                    :value="item.examinationRoomCode">
+                </el-option>
+              </el-select>
+              考场
+            </template>
+          </el-table-column>
+          <el-table-column
+              label="人数">
+            <template slot-scope="scope">
+                <span> {{scope.row.people}}人</span>
+            </template>
+          </el-table-column>
+        </el-table>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <div v-show="fpjd==1">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="fpjd=2">下一步</el-button>
+        </div>
+        <div v-show="fpjd==2">
+          <el-button @click="fpjd=1">上一步</el-button>
+          <el-button type="primary" @click="tijiao">确定</el-button>
+        </div>
+      </div>
+    </el-dialog>
 
   </section>
 </template>
@@ -92,6 +184,36 @@ export default {
 
   data() {
     return {
+      dialogFormVisible:false,
+      formLabelWidth: '120px',
+      form: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      options:[
+          {value: '0',label: '按考场分配',
+            children: [{value: '0',label: '模式1'}, {value: '1',label: '模式2' }]
+          },
+        {value: '1',label: '按随机分配',
+          children: [{value: '0',label: '模式1'}, {value: '1',label: '模式2' }]
+        }
+      ],
+      fpjd:1,
+      type:"",
+      mode:"",
+      course:"",
+      examNameNo:"",
+      examName:"",
+      examId:"",
+      examIdList:[],
+      courseList:[],
+      roomList:[],
       list: [],
       checkIds: [],
       listLoading: false,
@@ -124,6 +246,8 @@ export default {
         name: '',
         id: 0,
       },
+      aaDate:[],
+      tableData:[],
     }
   },
 
@@ -131,6 +255,127 @@ export default {
     this.getOrderList()
   },
   methods: {
+    selkc(row, type) {
+      // 如果考场的号码为随机数, 那么可以根据考场的号码 从考场列表中获取index
+      let n = 0
+      // let num = +this.aaDate[0].examCode // examCode
+      let num = 1 // examCode
+      num = num - 1
+      if (row.start && row.end && +row.end < +row.start) {
+        this.$message({
+          message: '考场号码大的应该放在后面',
+          type: 'warning'
+        })
+        row[type] = ''
+        return false
+      } else if (row.start && row.end && +row.end == +row.start) {
+        n = this.roomList[+row.start - 1 - num].examinationRoomNum
+      } else if(row.start && row.end && +row.end > +row.start){
+        for (let i = (+row.start - 1 - num); i < (+row.end - num); i++) {
+          n += this.roomList[i].examinationRoomNum
+        }
+
+      }
+      row.people = n
+
+    },
+    tijiao(){
+      let data=[]
+      this.tableData.forEach((item,index)=>{
+        data.push({
+          examCode:this.examNameNo,
+          examId: this.examId,
+          subject:this.course,
+          erMin:item.start,
+          erMax:item.end,
+          teacherId:item.teacherId,
+        })
+      })
+
+
+      let url = ""
+      if(this.type[0] == 0){
+        url="/exampaper/examDistributionPatternOne"
+      }else if(this.type[0] == 1){
+        url="/exampaper/examDistributionRandomOne"
+      }
+      this.$axios.post(url,data).then((res)=>{
+        if(res.code == 200){
+          this.$message.success('操作成功')
+          this.dialogFormVisible = false;
+
+        }
+      })
+    },
+    seletChage(){
+      this.$forceUpdate()
+    },
+    //修改模式
+    modeChange(){
+      this.getListByKs()
+    },
+    //获取考试列表
+    getKsList(){
+      this.$axios
+          .post('/ticket/examlist')
+          .then((res) => {
+            this.examIdList = res.result;
+          })
+          .catch(() => {});
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examIdList.map(item =>{
+        if(item.id == e){
+          this.examNameNo = item.no;
+          this.examId = item.id;
+          this.examName = item.name;
+          this.courseList = [];
+          this.course = ""
+          this.getExamDetails()
+
+        }
+      })
+    },
+    //分配查询
+    getListByKs(){
+      let data = {
+        "course": this.course,
+        "current": 1,
+        "examCode": this.examNameNo,
+        "provinceCode": "",
+        "schoolId": "",
+        "size": 10
+      }
+      this.$axios.post(
+          '/exampaper/examDistributionPaper',data
+      ).then(res=>{
+        this.tableData = res.result.teacherName;
+        this.aaDate = [];
+        this.tableData.forEach((item,index)=>{
+          this.aaDate.push({
+            teacherId:"",
+            start:"",
+            end:"",
+            peopleCount:0
+          })
+        })
+        this.roomList = res.result.examinationRoomCode;
+      })
+    },
+    // 查询考试下的科目
+    getExamDetails(){
+      this.$axios.get(
+          '/examsubject/listByExamId?examId='+this.examId
+      ).then(res=>{
+        this.courseList = res.result;
+      })
+    },
+    //分配试卷
+    fenpei(){
+      this.getKsList()
+      this.dialogFormVisible = true;
+    },
     //去查询联合考试状态
     // 新增
     add() {

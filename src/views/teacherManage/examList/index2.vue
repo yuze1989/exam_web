@@ -1,18 +1,23 @@
 <template>
   <section class="form_border">
     <div class="header">
-      <el-form :inline="true" class="demo-form-inline" style="display: flex;justify-content: flex-end">
+      <el-col :span="4">
+        <el-button type="primary" @click="dialogFormVisible=true">关联老师</el-button>
+      </el-col>
+      <el-col :span="20"  style="padding-bottom: 10px">
+        <el-form :inline="true" class="demo-form-inline" style="display: flex;justify-content: flex-end">
           <el-form-item style="margin-bottom: 0">
             <el-input
-              v-model="forms.model.name"
-              placeholder="考试名称"
+                v-model="teacherName"
+                placeholder="教师姓名"
             ></el-input>
           </el-form-item>
           <el-form-item style="margin-bottom: 0">
             <el-button type="primary" @click="onSubmit">查询</el-button>
             <!--            <el-button type="warning" @click="reset">重置</el-button>-->
           </el-form-item>
-      </el-form>
+        </el-form>
+      </el-col>
     </div>
     <!-- 导入 导出 -->
     <!--列表-->
@@ -28,46 +33,38 @@
       }"
     >
       <el-table-column
-        label="id"
+        label="教师账号"
         header-align="center"
         align="center"
-        prop="id"
+        prop="loginCode"
       ></el-table-column>
 
       <el-table-column
-        label="考试编码"
+        label="教师姓名"
         header-align="center"
         align="center"
-        prop="no"
+        prop="userName"
       ></el-table-column>
 
       <el-table-column
-        label="考试名称"
+        label="角色"
         header-align="center"
         align="center"
-        prop="name"
-      ></el-table-column>
-
-      <el-table-column
-        label="本考试老师数量"
-        header-align="center"
-        align="center"
-        prop="num"
-      ></el-table-column>
-
-      <el-table-column label="操作" header-align="center">
-        <template slot-scope="scope">
-          <div>
-            <el-button
-              type="text"
-              size="small"
-              @click="editItemAction(scope.row)"
-            >
-              <span>关联教师</span>
-            </el-button>
-          </div>
-        </template>
+        prop="role"
+      >
       </el-table-column>
+      <el-table-column
+          label="关联考试名称"
+          header-align="center"
+          align="center"
+          prop="examName"
+      ></el-table-column>
+      <el-table-column
+          label="考试科目"
+          header-align="center"
+          align="center"
+          prop="subjectName"
+      ></el-table-column>
     </el-table>
 
     <!--工具条-->
@@ -80,6 +77,31 @@
         @cb="currentChange"
       />
     </el-col>
+
+<!--    教师关联-->
+    <el-dialog title="教师关联" :visible.sync="dialogFormVisible">
+      <el-form>
+        <el-form-item label="选择教师">
+          <el-select v-model="examNameNo" style="display: flex;margin-left:50px;" placeholder="请选择教师" multiple>
+            <el-option
+                v-for="item in teacherList"
+                :key="item.id"
+                :label="item.userName"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择科目">
+          <el-checkbox-group v-model="checkList">
+            <el-checkbox v-for="item in courseList" :label="item.subjectName"></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="edit">确 定</el-button>
+      </div>
+    </el-dialog>
 
     <addDialog
       :visible.sync="isAdd"
@@ -135,6 +157,9 @@ export default {
       list: [],
       checkIds: [],
       listLoading: false,
+      dialogFormVisible:false,
+      examNameNo:"",
+      teacherName:"",
       forms: {
         current: 1,
         pageSize: 10,
@@ -164,14 +189,66 @@ export default {
         name: '',
         id: 0,
       },
+      courseList:[],
+      checkList:[],
+      teacherList:[]
     }
   },
 
   created() {
     this.getOrderList()
+    this.getExamDetails()
+    this.getTeacher()
   },
   methods: {
+    edit(){
+      let data={
+        "examId": this.$route.params.examId,
+        "subjectList": this.checkList,
+        "teacherIds": this.examNameNo
+      }
+      this.$axios.post('/teacher/relationTeacher',data)
+          .then((res) => {
+            this.$message.success('操作成功')
+            this.checkList = [];
+            this.examNameNo = [];
+            this.getOrderList()
+            this.dialogFormVisible = false
+          })
+          .catch(() => {
+            this.dialogFormVisible = false
+          })
+
+    },
     //去查询联合考试状态
+    // 查询考试下的科目
+    getExamDetails(){
+      this.$axios.get(
+          '/examsubject/listByExamId?examId='+this.$route.params.examId
+      ).then(res=>{
+        this.courseList = res.result;
+
+      })
+    },
+    //获取教师列表
+    getTeacher(){
+      let data = {
+        "current": 1,
+        "examId": "",
+        "provinceCode": "",
+        "roleId": "",
+        "schoolId": "",
+        "size": 100,
+        "teacherName": "",
+        roleType:1
+      }
+      this.$axios.post(
+          '/teacher/list',data
+      ).then(res=>{
+        this.teacherList = res.result.list;
+
+      })
+    },
     // 新增
     add() {
       this.isAddType = 1
@@ -181,6 +258,7 @@ export default {
       this.$router.push({ name: 'TeacherExamList', params: {
         examId: item.id
       }})
+      // this.$router.push("/teacherExamList")
     },
     toShowInvite(item) {
       this.editItemData = item
@@ -237,16 +315,13 @@ export default {
       let params = {
         current: this.forms.current,
         pageSize: this.forms.pageSize,
-        name: this.forms.model.name,
-        examStatus:
-          this.forms.model.examStatus == -1
-            ? null
-            : this.forms.model.examStatus,
+        examId:this.$route.params.examId,
+        teacherName:this.teacherName
       }
       this.$axios
-        .post('/teacher/examList', params)
+        .post('/teacher/examTeacherList', params)
         .then((res) => {
-          this.list = res.result.records
+          this.list = res.result.list
           this.data = res.result
           this.listLoading = false
         })

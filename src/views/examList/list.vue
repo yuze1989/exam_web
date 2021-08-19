@@ -138,7 +138,7 @@ export default {
       this.isAdd = true
     },
     editItemAction(item) {
-      this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode}})
+      this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode,"operStatus":item.operStatus}})
     },
     toShowInvite(item) {
       this.editItemData = item

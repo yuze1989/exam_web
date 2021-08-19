@@ -170,9 +170,11 @@ export default {
     },
     // 查询考试列表
     getExamList(){
-      apiExamList().then(res=>{
+
+      this.$axios.post('/score/examlist').then(res=>{
         this.examNameOption = res.result
       })
+
     },
     transformRequest(obj) {
       var str = []

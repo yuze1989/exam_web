@@ -3,39 +3,38 @@
     <div class="header">
       <div class="from-wrap">
         <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
-          <el-form-item>
-            <el-select
-                v-model="search.archiveStatus"
-                style="width: 130px; margin-right: 20px;"
-                placeholder="归档状态"
-            >
-              <el-option
-                  v-for="(item, index) in archiveStatus"
-                  :key="index"
-                  :label="item.name"
-                  :value="item.id"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-select
-                v-model="search.examType"
-                style="width: 130px; margin-right: 20px;"
-                placeholder="考试类型"
-            >
-              <el-option
-                  v-for="(item, index) in examType"
-                  :key="index"
-                  :label="item.name"
-                  :value="item.id"
-              ></el-option>
-            </el-select>
-          </el-form-item>
+<!--          <el-form-item>-->
+<!--            <el-select-->
+<!--                v-model="search.archiveStatus"-->
+<!--                style="width: 130px; margin-right: 20px;"-->
+<!--                placeholder="归档状态"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                  v-for="(item, index) in archiveStatus"-->
+<!--                  :key="index"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.id"-->
+<!--              ></el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item>-->
+<!--            <el-select-->
+<!--                v-model="search.examType"-->
+<!--                style="width: 130px; margin-right: 20px;"-->
+<!--                placeholder="考试类型"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                  v-for="(item, index) in examType"-->
+<!--                  :key="index"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.id"-->
+<!--              ></el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
           <el-form-item>
             <el-input
-                v-model="search.examName"
-                placeholder="请输入考试名称"
-                @keyup.enter.native="inputNum"
+                v-model="search.admissionTicketCode"
+                placeholder="请输入准考证号码"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -59,42 +58,79 @@
       }"
     >
     <el-table-column
-        label="考试编码"
+        label="机构编码"
         header-align="center"
         align="center"
-        prop="examCode"
+        prop="studioCode"
       >
       </el-table-column>
 
       <el-table-column
-        label="考试名称"
+        label="机构名称"
         header-align="center"
         align="center"
-        prop="examName"
+        prop="studioName"
       >
       </el-table-column>
 
       <el-table-column
-        label="归档状态"
+        label="准考证号"
         header-align="center"
         align="center"
-        prop="archiveStatusStr"
+        prop="admissionTicketCode"
       >
       </el-table-column>
       <el-table-column
-        label="归档时间"
+        label="姓名"
         header-align="center"
         align="center"
-        prop="updateTime"
+        prop="name"
       >
       </el-table-column>
-      <el-table-column label="操作" width="330" header-align="center">
+      <el-table-column
+          label="身份证号码"
+          header-align="center"
+          align="center"
+          prop="identification"
+      >
+      </el-table-column>
+      <el-table-column
+          label="生源省份"
+          header-align="center"
+          align="center"
+          prop="province"
+      >
+      </el-table-column>
+      <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
+        <template>
+          {{item.score}}
+        </template>
+      </el-table-column>
+
+      <el-table-column
+          label="总分"
+          header-align="center"
+          align="center"
+          prop="score"
+      >
+      </el-table-column>
+      <el-table-column
+          label="机构内排名"
+          header-align="center"
+          align="center"
+          prop="rankInStudio"
+      >
+      </el-table-column>
+      <el-table-column
+          label="总排名"
+          header-align="center"
+          align="center"
+          prop="rankInProvince"
+      >
+      </el-table-column>
+      <el-table-column label="试卷信息" header-align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="save(scope.row)" v-if="scope.row.archiveStatus==0"
-          >开始归档</el-button
-          >
-          <el-button type="text" size="small" @click="openXq(scope.row)">归档详情</el-button
-          >
+          <el-button type="text" size="small" @click="save(scope.row)">查看试卷</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -108,6 +144,20 @@
         @cb="currentChange"
       />
     </el-col>
+<!--    查看试卷-->
+    <el-dialog title="试卷信息" :visible.sync="dialogTableVisible">
+      <el-row>
+        <el-col :span="8" v-for="(o, index) in sjList" :key="o" style="padding: 10px">
+          <el-card :body-style="{ padding: '0px' }">
+            <img :src="o.img" class="image">
+            <div style="padding: 14px;">
+              <div>科目名称：{{o.subjectName}}</div>
+              <div>分数：{{o.score}}</div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </section>
 
 
@@ -123,6 +173,7 @@ export default {
       listLoading: false,
       dialogTableVisible:false,
       gridData:[],
+      sjList:[],
       //新增界面数据
       search: {
         admissionTicketCode : "",
@@ -196,19 +247,25 @@ export default {
       let params = {
         current: this.form.pageIndex,
         size: this.form.pageSize,
-        "archiveStatus":this.search.archiveStatus,
-        "examName":this.search.examName,
-        "examType":this.search.examType,
+        // "archiveStatus":this.search.archiveStatus,
+        // "examName":this.search.examName,
+        // "examType":this.search.examType,
         "schoolId": "",
-        "admissionTicketCode": "string",
+        "admissionTicketCode": this.search.admissionTicketCode,
         "examId": this.$route.query.id,
-        "examineeName": "string",
-        "provinceCode": "string",
+        "examineeName": "",
+        "provinceCode": "",
         "scoreEnd": "",
         "scoreStart": "",
         "studioId": "",
-        "studioName": "string",
-        "subject": "string"
+        "studioName": "",
+        "subject": "",
+
+
+
+
+
+
       };
       this.$axios
         .post('/score/hisFileDetailList', params)
@@ -219,42 +276,13 @@ export default {
           this.dataList.records = res.result.list;
         })
         .catch(() => {});
-      this.search.admissionTicketCode = ""
+      // this.search.admissionTicketCode = ""
     },
 
     save(row) {
-      this.$confirm("此操作将开始归档, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-          .then(() => {
-
-            this.$axios
-                .post('/score/examArchive?examId='+row.examId)
-                .then((res) => {
-                  if(res.code === 200) {
-                    this.$message({
-                      message: '提交成功',
-                      type: 'success',
-                      duration: 1500,
-                    })
-                    this.getList()
-                  }
-                })
-                .catch(() => {});
-            // this.$message({
-            //   type: "success",
-            //   message: "已重置",
-            // });
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消操作",
-            });
-          });
-
+      console.log(row);
+      this.sjList = row.subjectList;
+      this.dialogTableVisible = true
 
     }
 
