@@ -134,6 +134,7 @@
           prop="identification"
           label="身份证号"
           width="220"
+          maxlength="18"
           header-align="center"
           align="center"
         ></el-table-column>

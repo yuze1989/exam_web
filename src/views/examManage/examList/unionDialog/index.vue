@@ -60,7 +60,7 @@
           <div>
             <el-button
               type="text"
-              v-if="scope.row.currentSchoolId != scope.row.masterSchoolId"
+              v-if="(scope.row.currentSchoolId != scope.row.masterSchoolId) &&  scope.row.status == 0"
               size="small"
               @click="enbaleItemAction(scope.row, 1)"
             >
@@ -69,7 +69,7 @@
 
             <el-button
               type="text"
-              v-if="scope.row.currentSchoolId != scope.row.masterSchoolId"
+              v-if="(scope.row.currentSchoolId != scope.row.masterSchoolId) &&  scope.row.status == 0"
               size="small"
               @click="enbaleItemAction(scope.row, 2)"
             >

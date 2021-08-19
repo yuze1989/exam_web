@@ -133,6 +133,7 @@
         label="身份证号"
         header-align="center"
         align="center"
+        maxlength="18"
         prop="identification"
       ></el-table-column>
 
@@ -140,6 +141,7 @@
         label="手机号码"
         header-align="center"
         align="center"
+        maxlength="11"
         prop="mobile"
       ></el-table-column>
 

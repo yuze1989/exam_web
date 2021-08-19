@@ -209,16 +209,20 @@
             ></el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-time-select
+            <el-time-picker
               style="width: 120px;"
+              format="HH:mm"
+              value-format="HH:mm"
               placeholder="起始时间"
               v-model="item.subjectStarttime"
-            ></el-time-select>
-            <el-time-select
+            ></el-time-picker>
+            <el-time-picker
               style="width: 120px;"
               placeholder="结束时间"
+              format="HH:mm"
+              value-format="HH:mm"
               v-model="item.subjectEndtime"
-            ></el-time-select>
+            ></el-time-picker>
           </el-form-item>
           <el-form-item prop="submit">
             <el-button
