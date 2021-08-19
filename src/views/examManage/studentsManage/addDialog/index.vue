@@ -148,7 +148,7 @@
           :multiple="false"
           :limit="2"
           :on-change="handleChange"
-          action="https://exam-new.msjsol.com/exam-manager/file/upload"
+          action    
           accept=".jpg,.jpeg,.png"
           :auto-upload="false"
         >
