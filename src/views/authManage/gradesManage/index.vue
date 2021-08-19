@@ -81,7 +81,7 @@
         prop="province"
       >
       </el-table-column>
-      <div       v-if="dataList.records.length>0">
+      <div v-if="dataList.records.length>0">
         <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
           <template slot-scope="scope">
             <el-input v-model="scope.row.subjectList[index].score" @keyup.enter.native="save(scope.row)"></el-input>

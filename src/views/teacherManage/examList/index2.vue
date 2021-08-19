@@ -82,9 +82,9 @@
     <el-dialog title="教师关联" :visible.sync="dialogFormVisible">
       <el-form>
         <el-form-item label="选择教师">
-          <el-select v-model="examNameNo" style="display: flex;margin-left:50px;" placeholder="请选择考试名称" multiple>
+          <el-select v-model="examNameNo" style="display: flex;margin-left:50px;" placeholder="请选择教师" multiple>
             <el-option
-                v-for="item in list"
+                v-for="item in teacherList"
                 :key="item.id"
                 :label="item.userName"
                 :value="item.id">
@@ -190,13 +190,15 @@ export default {
         id: 0,
       },
       courseList:[],
-      checkList:[]
+      checkList:[],
+      teacherList:[]
     }
   },
 
   created() {
     this.getOrderList()
     this.getExamDetails()
+    this.getTeacher()
   },
   methods: {
     edit(){
@@ -225,6 +227,24 @@ export default {
           '/examsubject/listByExamId?examId='+this.$route.params.examId
       ).then(res=>{
         this.courseList = res.result;
+
+      })
+    },
+    //获取教师列表
+    getTeacher(){
+      let data = {
+        "current": 1,
+        "examId": "",
+        "provinceCode": "",
+        "roleId": "",
+        "schoolId": "",
+        "size": 100,
+        "teacherName": ""
+      }
+      this.$axios.post(
+          '/teacher/list',data
+      ).then(res=>{
+        this.teacherList = res.result.list;
 
       })
     },

@@ -88,12 +88,12 @@
         prop="updateTime"
       >
       </el-table-column>
-      <el-table-column label="操作" width="330" header-align="center">
+      <el-table-column label="操作" width="330" header-align="center" align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="save(scope.row)" v-if="scope.row.archiveStatus==0"
           >开始归档</el-button
           >
-          <el-button type="text" size="small" @click="openXq(scope.row)">归档详情</el-button
+          <el-button type="text" size="small" @click="openXq(scope.row)" v-if="scope.row.archiveStatus==1">归档详情</el-button
           >
         </template>
       </el-table-column>

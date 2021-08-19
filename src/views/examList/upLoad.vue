@@ -5,49 +5,45 @@
         各科目试卷上传进度
       </el-row>
       <el-row style="padding: 10px">
-        <el-col v-for="(item,index) in gradeList" :key="index" :span="24/gradeList.length" style="padding: 0 5px">
+        <el-col v-for="(item,index) in gradeList" :key="index" :span="4" style="padding: 0 5px;margin-bottom:10px">
           <div class="grade" style="position: relative">
-            <div class="label" style="position:absolute;
-    z-index: 99;
-    font-size: 14px;
-    left: 10px;">{{ item.course }}</div>
-<!--            {{item.count}}-->
-            <el-progress :text-inside="true" :stroke-width="26" :percentage="70"></el-progress>
+            <div class="label" style="position:absolute;z-index: 99;font-size: 14px;left: 10px;">{{item.course}} <span style="font-size: 12px;color:#82848a;">(已上传：{{item.count}})</span></div>
+            <el-progress :text-inside="true" :stroke-width="26" :percentage="Math.round(item.count/item.countNum)"></el-progress>
           </div>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="4" style="padding: 10px;margin-top: 5px;">
-          <el-button type="primary" class="meiyuan_btn" @click="saveRule" style="float: left">停止阅卷</el-button>
+          <el-button type="primary" class="meiyuan_btn" @click="stop" style="float: left">停止阅卷</el-button>
         </el-col>
         <el-col :span="20">
           <el-form :inline="true" class="demo-form-inline" style="    padding-top: 15px;
     padding-bottom: 10px;
     display: flex;
     justify-content: flex-end;">
-            <!--        <el-form-item>-->
-            <!--          <el-select-->
-            <!--              v-model="forms.model.provinceCode"-->
-            <!--              placeholder="生源省份"-->
-            <!--              value-key="province"-->
-            <!--              clearable-->
-            <!--              filterable-->
-            <!--          >-->
-            <!--            <el-option-->
-            <!--                v-for="item in options"-->
-            <!--                :key="item.provinceCode"-->
-            <!--                :label="item.province"-->
-            <!--                :value="item"-->
-            <!--            ></el-option>-->
-            <!--          </el-select>-->
-            <!--        </el-form-item>-->
-            <!--        <el-form-item>-->
-            <!--          <el-input v-model.trim="forms.model.userName" placeholder="机构名称"/>-->
-            <!--        </el-form-item>-->
+<!--                    <el-form-item>-->
+<!--                      <el-select-->
+<!--                          v-model="forms.model.provinceCode"-->
+<!--                          placeholder="生源省份"-->
+<!--                          value-key="province"-->
+<!--                          clearable-->
+<!--                          filterable-->
+<!--                      >-->
+<!--                        <el-option-->
+<!--                            v-for="item in options"-->
+<!--                            :key="item.provinceCode"-->
+<!--                            :label="item.province"-->
+<!--                            :value="item"-->
+<!--                        ></el-option>-->
+<!--                      </el-select>-->
+<!--                    </el-form-item>-->
+<!--                    <el-form-item>-->
+<!--                      <el-input v-model.trim="forms.model.userName" placeholder="机构名称"/>-->
+<!--                    </el-form-item>-->
             <el-form-item>
               <el-input
-                  v-model="forms.model.name"
-                  placeholder="考试名称"
+                  v-model="admissionTicketCode"
+                  placeholder="请输入准考证"
               ></el-input>
             </el-form-item>
             <el-form-item>
@@ -74,13 +70,6 @@
       }"
     >
       <el-table-column
-        label="id"
-        header-align="center"
-        align="center"
-        prop="id"
-      ></el-table-column>
-
-      <el-table-column
         label="考试编码"
         header-align="center"
         align="center"
@@ -95,26 +84,48 @@
       ></el-table-column>
 
       <el-table-column
-        label="阅卷状态"
-        header-align="center"
-        align="center"
-      >
-        <template slot-scope="scope">{{scope.row.operStatus==0?'未停止':'停止'}}</template>
-      </el-table-column>
+          label="机构编号"
+          header-align="center"
+          align="center"
+          prop="studioCode"
+      ></el-table-column>
 
-      <el-table-column label="操作" header-align="center"    align="center">
-        <template slot-scope="scope">
-          <div>
-            <el-button
-              type="text"
-              size="small"
-              @click="editItemAction(scope.row)"
-            >
-              <span>上传进度详情</span>
-            </el-button>
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column
+          label="机构名称"
+          header-align="center"
+          align="center"
+          prop="studioName"
+      ></el-table-column>
+
+      <el-table-column
+          label="准考证"
+          header-align="center"
+          align="center"
+          prop="admissionTicketCode"
+      ></el-table-column>
+
+      <el-table-column
+          label="考场"
+          header-align="center"
+          align="center"
+          prop="examinationRoomCode"
+      ></el-table-column>
+      <el-table-column
+          label="省份"
+          header-align="center"
+          align="center"
+          prop="province"
+      ></el-table-column>
+
+
+      <div v-if="list.length>0">
+        <el-table-column v-for="(item, index) in list[0].courseImg" :label="item.course" header-align="center" align="center">
+          <template slot-scope="scope">
+            <img :src="item.img" alt="" style="max-height: 150px;max-width: 200px">
+          </template>
+        </el-table-column>
+      </div>
+
     </el-table>
 
     <!--工具条-->
@@ -138,6 +149,7 @@ export default {
       list: [],
       checkIds: [],
       listLoading: false,
+      admissionTicketCode:"",
       forms: {
         current: 1,
         pageSize: 10,
@@ -175,12 +187,38 @@ export default {
     this.getGrade()
   },
   methods: {
+    saveRule(){},
+    stop(){
+      this.$confirm("此操作将停止阅卷, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+          .then(() => {
+            this.$axios.post('/exampaper/stopMarking')
+                .then((res)=>{
+                  this.$message({
+                    type: "success",
+                    message: "成功",
+                  });
+                })
+
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消操作",
+            });
+          });
+    },
     //查询进度
     getGrade(){
       this.$axios
           .post('/exampaper/uploadProgress', {
             current:"",
-            size:""
+            size:"",
+            examCode:this.$route.params.id,
+            operStatus:this.$route.params.operStatus
           })
           .then((res) => {
             this.gradeList = res.result.list
@@ -256,7 +294,8 @@ export default {
         current: this.forms.current,
         size: this.forms.pageSize,
         operStatus : 0,
-        examCode:this.$route.params.id
+        examCode:this.$route.params.id,
+        admissionTicketCode:this.admissionTicketCode
       }
       this.$axios
         .post('/exampaper/exampaperList', params)
