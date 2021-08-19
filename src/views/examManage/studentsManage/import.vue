@@ -106,7 +106,7 @@ export default {
       },
       rules: {
         examId: [{ required: true, message: '请输入', trigger: 'blur' }], //考试id
-        // address: [{ required: true, message: '请输入', trigger: 'blur' }], 
+        address: [{ required: true, message: '请输入', trigger: 'blur' }], 
       },
       examList: [],
     }
