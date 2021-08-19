@@ -8,7 +8,7 @@
         <el-form :inline="true" class="demo-form-inline" style="display: flex;justify-content: flex-end">
           <el-form-item style="margin-bottom: 0">
             <el-input
-                v-model="forms.model.name"
+                v-model="teacherName"
                 placeholder="教师姓名"
             ></el-input>
           </el-form-item>
@@ -159,6 +159,7 @@ export default {
       listLoading: false,
       dialogFormVisible:false,
       examNameNo:"",
+      teacherName:"",
       forms: {
         current: 1,
         pageSize: 10,
@@ -293,11 +294,8 @@ export default {
       let params = {
         current: this.forms.current,
         pageSize: this.forms.pageSize,
-        name: this.forms.model.name,
-        examStatus:
-          this.forms.model.examStatus == -1
-            ? null
-            : this.forms.model.examStatus,
+        examId:this.$route.params.examId,
+        teacherName:this.teacherName
       }
       this.$axios
         .post('/teacher/examTeacherList', params)
