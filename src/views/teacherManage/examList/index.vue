@@ -1,21 +1,17 @@
 <template>
   <section class="form_border">
     <div class="header">
-      <el-form :inline="true" class="demo-form-inline">
-        <el-col :span="4">
-          <el-form-item>
+      <el-form :inline="true" class="demo-form-inline" style="display: flex;justify-content: flex-end">
+          <el-form-item style="margin-bottom: 0">
             <el-input
               v-model="forms.model.name"
               placeholder="考试名称"
             ></el-input>
           </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item>
+          <el-form-item style="margin-bottom: 0">
             <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button type="warning" @click="reset">重置</el-button>
+            <!--            <el-button type="warning" @click="reset">重置</el-button>-->
           </el-form-item>
-        </el-col>
       </el-form>
     </div>
     <!-- 导入 导出 -->
@@ -185,7 +181,6 @@ export default {
       this.$router.push({ name: 'TeacherExamList', params: {
         examId: item.id
       }})
-      this.$router.push("/teacherExamList")
     },
     toShowInvite(item) {
       this.editItemData = item

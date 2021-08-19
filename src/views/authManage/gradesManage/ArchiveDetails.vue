@@ -196,19 +196,25 @@ export default {
       let params = {
         current: this.form.pageIndex,
         size: this.form.pageSize,
-        "archiveStatus":this.search.archiveStatus,
-        "examName":this.search.examName,
-        "examType":this.search.examType,
+        // "archiveStatus":this.search.archiveStatus,
+        // "examName":this.search.examName,
+        // "examType":this.search.examType,
         "schoolId": "",
-        "admissionTicketCode": "string",
+        "admissionTicketCode": "",
         "examId": this.$route.query.id,
-        "examineeName": "string",
-        "provinceCode": "string",
+        "examineeName": "",
+        "provinceCode": "",
         "scoreEnd": "",
         "scoreStart": "",
         "studioId": "",
-        "studioName": "string",
-        "subject": "string"
+        "studioName": "",
+        "subject": "",
+
+
+
+
+
+
       };
       this.$axios
         .post('/score/hisFileDetailList', params)
