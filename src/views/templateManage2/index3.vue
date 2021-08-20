@@ -9,7 +9,7 @@
         <!-- 基本信息 -->
         <div class="basic-info">
           <div class="display-center">
-            <el-select v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+            <el-select clearable  v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
               <el-option
                   v-for="item in examNameOption"
                   :key="item.id"

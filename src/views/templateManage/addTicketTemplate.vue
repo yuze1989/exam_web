@@ -10,7 +10,7 @@
             <div class="basic-info">
                 <div class="display-center">
                     <div class="title">考试名称</div>
-                     <el-select v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+                     <el-select clearable  v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
                         <el-option
                             v-for="item in examNameOption"
                                 :key="item.id"
@@ -21,7 +21,7 @@
                 </div>
 <!--               <div class="display-center">-->
 <!--                    <div class="title">考生省份</div>-->
-<!--                      <el-select v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">-->
+<!--                      <el-select clearable  v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">-->
 <!--                        <el-option-->
 <!--                            v-for="item in studentAreaOption"-->
 <!--                            :key="item.provinceCode"-->

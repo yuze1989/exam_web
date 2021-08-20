@@ -4,7 +4,7 @@
       <div class="from-wrap">
         <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
           <el-form-item>
-            <el-select
+            <el-select clearable
                 v-model="search.archiveStatus"
                 style="width: 130px; margin-right: 20px;"
                 placeholder="归档状态"
@@ -18,7 +18,7 @@
             </el-select>
           </el-form-item>
 <!--          <el-form-item>-->
-<!--            <el-select-->
+<!--            <el-select clearable -->
 <!--                v-model="search.examType"-->
 <!--                style="width: 130px; margin-right: 20px;"-->
 <!--                placeholder="考试类型"-->

@@ -27,7 +27,7 @@
       </el-form-item>
 
       <el-form-item label="考试类型" prop="examType">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.examType"
           placeholder="考试类型"
@@ -129,7 +129,7 @@
           class="demo-ruleForm"
         >
           <el-form-item>
-            <el-select
+            <el-select clearable
               v-model="item.province"
               style="width: 180px;"
               placeholder="选择省份"

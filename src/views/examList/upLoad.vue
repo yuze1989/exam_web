@@ -22,7 +22,7 @@
     display: flex;
     justify-content: flex-end;">
 <!--                    <el-form-item>-->
-<!--                      <el-select-->
+<!--                      <el-select clearable -->
 <!--                          v-model="forms.model.provinceCode"-->
 <!--                          placeholder="生源省份"-->
 <!--                          value-key="province"-->

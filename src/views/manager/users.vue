@@ -15,7 +15,7 @@
             </el-input>
           </el-form-item>
           <el-form-item v-if="false">
-            <el-select v-model="selections.provinceCode" clearable style="width:140px;" placeholder="选择省份" size='medium' @change="selProvice">
+            <el-select clearable  v-model="selections.provinceCode" clearable style="width:140px;" placeholder="选择省份" size='medium' @change="selProvice">
               <el-option v-for="province in provinceList" :key="province.province" :value="province.id" :label="province.province">
               </el-option>
             </el-select>

@@ -11,7 +11,7 @@
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span v-if="!form.rule.id">考试</span>名称:</el-col>
         <el-col :span="12">
-          <el-select v-model="form.rule.provinceCode" placeholder="请选择考试" size="medium" @change="selArea" v-if="false">
+          <el-select clearable  v-model="form.rule.provinceCode" placeholder="请选择考试" size="medium" @change="selArea" v-if="false">
             <el-option v-for="province in provinceList" :key="province.province" :value="province.id" :label="province.province">
             </el-option>
           </el-select>

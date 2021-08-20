@@ -19,7 +19,7 @@
       ref="inviteForm"
     >
       <el-form-item label="考试名称"  prop="examId" style="width: 400px;">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.examId"
           placeholder="考试名称"
@@ -35,7 +35,7 @@
       </el-form-item>
 
       <el-form-item label="考试地址" prop="address">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.address"
           placeholder="选择考试地址"

@@ -7,7 +7,7 @@
       <h1>请选择您要批改的科目</h1>
       <el-form>
         <el-form-item label="请选择考试名称">
-          <el-select v-model="examNameNo" style="display: flex;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+          <el-select clearable  v-model="examNameNo" style="display: flex;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
             <el-option
                 v-for="item in examNameOption"
                 :key="item.id"

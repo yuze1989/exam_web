@@ -8,7 +8,7 @@
           >新增用户</el-button
           >
           <!-- <el-col :span="5">
-            <el-select v-model="search.state" placeholder="请选择">
+            <el-select clearable  v-model="search.state" placeholder="请选择">
               <el-option
                 v-for="(item, index) in options"
                 :key="index"

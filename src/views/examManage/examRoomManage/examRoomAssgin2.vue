@@ -3,7 +3,7 @@
     <el-form :model="forms" :rules="rules" ref="roomAssgin" style="text-align: center"  class="demo-ruleForm">
 
       <el-form-item >
-        <el-select placeholder="选择省份" v-model="forms.province"  style="width:80%">
+        <el-select clearable  placeholder="选择省份" v-model="forms.province"  style="width:80%">
             <el-option v-for="province in provinceList"
                     :key="province.province"
                     :value="province.province"

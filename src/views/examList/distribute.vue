@@ -96,13 +96,13 @@
     <el-dialog title="分配试卷" :visible.sync="dialogFormVisible" >
       <el-form v-show="fpjd==1">
         <el-form-item label="考试名称" :label-width="formLabelWidth">
-          <el-select v-model="examId" placeholder="请选择考试" size="medium" @change="examNameChange">
+          <el-select clearable  v-model="examId" placeholder="请选择考试" size="medium" @change="examNameChange">
             <el-option v-for="item in examIdList" :key="item.id" :value="item.id" :label="item.name">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="考试科目" :label-width="formLabelWidth">
-          <el-select v-model="course" style="width:200px;" placeholder="请选择科目" @change="seletChage">
+          <el-select clearable  v-model="course" style="width:200px;" placeholder="请选择科目" @change="seletChage">
             <el-option
                 v-for="item in courseList"
                 :key="item.subjectName"
@@ -135,7 +135,7 @@
               label="考场"
               width="280">
             <template slot-scope="scope">
-              第<el-select style="width:70px;"  v-model="scope.row.start"  placeholder="" clearable @change="selkc(scope.row, 'start')">
+              第<el-select clearable  style="width:70px;"  v-model="scope.row.start"  placeholder="" clearable @change="selkc(scope.row, 'start')">
               <el-option
                   v-for="item in roomList"
                   :key="item.examinationRoomCode"
@@ -144,7 +144,7 @@
               </el-option>
             </el-select>
               至
-              <el-select style="width:70px;"  v-model="scope.row.end"  placeholder="" clearable @change="selkc(scope.row, 'end')">
+              <el-select clearable  style="width:70px;"  v-model="scope.row.end"  placeholder="" clearable @change="selkc(scope.row, 'end')">
                 <el-option
                     v-for="item in roomList"
                     :key="item.examinationRoomCode"

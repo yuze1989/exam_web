@@ -51,7 +51,7 @@
           </el-form-item>
 
           <el-form-item>
-            <el-select
+            <el-select clearable
               v-model="selections.provinceCode"
               placeholder="生源省份"
               value-key="province"
@@ -212,7 +212,7 @@
             size="medium"
             style="width: 200px;"
           ></el-input>
-          <!-- <el-select
+          <!-- <el-select clearable
             v-model="ruleForm.id"
             placeholder="请选择考场"
             style="width: 100%;"

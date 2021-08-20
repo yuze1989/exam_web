@@ -2,7 +2,7 @@
   <div style="width: 100%; text-align: center;">
     <el-form :model="formsData" :rules="rules" ref="ruleForm" style="">
       <el-form-item>
-        <el-select
+        <el-select clearable
           v-model="forms.examId"
           placeholder="考试名称"
           value-key="value"
@@ -16,7 +16,7 @@
           ></el-option>
         </el-select>
 
-        <el-select
+        <el-select clearable
           placeholder="选择省份"
           v-model="forms.provinceCode"
           style="margin-left: 10px;"

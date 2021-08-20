@@ -20,7 +20,7 @@
       ></el-input>
       <el-input v-model="form.studioName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
       ></el-input>
-       <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
+       <el-select clearable  v-model="form.studentAreaCode" style="width:200px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
           <el-option
             v-for="item in studentAreaOption"
             :key="item.provinceCode"
@@ -149,7 +149,7 @@
       <div style="color:red">
         当前选择会覆盖之前的选择
       </div>
-      <el-select v-model="selectRoomIds" multiple placeholder="请选择机构">
+      <el-select clearable  v-model="selectRoomIds" multiple placeholder="请选择机构">
         <el-option
           v-for="item in roomOptions"
           :key="item.id"

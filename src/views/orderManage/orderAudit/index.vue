@@ -12,7 +12,7 @@
         </el-col>
         <el-col :span="4">
           <el-form-item>
-            <el-select
+            <el-select clearable
               v-model="forms.model.status"
               placeholder="状态"
               @change="changeStatus"
