@@ -60,7 +60,7 @@
         </el-col>
       </el-form-item>
       <!-- <el-form-item label="角色" prop="useType">
-        <el-select
+        <el-select clearable
           v-model="from.useType"
           placeholder="请选择角色"
           style="width: 100%"

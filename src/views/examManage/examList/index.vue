@@ -22,7 +22,7 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-select
+              <el-select clearable
                   v-model="forms.model.examStatus"
                   placeholder="考试状态"
                   @change="changeStatus"

@@ -19,7 +19,7 @@
       class="demo-form-inline"
     >
       <el-form-item label="选择品牌" required>
-        <el-select
+        <el-select clearable
           v-model="addOrderForm.brandItem"
           filterable
           remote
@@ -41,7 +41,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="选择机构" required>
-        <el-select
+        <el-select clearable
           v-model="addOrderForm.schoolItem"
           placeholder="请选择机构"
           @change="selectOrgan"

@@ -19,7 +19,7 @@
       ref="teacherForm"
     >
       <el-form-item label="角色名称" prop="role">
-        <el-select v-model="from.role" placeholder="请选择" @change="changeRole">
+        <el-select clearable  v-model="from.role" placeholder="请选择" @change="changeRole">
           <el-option
             v-for="(item, index) in roleList"
             :key="index"
@@ -31,7 +31,7 @@
       </el-form-item>
 
       <el-form-item label="省份(支持多选)" prop="provinceList">
-        <el-select
+        <el-select clearable
           multiple
           v-model="from.provinceList"
           placeholder="省份(支持多选)"

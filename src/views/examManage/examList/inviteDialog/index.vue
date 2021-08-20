@@ -19,7 +19,7 @@
       ref="inviteForm"
     >
       <!-- <el-form-item label="考试名称" prop="examType">
-        <el-select
+        <el-select clearable
           style="width: 100%"
           v-model="from.name"
           placeholder="考试名称"

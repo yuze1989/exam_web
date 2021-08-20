@@ -19,7 +19,7 @@
       ref="studentsForm"
     >
       <el-form-item label="考试名称" prop="examName">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.examName"
           placeholder="考试名称"
@@ -36,7 +36,7 @@
       </el-form-item>
 
       <el-form-item label="机构名称" prop="studioName">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.studioName"
           placeholder="选择机构名称"
@@ -53,7 +53,7 @@
       </el-form-item>
 
       <el-form-item label="考试地址" prop="address">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.address"
           placeholder="选择考试地址"
@@ -87,7 +87,7 @@
       </el-form-item>
 
       <el-form-item label="性别" prop="gender">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.gender"
           placeholder="请选择"
@@ -118,7 +118,7 @@
       </el-form-item>
 
       <el-form-item label="选择省份" prop="province">
-        <el-select
+        <el-select clearable
           v-model="from.province"
           style="width: 180px;"
           placeholder="选择省份"

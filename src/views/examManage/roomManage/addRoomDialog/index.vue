@@ -25,7 +25,7 @@
         <el-input v-model="from.studioName" placeholder="请输入机构名称"></el-input>
       </el-form-item>
          <el-form-item label="机构地区" prop="studioAreaCode">
-        <el-select v-model="from.studioAreaCode" placeholder="请选择" @change="studioAreaChange">
+        <el-select clearable  v-model="from.studioAreaCode" placeholder="请选择" @change="studioAreaChange">
           <el-option
             v-for="item in studioAreaOption"
             :key="item.provinceCode"

@@ -3,7 +3,7 @@
     <div class="header">
       <el-form :inline="true" :model="search" class="demo-form-inline">
         <el-col :span="4">
-          <el-select v-model="search.state" placeholder="状态">
+          <el-select clearable  v-model="search.state" placeholder="状态">
             <el-option
               v-for="(item, index) in options"
               :key="index"
@@ -13,7 +13,7 @@
           </el-select>
         </el-col>
         <el-col :span="4">
-          <el-select v-model="search.limitState" placeholder="一个月内到期">
+          <el-select clearable  v-model="search.limitState" placeholder="一个月内到期">
             <el-option
               v-for="(item, index) in limitOptions"
               :key="index"

@@ -27,7 +27,7 @@
         placeholder="考试名称"
       ></el-input>
 
-      <el-select
+      <el-select clearable
         v-model="forms.checkStatus"
         style="width: 200px; margin-right: 20px;margin-bottom: 5px"
         placeholder="审核状态"
@@ -41,7 +41,7 @@
         ></el-option>
       </el-select>
 
-      <el-select
+      <el-select clearable
         v-model="forms.payStatus"
         style="width: 200px; margin-right: 20px;"
         placeholder="支付状态"
@@ -55,7 +55,7 @@
         ></el-option>
       </el-select>
 
-      <el-select
+      <el-select clearable
         v-model="forms.source"
         style="width: 200px; margin-right: 20px;"
         placeholder="报名来源"
@@ -263,7 +263,7 @@
 
     <!--选择审核修改-->
     <el-dialog title="审核学生信息" :visible.sync="showCheck" center>
-      <el-select style="width: 350px;" v-model="selectCheck" placeholder="请选择">
+      <el-select clearable  style="width: 350px;" v-model="selectCheck" placeholder="请选择">
         <el-option
           v-for="item in checkOptions"
           :key="item.id"

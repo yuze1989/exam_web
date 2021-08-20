@@ -2,7 +2,7 @@
   <div>
     <el-form :model="forms" :rules="rules" ref="ruleForm" label-width="30px" class="demo-ruleForm">
       <el-form-item>
-        <el-select v-model="forms.role" style="width:300px;" placeholder="选择角色">
+        <el-select clearable  v-model="forms.role" style="width:300px;" placeholder="选择角色">
           <template v-for="(item,idx) in roles">
             <el-option :key="idx" :label="item" :value="item"></el-option>
           </template>
@@ -12,7 +12,7 @@
         <el-input v-model="forms.account" placeholder="请输入登录账号" style="width:300px;" onKeyUp="value=value.replace(/[^\w\.\/]/ig,'')"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="forms.provinces" style="width:300px;" placeholder="选择省份" multiple>
+        <el-select clearable  v-model="forms.provinces" style="width:300px;" placeholder="选择省份" multiple>
           <el-option v-for="(item, i) in provinceList" :key="i" :value="item.province" :label="item.province">
           </el-option>
         </el-select>

@@ -11,7 +11,7 @@
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>考试</span>名称:</el-col>
         <el-col :span="12">
-          <el-select v-model="form.rule.examId" placeholder="请选择考试" size="medium" @change="examNameChange">
+          <el-select clearable  v-model="form.rule.examId" placeholder="请选择考试" size="medium" @change="examNameChange">
             <el-option v-for="item in examIdList" :key="item.id" :value="item.id" :label="item.name">
             </el-option>
           </el-select>
@@ -20,7 +20,7 @@
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>请选择</span>区域:</el-col>
         <el-col :span="12">
-          <el-select v-model="form.studentAreaName" style="width:200px;" placeholder="请选择区域" @change="studentChange">
+          <el-select clearable  v-model="form.studentAreaName" style="width:200px;" placeholder="请选择区域" @change="studentChange">
             <el-option
                 v-for="item in studentAreaOption"
                 :key="item.provinceCode"
@@ -33,7 +33,7 @@
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>打分</span>算法:</el-col>
         <el-col :span="12">
-          <el-select v-model="form.gradeRule" placeholder="请选择打分算法" size="medium" @change="seletChage">
+          <el-select clearable  v-model="form.gradeRule" placeholder="请选择打分算法" size="medium" @change="seletChage">
             <el-option v-for="item in gradeRuleList" :key="item.id" :value="item.id" :label="item.name" >
             </el-option>
           </el-select>
@@ -42,7 +42,7 @@
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>二维码隐藏</span>区域:</el-col>
         <el-col :span="12">
-          <el-select v-model="form.hideSite" placeholder="请选择二维码隐藏区域" size="medium" @change="seletChage">
+          <el-select clearable  v-model="form.hideSite" placeholder="请选择二维码隐藏区域" size="medium" @change="seletChage">
             <el-option v-for="item in hideSiteList" :key="item.id" :value="item.id" :label="item.name">
             </el-option>
           </el-select>
@@ -55,7 +55,7 @@
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>科目</span>名称:</el-col>
         <el-col :span="12">
-          <el-select v-model="form.course" style="width:200px;" placeholder="请选择科目" @change="seletChage">
+          <el-select clearable  v-model="form.course" style="width:200px;" placeholder="请选择科目" @change="seletChage">
             <el-option
                 v-for="item in courseList"
                 :key="item.subjectName"

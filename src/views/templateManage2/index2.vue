@@ -12,7 +12,7 @@
     margin: 15px 0;">提示：只能导出已经归档历史数据</div>
         <div class="basic-info">
           <div class="display-center">
-            <el-select v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+            <el-select clearable  v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
               <el-option
                   v-for="item in examNameOption"
                   :key="item.id"
@@ -22,7 +22,7 @@
             </el-select>
           </div>
           <div class="display-center">
-            <el-select v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择画室名称" @change="studentChange">
+            <el-select clearable  v-model="form.studentAreaCode" style="width:200px;margin-left:50px;" placeholder="请选择画室名称" @change="studentChange">
               <el-option
                   v-for="item in examDetails"
                   :key="item.studioId"

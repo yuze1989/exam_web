@@ -2,7 +2,7 @@
   <div>
     <el-form :model="form" :rules="rules" ref="ruleForm" label-width="30px" class="demo-ruleForm">
       <el-form-item>
-        <el-select v-model="form.role" style="width:300px;" placeholder="选择角色">
+        <el-select clearable  v-model="form.role" style="width:300px;" placeholder="选择角色">
           <template v-for="(item,idx) in roles">
             <el-option :key="idx" :label="item" :value="item"></el-option>
           </template>
@@ -12,7 +12,7 @@
         <el-input v-model="form.account" placeholder="请输入登录账号" style="width:300px;" disabled></el-input>
       </el-form-item>
       <el-form-item required v-if="false">
-        <el-select v-model="provincesSel" style="width:300px;" placeholder="选择省份" multiple>
+        <el-select clearable  v-model="provincesSel" style="width:300px;" placeholder="选择省份" multiple>
           <el-option v-for="province in provinceList" :key="province.province" :value="province.province" :label="province.province">
           </el-option>
         </el-select>

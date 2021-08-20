@@ -19,7 +19,7 @@
       ref="teacherForm"
     >
      <el-form-item label="考试名称" prop="examName">
-        <el-select
+        <el-select clearable
           style="width: 250px;"
           v-model="from.examName"
           placeholder="考试名称"

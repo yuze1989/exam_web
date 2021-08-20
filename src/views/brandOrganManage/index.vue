@@ -167,7 +167,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="所属品牌" prop="brandName">
-          <el-select
+          <el-select clearable
             style="width: 100%"
             v-model="ruleForm.brandId"
             placeholder="请选择"
@@ -200,7 +200,7 @@
         <el-form-item label="所属地区" required>
           <el-col :span="8">
             <el-form-item prop="province">
-              <el-select
+              <el-select clearable
                 value-key="id"
                 v-model="ruleForm.province"
                 placeholder="请选择"
@@ -218,7 +218,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item prop="city">
-              <el-select
+              <el-select clearable
                 value-key="id"
                 v-model="ruleForm.city"
                 placeholder="请选择"
@@ -236,7 +236,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item prop="district">
-              <el-select
+              <el-select clearable
                 value-key="id"
                 v-model="ruleForm.district"
                 placeholder="请选择"

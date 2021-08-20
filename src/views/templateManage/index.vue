@@ -94,7 +94,7 @@
       <div style="color:red">
         当前选择会覆盖之前的选择
       </div>
-      <el-select v-model="selectRoomIds" multiple placeholder="请选择机构">
+      <el-select clearable  v-model="selectRoomIds" multiple placeholder="请选择机构">
         <el-option
           v-for="item in roomOptions"
           :key="item.id"
@@ -188,7 +188,7 @@ export default {
       let params = {
         current : this.form.pageIndex ,
         size : this.form.size ,
-        name : this.form.examName,
+        examName : this.form.examName,
         no:  this.form.examNo
       };
       examinationList2(params).then((res) => {

@@ -27,7 +27,7 @@
         <el-input v-model="from.roleName" placeholder="请输入"></el-input>
       </el-form-item>
       <el-form-item label="角色类型" prop="roleType">
-        <el-select v-model="from.roleType" placeholder="请选择">
+        <el-select clearable  v-model="from.roleType" placeholder="请选择">
           <!-- <el-option label="管理员" value="0"></el-option> -->
           <el-option label="阅卷老师" value="1"></el-option>
           <el-option label="教辅老师" value="2"></el-option>

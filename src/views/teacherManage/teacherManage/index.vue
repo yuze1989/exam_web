@@ -23,7 +23,7 @@
 
           <!-- multiple -->
             <el-form-item style="margin-bottom: 0">
-              <el-select
+              <el-select clearable
                   v-model="forms.model.provinceCode"
                   placeholder="生源省份"
                   value-key="province"

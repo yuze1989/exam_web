@@ -7,7 +7,7 @@
         查询
       </el-button>
 
-      <el-select
+      <el-select clearable
           v-model="form.ticketStatus"
           style="width: 200px; margin-left: 20px;float: right"
           placeholder="准考证号状态"

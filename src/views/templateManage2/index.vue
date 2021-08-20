@@ -87,7 +87,7 @@
       <div style="color:red">
         当前选择会覆盖之前的选择
       </div>
-      <el-select v-model="selectRoomIds" multiple placeholder="请选择机构">
+      <el-select clearable  v-model="selectRoomIds" multiple placeholder="请选择机构">
         <el-option
             v-for="item in roomOptions"
             :key="item.id"
