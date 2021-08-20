@@ -134,9 +134,13 @@
       </el-form-item>
 
       <el-form-item label="上传图片"  v-if="from.url" prop="url">
-        <template slot-scope="scope">
-          <img :src="from.url" style="width: 150px; height: 150px;" />
-          <el-button @click="changeImage" style="margin-left:20px" >更换</el-button>
+        <template slot-scope="scope" class="m_box">
+          <div class="m_box" >
+            <img class="img"  :src="from.url" style="width: 150px; height: 150px;" />
+            <div class="mengceng">
+              <i class="el-icon-delete del_icon" @click="changeImage"></i>
+            </div>
+          </div>
         </template>
       </el-form-item>
 
@@ -148,10 +152,12 @@
           :multiple="false"
           :limit="2"
           :on-change="handleChange"
+          :on-remove="handleRemove"
           action    
           accept=".jpg,.jpeg,.png"
           :auto-upload="false"
-        >
+          :class="{'disUoloadSty': !showBtnImg}"
+        > 
           <i class="el-icon-plus"></i>
         </el-upload>
       </el-form-item>
@@ -193,6 +199,7 @@ export default {
       addressList:[],
       file:"",
       currentProvinceCode: '',
+      showBtnImg: true,
       from: {
         id: '',
         examId: '', //考试id
@@ -247,6 +254,13 @@ export default {
       console.log(fileList,'fileList')
       this.file = file
       this.fileList = [file]
+      this.showBtnImg = fileList.length <1
+    },
+    handleRemove(file, fileList){
+      console.log(file, fileList,'file, fileLis')
+      if(fileList.length <1){
+        this.showBtnImg = true
+      }
     },
     provinceChange(value) {
       this.provinceList.forEach((item) => {
@@ -346,6 +360,7 @@ export default {
       this.getExamList()
       this.fileList= []
       this.file=""
+      this.showBtnImg= true,
       console.log(this.editItem, this.isAdd, 'this.isAdd')
       if (this.isAdd) {
         this.from = {}
@@ -491,6 +506,7 @@ export default {
 </script>
 
 <style>
+@import './add.scss';
 .address-item {
   margin: 10px 0px;
 }
@@ -511,7 +527,42 @@ export default {
   width: 140px;
   height: 140px;
 }
-</style>
-<style lang="scss" scoped>
-@import './add.scss';
+.disUoloadSty .el-upload{
+  display: none !important;   /* 上传按钮隐藏 */
+}
+.mengceng {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+.mengceng:hover{
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.mengceng:hover .del_icon{
+  display: block;
+}
+.m_box{
+  width: 150px;
+  height: 150px; 
+  position: relative;
+}
+.img{
+  border-radius: 10px;
+}
+.del_icon{
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin-top:-12px;
+  margin-left:-12px;
+  z-index: 10;
+  font-size: 24px;
+  color: #fff;
+  display: none;
+  cursor: pointer;
+}
 </style>
