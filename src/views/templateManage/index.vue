@@ -188,7 +188,7 @@ export default {
       let params = {
         current : this.form.pageIndex ,
         size : this.form.size ,
-        name : this.form.examName,
+        examName : this.form.examName,
         no:  this.form.examNo
       };
       examinationList2(params).then((res) => {
