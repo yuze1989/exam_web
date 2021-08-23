@@ -14,19 +14,13 @@
             <div class="card no">
               <div class="title">待打分</div>
               <div class="val">
-                <span class="number">{{ unmarkedCount }}</span>
+                <span class="number">{{ NoScore }}</span>
               </div>
             </div>
             <div class="card done">
               <div class="title">已打分</div>
               <div class="val">
-                <span class="number">{{ markedCount }}</span>
-              </div>
-            </div>
-            <div class="card total">
-              <div class="title">所有老师已打分</div>
-              <div class="val">
-                <span class="number">{{ markedCountTotal }}</span>
+                <span class="number">{{ Score }}</span>
               </div>
             </div>
           </div>
@@ -34,23 +28,23 @@
             <div class="card no">
               <div class="title">待评级</div>
               <div class="val">
-                <span class="number">{{ unmarkedCount }}</span>
+                <span class="number">{{ NoGrade }}</span>
               </div>
             </div>
             <div class="card done">
               <div class="title">已评级</div>
               <div class="val">
-                <span class="number">{{ markedCount }}</span>
-              </div>
-            </div>
-            <div class="card total">
-              <div class="title">所有老师已评级</div>
-              <div class="val">
-                <span class="number">{{ markedCountTotal }}</span>
+                <span class="number">{{ Grade }}</span>
               </div>
             </div>
           </div>
-          <h3>试卷分组数据</h3>
+          <h3>试卷分组数据
+            <el-switch
+                style="display: inline-block;float: right;margin-top: 5px"
+              v-model="value1"
+              active-text="竖版"
+              inactive-text="横版">
+          </el-switch></h3>
           <div class="cards-statistics">
             <div
                 class="card"
@@ -113,11 +107,13 @@
       </div>
       <div class="right">
         <div
+            v-if="value1"
             class="right-top"
             ref="imgViewerContainer"
             @mouseenter="imgViewerEnter"
             @mouseleave="imgViewerLeave"
         >
+          <div class="bg"></div>
           <span
               v-if="
               paperList[currentPosition] && paperList[currentPosition].level
@@ -133,11 +129,12 @@
               }}<span v-if="paperList[currentPosition].mark">分</span>
             </span>
           </span>
-          <div class="previous-image box_img" style="top: 100px!important;">
+          <div class="previous-image box_img" @click="clickImg(-2)"  style="top: 100px!important;">
             <el-image
+                :preview-src-list="imgList"
                 fit="cover"
                 :src="
-                imgList[currentPosition] ? imgList[currentPosition] : ''
+                imgList[currentPosition - 2] ? imgList[currentPosition - 2] : ''
               "
             >
               <div slot="error" class="image-slot">
@@ -146,31 +143,75 @@
             </el-image>
             <span
                 v-if="
-                paperList[currentPosition] &&
-                paperList[currentPosition].level
+                paperList[currentPosition - 2] &&
+                paperList[currentPosition - 2].level
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition].level
-                }}<span v-if="paperList[currentPosition].level"
+              >{{ paperList[currentPosition - 2].level
+                }}<span v-if="paperList[currentPosition - 2].level"
                 >类</span
                 ></span
               >
               <span
-              >{{ paperList[currentPosition].mark
-                }}<span v-if="paperList[currentPosition].level"
+              >{{ paperList[currentPosition - 2].mark
+                }}<span v-if="paperList[currentPosition - 2].level"
                 >分</span
                 ></span
               >
             </span>
           </div>
-          <div class="previous-image box_img" style="bottom: 0px !important;">
+          <div class="previous-image box_img" @click="clickImg(-1)" style="bottom: 0px !important;">
             <el-image
                 style="position: absolute;bottom: 0"
                 fit="cover"
                 :src="
-                imgList[currentPosition + 1] ? imgList[currentPosition + 1] : ''
+                imgList[currentPosition  - 1] ? imgList[currentPosition  - 1] : ''
+              "
+            >
+              <div slot="error" class="image-slot">
+                <img src="@/assets/no_img.png" alt="" style="width:100%">
+              </div>
+            </el-image>
+            <span
+                v-if="
+                paperList[currentPosition  - 1] &&
+                paperList[currentPosition  - 1].level
+              "
+                class="mark-level-container"
+            >
+              <span
+              >{{ paperList[currentPosition  - 1].level
+                }}<span v-if="paperList[currentPosition  - 1].level"
+                >类</span
+                ></span
+              >
+              <span
+              >{{ paperList[currentPosition  - 1].mark
+                }}<span v-if="paperList[currentPosition  - 1].level"
+                >分</span
+                ></span
+              >
+            </span>
+          </div>
+          <vue-img-viewer
+              ref="imgViewer"
+
+              :container="'imgViewerContainer'"
+              :image-urls="imgList"
+              :visible="visible"
+              :initial-scale="1"
+              @positionUpdated="imgSwitchEnd"
+              :start-position="startPosition"
+          >
+          </vue-img-viewer>
+
+          <div class="next-image box_img" @click="clickImg(1)"  style="top: 100px;">
+            <el-image
+                fit="cover"
+                :src="
+                imgList[currentPosition  + 1] ? imgList[currentPosition + 1] : ''
               "
             >
               <div slot="error" class="image-slot">
@@ -185,64 +226,118 @@
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition + 1].level
-                }}<span v-if="paperList[currentPosition + 1].level"
+              >{{ paperList[currentPosition + 1].level }}
+                <span v-if="paperList[currentPosition + 1].level">类</span>
+              </span>
+              <span
+              >{{ paperList[currentPosition + 1].mark }}
+                <span v-if="paperList[currentPosition + 1].mark">分</span>
+              </span>
+            </span>
+          </div>
+          <div class="next-image box_img" @click="clickImg(2)"  style="position: absolute;bottom: 0">
+            <el-image
+                style="position: absolute;bottom: 0"
+                fit="cover"
+                :src="
+                imgList[currentPosition + 2] ? imgList[currentPosition + 2] : ''
+              "
+            >
+              <div slot="error" class="image-slot">
+                <img src="@/assets/no_img.png" alt="" style="width:100%">
+              </div>
+            </el-image>
+            <span
+                v-if="
+                paperList[currentPosition + 2] &&
+                paperList[currentPosition + 2].level
+              "
+                class="mark-level-container"
+            >
+              <span
+              >{{ paperList[currentPosition + 2].level }}
+                <span v-if="paperList[currentPosition + 2].level">类</span>
+              </span>
+              <span
+              >{{ paperList[currentPosition + 2].mark }}
+                <span v-if=" [currentPosition + 2].mark">分</span>
+              </span>
+            </span>
+          </div>
+        </div>
+        <div
+            v-if="!value1"
+            class="right-top right-top2"
+            ref="imgViewerContainer"
+            @mouseenter="imgViewerEnter"
+            @mouseleave="imgViewerLeave"
+        >
+          <div class="bg"></div>
+          <span
+              v-if="
+              paperList[currentPosition] && paperList[currentPosition].level
+            "
+              class="image-header"
+          >
+            <span
+            >{{ paperList[currentPosition].level }}
+              <span v-if="paperList[currentPosition].level">类</span>
+            </span>
+            <span
+            >{{ paperList[currentPosition].mark
+              }}<span v-if="paperList[currentPosition].mark">分</span>
+            </span>
+          </span>
+          <vue-img-viewer
+              ref="imgViewer"
+
+              :container="'imgViewerContainer'"
+              :image-urls="imgList"
+              :visible="visible"
+              :initial-scale="1"
+              @positionUpdated="imgSwitchEnd"
+              :start-position="startPosition"
+          >
+          </vue-img-viewer>
+          <div class="previous-image box_img" @click="clickImg(1)"  style="top: 100px!important;">
+            <el-image
+                :preview-src-list="imgList"
+                fit="cover"
+                :src="
+                imgList[currentPosition +1] ? imgList[currentPosition +1] : ''
+              "
+            >
+              <div slot="error" class="image-slot">
+                <img src="@/assets/no_img.png" alt="" style="width:100%">
+              </div>
+            </el-image>
+            <span
+                v-if="
+                paperList[currentPosition +1] &&
+                paperList[currentPosition +1].level
+              "
+                class="mark-level-container"
+            >
+              <span
+              >{{ paperList[currentPosition +1].level
+                }}<span v-if="paperList[currentPosition +1].level"
                 >类</span
                 ></span
               >
               <span
-              >{{ paperList[currentPosition + 1].mark
-                }}<span v-if="paperList[currentPosition + 1].level"
+              >{{ paperList[currentPosition +1].mark
+                }}<span v-if="paperList[currentPosition +1].level"
                 >分</span
                 ></span
               >
             </span>
           </div>
-          <vue-img-viewer
-              ref="imgViewer"
-              :container="'imgViewerContainer'"
-              :image-urls="imgList"
-              :visible="visible"
-              :initial-scale="0.2"
-              @positionUpdated="imgSwitchEnd"
-              :start-position="startPosition"
-          >
-          </vue-img-viewer>
-
-          <div class="next-image box_img" style="top: 100px;">
-            <el-image
-                fit="cover"
-                :src="
-                imgList[currentPosition + 3] ? imgList[currentPosition + 3] : ''
-              "
-            >
-              <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
-              </div>
-            </el-image>
-            <span
-                v-if="
-                paperList[currentPosition + 3] &&
-                paperList[currentPosition + 3].level
-              "
-                class="mark-level-container"
-            >
-              <span
-              >{{ paperList[currentPosition + 3].level }}
-                <span v-if="paperList[currentPosition + 3].level">类</span>
-              </span>
-              <span
-              >{{ paperList[currentPosition + 3].mark }}
-                <span v-if="paperList[currentPosition + 3].mark">分</span>
-              </span>
-            </span>
-          </div>
-          <div class="next-image box_img" style="position: absolute;bottom: 0">
+          <div class="previous-image box_img" @click="clickImg(2)" style="top: calc(25% + 100px) !important;">
             <el-image
                 style="position: absolute;bottom: 0"
                 fit="cover"
                 :src="
-                imgList[currentPosition + 4] ? imgList[currentPosition + 4] : ''
+                imgList[currentPosition  +2] ? imgList[currentPosition  +2] : ''
               "
             >
               <div slot="error" class="image-slot">
@@ -251,18 +346,79 @@
             </el-image>
             <span
                 v-if="
-                paperList[currentPosition + 4] &&
-                paperList[currentPosition + 4].level
+                paperList[currentPosition  +2] &&
+                paperList[currentPosition  +2].level
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition + 4].level }}
-                <span v-if="paperList[currentPosition + 4].level">类</span>
+              >{{ paperList[currentPosition  +2].level
+                }}<span v-if="paperList[currentPosition  +2].level"
+                >类</span
+                ></span
+              >
+              <span
+              >{{ paperList[currentPosition  +2].mark
+                }}<span v-if="paperList[currentPosition  +2].level"
+                >分</span
+                ></span
+              >
+            </span>
+          </div>
+          <div class="next-image box_img" @click="clickImg(3)"  style="top: calc(50% + 100px);">
+            <el-image
+                fit="cover"
+                :src="
+                imgList[currentPosition  +3] ? imgList[currentPosition +3] : ''
+              "
+            >
+              <div slot="error" class="image-slot">
+                <img src="@/assets/no_img.png" alt="" style="width:100%">
+              </div>
+            </el-image>
+            <span
+                v-if="
+                paperList[currentPosition +3] &&
+                paperList[currentPosition +3].level
+              "
+                class="mark-level-container"
+            >
+              <span
+              >{{ paperList[currentPosition +3].level }}
+                <span v-if="paperList[currentPosition +3].level">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 4].mark }}
-                <span v-if="paperList[currentPosition + 4].mark">分</span>
+              >{{ paperList[currentPosition +3].mark }}
+                <span v-if="paperList[currentPosition +3].mark">分</span>
+              </span>
+            </span>
+          </div>
+          <div class="next-image box_img" @click="clickImg(4)"  style="position: absolute;top: calc(75% + 100px)">
+            <el-image
+                style="position: absolute;bottom: 0"
+                fit="cover"
+                :src="
+                imgList[currentPosition +4] ? imgList[currentPosition +4] : ''
+              "
+            >
+              <div slot="error" class="image-slot">
+                <img src="@/assets/no_img.png" alt="" style="width:100%">
+              </div>
+            </el-image>
+            <span
+                v-if="
+                paperList[currentPosition +4] &&
+                paperList[currentPosition +4].level
+              "
+                class="mark-level-container"
+            >
+              <span
+              >{{ paperList[currentPosition +4].level }}
+                <span v-if="paperList[currentPosition +4].level">类</span>
+              </span>
+              <span
+              >{{ paperList[currentPosition +4].mark }}
+                <span v-if=" [currentPosition +4].mark">分</span>
               </span>
             </span>
           </div>
@@ -338,7 +494,7 @@
         :before-close="handleClose"
     >
       <div class="img-wrap">
-        <el-image :src="targetUrl" fit="cover"></el-image>
+        <el-image :src="targetUrl" fit="cover" :class="[rotate?'go':'aa']" @click="startR"></el-image>
       </div>
     </el-dialog>
   </div>
@@ -362,6 +518,7 @@ export default {
   },
   data: () => {
     return {
+      value1:true,
       account: "",
       markError: "",
       level: "",
@@ -372,6 +529,7 @@ export default {
       markDlgVisible: false,
       total: 0,
       paperList: [],
+      mList:[],
       imgList: [],
       levelList: [],
       levelStatisticsList: [],
@@ -393,6 +551,12 @@ export default {
       maxScore: 0,
       paperStopDialogVisible: false,
       targetUrl:'', // 放大的图片
+      clickTimer:null,
+      rotate:false,
+      Score:0,
+      NoScore:0,
+      NoGrade:0,
+      Grade:0,
     };
   },
   created() {
@@ -408,18 +572,70 @@ export default {
     // } else {
     //   query.grade = routeParams.level
     // }
+    this.getJinDu();//获取进度
+    this.getFenZu();//获取分组
     this.queryPaperList(); //获取评级
     this.queryProgress(); //获取分类
     this.renderMarkingRules(); //获取规则
     this.getList();//获取试卷
   },
   methods: {
+    getJinDu(){
+      let url1 = '/exampaper/scoringProgress'
+      this.$axios.post(url1,{
+        "course": this.$route.query.course,
+        "current": 1,
+        "examCode": this.$route.query.examNo,
+        "examPaperId": this.$route.query.examId,
+        "grade": "",
+        "provinceCode": "",
+        "schoolId": "",
+        "size": 10,
+      }).then((res)=>{
+            this.Score=res.Score;
+            this.NoScore=res.NoScore;
+            this.NoGrade=res.NoGrade;
+            this.Grade=res.Grade;
+      })
+    },
+    getFenZu(){
+      let url1 = '/exampaper/queryPaperGroupingList'
+      this.$axios.post(url1,{
+        "course": this.$route.query.course,
+        "examCode": this.$route.query.examNo,
+        "examPaperId": this.$route.query.examId,
+      }).then((res)=>{
+        this.Score=res.Score;
+        this.NoScore=res.NoScore;
+        this.NoGrade=res.NoGrade;
+        this.Grade=res.Grade;
+      })
+    },
+    startR(){
+      this.rotate = !this.rotate
+    },
+    // 图片点击
+    clickImg(val){
+      if(this.clickTimer){
+        window.clearTimeout(this.clickTimer);
+        this.clickTimer = null;
+      }
+      let that = this;
+      this.clickTimer = window.setTimeout(function (){
+        if(that.currentPosition+val < 0 || that.currentPosition+val >=that.paperList.length){
+          return false;
+        }
+        that.currentPosition +=val
+        that.startPosition += val;
+      },300)
+    },
     getList(){
       let list = [{"id":73447,"name":"11000006","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918889201photo.jpg","permission":"11000006","level":"A","show":false,"mark":10},{"id":73480,"name":"11000010","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163630","permission":"11000010","level":"A","show":false,"mark":11},{"id":73481,"name":"11000004","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919106963photo.jpg","permission":"11000004","level":"A","show":false,"mark":1},{"id":73485,"name":"11000003","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164251","permission":"11000003","level":"A","show":false,"mark":33},{"id":73448,"name":"11000015","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1615186236562photo.jpg","permission":"11000015","level":"B","show":false,"mark":87},{"id":73478,"name":"11000011","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163547","permission":"11000011","level":"B","show":false,"mark":90},{"id":73479,"name":"11000009","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918957857photo.jpg","permission":"11000009","level":"B","show":false,"mark":90},{"id":73482,"name":"11000008","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919155580photo.jpg","permission":"11000008","level":"B","show":false,"mark":44},{"id":73483,"name":"11000002","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164219","permission":"11000002","level":"B","show":false,"mark":1},{"id":73484,"name":"11000005","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919348377photo.jpg","permission":"11000005","level":"B","show":false,"mark":99},{"id":73486,"name":"11000007","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919433104photo.jpg","permission":"11000007","level":"B","show":false,"mark":44}]
       let imgList = ["http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918889201photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163630","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919106963photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164251","http://topexam.oss-cn-hangzhou.aliyuncs.com/1615186236562photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163547","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918957857photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919155580photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164219","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919348377photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919433104photo.jpg"]
 
 
       this.paperList = list;
+      this.mList = list;
       this.imgList = imgList;
     },
     getImgUrlIP() {
@@ -779,11 +995,31 @@ export default {
       this.showExamplesPreviewer = true;
       this.targetUrl = url;
     },
+    //双击放大图片
+    expandImgDb(url){
+      if(this.clickTimer){
+        window.clearTimeout(this.clickTimer);
+        this.clickTimer = null;
+      }
+      if(url){
+        this.showExamplesPreviewer = true;
+        this.targetUrl = url;
+      }
+
+    }
   },
 };
 </script>
 
 <style lang="scss">
+
+.aa{
+  transition: all 2s;
+}
+.go{
+  transform: rotate(90deg);
+  transition: all 2s;
+}
 .box_img{
   height: 40%;
   border: 1px solid #ccc;
@@ -794,6 +1030,9 @@ export default {
     width: calc(100% - 4px) !important;
   }
 }
+.box_img.active{
+  border-color: #c03639;
+}
 .preview-container{
   width: 58%;
   left: 21% !important;
@@ -802,6 +1041,7 @@ export default {
 .preview-container .image-wrapper .image-box{
   left: 0 !important;
   width: 100% !important;
+  border: 1px solid #fff !important;
 }
 .marking-area .bottom .right .right-top .previous-image{
   width: 20% !important;
@@ -899,9 +1139,32 @@ export default {
     }
   }
 }
+.box_img .el-image:after{
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 8;
+  background: rgba(0,0,0,.3);
+  top: 0;
+  left: 0;
+}
+.right-top2 .preview-container{
+  left: 0!important;
+  width: 70%!important;
+}
+.marking-area .bottom .right .right-top2 .image-header{
+  left: 0!important;
+}
+.marking-area .bottom .right .right-top2 .box_img{
+  width: 30% !important;
+  height: 25% !important;
+  left: 70%!important;
+}
 </style>
 
 <style scoped lang="scss">
+
 .marking-area {
   .primary-submit {
     width: 100%;
@@ -1105,7 +1368,7 @@ export default {
         -moz-border-radius: 10px 10px 0 0;
         border-radius: 10px 10px 0 0;
         overflow: hidden;
-        background: #fff;
+        background: rgba(0,0,0,.3);
         margin-bottom: 10px;
         .image-header {
           position: absolute;
@@ -1215,4 +1478,5 @@ export default {
 text-align: center;
 }
 }
+
 </style>

@@ -15,19 +15,21 @@
           <!-- draggable: false 禁止 chrome 拖拽图片 -->
           <div class="image-box">
             <span class="image-container" :style="imgStyle">
-                <img
-                    v-show="!loading"
-                    ref="image"
-                    :src="finallyImageList[currentPosition]"
-                    :alt="`图片${currentPosition + 1}`"
-                    class="image"
-                    draggable="false"
-                    @load="handleImageLoad"
-                    @error="hideLoading"
-                    @abort="hideLoading"
-                    @mousedown="handleImageMouseDown"
-                    @wheel.stop="wheelScale"
-                />
+               <el-image
+                   v-show="!loading"
+                   ref="image"
+                   :src="finallyImageList[currentPosition]"
+                   :alt="`图片${currentPosition + 1}`"
+                   class="image"
+                   draggable="false"
+                   @load="handleImageLoad"
+                   @error="hideLoading"
+                   @abort="hideLoading"
+                   @mousedown="handleImageMouseDown"
+                   @wheel.stop="wheelScale"
+                   :preview-src-list="finallyImageList">
+                </el-image>
+
             </span>
           </div>
         </div>
@@ -77,6 +79,17 @@
     <div v-if="isSlotMode" ref="slotWrapper" @click="handleImgWrapperClick">
       <slot />
     </div>
+    <!-- 点击放大图片 -->
+    <el-dialog
+        title="示例图片"
+        :visible.sync="showExamplesPreviewer"
+        width="45%"
+        :before-close="handleClose"
+    >
+      <div class="img-wrap">
+        <el-image :src="targetUrl" fit="cover"></el-image>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -168,6 +181,8 @@ export default {
   },
   data() {
     return {
+      showExamplesPreviewer:false,
+      targetUrl:"",
       isFirstShow: false,
       currentPosition: 0,
       slotModeVisible: false,
@@ -177,6 +192,7 @@ export default {
       scale: 1.5,
       rotateAngle: 0,
       aspectRatio: 1,
+      clickTimer:null,
       position: {
         left: 0,
         top: 0,
@@ -225,6 +241,7 @@ export default {
     imgStyle() {
       let { left, top } = this.position
       let styleKey = this.aspectRatio > 1 ? 'max-width' : 'max-height'
+      console.log(this.scale);
       return {
         transform: `translate3d(${left}px, ${top}px, 0) scale(${this.scale}) rotate(${this.rotateAngle}deg)`,
       }
@@ -444,6 +461,18 @@ export default {
         }
       })
     },
+    expandImgDb(url){
+      if(this.clickTimer){
+        window.clearTimeout(this.clickTimer);
+        this.clickTimer = null;
+      }
+      if(url){
+        this.showExamplesPreviewer = true;
+        this.targetUrl = url;
+        console.log(url)
+      }
+
+    },
     showLoading() {
       clearTimeout(this.loadingTimer)
       this.loadingTimer = setTimeout(() => {
@@ -507,6 +536,9 @@ export default {
     },
     // 滚轮缩放
     wheelScale(e) {
+      let evt = window.event;
+      evt.stopPropagation();
+      evt.preventDefault();
       const RATIO = 700 // 实际缩放与缩放偏移量的系数
       let computedScale = this.scale - e.deltaY / RATIO
       this.scale =
@@ -539,8 +571,13 @@ export default {
   },
 }
 </script>
-
+<style>
+.el-image-viewer__wrapper .el-image-viewer__img{
+  border: 1px solid #fff;
+}
+</style>
 <style lang="scss" scoped>
+
 .fade-in-enter-active,
 .fade-in-leave-active {
   transition: opacity 0.25s;
@@ -558,7 +595,7 @@ export default {
   right: 0;
   bottom: 0;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  //background-color: rgba(0, 0, 0, 0.6);
   overflow: hidden;
   user-select: none;
   z-index: 10;
