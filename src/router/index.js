@@ -112,6 +112,25 @@ export const constantRoutes = [
                     icon: 'classmate'
                 },
             },
+            {
+                path: "/marking",
+                name:'marking',
+                component: resolve => require(["@/views/examList/marking.vue"], resolve),
+                meta: {
+                    name: '批改试卷',
+                    icon: 'classmate'
+                },
+            },
+            {
+                path: "/templateManage4",
+                name:"templateManage4",
+                component: resolve => require(["@/views/templateManage2/index3.vue"], resolve),
+                meta: {
+                    name: '脱敏设置',
+                    icon: 'classtime'
+                },
+
+            },
         ]
     },
 
@@ -494,11 +513,12 @@ export const asyncRouter = [
                     icon: 'classtime'
                 },
             },
+
             {
-                path: "/templateManage4",
+                path: "/TakeSense",
                 id: 129,
                 code: 10129,
-                component: resolve => require(["@/views/templateManage2/index3.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                component: resolve => require(["@/views/templateManage2/TakeSense.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
                 meta: {
                     name: '脱敏设置',
                     icon: 'classtime'

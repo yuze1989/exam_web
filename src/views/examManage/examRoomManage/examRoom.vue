@@ -15,12 +15,14 @@
         <el-form :inline="true" :model="selections" style="float: right;">
 
           <el-form-item>
-            <el-input
-              v-model="selections.examName"
-              style="width: 140px;"
-              placeholder="请输入考试名称"
-              onKeyUp="value=value.replace(/\s|[\r\n]/ig,'')"
-            ></el-input>
+            <el-select clearable  v-model="selections.examName"  placeholder="请选择考试名称" @change="examNameChange">
+              <el-option
+                  v-for="item in examNameOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item>
@@ -235,6 +237,7 @@
 </template>
 
 <script>
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import provinceCodeList from '@/utils/provinceCode'
 import myPagination from '@/components/pagination'
 import SelectProvince from '@/components/SelectProvince'
@@ -244,6 +247,9 @@ export default {
   components: { examRoomAssgin, myPagination, SelectProvince },
   data() {
     return {
+      examName:"",
+      examId:"",
+      examNameOption: [],
       options:[],
       from: {},
       listLoading: false,
@@ -276,7 +282,25 @@ export default {
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
     }
   },
+  created() {
+    this.getExamList()
+  },
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.selections.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     // selectedProvince(payload) {
     //   this.selections.provinceCode = payload.provinceCode
     //   this.selections.provinceName = payload.province

@@ -1,9 +1,18 @@
 <template>
   <section class="form_border">
     <div class="header">
-      <el-button class="meiyuan_btn" type="primary" size="medium" @click="addStudio"
+      <el-col :span="6">
+        <el-button class="meiyuan_btn" type="primary" size="medium" @click="addStudio"
         >新增机构信息</el-button
-      >
+        >
+      </el-col>
+
+     <el-col :span="18" style="display: flex;justify-content: flex-end">
+       <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
+       ></el-input>
+       <el-button class="association_btn" style="margin-left:50px; margin-bottom: 10px" type="primary" size="medium" @click="getList"
+       >查询</el-button>
+     </el-col>
 <!--       <el-button class="association_btn" type="primary" size="medium" @click="associationExam"-->
 <!--        >关联考试</el-button-->
 <!--      >-->
@@ -187,7 +196,7 @@ export default {
       let params = {
         current : this.form.pageIndex ,
         pageSize : this.form.size ,
-       
+        studioName:this.form.studentName
       };
       this.$axios
         .post(this.API.roomManage.list, params)

@@ -89,7 +89,7 @@
         </el-table-column>
       </div>
 
-      <el-table-column label="操作" width="130" header-align="center">
+      <el-table-column label="操作" width="130" header-align="center" v-if="dataList.records.length>0">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="save(scope.row)"
             >保存</el-button
@@ -127,11 +127,7 @@ export default {
         pageSize: 10,
       },
 
-      dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
-        {
-          'id': 1,'data': 2,'sales': 3,'salt': 4,'const': 5, 'profit': 6
-        }
-      ] },
+      dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
       subjectName1: false,
       subjectName2: false,
       subjectName3: false,
@@ -161,6 +157,10 @@ export default {
         size: this.form.pageSize,
         admissionTicketCode: this.search.admissionTicketCode,
       };
+      console.log(this.dataList.records);
+      if(this.search.admissionTicketCode == ""){
+        return false;
+      }
       this.$axios
         .post('/score/scoreList', params)
         .then((res) => {

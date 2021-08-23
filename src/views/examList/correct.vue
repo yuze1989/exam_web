@@ -49,7 +49,8 @@ export default {
       colorList: ['sketch', 'color', 'sketch2', 'design','sketch', 'color', 'sketch2', 'design'],
       courseList: [],
       examNameNo:"",
-      examNameOption:[]
+      examNameOption:[],
+      examNo:""
     }
   },
   created() {
@@ -71,6 +72,7 @@ export default {
         if(item.id == e){
           this.examNameNo = item.id;
           this.examName = item.name;
+          this.examNo = item.no;
           this.getExamDetails()
           // this.getProvinceByExamId()
         }
@@ -95,8 +97,8 @@ export default {
     // 选择科目
     selectSubject(subject) {
       this.query.examId = this.examNameNo;
+      this.query.examNo = this.examNo;
       this.query.course = subject;
-      console.log(this.query);
 
       // 跳转到考卷列表页 需要传递份和科目两个参数
       this.$router.push({

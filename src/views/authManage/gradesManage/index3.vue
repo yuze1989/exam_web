@@ -32,11 +32,15 @@
 <!--            </el-select>-->
 <!--          </el-form-item>-->
           <el-form-item>
-            <el-input
-                v-model="search.examName"
-                placeholder="请输入考试名称"
-                @keyup.enter.native="inputNum"
-            ></el-input>
+            <el-select clearable  v-model="search.examName"  placeholder="请选择考试名称" @change="examNameChange">
+              <el-option
+                  v-for="item in examNameOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
+
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -115,11 +119,15 @@
 
 <script>
 
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
   components: {
   },
   data() {
     return {
+      examName:"",
+      examId:"",
+      examNameOption: [],
       listLoading: false,
       dialogTableVisible:false,
       gridData:[],
@@ -160,9 +168,26 @@ export default {
   },
   created() {
     this.getList();
+    this.getExamList()
   },
 
   methods: {
+
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.search.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     openXq(row){
       this.$router.push({name:"ArchiveDetails",query:{id:row.examId}})
     },

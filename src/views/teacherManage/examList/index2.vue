@@ -65,6 +65,15 @@
           align="center"
           prop="subjectName"
       ></el-table-column>
+      <el-table-column
+          fixed="right"
+          align="center"
+          label="操作"
+          width="200">
+        <template slot-scope="scope">
+          <el-button @click="bindEidt(scope.row)" type="text" size="small" >删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <!--工具条-->
@@ -82,7 +91,7 @@
     <el-dialog title="教师关联" :visible.sync="dialogFormVisible">
       <el-form>
         <el-form-item label="选择教师">
-          <el-select clearable  v-model="examNameNo" style="display: flex;margin-left:50px;" placeholder="请选择教师" multiple>
+          <el-select clearable  v-model="examNameNo" filterable style="display: flex;margin-left:50px;" placeholder="请选择教师" multiple>
             <el-option
                 v-for="item in teacherList"
                 :key="item.id"
@@ -201,6 +210,20 @@ export default {
     this.getTeacher()
   },
   methods: {
+    bindEidt(row){
+      let data={
+        "examId": this.$route.params.examId,
+        "id": row.id
+      }
+      this.$axios.post('/teacher/examTeacherDelete',data)
+          .then((res) => {
+            this.$message.success('操作成功')
+            this.getOrderList()
+          })
+          .catch(() => {
+
+          })
+    },
     edit(){
       let data={
         "examId": this.$route.params.examId,
@@ -240,7 +263,7 @@ export default {
         "schoolId": "",
         "size": 100,
         "teacherName": "",
-        roleType:1
+        roleTypeList :[1,3]
       }
       this.$axios.post(
           '/teacher/list',data

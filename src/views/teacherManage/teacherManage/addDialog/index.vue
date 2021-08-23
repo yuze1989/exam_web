@@ -30,27 +30,27 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="省份(支持多选)" prop="provinceList">
-        <el-select clearable
-          multiple
-          v-model="from.provinceList"
-          placeholder="省份(支持多选)"
-          value-key="province"
-          clearable
-          filterable
-          @change="selectedProvince"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.provinceCode"
-            :label="item.province"
-            :value="item"
-          ></el-option>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="省份(支持多选)" prop="provinceList">-->
+<!--        <el-select clearable-->
+<!--          multiple-->
+<!--          v-model="from.provinceList"-->
+<!--          placeholder="省份(支持多选)"-->
+<!--          value-key="province"-->
+<!--          clearable-->
+<!--          filterable-->
+<!--          @change="selectedProvince"-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in options"-->
+<!--            :key="item.provinceCode"-->
+<!--            :label="item.province"-->
+<!--            :value="item"-->
+<!--          ></el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
 
       <el-form-item label="登录账号" prop="loginCode">
-        <el-input v-model="from.loginCode" placeholder="请输入"></el-input>
+        <el-input v-model="from.loginCode" placeholder="请输入" :disabled="isAdd==0"></el-input>
       </el-form-item>
       <el-form-item label="姓名" prop="userName">
         <el-input v-model="from.userName" placeholder="请输入"></el-input>
@@ -102,15 +102,17 @@ export default {
       },
       rules: {
         role: [{ required: true, message: '请选择', trigger: 'blur' }],
-        loginCode: [{ required: true, message: '请输入', trigger: 'blur' }],
+        loginCode: [{ required: true,pattern:/^[A-Za-z0-9]+$/, message: '请输入（账号只能由字母和数字组成）', trigger: 'blur' }],
         password: [{ required: true, message: '请输入', trigger: 'blur' }],
         userName: [{ required: true, message: '请输入', trigger: 'blur' }],
       },
     }
   },
+  created() {
+    console.log(this.isAdd);
+  },
   methods: {
     selectedProvince(payload) {
-      console.log(payload, 'payload')
       this.from.provinceList = payload
     },
     changeRole(payload) {
@@ -127,18 +129,14 @@ export default {
       this.getProvinceList() 
       if (!this.isAdd) {
         this.rules.password = [{ required: false, message: '请输入', trigger: 'blur' }],
-        console.log(this.editItem,'this.editItem')
         this.$axios
           .get(`${this.API.teacher.detail}?id=${this.editItem.id}`)
           .then((res) => {
             if ((res.code = 200)) {
-              console.log(res, 'rr')
               this.from = {
                 id: this.editItem.id,
                 loginCode: this.editItem.loginCode,
                 password: this.editItem.password,
-                // province: "北京",
-                // provinceCode: "北京",
                 role: this.editItem.role,
                 roleId: this.editItem.roleId,
                 provinceList: res.result.provinceList,
@@ -170,6 +168,7 @@ export default {
         })
     },
     confirm() {
+
       if (this.isAdd) {
         this.add()
       } else {

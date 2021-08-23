@@ -6,8 +6,16 @@
       <div style="position: absolute;right: 0;padding-right: 20px">
 <!--        <el-input v-model="form.examNo" style="width:200px;"  placeholder="考试编号"-->
 <!--        ></el-input>-->
-        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"
-        ></el-input>
+<!--        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"-->
+<!--        ></el-input>-->
+        <el-select clearable  v-model="examName"  placeholder="请选择考试名称" @change="examNameChange">
+          <el-option
+              v-for="item in examNameOption"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+          </el-option>
+        </el-select>
         <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button>
       </div>
@@ -105,7 +113,7 @@
 </template>
 
 <script>
-
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import { examinationList3,apiRelationStudio } from '@/api/studioManage.js'
 import addTicketTemplate from './addTicketTemplate.vue'
 export default {
@@ -119,6 +127,9 @@ export default {
   },
   data() {
     return {
+      examName:"",
+      examId:"",
+      examNameOption: [],
       listLoading: false,
       showTemplate: false,
       sels: [], //列表选中列
@@ -153,9 +164,25 @@ export default {
   created() {
     this.getRoomList()
     this.getList();
+    this.getExamList()
   },
 
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     // 新建模板
     addTemplate(){
       this.$router.push({path: '/AddTicketTemplate2'})
@@ -181,7 +208,7 @@ export default {
         current : this.form.pageIndex ,
         size : this.form.size ,
         // name : this.form.examName,
-        examName : this.form.examName
+        examName : this.examName
       };
       examinationList3(params).then((res) => {
         this.data.records = res.result.list;

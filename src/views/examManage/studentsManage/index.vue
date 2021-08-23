@@ -9,6 +9,14 @@
         schoolId:'',// 机构id ,
         source:'',//报名来源:1手机；2后台 ,
         studioName:'',//: 机构名称 -->
+      <el-select clearable  v-model="forms.examName"  placeholder="请选择考试名称" @change="examNameChange">
+        <el-option
+            v-for="item in examNameOption"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+        </el-option>
+      </el-select>
       <el-input
         style="width: 200px; margin-right: 20px; margin-bottom: 5px"
         v-model="forms.examineeName"
@@ -21,11 +29,11 @@
         placeholder="机构名称"
       ></el-input>
 
-      <el-input
-        style="width: 200px; margin-right: 20px;margin-bottom: 5px"
-        v-model="forms.examName"
-        placeholder="考试名称"
-      ></el-input>
+<!--      <el-input-->
+<!--        style="width: 200px; margin-right: 20px;margin-bottom: 5px"-->
+<!--        v-model="forms.examName"-->
+<!--        placeholder="考试名称"-->
+<!--      ></el-input>-->
 
       <el-select clearable
         v-model="forms.checkStatus"
@@ -298,6 +306,7 @@
   </section>
 </template>
 <script>
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import addDialog from './addDialog'
 import importDialog from './import.vue'
 export default {
@@ -307,6 +316,10 @@ export default {
   },
   data() {
     return {
+      examName:"",
+      examId:"",
+      examNameOption: [],
+
       //新增
       isAddType: true,//true新增 flase修改
       isAdd: false,
@@ -369,8 +382,24 @@ export default {
   },
   created() {
     this.getOrderList()
+    this.getExamList()
   },
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.forms.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     // 上传文件
     onImport(file, fileList) {
       this.showImport = true

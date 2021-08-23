@@ -1,6 +1,7 @@
 <template>
   <section class="form_border">
     <div class="header" style="height: 66px">
+
       <el-button type="primary" @click="ticketGenerate" style="float: left">生成准考证号</el-button>
 
       <el-button type="primary" style="margin-left: 20px;float: right" @click="pageReset">
@@ -26,6 +27,19 @@
         placeholder="姓名"
 
       ></el-input>
+      <el-input
+          style="width: 200px; margin-right: 20px;margin-bottom: 5px;float: right"
+          v-model="form.studioName"
+          placeholder="机构名称"
+      ></el-input>
+      <el-select clearable  v-model="form.examName" style="width: 200px;float: right"  placeholder="请选择考试名称" @change="examNameChange">
+        <el-option
+            v-for="item in examNameOption"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+        </el-option>
+      </el-select>
 
 
 
@@ -102,17 +116,24 @@
   </section>
 </template>
 <script>
+
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import { Message } from "element-ui";
 export default {
   components: {},
   data() {
     return {
       list: [],
+      examName:"",
+      examId:"",
+      examNameOption: [],
       form: {
         current: 1,
         size: 10,
         ticketStatus: '',
-        examineeName: '',
+        examineeName: '', //考生姓名
+        studioName: '', //: 机构名称
+        examName: '', //考试名称
       },
       value: '',
       data: { pages: 0, size: 10, total: 0, records: [] },
@@ -124,8 +145,24 @@ export default {
   },
   created() {
     this.getList()
+    this.getExamList()
   },
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.form.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     ticketGenerate() {
       this.$axios
         .post(this.API.studentsManage.ticketGenerate, {})

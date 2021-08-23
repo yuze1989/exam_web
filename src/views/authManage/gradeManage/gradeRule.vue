@@ -17,19 +17,19 @@
           </el-select>
         </el-col>
       </el-row>
-      <el-row class="w200 mt-20">
-        <el-col :span="8" class="title18"><span>请选择</span>区域:</el-col>
-        <el-col :span="12">
-          <el-select clearable  v-model="form.studentAreaName" style="width:200px;" placeholder="请选择区域" @change="studentChange">
-            <el-option
-                v-for="item in studentAreaOption"
-                :key="item.provinceCode"
-                :label="item.province"
-                :value="item.provinceCode">
-            </el-option>
-          </el-select>
-        </el-col>
-      </el-row>
+<!--      <el-row class="w200 mt-20">-->
+<!--        <el-col :span="8" class="title18"><span>请选择</span>区域:</el-col>-->
+<!--        <el-col :span="12">-->
+<!--          <el-select clearable  v-model="form.studentAreaName" style="width:200px;" placeholder="请选择区域" @change="studentChange">-->
+<!--            <el-option-->
+<!--                v-for="item in studentAreaOption"-->
+<!--                :key="item.provinceCode"-->
+<!--                :label="item.province"-->
+<!--                :value="item.provinceCode">-->
+<!--            </el-option>-->
+<!--          </el-select>-->
+<!--        </el-col>-->
+<!--      </el-row>-->
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>打分</span>算法:</el-col>
         <el-col :span="12">
@@ -44,6 +44,15 @@
         <el-col :span="12">
           <el-select clearable  v-model="form.hideSite" placeholder="请选择二维码隐藏区域" size="medium" @change="seletChage">
             <el-option v-for="item in hideSiteList" :key="item.id" :value="item.id" :label="item.name">
+            </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span>教师阅卷</span>顺序:</el-col>
+        <el-col :span="12">
+          <el-select clearable  v-model="form.ruleSort " placeholder="请选择教师阅卷顺序" size="medium" @change="seletChage">
+            <el-option v-for="item in ruleSortList" :key="item.id" :value="item.id" :label="item.name" >
             </el-option>
           </el-select>
         </el-col>
@@ -72,12 +81,12 @@
         </el-col>
       </el-row>
       <el-row class="w200 mt-20">
-        <el-col :span="8" class="title18">设置评分阶梯</el-col>
+        <el-col :span="8" class="title18">设置分组级别</el-col>
         <el-col :span="12">
           <el-input-number v-model="form.rule.gradeLevel" controls-position="right" @change="gradeChange" :min="1" :max="20">
           </el-input-number>
         </el-col>
-        <span class="title18" :span="4">个阶梯</span>
+        <span class="title18" :span="4">个</span>
       </el-row>
 
       <div class="lablestyle fw-b" style="width: 100%;color:#3E3D3D">
@@ -181,8 +190,12 @@ export default {
       examIdList:[],
       studentAreaOption: [],
       gradeRuleList: [
-        {id:0,name:'算术平均算法'},
-        {id:1,name:'加权平均算法'},
+        {id:0,name:'算术平均算法:平均值'},
+        {id:1,name:'截尾平均数：去掉最高值和最低值，再求平均值'},
+      ],
+      ruleSortList:[
+        {id:0,name:'按准考证顺序'},
+        {id:1,name:'随机顺序'},
       ],
       hideSiteList: [
         {id:"",name:'不隐藏'},
@@ -304,17 +317,22 @@ export default {
     },
     uploadchanged() {
       let file = this.$refs.fileup.files[0]
-      var fromDate = new FormData();
-      fromDate.append("file",file)
-      this.$axios.post('/file/upload',fromDate).then(res=>{
-        if(res){
-          if(this.isOne){
-            this.form.rule.picUrl = res.result;
-          }else{
-            this.tempExam.imgUrl = res.result;
+      if(file !=undefined){
+        var fromDate = new FormData();
+        fromDate.append("file",file)
+        this.$axios.post('/file/upload',fromDate).then(res=>{
+          if(res){
+            if(this.isOne){
+              this.form.rule.picUrl = res.result;
+            }else{
+              this.tempExam.imgUrl = res.result;
+            }
+            this.$refs.fileup.value = ""
+
           }
-        }
-      }).catch(()=>{})
+        }).catch(()=>{})
+      }
+
     },
     upToOss(exam) {
       this.isOne = false;
@@ -447,7 +465,8 @@ export default {
         "province": params.studentAreaName,
         "provinceCode": params.studentAreaCode,
         "score": params.rule.score,
-        "takePic": params.rule.takePic
+        "takePic": params.rule.takePic,
+        ruleSort:params.ruleSort
       }
 
       if (this.id) {

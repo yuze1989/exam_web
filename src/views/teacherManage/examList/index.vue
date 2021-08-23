@@ -3,10 +3,14 @@
     <div class="header">
       <el-form :inline="true" class="demo-form-inline" style="display: flex;justify-content: flex-end">
           <el-form-item style="margin-bottom: 0">
-            <el-input
-              v-model="forms.model.name"
-              placeholder="考试名称"
-            ></el-input>
+            <el-select clearable  v-model="forms.model.name"  placeholder="请选择考试名称" @change="examNameChange">
+              <el-option
+                  v-for="item in examNameOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item style="margin-bottom: 0">
             <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -121,6 +125,7 @@
     ? 2.设计稿只有一个列表, POST /examinfo/list /examinfo/unionExamList查询本机构下联合考试 是不是还有一个页面 
     -->
 <script>
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import addDialog from './addDialog'
 import inviteDialog from './inviteDialog'
 import deleteDialog from "./deleteDialog"
@@ -132,6 +137,9 @@ export default {
   },
   data() {
     return {
+      examName:"",
+      examId:"",
+      examNameOption: [],
       list: [],
       checkIds: [],
       listLoading: false,
@@ -169,8 +177,24 @@ export default {
 
   created() {
     this.getOrderList()
+    this.getExamList()
   },
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.forms.model.name = item.name
+          this.examId = item.id
+        }
+      })
+    },
     //去查询联合考试状态
     // 新增
     add() {

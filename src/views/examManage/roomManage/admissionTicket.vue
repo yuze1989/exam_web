@@ -10,8 +10,14 @@
     height: 40px;"
           >导出准考证</el-button
         >
-        <el-input v-model="form.examName" style="width:200px;margin-left:50px;" placeholder="考试名称"
-        ></el-input>
+      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange">
+        <el-option
+            v-for="item in examNameOption"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+        </el-option>
+      </el-select>
         <el-input v-model="form.examNo" style="width:200px;margin-left:15px;"  placeholder="输入考场"
         ></el-input>
          <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="学生姓名"
@@ -167,7 +173,7 @@
 </template>
 
 <script>
-
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import { getAllProvince } from '@/api/studioManage.js'
 import { apiUnionExamList } from '@/api/ticket.js'
 
@@ -176,6 +182,10 @@ export default {
   name: "AdmissionTicket",
   data() {
     return {
+
+      examName:"",
+      examId:"",
+      examNameOption: [],
        listLoading: false,
       sels: [], //列表选中列
       search: {
@@ -211,9 +221,25 @@ export default {
   created() {
       this.getAllProvinces()
      this.getList();
+    this.getExamList()
   },
 
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.form.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
      // 生成和导出二维码
      exportQR(){
 

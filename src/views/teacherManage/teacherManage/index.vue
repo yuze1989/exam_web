@@ -22,22 +22,22 @@
             </el-form-item>
 
           <!-- multiple -->
-            <el-form-item style="margin-bottom: 0">
-              <el-select clearable
-                  v-model="forms.model.provinceCode"
-                  placeholder="生源省份"
-                  value-key="province"
-                  clearable
-                  filterable
-              >
-                <el-option
-                    v-for="item in options"
-                    :key="item.provinceCode"
-                    :label="item.province"
-                    :value="item"
-                ></el-option>
-              </el-select>
-            </el-form-item>
+<!--            <el-form-item style="margin-bottom: 0">-->
+<!--              <el-select clearable-->
+<!--                  v-model="forms.model.provinceCode"-->
+<!--                  placeholder="生源省份"-->
+<!--                  value-key="province"-->
+<!--                  clearable-->
+<!--                  filterable-->
+<!--              >-->
+<!--                <el-option-->
+<!--                    v-for="item in options"-->
+<!--                    :key="item.provinceCode"-->
+<!--                    :label="item.province"-->
+<!--                    :value="item"-->
+<!--                ></el-option>-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
 
 
           <el-form-item  style="margin-bottom: 0">
@@ -83,11 +83,23 @@
         prop="userName"
       ></el-table-column>
       <el-table-column
-        label="省份"
-        header-align="center"
-        align="center"
-        prop="province"
+          label="状态"
+          header-align="center"
+          align="center"
+          prop="stateStr"
       ></el-table-column>
+      <el-table-column
+          label="角色名称"
+          header-align="center"
+          align="center"
+          prop="role"
+      ></el-table-column>
+<!--      <el-table-column-->
+<!--        label="省份"-->
+<!--        header-align="center"-->
+<!--        align="center"-->
+<!--        prop="province"-->
+<!--      ></el-table-column>-->
       <el-table-column
         label="老师类型"
         header-align="center"

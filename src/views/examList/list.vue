@@ -6,10 +6,14 @@
     display: flex;
     justify-content: flex-end;">
         <el-form-item style="margin-bottom: 0">
-          <el-input
-              v-model="forms.model.name"
-              placeholder="考试名称"
-          ></el-input>
+          <el-select clearable  v-model="forms.model.name"  placeholder="请选择考试名称" @change="examNameChange">
+            <el-option
+                v-for="item in examNameOption"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item style="margin-bottom: 0">
           <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -88,10 +92,15 @@
 </template>
 
 <script>
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
 
   data() {
+
     return {
+      examName:"",
+      examId:"",
+      examNameOption: [],
       list: [],
       checkIds: [],
       listLoading: false,
@@ -129,8 +138,24 @@ export default {
 
   created() {
     this.getOrderList()
+    this.getExamList()
   },
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.forms.model.name = item.name
+          this.examId = item.id
+        }
+      })
+    },
     //去查询联合考试状态
     // 新增
     add() {

@@ -12,10 +12,14 @@
     justify-content: flex-end;">
 
             <el-form-item style="margin-bottom: 0">
-              <el-input
-                  v-model="forms.model.name"
-                  placeholder="考试名称"
-              ></el-input>
+              <el-select clearable  v-model="examName"  placeholder="请选择考试名称" @change="examNameChange">
+                <el-option
+                    v-for="item in examNameOption"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item style="margin-bottom: 0">
               <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -180,10 +184,12 @@
 </template>
 
 <script>
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
 
   data() {
     return {
+      examNameOption: [],
       dialogFormVisible:false,
       formLabelWidth: '120px',
       form: {
@@ -253,8 +259,24 @@ export default {
 
   created() {
     this.getOrderList()
+    this.getExamList()
   },
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.forms.model.name = item.name
+          this.examId = item.id
+        }
+      })
+    },
     selkc(row, type) {
       // 如果考场的号码为随机数, 那么可以根据考场的号码 从考场列表中获取index
       let n = 0
@@ -316,6 +338,9 @@ export default {
     },
     //获取考试列表
     getKsList(){
+      let data ={
+
+      }
       this.$axios
           .post('/ticket/examlist')
           .then((res) => {
@@ -323,20 +348,7 @@ export default {
           })
           .catch(() => {});
     },
-    // 考试改变监听
-    examNameChange(e){
-      this.examIdList.map(item =>{
-        if(item.id == e){
-          this.examNameNo = item.no;
-          this.examId = item.id;
-          this.examName = item.name;
-          this.courseList = [];
-          this.course = ""
-          this.getExamDetails()
 
-        }
-      })
-    },
     //分配查询
     getListByKs(){
       let data = {

@@ -280,7 +280,6 @@ export default {
     },
 
     save(row) {
-      console.log(row);
       this.sjList = row.subjectList;
       this.dialogTableVisible = true
 

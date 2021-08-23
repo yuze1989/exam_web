@@ -1,27 +1,11 @@
 <template>
-   <section class="form_border">
-    <div class="header" style="position: relative">
-      <el-button class="association_btn" style="float: left" type="primary" size="medium" @click="addTemplate"
-      >新建模板</el-button>
-      <div style="position: absolute;right: 0;padding-right: 20px">
-<!--        <el-input v-model="form.examNo" style="width:200px;"  placeholder="考试编号"-->
-<!--        ></el-input>-->
-<!--        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"-->
-<!--        ></el-input>-->
-        <el-select clearable  v-model="examName"  placeholder="请选择考试名称" @change="examNameChange">
-          <el-option
-              v-for="item in examNameOption"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-          </el-option>
-        </el-select>
-        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
-        >查询</el-button>
-      </div>
-
-
-
+   <section class="form_border" style="position: relative">
+     <el-button class="association_btn" style="position: absolute;top: 18px;left: 10px;" type="primary" size="medium" @click="add">新增脱敏</el-button>
+    <div class="header" style="display: flex;justify-content: flex-end;padding: 10px;padding-top: 15px">
+        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"
+        ></el-input>
+       <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList">查询</el-button
+      >
     </div>
     <!--列表-->
     <el-table
@@ -36,54 +20,59 @@
       }"
     >
       <el-table-column
-        label="考试编码"
+        label="ID"
         header-align="center"
         align="center"
-        prop="examCode"
+        prop="id"
       >
       </el-table-column>
       <el-table-column
-        label="考试名称"
+        label="考试编号"
         header-align="center"
         align="center"
-        prop="examName"
-      >
-      </el-table-column>
-<!--       <el-table-column-->
-<!--        label="所属省份"-->
-<!--        header-align="center"-->
-<!--        align="center"-->
-<!--        prop="province"-->
-<!--      >-->
-<!--      </el-table-column>-->
-         <el-table-column
-        label="主办单位"
-        header-align="center"
-        align="center"
-        prop="organizer"
-      >
-      </el-table-column>
-         <el-table-column
-        label="考试标题"
-        header-align="center"
-        align="center"
-        prop="examTitle"
-      >
-      </el-table-column>
-         <el-table-column
-        label="创建时间"
-        header-align="center"
-        align="center"
-        prop="createAt"
+        prop="examId"
       >
       </el-table-column>
        <el-table-column
+        label="身份证"
+        header-align="center"
+        align="center"
+        prop="identification==1?'是':'否'"
+      >
+         <template slot-scope="scope">
+           <span v-if="scope.row.identification==1">脱敏</span>
+           <span v-if="scope.row.identification==0">未脱敏</span>
+         </template>
+      </el-table-column>
+      <el-table-column
+          label="姓名"
+          header-align="center"
+          align="center"
+          prop="identification==1?'是':'否'"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.name==1">脱敏</span>
+          <span v-if="scope.row.name==0">未脱敏</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+          label="手机"
+          header-align="center"
+          align="center"
+          prop="identification==1?'是':'否'"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.mobile==1">脱敏</span>
+          <span v-if="scope.row.mobile==0">未脱敏</span>
+        </template>
+      </el-table-column>
+       <el-table-column
       fixed="right"
-      align="center"
       label="操作"
       width="200">
       <template slot-scope="scope">
-        <el-button @click="bindEidt(scope.row)" type="text" size="small" >编辑</el-button>
+        <el-button @click="relationStudio(scope.row)" type="text" size="small" >编辑</el-button>
+<!--        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>-->
       </template>
     </el-table-column>
     </el-table>
@@ -120,25 +109,13 @@
 </template>
 
 <script>
-import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
-import { examinationList2,apiRelationStudio } from '@/api/studioManage.js'
-import addTicketTemplate from './addTicketTemplate.vue'
+
+import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
 export default {
-  name: "TicketManage",
-    props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    }
-   
-  },
+  name: "AssociationExam",
   data() {
     return {
-      examName:"",
-      examId:"",
-      examNameOption: [],
        listLoading: false,
-       showTemplate: false,
       sels: [], //列表选中列
       search: {
         name: "",
@@ -149,7 +126,7 @@ export default {
       roomOptions: [],
       form: {
         pageIndex: 1,
-        size: 10,
+        pageSize: 10,
         examNo: "",
         examName: ""
 
@@ -165,35 +142,14 @@ export default {
       editItemData: {},
     };
   },
-    components: {
-    addTicketTemplate
-  },
   created() {
-    this.getRoomList()
-    this.getList();
-    this.getExamList()
+      this.getRoomList()
+     this.getList();
   },
 
   methods: {
-    // 查询考试列表
-    getExamList(){
-      apiExamList().then(res=>{
-        this.examNameOption = res.result
-      })
-    },
-    // 考试改变监听
-    examNameChange(e){
-      this.examNameOption.map(item =>{
-        if(item.id == e){
-          this.examName = item.name
-          this.examId = item.id
-        }
-      })
-    },
-    // 新建模板
-    addTemplate(){
-      this.$router.push({path: '/AddTicketTemplate'})
-      this.showTemplate = true
+    add(){
+      this.$router.push({name:"templateManage4"})
     },
   // 获取机构
   getRoomList(){
@@ -214,25 +170,25 @@ export default {
     getList() {
       let params = {
         current : this.form.pageIndex ,
-        size : this.form.size ,
-        examName : this.examName,
-        no:  this.form.examNo
+        size : this.form.pageSize ,
+        examName  : this.form.examName,
+        examId :  this.form.examNo
       };
-      examinationList2(params).then((res) => {
+      this.$axios.post("/datahide/list",params).then((res) => {
                  this.data.records = res.result.list;
                 this.data.current = res.result.current;
                 this.data.total = res.result.total;
-                (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
+                (this.data.pageSize = res.result.pageSize), (this.data.pages = res.result.pages);
             })
             .catch(() => {});
     },
     // 确认关联机构
     confirmRltRoom(){
-    let list = []
+
+      let list = []
        let params = {
         studioIds  : this.selectRoomIds ,
-        examId  : this.sels.id 
-       
+        examId  : this.sels.id
       };
       apiRelationStudio(params).then((res) => {
            this.$message({
@@ -246,13 +202,18 @@ export default {
         .catch(() => {});
     
     },
-    // 编辑模版信息
-    bindEidt(row){
-      this.$router.push({ name: 'AddTicketTemplate', params: {
+    // 关联机构
+    relationStudio(row){
+      this.$router.push({name:"templateManage4",params:{examId:row.examId}})
+    },
+    // 统计信息
+    statisticsInfo(row){
+      this.$router.push({ name: 'StudioStatistics', params: {
         examId: row.id
       }})
     },
    currentChange() {
+      //console.log('index' + index)
       this.getList();
     },
   },
@@ -262,7 +223,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "./index.scss";
+
 .header{
 display: flex;
 padding-left:200px;

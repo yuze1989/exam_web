@@ -12,12 +12,20 @@
         </el-col>
         <el-col :span="20" style="display: flex;justify-content: flex-end;">
           <el-col :span="4">
-            <el-form-item>
-              <el-input
-                  v-model="forms.model.name"
-                  placeholder="考试名称"
-              ></el-input>
-            </el-form-item>
+<!--            <el-form-item>-->
+<!--              <el-input-->
+<!--                  v-model="forms.model.name"-->
+<!--                  placeholder="考试名称"-->
+<!--              ></el-input>-->
+<!--            </el-form-item>-->
+            <el-select clearable  v-model="examNameNo"  placeholder="请选择考试名称" @change="examNameChange">
+              <el-option
+                  v-for="item in examNameOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
           </el-col>
 
           <el-col :span="4">
@@ -256,6 +264,7 @@ import addDialog from './addDialog'
 import inviteDialog from './inviteDialog'
 import unionDialog from './unionDialog'
 import deleteDialog from "./deleteDialog"
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
   components: {
     addDialog,
@@ -267,6 +276,8 @@ export default {
     return {
       list: [],
       listLoading: false,
+      examNameNo:"",
+      examId:"",
       forms: {
         current: 1,
         pageSize: 10,
@@ -275,6 +286,7 @@ export default {
           examStatus: -1, //0、未开始;1、正在进行;2、结束考试
         },
       },
+      examNameOption: [],
       status: [
         { name: '同意', id: 1 },
         { name: '拒绝', id: 2 },
@@ -302,8 +314,24 @@ export default {
 
   created() {
     this.getOrderList()
+    this.getExamList()
   },
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     //去查询联合考试状态
     toUnion(item){
       this.showUnion = true,
@@ -374,7 +402,8 @@ export default {
       let params = {
         current: this.forms.current,
         size: this.forms.pageSize,
-        name: this.forms.model.name,
+        // examId: this.examId,
+        name:this.examName,
         examStatus:
           this.forms.model.examStatus == -1
             ? null

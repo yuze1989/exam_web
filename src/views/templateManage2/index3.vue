@@ -9,7 +9,7 @@
         <!-- 基本信息 -->
         <div class="basic-info">
           <div class="display-center">
-            <el-select clearable  v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+            <el-select clearable  v-model="form.examNameNo" style="width:200px;margin-left:50px;" :disabled="isedit" placeholder="请选择考试名称" @change="examNameChange">
               <el-option
                   v-for="item in examNameOption"
                   :key="item.id"
@@ -24,13 +24,13 @@
               <div>
 
                 <el-row style="width:200px;text-align: left;padding-left: 0px">
-                  <el-checkbox>身份证号码</el-checkbox>
+                  <el-checkbox v-model="identification">身份证号码</el-checkbox>
                 </el-row>
                 <el-row style="width:200px;text-align: left;padding-left:0px">
-                  <el-checkbox>姓名</el-checkbox>
+                  <el-checkbox  v-model="name">姓名</el-checkbox>
                 </el-row>
                 <el-row style="width:200px;text-align: left;padding-left: 0px">
-                  <el-checkbox>手机</el-checkbox>
+                  <el-checkbox v-model="mobile">手机</el-checkbox>
                 </el-row>
 
 
@@ -65,6 +65,9 @@ export default {
     return {
       imgUrl: '',
       listLoading: false,
+      identification:false,
+      mobile:false,
+      name:false,
       sels: [], //列表选中列
       examDetails: {
         subjectList: []
@@ -96,7 +99,8 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
-      examId:""
+      examId:"",
+      isedit:false
     };
   },
   created() {
@@ -106,17 +110,22 @@ export default {
     this.examId = this.$route.params.examId;
     if(this.examId != undefined){
       this.get_mb();
+      this.form.examNameNo = this.examId
+      this.isedit = true;
     }
   },
 
   methods: {
     //获取模板详情
     get_mb(){
-      let params = {id:this.examId};
+      let params = {examId:this.examId};
       this.$axios
-          .post('/ticket/ticketDetail', params)
+          .post('/datahide/getDetailByExamId?examId='+this.examId)
           .then((res) => {
-            this.getList();
+            this.examId = res.result.examId;
+            this.identification = (res.result.identification==0?false:true)
+            this.mobile = (res.result.mobile==0?false:true)
+            this.name = (res.result.name==0?false:true)
           })
           .catch(() => {});
     },
@@ -192,44 +201,23 @@ export default {
     // 保存
     examConfirm(){
       let data = {
-        examId : this.examId,
-        province: this.form.studentAreaCode,
-        provinceCode: this.form.studentAreaCode,
-        organizer: this.form.organizer,
-        examTitle : this.form.examTitle,
-        remark: this.form.carefulMatter,
-        schoolId:""
+        examId  : this.examId,
+        identification : this.identification?"1":"0",
+        mobile : this.mobile?"1":"0",
+        name : this.name?"1":"0",
       }
 
-      if(!this.imgUrl){
-        this.$message({
-          message: '请点击生成图片之后再保存',
-          type: 'error',
-        })
-        return
-      }
-      let formData = new FormData();
-
-      let file = this.base64toFile(this.imgUrl);
-
-
-
-      formData.append('ticketFile', file);
-
-
-
-
-
-      let url = `/ticket/ticketCreate?`+this.transformRequest(data);
+      let url = `/datahide/save`;
       this.$axios
-          .post(url, formData)
+          .post(url, data)
           .then((res) => {
             if (res) {
               this.$message({
-                message: '修改成功',
+                message: '保存成功',
                 type: 'success',
               })
-              this.$emit('addSuccess')
+              this.$router.go(-1)
+
             }
           })
           .catch(() => {})
@@ -259,11 +247,7 @@ export default {
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name
-          this.form.studentAreaName = ''
-          this.form.studentAreaCode = ''
-          this.studentAreaOption = []
-          this.getExamDetails()
-          this.getProvinceByExamId()
+          this.examId = item.id
         }
       })
     },

@@ -6,7 +6,7 @@
           <el-form-item>
             <el-row style="margin-right: 20px">
               <el-col :span="10" style="position: relative;left: -10px">
-                <el-input v-model="search.min" placeholder="分数1" style="width: 80px" type="number" class="nn"></el-input>
+                <el-input v-model="search.min" placeholder="分数1" style="width: 80px" :min="0" :max="100" type="number" class="nn"></el-input>
               </el-col>
               <el-col :span="4" style="text-align: center">至</el-col>
               <el-col :span="10">
@@ -16,6 +16,7 @@
                     placeholder="分数2"
                     style="width: 80px"
                     type="number"
+                    :min="0" :max="100"
                 ></el-input>
               </el-col>
             </el-row>
@@ -36,6 +37,16 @@
                   :label="item.province"
                   :value="item"
               ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select clearable  v-model="form.examNameNo"  placeholder="请选择考试名称" @change="examNameChange">
+              <el-option
+                  v-for="item in examNameOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -198,8 +209,9 @@
 </template>
 
 <script>
-
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
+
   components: {
   },
   data() {
@@ -216,6 +228,7 @@ export default {
         pageIndex: 1,
         pageSize: 10,
       },
+      examNameOption: [],
       selections: {
         size: 10,
         current: 1,
@@ -230,6 +243,7 @@ export default {
         score:"",//科目
         min:"",//科目
         max:"",//科目
+        examId:""//考试名称
       },
 
       dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -247,9 +261,25 @@ export default {
   created() {
     this.getList();
     this.getProvinceList()
+    this.getExamList()
   },
 
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.form.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     getProvinceList() {
       this.$axios
           .get(this.API.studentsManage.examRoomProvince)
@@ -291,15 +321,15 @@ export default {
         current: this.form.pageIndex,
         size: this.form.pageSize,
         admissionTicketCode: this.search.admissionTicketCode,
-        "examId": "",
         "examineeName": this.search.examineeName,
-        "provinceCode":this.selections.provinceCode,
+        "provinceCode":this.selections.provinceCode.provinceCode,
         "schoolId": "",
         "scoreEnd": this.search.max,
         "scoreStart": this.search.min,
         "studioId": "",
         "studioName": this.search.studioName,
-        "subject": this.search.score
+        "subject": this.search.score,
+        examId:this.examId
       };
       this.$axios
           .post('/score/scoreList', params)

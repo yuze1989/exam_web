@@ -3,7 +3,7 @@
     <div class="top-container clearfix">
       <el-row
         :gutter="24"
-        style="background: #ffffff; margin: 20px 0; padding: 10px 0"
+        style="background: #ffffff; margin: 20px 0; padding: 10px 0;font-size: 15px;border-bottom: 1px solid #f1efef;"
       >
         <el-col :span="21">
           <div class="common-mb">科目：{{ $route.query.course}}</div>
@@ -18,13 +18,13 @@
               size="medium"
               class="common-mr pointer"
             >
-              <font v-if="item.name == 'all'">
-                全部 ({{ item.total }}) 份
+
+              <font v-if="item.name == '仲裁组'">
+                {{ item.name}}
               </font>
-              <font v-if="!item.name"> 未评级 ({{ item.total }}) 份 </font>
-              <font v-else-if="item.name !== 'all'">
-                {{ item.name }}类 ({{ item.count || 0 }}) 份
-              </font>
+                <font v-else="">
+                  {{ item.name }} ({{ item.count || 0 }}) 份
+                </font>
             </el-tag>
             </div>
 
@@ -127,14 +127,17 @@
           </div>
         </li>
       </ul>
-      <paginations
-        v-if="totalItem > 0"
-        :total="totalItem"
-        :page.sync="listQuery.current"
-        :limit.sync="listQuery.size"
-        layout="total, sizes, prev, pager, next"
-        @pagination="queryPaperList"
-      />
+      <!--工具条-->
+      <el-col :span="24" class="toolbar">
+        <myPagination
+            :current.sync="listQuery.pageIndex"
+            :pages.sync="data.pages"
+            :size.sync="listQuery.size"
+            :total.sync="totalItem"
+            @cb="currentChange"
+        />
+      </el-col>
+
     </div>
     <el-dialog
       :visible.sync="editImgDialogVisible"
@@ -229,21 +232,22 @@
   </div>
 </template>
 <script>
-// import { ossThumbnailSuffix } from "@/utils/ossUtils";
-// import SelecteGrade from "@/components/SelecteGrade";
 // import paginations from "@/components/Paginations";
-// import {
-//   getPaperQueryList,
-//   getPaperAgg,
-//   getPaperGrade,
-//   getPaperUpdate,
-//   getReviewStatus,
-//   getRulesdetail,
-// } from "@/api/paper";
+// import { ossThumbnailSuffix } from "@/utils/ossUtils";
+import SelecteGrade from "@/views/examList/selectGrade";
+
+import {
+  getPaperQueryList,
+  getPaperAgg,
+  getPaperGrade,
+  getPaperUpdate,
+  getReviewStatus,
+  getRulesdetail,
+} from "@/api/paper";
 
 export default {
   name: "paperManage",
-  // components: { SelecteGrade, paginations },
+  components: { SelecteGrade },
   data: () => {
     return {
       levelList: [],
@@ -267,13 +271,14 @@ export default {
         grade: "all", // 等级 all:全部，'':未评级，其他为A,B,C等类
         score: "all", // 分数 all:全部，'':未打分，1：已打分
         current: 1, // 当前页码
-        size: 20, // 每页多少条数据
+        size: 10, // 每页多少条数据
       },
       rulesdetail: [],
       maxScore: 100,
       editImgDialogVisible: false,
       editImgIndex: 0,
       paperStopDialogVisible: false,
+      data: { pages: 0, pageSize: 10, total: 0, records: [] },
     };
   },
   computed: {
@@ -288,17 +293,82 @@ export default {
     },
   },
   created() {
-    // if (this.$route.query) {
-    //   for (const item in this.$route.query) {
-    //     this.listQuery[item] = this.$route.query[item];
-    //   }
-    // }
     this.account = localStorage.getItem("user_name")
-    this.queryPaperList();  //获取试卷列表
-    this.queryDealedCount();    // 获取已评分/未评分
-    this.getRulesdetail();  //获取打分规则
+    this.queryPaperList();  //获取评级列表
+    this.getList();  //获取试卷列表
+    // this.queryDealedCount();    // 获取已评分/未评分
+    // this.getRulesdetail();  //获取打分规则
   },
   methods: {
+    currentChange(){
+
+      this.getList()
+    },
+    getList(){
+      console.log(this.listQuery);
+      let data = {
+        "course": this.$route.query.course,
+        "current": this.listQuery.current,
+        "examCode": this.$route.query.examNo,
+        "examPaperId": this.$route.query.examId,
+        "grade": "",
+        "provinceCode": "",
+        "schoolId": "",
+        "size": this.listQuery.size,
+        "teacherId": ""
+      }
+      // todo 待完善
+      let url = '/exampaper/examCorrectPaperList'
+      this.$axios.post(url,data).then((response) => {
+        const result = response.result || {};
+        this.totalItem = result.total;
+        if (result.list && result.list.length) {
+          const list = [];
+          const cachedList = [];
+          result.list.forEach((item) => {
+            const imgName = item.img.substr(item.img.lastIndexOf("/") + 1);
+            // const imgUrl = "http://192.168.1.11/" + imgName;
+            const imgUrl = item.img;
+            list.push({
+              id: item.id,
+              name: item.admissionTicketCode,
+              url: item.img,
+              imgUrl: imgUrl,
+              // imgUrl: item.img + ossThumbnailSuffix(1000, 1000),
+              permission: item.admissionTicketCode,
+              level: item.grade,
+              show: false,
+              mark: item.score,
+              edit: false,
+            });
+            // cachedList.push({
+            //   id: item.id,
+            //   name: item.admissionTicketCode,
+            //   url: item.img + ossThumbnailSuffix(200, 200),
+            //   imgUrl: imgUrl,
+            //   // imgUrl: item.img + ossThumbnailSuffix(1000, 1000),
+            //   permission: item.admissionTicketCode,
+            //   level: item.grade,
+            //   show: false,
+            //   mark: item.course,
+            // });
+          });
+          this.paperList = list;
+          // this.cachedPaperList = cachedList;
+          // if (type && this.currentIndex <= this.paperList.length - 1) {
+          //   this.paperList[this.currentIndex].show = true;
+          //   this.$nextTick(() => {
+          //     const currentEle = this.$refs["markInput" + this.currentIndex];
+          //     if (currentEle) {
+          //       currentEle[0].focus();
+          //     }
+          //   });
+          // } else {
+          //   this.paperList[this.currentIndex].show = false;
+          // }
+        }
+      });
+    },
     // 修改评级 子组件传递数据 type:0 为评级，1为打分
     selecteUpdateGrade(payload) {
       if (payload) {
@@ -378,21 +448,57 @@ export default {
         this.maxScore = ruleScore;
       });
     },
-    // 获取试卷列表
+    // 获取评级列表
     queryPaperList(type) {
       let url1 = '/exampaper/queryGrade'
       this.$axios.post(url1,{
-        "course": "设计",
+        "course": this.$route.query.course,
         "current": 1,
-        "examCode": "100114",
+        "examCode": this.$route.query.examNo,
         "examPaperId": "",
         "grade": "",
         "provinceCode": "",
         "schoolId": "",
         "size": 10,
-        "teacherId": "379"
       }).then((res)=>{
-        console.log(res);
+
+
+        let tempGradeList = [];
+        let list = [
+          {
+            name: "全部",
+            count: res.result.countNum,
+            active: true,
+          },
+          {
+            name: "未评级",
+            count: res.result.notGradeCount,
+            active: false,
+          },
+          {
+            name: "仲裁组",
+            count: "",
+            active: false,
+          },
+        ];
+        res.result.gradeNameCount.forEach((item,index)=>{
+
+          if(item.grade != ""){
+            list.push({
+              name: item.grade+"类",
+              count: item.count,
+              active: false,
+            })
+            tempGradeList.push({
+              key: index,
+              name: item.grade,
+            })
+          }
+
+        })
+        this.levelList = list;
+        this.gradeList = tempGradeList;
+
       })
        return false
 
@@ -418,160 +524,99 @@ export default {
       //   params.status = 2
       // }
 
-      // todo 待完善
-      if (!params.score) {
-        params.status = 0;
-      }
-      if (params.score === 1) {
-        params.status = 2;
-      }
-      if (params.grade === "all" && params.score === "all") {
-        delete params.grade;
-        delete params.score;
-      }
-      if (params.grade === "") {
-        // delete params.status
-        delete params.grade;
-        params.status = 1;
-      }
-      if (params.grade === "all") {
-        delete params.grade;
-        delete params.score;
-      }
 
-      let url = '/exampaper/examCorrectPaperList'
-      this.$axios.post(url,params).then((response) => {
-        const result = response.result || {};
-        this.totalItem = result.total;
-        if (result.records && result.records.length) {
-          const list = [];
-          const cachedList = [];
-          result.records.forEach((item) => {
-            const imgName = item.img.substr(item.img.lastIndexOf("/") + 1);
-            const imgUrl = "http://192.168.1.11/" + imgName;
-            list.push({
-              id: item.id,
-              name: item.admissionTicketCode,
-              url: item.img,
-              imgUrl: imgUrl,
-              // imgUrl: item.img + ossThumbnailSuffix(1000, 1000),
-              permission: item.admissionTicketCode,
-              level: item.grade,
-              show: false,
-              mark: item.score,
-              edit: false,
-            });
-            cachedList.push({
-              id: item.id,
-              name: item.admissionTicketCode,
-              url: item.img + ossThumbnailSuffix(200, 200),
-              imgUrl: imgUrl,
-              // imgUrl: item.img + ossThumbnailSuffix(1000, 1000),
-              permission: item.admissionTicketCode,
-              level: item.grade,
-              show: false,
-              mark: item.score,
-            });
-          });
-          this.paperList = list;
-          this.cachedPaperList = cachedList;
-          if (type && this.currentIndex <= this.paperList.length - 1) {
-            this.paperList[this.currentIndex].show = true;
-            this.$nextTick(() => {
-              const currentEle = this.$refs["markInput" + this.currentIndex];
-              if (currentEle) {
-                currentEle[0].focus();
-              }
-            });
-          } else {
-            this.paperList[this.currentIndex].show = false;
-          }
-        }
-      });
     },
     // 获取已评分/未评分
-    queryDealedCount() {
-      this.$axios.get('//rules/detail?id=118')
-      getPaperAgg({
-        provinceCode: this.$route.query.provinceCode,
-        course: this.$route.query.course,
-        province: this.$route.query.province,
-        account: this.account,
-      }).then((res) => {
-        if (res.result) {
-          const count = res.result.count || 0;
-          const dealCount = res.result.dealCount || 0;
-          this.scoreList[0].total = count + dealCount;
-          this.scoreList[1].total = count;
-          this.scoreList[2].total = dealCount;
-          if (res.result.stats) {
-            const resultList = res.result.stats;
-            let totalCount = 0;
-            let undealCount = 0;
-            let tempGradeList = [];
-            let list = [
-              {
-                name: "all",
-                count: 0,
-                dealCount: 0,
-                total: 0,
-                active: true,
-              },
-              {
-                name: "",
-                count: 0,
-                dealCount: 0,
-                total: 0,
-                active: false,
-              },
-            ];
-            for (let i = 0; i < resultList.length; i++) {
-              totalCount =
-                totalCount +
-                (resultList[i].count || 0) +
-                (resultList[i].dealCount || 0);
-              undealCount = undealCount + (resultList[i].count || 0);
-              list.push({
-                name: resultList[i].name,
-                count: resultList[i].count,
-                dealCount: resultList[i].dealCount,
-                total: resultList[i].total,
-                active: false,
-              });
-              if (resultList[i].name) {
-                tempGradeList.push({
-                  key: i,
-                  name: resultList[i].name,
-                });
-              }
-            }
-            list[0].total = res.result.personalTotal;
-            list[1].total = res.result.personalCount;
-            this.levelList = list;
-            this.gradeList = tempGradeList;
-          }
-        }
-      });
-    },
+    // queryDealedCount() {
+    //   this.$axios.get('//rules/detail?id=118')
+    //   getPaperAgg({
+    //     provinceCode: this.$route.query.provinceCode,
+    //     course: this.$route.query.course,
+    //     province: this.$route.query.province,
+    //     account: this.account,
+    //   }).then((res) => {
+    //     if (res.result) {
+    //       const count = res.result.count || 0;
+    //       const dealCount = res.result.dealCount || 0;
+    //       this.scoreList[0].total = count + dealCount;
+    //       this.scoreList[1].total = count;
+    //       this.scoreList[2].total = dealCount;
+    //       if (res.result.stats) {
+    //         const resultList = res.result.stats;
+    //         let totalCount = 0;
+    //         let undealCount = 0;
+    //         let tempGradeList = [];
+    //         let list = [
+    //           {
+    //             name: "all",
+    //             count: 0,
+    //             dealCount: 0,
+    //             total: 0,
+    //             active: true,
+    //           },
+    //           {
+    //             name: "",
+    //             count: 0,
+    //             dealCount: 0,
+    //             total: 0,
+    //             active: false,
+    //           },
+    //         ];
+    //         for (let i = 0; i < resultList.length; i++) {
+    //           totalCount =
+    //             totalCount +
+    //             (resultList[i].count || 0) +
+    //             (resultList[i].dealCount || 0);
+    //           undealCount = undealCount + (resultList[i].count || 0);
+    //           list.push({
+    //             name: resultList[i].name,
+    //             count: resultList[i].count,
+    //             dealCount: resultList[i].dealCount,
+    //             total: resultList[i].total,
+    //             active: false,
+    //           });
+    //           if (resultList[i].name) {
+    //             tempGradeList.push({
+    //               key: i,
+    //               name: resultList[i].name,
+    //             });
+    //           }
+    //         }
+    //         list[0].total = res.result.personalTotal;
+    //         list[1].total = res.result.personalCount;
+    //         this.levelList = list;
+    //         this.gradeList = tempGradeList;
+    //       }
+    //     }
+    //   });
+    // },
     // 设置分数
     updatePaper(data) {
-      // type:0评级，1 分数，2:评分下一张
-      const tipsMsg = data.type ? "分数" : "评级";
-      const params = Object.assign({}, data);
+      // // type:0评级，1 分数，2:评分下一张
+      // const tipsMsg = data.type ? "分数" : "评级";
+      // const params = Object.assign({}, data);
+      // let flagType = 0;
+      // if (params.type === 2) {
+      //   flagType = 2;
+      // }
+      // delete params.type;
+      console.log(data);
       let flagType = 0;
-      if (params.type === 2) {
-        flagType = 2;
+      let params = {
+        "course": this.$route.query.course,
+        "examCode": this.$route.query.examNo,
+        examPaperId:data.paperId,
+        grade:data.grade
       }
-      delete params.type;
-      getPaperUpdate(params).then((res) => {
+      this.$axios.post("/exampaper/updateGrade",params).then((res) => {
         if (res) {
-          this.$message.success(`试卷${tipsMsg}更新成功！`);
+          this.$message.success(`试卷评级更新成功！`);
           if (flagType) {
             this.queryPaperList(1);
           } else {
             this.queryPaperList();
           }
-          this.queryDealedCount();
+          // this.queryDealedCount();
         }
       });
     },
@@ -629,7 +674,7 @@ export default {
         urlParams.level = this.activeLevel;
         urlParams.startId = typeof startId !== "object" ? startId : -1;
         this.$router.push({
-          path: "/markingArea",
+          path: "/marking",
           query: urlParams,
         });
       }
@@ -752,6 +797,7 @@ export default {
 }
 .common-mr{
   margin-bottom:10px;
+  margin-right: 15px;
 }
 .title{
   display:inline-block;
