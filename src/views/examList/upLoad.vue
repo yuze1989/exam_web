@@ -8,7 +8,7 @@
         <el-col v-for="(item,index) in gradeList" :key="index" :span="4" style="padding: 0 5px;margin-bottom:10px">
           <div class="grade" style="position: relative">
             <div class="label" style="position:absolute;z-index: 99;font-size: 14px;left: 10px;">{{item.course}} <span style="font-size: 12px;color:#82848a;">(已上传：{{item.count}})</span></div>
-            <el-progress :text-inside="true" :stroke-width="26" :percentage="Math.round(item.count/item.countNum)"></el-progress>
+            <el-progress :text-inside="true" :stroke-width="26" :percentage="Math.round(item.count/item.countNum)*100"></el-progress>
           </div>
         </el-col>
       </el-row>
@@ -118,10 +118,11 @@
       ></el-table-column>
 
 
-      <div v-if="list.length>0">
-        <el-table-column v-for="(item, index) in list[0].courseImg" :label="item.course" header-align="center" align="center">
+      <div v-if="courseName.length>0">
+        <el-table-column v-for="(item, index) in courseName" :label="item.course" header-align="center" align="center">
           <template slot-scope="scope">
-            <img :src="item.img" alt="" style="max-height: 150px;max-width: 200px">
+
+            <img :src="scope.row.subjectMap[item.course]" alt="" style="max-height: 150px;max-width: 200px">
           </template>
         </el-table-column>
       </div>
@@ -180,6 +181,7 @@ export default {
         name: '',
         id: 0,
       },
+      courseName:[],
     }
   },
   created() {
@@ -218,7 +220,8 @@ export default {
             current:"",
             size:"",
             examCode:this.$route.params.id,
-            operStatus:this.$route.params.operStatus
+            operStatus:this.$route.params.operStatus,
+            examId: this.$route.params.examId,
           })
           .then((res) => {
             this.gradeList = res.result.list
@@ -289,19 +292,22 @@ export default {
     auditItem(scope) {},
     // 订单列表
     getOrderList() {
+      console.log(this.$route.params);
       this.listLoading = true
       let params = {
         current: this.forms.current,
         size: this.forms.pageSize,
         operStatus : 0,
+        examId: this.$route.params.examId,
         examCode:this.$route.params.id,
         admissionTicketCode:this.admissionTicketCode
       }
       this.$axios
         .post('/exampaper/exampaperList', params)
         .then((res) => {
-          this.list = res.result.list
-          this.data = res.result
+          this.list = res.result.list[0].examPaperVoList
+          this.data = res.result;
+          this.courseName = res.result.list[0].courseName
           this.listLoading = false
         })
         .catch(() => {

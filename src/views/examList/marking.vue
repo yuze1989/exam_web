@@ -491,7 +491,6 @@
         title="示例图片"
         :visible.sync="showExamplesPreviewer"
         width="45%"
-        :before-close="handleClose"
     >
       <div class="img-wrap">
         <el-image :src="targetUrl" fit="cover" :class="[rotate?'go':'aa']" @click="startR"></el-image>
@@ -548,7 +547,7 @@ export default {
       currentLevel: "B",
       pageSize: 5000,
       currentPage: 1,
-      maxScore: 0,
+      maxScore: 100,
       paperStopDialogVisible: false,
       targetUrl:'', // 放大的图片
       clickTimer:null,
@@ -575,7 +574,6 @@ export default {
     this.getJinDu();//获取进度
     this.getFenZu();//获取分组
     this.queryPaperList(); //获取评级
-    this.queryProgress(); //获取分类
     this.renderMarkingRules(); //获取规则
     this.getList();//获取试卷
   },
@@ -592,10 +590,10 @@ export default {
         "schoolId": "",
         "size": 10,
       }).then((res)=>{
-            this.Score=res.Score;
-            this.NoScore=res.NoScore;
-            this.NoGrade=res.NoGrade;
-            this.Grade=res.Grade;
+            this.Score=res.result.Score;
+            this.NoScore=res.result.NoScore;
+            this.NoGrade=res.result.NoGrade;
+            this.Grade=res.result.Grade;
       })
     },
     getFenZu(){
@@ -603,7 +601,7 @@ export default {
       this.$axios.post(url1,{
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
-        "examPaperId": this.$route.query.examId,
+        "examId": this.$route.query.examId,
       }).then((res)=>{
         this.Score=res.Score;
         this.NoScore=res.NoScore;
@@ -630,13 +628,44 @@ export default {
       },300)
     },
     getList(){
-      let list = [{"id":73447,"name":"11000006","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918889201photo.jpg","permission":"11000006","level":"A","show":false,"mark":10},{"id":73480,"name":"11000010","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163630","permission":"11000010","level":"A","show":false,"mark":11},{"id":73481,"name":"11000004","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919106963photo.jpg","permission":"11000004","level":"A","show":false,"mark":1},{"id":73485,"name":"11000003","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164251","permission":"11000003","level":"A","show":false,"mark":33},{"id":73448,"name":"11000015","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1615186236562photo.jpg","permission":"11000015","level":"B","show":false,"mark":87},{"id":73478,"name":"11000011","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163547","permission":"11000011","level":"B","show":false,"mark":90},{"id":73479,"name":"11000009","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918957857photo.jpg","permission":"11000009","level":"B","show":false,"mark":90},{"id":73482,"name":"11000008","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919155580photo.jpg","permission":"11000008","level":"B","show":false,"mark":44},{"id":73483,"name":"11000002","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164219","permission":"11000002","level":"B","show":false,"mark":1},{"id":73484,"name":"11000005","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919348377photo.jpg","permission":"11000005","level":"B","show":false,"mark":99},{"id":73486,"name":"11000007","url":"http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919433104photo.jpg","permission":"11000007","level":"B","show":false,"mark":44}]
-      let imgList = ["http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918889201photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163630","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919106963photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164251","http://topexam.oss-cn-hangzhou.aliyuncs.com/1615186236562photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617163547","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623918957857photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919155580photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/20210617164219","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919348377photo.jpg","http://topexam.oss-cn-hangzhou.aliyuncs.com/1623919433104photo.jpg"]
+      let url = '';
+      //未评级
+      url = '/exampaper/examNoGradeList'
+      let data = {
+        "course": this.$route.query.course,
+        "examCode": this.$route.query.examNo,
+        "examId":this.$route.query.examId,
+        size:100
+      }
+      this.$axios.post(url,data).then((res) => {
+        let list = res.result.list;
+        if(list.length == 0){
+          url = '/exampaper/examNoScoreList'
+          this.$axios.post(url,data).then((res) =>{
+            let list = res.result.list;
+            let imgList = [];
+            list.forEach((item,index)=>{
+              imgList.push(item.img)
+            })
+            this.paperList = list;
+            this.mList = list;
+            this.imgList = imgList;
+          })
+        }else{
+          let imgList = [];
+          list.forEach((item,index)=>{
+            imgList.push(item.img)
+          })
+          this.paperList = list;
+          this.mList = list;
+          this.imgList = imgList;
+        }
 
 
-      this.paperList = list;
-      this.mList = list;
-      this.imgList = imgList;
+      });
+
+
+
     },
     getImgUrlIP() {
       getImgUrlIP().then((res) => {
@@ -657,112 +686,73 @@ export default {
           (value >= 0 && value <= this.maxScore && value.match(/^\d*/g)[0]) ||
           null;
     },
-    queryProgress() {
-      this.levelStatisticsList = [
-        {
-          active: false,
-          count: 3,
-          dealCount: 3,
-          name: "A",
-          percentage: 30,
-          total: 10,
-          totalDealCount: 3,
-        },
-        {
-          active: false,
-          count: 8,
-          dealCount: 8,
-          name: "B",
-          percentage: 80,
-          total: 10,
-          totalDealCount: 8,
-        }
-      ];
-      return false;
-      getPaperAgg({
-        province: this.$route.query.province,
-        provinceCode: this.$route.query.provinceCode,
-        course: this.$route.query.course,
-        account: this.account,
-      }).then((res) => {
-        if (res.result) {
-          this.unmarkedCount = res.result.count;
-          this.markedCount = res.result.dealCount;
-          this.markedCountTotal = res.result.total;
-          const resultList = res.result.stats;
-          if (resultList) {
-            let list = [];
-            for (let i = 0; i < resultList.length; i++) {
-              const progress = Math.round(
-                  ((resultList[i].totalDealCount || 0) /
-                      (resultList[i].total || 0)) *
-                  100
-              );
-              list.push({
-                name: resultList[i].name,
-                count: resultList[i].count,
-                dealCount: resultList[i].dealCount,
-                totalDealCount: resultList[i].totalDealCount,
-                total: resultList[i].total,
-                percentage: progress <= 100 ? progress : 100,
-                active: false,
-              });
-            }
-            this.levelList = list;
-            this.levelStatisticsList = list;
-          }
-        }
-      });
-    },
     queryPaperList() {
       let url1 = '/exampaper/queryGrade'
       this.$axios.post(url1,{
         "course": this.$route.query.course,
         "current": 1,
         "examCode": this.$route.query.examNo,
-        "examPaperId": "",
+        "examId": this.$route.query.examId,
         "grade": "",
         "provinceCode": "",
         "schoolId": "",
         "size": 10,
       }).then((res)=>{
-
-
-        let tempGradeList = [];
-        let list = [
-          {
-            name: "全部",
-            count: res.result.countNum,
-            active: true,
-          },
-          {
-            name: "未评级",
-            count: res.result.notGradeCount,
-            active: false,
-          },
-          {
-            name: "仲裁组",
-            count: "",
-            active: false,
-          },
-        ];
-        res.result.gradeNameCount.forEach((item,index)=>{
-
-          if(item.grade != ""){
-            list.push({
-              name: item.grade+"类",
-              count: item.count,
+        let resultList = res.result.gradeNameCount;
+        this.unmarkedCount = res.result.countNum;
+        this.markedCount = res.result.notGradeCount;
+        // this.markedCountTotal = res.result.total;
+        if (resultList) {
+          let list = [
+            {
+              name: "全部",
+              count: res.result.countNum,
+              active: true,
+            },
+            {
+              name: "未评级",
+              count: res.result.notGradeCount,
               active: false,
-            })
-            tempGradeList.push({
-              key: index,
-              name: item.grade,
-            })
-          }
+            },
+            {
+              name: "仲裁组",
+              count: "",
+              active: false,
+            },
+          ];
 
-        })
-        this.levelList = list;
-        this.gradeList = tempGradeList;
+          let tempGradeList = [];
+          for (let i = 0; i < resultList.length; i++) {
+            const progress = Math.round(
+                ((resultList[i].count || 0) /
+                    (resultList[i].count || 0)) *
+                100
+            );
+            if(resultList[i].grade){
+              list.push({
+                name: resultList[i].grade,
+                count: resultList[i].count,
+                // dealCount: resultList[i].dealCount,
+                // totalDealCount: resultList[i].totalDealCount,
+                // total: resultList[i].total,
+                percentage: progress <= 100 ? progress : 100,
+                active: false,
+              });
+            }
+
+            if(resultList[i].grade){
+              tempGradeList.push({
+                key: i,
+                name: resultList[i].grade,
+              })
+            }
+
+          }
+          this.levelList = tempGradeList;
+          this.levelStatisticsList = list;
+          this.gradeList = tempGradeList;
+        }
+
 
       })
     },
@@ -817,34 +807,13 @@ export default {
       let data = {
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
+        "examId": this.$route.query.examId,
       }
-      this.descriptionLevelList = [{
-        active: true,
-        course: "素描",
-        courseId: 1,
-        grade: "A",
-        id: 191,
-        imgUrl: "https://topexam.oss-cn-hangzhou.aliyuncs.com/web/rules/20210308-142949-089/3f2c7a14-777e-4959-b960-db7da764fa7f",
-        imgUrlDesc: "A :请添加评分描述",
-        percentage: 50,
-        provinceCode: "110000",
-      },{
-        active: false,
-        course: "素描",
-        courseId: 1,
-        grade: "B",
-        id: 191,
-        imgUrl: "https://topexam.oss-cn-hangzhou.aliyuncs.com/web/rules/20210308-142949-089/3f2c7a14-777e-4959-b960-db7da764fa7f",
-        imgUrlDesc: "A :请添加评分描述",
-        percentage: 50,
-        provinceCode: "110000",
-      }];
-      this.currentRuleLevel = this.descriptionLevelList[0].grade;
-      this.levelDescription.demoUrl = this.descriptionLevelList[0].imgUrl
-      this.levelDescription.description = this.descriptionLevelList[0].imgUrlDesc;
-      return false;
       this.$axios.post('/exampaper/scoringRules',data).then((res) => {
         if (res && res.result) {
+
+
+
           const resultList = res.result.list || [];
           const levelList = [];
           this.levelList = [];
@@ -852,14 +821,14 @@ export default {
           let maxScore = 0;
           resultList.map((item) => {
             if (
-                item.rule.course == this.$route.query.course &&
-                item.rule.province == this.$route.query.province
+                item.course == this.$route.query.course &&
+                item.province == this.$route.query.province
             ) {
-              examplesList = item.examples;
-              maxScore = item.rule.score;
+              maxScore = item.score;
             }
           });
-          this.maxScore = maxScore;
+          examplesList = resultList;
+          this.maxScore = 100;
           examplesList.forEach((item) => {
             levelList.push({
               name: item.grade,
@@ -872,11 +841,12 @@ export default {
             item.active = false;
           });
           this.descriptionLevelList[0].active = true;
-          this.levelDescription.demoUrl =
-              //this.descriptionLevelList[0].imgUrl + ossThumbnailSuffix(190, 200);
-              this.descriptionLevelList[0].imgUrl
+          this.levelDescription.demoUrl =this.descriptionLevelList[0].imgUrl
           this.levelDescription.description = this.descriptionLevelList[0].imgUrlDesc;
           this.currentRuleLevel = this.descriptionLevelList[0].grade;
+
+
+
         }
       });
     },
@@ -904,10 +874,24 @@ export default {
     // 点击A,B,C,D级
     switchCurrentLevel(index) {
       this.currentLevel = this.levelList[index].name;
-      localStorage.setItem("paperId", this.paperList[this.currentPosition].id);
-      this.updatePaper({
-        paperId: this.paperList[this.currentPosition].id,
-        grade: this.currentLevel,
+      // localStorage.setItem("paperId", this.paperList[this.currentPosition].id);
+      // this.updatePaper({
+      //   paperId: this.paperList[this.currentPosition].id,
+      //   grade: this.currentLevel,
+      // });
+      let data = {
+        "course": this.$route.query.course,
+        "examCode": this.$route.query.examNo,
+        "examPaperId": this.paperList[this.currentPosition].id,
+        grade:this.currentLevel,
+      }
+      this.$axios.post("/exampaper/updateGrade",data).then((res) => {
+        console.log(res);
+        if(res.code == 200){
+          this.$message.success(`试卷评级更新成功！`);
+          this.getJinDu();//获取进度
+          this.getList()
+        }
       });
     },
     imgSwitchEnd(currentImgIndex) {
@@ -940,6 +924,9 @@ export default {
     },
     imgViewerEnter() {
       const scroller = document.querySelector(".content-container");
+      if(!scroller.offsetWidth){
+        return false
+      }
       const scrollBarWidth = scroller.offsetWidth - scroller.clientWidth;
       const chromeBarWidth = 17;
       const initPaddingRight = 20;
@@ -947,6 +934,9 @@ export default {
       scroller.style.overflowY = "hidden";
     },
     imgViewerLeave() {
+      if(!scroller.offsetWidth){
+        return false
+      }
       const scrollBarWidth =
           window.innerWidth - document.documentElement.offsetWidth;
       const scroller = document.querySelector(".content-container");
@@ -961,18 +951,38 @@ export default {
       this.mark = this.paperList[this.currentPosition].mark;
     },
     submitLevelAndMark() {
-      this.updatePaper({
-        paperId: this.paperList[this.currentPosition].id,
-        grade: this.level,
-        score: this.mark,
-      }).then(() => {
-        this.markDlgVisible = false;
-        if (this.currentPosition < this.paperList.length - 1) {
-          this.currentPosition += 1;
-          this.startPosition += 1;
+      let data = {
+        "course": this.$route.query.course,
+        "examCode": this.$route.query.examNo,
+        "examPaperId": this.paperList[this.currentPosition].id,
+        grade:this.level,
+        score:this.mark,
+      }
+      this.$axios.post("/exampaper/updateScore",data).then((res) => {
+        if(res.code == 200){
+            this.markDlgVisible = false;
+            if (this.currentPosition < this.paperList.length - 1) {
+              this.currentPosition += 1;
+              this.startPosition += 1;
+            }
+          this.$message.success(`试卷评分更新成功！`);
+          this.getList()
+          this.getJinDu();//获取进度
         }
       });
-      this.queryProgress();
+      // this.updatePaper({
+      //   paperId: this.paperList[this.currentPosition].id,
+      //   grade: this.level,
+      //   score: this.mark,
+      // }).then(() => {
+      //   this.markDlgVisible = false;
+      //   if (this.currentPosition < this.paperList.length - 1) {
+      //     this.currentPosition += 1;
+      //     this.startPosition += 1;
+      //   }
+      // });
+      // this.queryProgress();
+
     },
     back() {
       this.$router.back();

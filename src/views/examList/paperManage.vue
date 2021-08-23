@@ -304,13 +304,12 @@ export default {
 
       this.getList()
     },
-    getList(){
-      console.log(this.listQuery);
+    getList(type){
       let data = {
         "course": this.$route.query.course,
         "current": this.listQuery.current,
         "examCode": this.$route.query.examNo,
-        "examPaperId": this.$route.query.examId,
+        "examId": this.$route.query.examId,
         "grade": "",
         "provinceCode": "",
         "schoolId": "",
@@ -354,6 +353,9 @@ export default {
             // });
           });
           this.paperList = list;
+          if(type == 2){
+            this.paperList[this.currentIndex].show = true;
+          }
           // this.cachedPaperList = cachedList;
           // if (type && this.currentIndex <= this.paperList.length - 1) {
           //   this.paperList[this.currentIndex].show = true;
@@ -455,7 +457,7 @@ export default {
         "course": this.$route.query.course,
         "current": 1,
         "examCode": this.$route.query.examNo,
-        "examPaperId": "",
+        "examId": this.$route.query.examId,
         "grade": "",
         "provinceCode": "",
         "schoolId": "",
@@ -592,33 +594,49 @@ export default {
     // },
     // 设置分数
     updatePaper(data) {
-      // // type:0评级，1 分数，2:评分下一张
-      // const tipsMsg = data.type ? "分数" : "评级";
-      // const params = Object.assign({}, data);
-      // let flagType = 0;
-      // if (params.type === 2) {
-      //   flagType = 2;
-      // }
-      // delete params.type;
-      console.log(data);
+      // type:0评级，1 分数，2:评分下一张
       let flagType = 0;
-      let params = {
-        "course": this.$route.query.course,
-        "examCode": this.$route.query.examNo,
-        examPaperId:data.paperId,
-        grade:data.grade
-      }
-      this.$axios.post("/exampaper/updateGrade",params).then((res) => {
-        if (res) {
-          this.$message.success(`试卷评级更新成功！`);
-          if (flagType) {
-            this.queryPaperList(1);
-          } else {
-            this.queryPaperList();
-          }
-          // this.queryDealedCount();
+
+      if(data.type == 0){
+        let params = {
+          "course": this.$route.query.course,
+          "examCode": this.$route.query.examNo,
+          examPaperId:data.paperId,
+          grade:data.grade
         }
-      });
+        this.$axios.post("/exampaper/updateGrade",params).then((res) => {
+          if (res) {
+            this.$message.success(`试卷评级更新成功！`);
+            if (flagType) {
+              this.getList();
+            } else {
+              this.getList();
+            }
+            // this.queryDealedCount();
+          }
+        });
+      }else if(data.type == 2){
+        let params = {
+          "course": this.$route.query.course,
+          "examCode": this.$route.query.examNo,
+          examPaperId:data.paperId,
+          grade:data.grade,
+          score:data.score,
+        }
+        this.$axios.post("/exampaper/updateScore",params).then((res) => {
+          if (res) {
+            this.$message.success(`试卷评级更新成功！`);
+            if (flagType) {
+              this.getList(2);
+            } else {
+              this.getList(2);
+            }
+
+            // this.queryDealedCount();
+          }
+        });
+      }
+
     },
     // 筛选评级
     switchLevel(value, index) {
@@ -630,7 +648,8 @@ export default {
           level.active = false;
         }
       });
-      this.queryPaperList();
+      console.log(value,index);
+      // this.queryPaperList();
     },
     // 点击打分
     showMarkArea(index) {
@@ -661,7 +680,7 @@ export default {
       if (index < this.paperList.length - 1) {
         this.currentIndex = index + 1;
       }
-      this.updatePaper({ paperId, score: this.paperList[index].mark, type: 2 });
+      this.updatePaper({ paperId, score: this.paperList[index].mark,grade: this.paperList[index].level, type: 2 });
     },
     // 跳转到评分页面
     jumpToMarkingAreaPage(start) {

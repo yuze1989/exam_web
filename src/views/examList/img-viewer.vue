@@ -84,7 +84,6 @@
         title="示例图片"
         :visible.sync="showExamplesPreviewer"
         width="45%"
-        :before-close="handleClose"
     >
       <div class="img-wrap">
         <el-image :src="targetUrl" fit="cover"></el-image>
