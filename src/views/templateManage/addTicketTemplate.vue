@@ -339,6 +339,8 @@ export default {
 
       let formData = new FormData();
       let file = this.base64toFile(this.imgUrl);
+      console.log(this.imgUrl);
+
       formData.append('ticketFile', file);
 
       if(this.examId != undefined){

@@ -1,45 +1,49 @@
 <template>
   <section class="form_border">
     <div class="header" style="height: 66px">
+        <el-col :span="4">      <el-button type="primary" @click="ticketGenerate" style="float: left">生成准考证号</el-button></el-col>
+        <el-col :span="20" style="display: flex;justify-content: flex-end">
+          <el-select clearable
+                     v-model="form.ticketStatus"
+                     style="width: 200px; margin-left: 20px;"
+                     placeholder="准考证号状态"
+          >
+            <el-option
+                v-for="item in ticketStatusList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            ></el-option>
+          </el-select>
 
-      <el-button type="primary" @click="ticketGenerate" style="float: left">生成准考证号</el-button>
+          <el-input
+              style="width: 200px;margin-left: 20px;"
+              v-model="form.examineeName"
+              placeholder="姓名"
 
-      <el-button type="primary" style="margin-left: 20px;float: right" @click="pageReset">
-        查询
-      </el-button>
+          ></el-input>
+          <el-input
+              style="width: 200px; margin-right: 20px;margin-bottom: 5px;margin-left: 20px;"
+              v-model="form.studioName"
+              placeholder="机构名称"
+          ></el-input>
+          <el-select clearable  v-model="form.examName" style="width: 200px;"  placeholder="请选择考试名称" @change="examNameChange">
+            <el-option
+                v-for="item in examNameOption"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
 
-      <el-select clearable
-          v-model="form.ticketStatus"
-          style="width: 200px; margin-left: 20px;float: right"
-          placeholder="准考证号状态"
-      >
-        <el-option
-            v-for="item in ticketStatusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-        ></el-option>
-      </el-select>
 
-      <el-input
-        style="width: 200px;float: right"
-        v-model="form.examineeName"
-        placeholder="姓名"
+          <el-button type="primary" style="margin-left: 20px;" @click="pageReset">
+            查询
+          </el-button>
+        </el-col>
 
-      ></el-input>
-      <el-input
-          style="width: 200px; margin-right: 20px;margin-bottom: 5px;float: right"
-          v-model="form.studioName"
-          placeholder="机构名称"
-      ></el-input>
-      <el-select clearable  v-model="form.examName" style="width: 200px;float: right"  placeholder="请选择考试名称" @change="examNameChange">
-        <el-option
-            v-for="item in examNameOption"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-        </el-option>
-      </el-select>
+
+
 
 
 

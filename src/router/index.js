@@ -131,6 +131,33 @@ export const constantRoutes = [
                 },
 
             },
+            {
+                path: "/addTicketTemplate",
+                name:'AddTicketTemplate',
+                component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
+                meta: {
+                    name: '关联考试',
+                    icon: 'classmate'
+                },
+            },
+            {
+                path: "/addTicketTemplate2",
+                name:'addTicketTemplate2',
+                component: resolve => require(["@/views/templateManage2/addTicketTemplate.vue"], resolve),
+                meta: {
+                    name: '关联考试',
+                    icon: 'classmate'
+                },
+            },
+            {
+                path: "/gradeManageAdd",
+                name:"gradeManageAdd",
+                component: resolve => require(["@/views/authManage/gradeManage/gradeRule.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                meta: {
+                    name: '打分规则',
+                    icon: 'classtime'
+                },
+            },
         ]
     },
 
@@ -180,40 +207,6 @@ export const asyncRouter = [
                     icon: 'notice-fill'
                 },
             },
-            {
-                path: "/addTicketTemplate",
-                id: 124,
-                code: 10105,
-                name:'AddTicketTemplate',
-                component: resolve => require(["@/views/templateManage/addTicketTemplate.vue"], resolve),
-                meta: {
-                    name: '关联考试',
-                    icon: 'classmate'
-                },
-            },
-            {
-                path: "/addTicketTemplate2",
-                id: 123,
-                code: 10105,
-                name:'addTicketTemplate2',
-                component: resolve => require(["@/views/templateManage2/addTicketTemplate.vue"], resolve),
-                meta: {
-                    name: '关联考试',
-                    icon: 'classmate'
-                },
-            },
-            {
-                path: "/gradeManageAdd",
-                id: 107,
-                code: 10107,
-                name:"gradeManageAdd",
-                component: resolve => require(["@/views/authManage/gradeManage/gradeRule.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
-                meta: {
-                    name: '打分规则',
-                    icon: 'classtime'
-                },
-            },
-
 
         ]
     },
