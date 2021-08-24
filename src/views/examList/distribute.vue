@@ -198,6 +198,36 @@
       </div>
     </el-dialog>
 
+<!--    查看-->
+    <el-dialog title="查看" :visible.sync="dialogTableVisible2">
+      <el-table :data="sj_list">
+        <el-table-column prop="admissionTicketCode" label="准考证" width="250"></el-table-column>
+        <el-table-column prop="province" label="省份" width="200"></el-table-column>
+        <el-table-column prop="examinationRoomCode" label="考场"></el-table-column>
+        <el-table-column label="操作" header-align="center"    align="center">
+          <template slot-scope="scope">
+
+            <div>
+              <el-button
+                  type="text"
+                  size="small"
+                  @click="ddd(scope.row.img)"
+              >
+                <span>查看试卷</span>
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-dialog
+          width="50%"
+          title="试卷图"
+          :visible.sync="innerVisible"
+          append-to-body>
+        <img :src="fd_img" alt="" style="width: 100%">
+      </el-dialog>
+    </el-dialog>
+
   </section>
 </template>
 
@@ -207,9 +237,12 @@ export default {
 
   data() {
     return {
+      fd_img:"",
       examNameOption: [],
       dialogFormVisible:false,
       formLabelWidth: '120px',
+      outerVisible: false,
+      innerVisible: false,
       form: {
         name: '',
         region: '',
@@ -234,6 +267,8 @@ export default {
       course:"",
       examNameNo:"",
       examName:"",
+      dialogTableVisible2:false,
+      sj_list:[],
       examId:"",
       examIdList:[],
       courseList:[],
@@ -281,6 +316,10 @@ export default {
     this.getExamList()
   },
   methods: {
+    ddd(img){
+      this.fd_img = img;
+      this.innerVisible = true;
+    },
     // 查询考试列表
     getExamList(){
       apiExamList().then(res=>{
@@ -467,7 +506,10 @@ export default {
         "schoolId": "",
         "size": 10
       }
-      this.$axios.post('/exampaper/examDistributionPaperQuer',data)
+      this.$axios.post('/exampaper/examDistributionPaperQuer',data).then((res)=>{
+        this.sj_list = res.result.list;
+        this.dialogTableVisible2 = true;
+      })
     },
     toShowInvite(item) {
       this.editItemData = item
