@@ -42,12 +42,6 @@
         border: 'none',
       }"
     >
-      <el-table-column
-        label="id"
-        header-align="center"
-        align="center"
-        prop="id"
-      ></el-table-column>
 
       <el-table-column
         label="考试编码"
@@ -64,12 +58,18 @@
       ></el-table-column>
 
       <el-table-column
-        label="阅卷状态"
-        header-align="center"
-        align="center"
-      >
-        <template slot-scope="scope">{{scope.row.operStatus==0?'未停止':'停止'}}</template>
-      </el-table-column>
+          label="阅卷老师姓名"
+          header-align="center"
+          align="center"
+          prop="teacherName"
+      ></el-table-column>
+
+      <el-table-column
+          label="试卷数量"
+          header-align="center"
+          align="center"
+          prop="paperNum"
+      ></el-table-column>
 
       <el-table-column label="操作" header-align="center"    align="center">
         <template slot-scope="scope">
@@ -79,7 +79,7 @@
               size="small"
               @click="editItemAction(scope.row)"
             >
-              <span>上传进度详情</span>
+              <span>查看</span>
             </el-button>
           </div>
         </template>
@@ -274,6 +274,8 @@ export default {
         if(item.id == e){
           this.forms.model.name = item.name
           this.examId = item.id
+          this.examNameNo = item.no
+          this.getExamDetails()
         }
       })
     },
@@ -395,7 +397,17 @@ export default {
       this.isAdd = true
     },
     editItemAction(item) {
-      this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode}})
+      console.log(item);
+      // this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode}})
+      let data = {
+
+        "current": 1,
+        "examCode": item.examCode,
+        "teacherId": item.teacherId,
+        "schoolId": "",
+        "size": 10
+      }
+      this.$axios.post('/exampaper/examDistributionPaperQuer',data)
     },
     toShowInvite(item) {
       this.editItemData = item
