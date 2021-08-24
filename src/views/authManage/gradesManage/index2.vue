@@ -247,9 +247,6 @@ export default {
       },
 
       dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
-        {
-          'id': 1,'data': 2,'sales': 3,'salt': 4,'const': 5, 'profit': 6
-        }
       ] },
       subjectName1: false,
       subjectName2: false,

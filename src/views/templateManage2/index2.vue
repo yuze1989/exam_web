@@ -170,7 +170,6 @@ export default {
     },
     // 查询考试列表
     getExamList(){
-
       this.$axios.post('/score/examlist').then(res=>{
         this.examNameOption = res.result
       })
@@ -208,19 +207,19 @@ export default {
     },
     // 获取列表
     getList() {
-      let params = {
-        current : this.form.pageIndex ,
-        size : this.form.size ,
-        name : this.form.examName,
-        no:  this.form.examNo
-      };
-      examinationList(params).then((res) => {
-        this.data.records = res.result.records;
-        this.data.current = res.result.current;
-        this.data.total = res.result.total;
-        (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
-      })
-          .catch(() => {});
+      // let params = {
+      //   current : this.form.pageIndex ,
+      //   size : this.form.size ,
+      //   name : this.form.examName,
+      //   no:  this.form.examNo
+      // };
+      // examinationList(params).then((res) => {
+      //   this.data.records = res.result.records;
+      //   this.data.current = res.result.current;
+      //   this.data.total = res.result.total;
+      //   (this.data.size = res.result.pageSize), (this.data.pages = res.result.pages);
+      // })
+      //     .catch(() => {});
     },
     // 考试改变监听
     examNameChange(e){

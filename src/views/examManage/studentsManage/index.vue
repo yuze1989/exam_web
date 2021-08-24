@@ -1,6 +1,6 @@
 <template>
   <section class="form_border">
-    <div class="header" style="display: flex;justify-content: flex-end">
+    <div class="header" style="display: block">
       <!-- checkStatus:'',//审核状态:0未审核；1通过；2未通过 ,
         examName:'',//考试名称 
         examineeName: '',//考生姓名
@@ -9,84 +9,81 @@
         schoolId:'',// 机构id ,
         source:'',//报名来源:1手机；2后台 ,
         studioName:'',//: 机构名称 -->
-      <el-select clearable  v-model="forms.examName"  placeholder="请选择考试名称" @change="examNameChange">
-        <el-option
-            v-for="item in examNameOption"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-        </el-option>
-      </el-select>
-      <el-input
-        style="width: 200px; margin-right: 20px; margin-bottom: 5px"
-        v-model="forms.examineeName"
-        placeholder="姓名"
-      ></el-input>
+      <el-row style="display: flex;justify-content: flex-end">
+        <el-select clearable  v-model="forms.examName"  placeholder="请选择考试名称" @change="examNameChange"         style="width: 200px; margin-right: 20px; margin-bottom: 5px">
+          <el-option
+              v-for="item in examNameOption"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+          </el-option>
+        </el-select>
+        <el-input
+            style="width: 200px; margin-right: 20px; margin-bottom: 5px"
+            v-model="forms.examineeName"
+            placeholder="姓名"
+        ></el-input>
 
-      <el-input
-        style="width: 200px; margin-right: 20px;margin-bottom: 5px"
-        v-model="forms.studioName"
-        placeholder="机构名称"
-      ></el-input>
+        <el-input
+            style="width: 200px; margin-right: 20px;margin-bottom: 5px"
+            v-model="forms.studioName"
+            placeholder="机构名称"
+        ></el-input>
 
-<!--      <el-input-->
-<!--        style="width: 200px; margin-right: 20px;margin-bottom: 5px"-->
-<!--        v-model="forms.examName"-->
-<!--        placeholder="考试名称"-->
-<!--      ></el-input>-->
 
-      <el-select clearable
-        v-model="forms.checkStatus"
-        style="width: 200px; margin-right: 20px;margin-bottom: 5px"
-        placeholder="审核状态"
-        @change="changeCheckStatus"
-      >
-        <el-option
-          v-for="(item, index) in checkStatusList"
-          :key="index"
-          :label="item.name"
-          :value="item.id"
-        ></el-option>
-      </el-select>
+        <el-select clearable
+                   v-model="forms.checkStatus"
+                   style="width: 200px; margin-right: 20px;margin-bottom: 5px"
+                   placeholder="审核状态"
+                   @change="changeCheckStatus"
+        >
+          <el-option
+              v-for="(item, index) in checkStatusList"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+          ></el-option>
+        </el-select>
 
-      <el-select clearable
-        v-model="forms.payStatus"
-        style="width: 200px; margin-right: 20px;"
-        placeholder="支付状态"
-        @change="changeStatus"
-      >
-        <el-option
-          v-for="(item, index) in payStatusList"
-          :key="index"
-          :label="item.name"
-          :value="item.id"
-        ></el-option>
-      </el-select>
+        <el-select clearable
+                   v-model="forms.payStatus"
+                   style="width: 200px; margin-right: 20px;"
+                   placeholder="支付状态"
+                   @change="changeStatus"
+        >
+          <el-option
+              v-for="(item, index) in payStatusList"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+          ></el-option>
+        </el-select>
 
-      <el-select clearable
-        v-model="forms.source"
-        style="width: 200px; margin-right: 20px;"
-        placeholder="报名来源"
-        @change="changeStatus"
-      >
-        <el-option
-          v-for="(item, index) in sourceList"
-          :key="index"
-          :label="item.name"
-          :value="item.id"
-        ></el-option>
-      </el-select>
-      <el-button type="primary" style="margin-left: 20px;" @click="onSubmit">
-        查询
-      </el-button>
+        <el-select clearable
+                   v-model="forms.source"
+                   style="width: 200px; margin-right: 20px;"
+                   placeholder="报名来源"
+                   @change="changeStatus"
+        >
+          <el-option
+              v-for="(item, index) in sourceList"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+          ></el-option>
+        </el-select>
+        <el-button type="primary" style="margin-left: 20px;height: 40px;" @click="onSubmit">
+          查询
+        </el-button>
+      </el-row>
+      <el-row style="margin-top: 6px;margin-bottom: 0px;display:block;justify-content: flex-start">
+        <!--      <el-button type="warning" @click="reset">重置</el-button>-->
+        <el-button type="primary" @click="add">新增学生信息</el-button>
+        <el-button type="primary" @click="onImport">批量导入</el-button>
+        <el-button type="primary" @click="checkMore">批量审核</el-button>
+      </el-row>
     </div>
-    <div style="margin-top: -10px;margin-bottom: 10px;">
 
-<!--      <el-button type="warning" @click="reset">重置</el-button>-->
-      <el-button type="primary" @click="add" style="margin-left: 15px">新增学生信息</el-button>
-      <el-button type="primary" @click="onImport">批量导入</el-button>
-      <el-button type="primary" @click="checkMore">批量审核</el-button>
-    </div>
     <!-- 导入 导出 -->
     <!-- <div class="export-box">
       <el-upload
