@@ -127,6 +127,7 @@
         </el-form-item>
 
         <el-table
+            v-if="type[0]==0"
             :data="tableData"
             style="width: 100%">
           <el-table-column
@@ -166,12 +167,29 @@
             </template>
           </el-table-column>
         </el-table>
-
+        <el-table
+            v-if="type[0]==1"
+            :data="tableData"
+            style="width: 100%">
+          <el-table-column
+              prop="teacherName"
+              label="老师"
+              width="180"
+          >
+          </el-table-column>
+          <el-table-column
+              label="数量">
+            <template slot-scope="scope">
+              <span v-if="type[1]==0">考卷数量 {{dataA.result.examinationPaperNum}}</span>
+              <span v-if="type[1]==1">考卷数量 <el-input type="number" min="0" v-model="scope.row.num" style="width: 150px"></el-input></span>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <div v-show="fpjd==1">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="fpjd=2">下一步</el-button>
+          <el-button type="primary" @click="get_ms">下一步</el-button>
         </div>
         <div v-show="fpjd==2">
           <el-button @click="fpjd=1">上一步</el-button>
@@ -254,6 +272,7 @@ export default {
       },
       aaDate:[],
       tableData:[],
+      dataA:"",
     }
   },
 
@@ -270,14 +289,25 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
-      this.examNameOption.map(item =>{
-        if(item.id == e){
-          this.forms.model.name = item.name
-          this.examId = item.id
-          this.examNameNo = item.no
-          this.getExamDetails()
-        }
-      })
+      if(e == ""){
+        this.forms.model.name = ""
+        this.examId = ""
+      }else{
+        this.examNameOption.map(item =>{
+          if(item.id == e){
+            this.forms.model.name = item.name
+            this.examId = item.id
+            this.examNameNo = item.no
+            this.getExamDetails()
+          }
+        })
+
+      }
+
+    },
+    get_ms(){
+      this.fpjd=2;
+      this.getListByKs()
     },
     selkc(row, type) {
       // 如果考场的号码为随机数, 那么可以根据考场的号码 从考场列表中获取index
@@ -305,29 +335,54 @@ export default {
     },
     tijiao(){
       let data=[]
-      this.tableData.forEach((item,index)=>{
-        data.push({
-          examCode:this.examNameNo,
-          examId: this.examId,
-          subject:this.course,
-          erMin:item.start,
-          erMax:item.end,
-          teacherId:item.teacherId,
-        })
-      })
+
 
 
       let url = ""
       if(this.type[0] == 0){
         url="/exampaper/examDistributionPatternOne"
+        this.tableData.forEach((item,index)=>{
+          data.push({
+            examCode:this.examNameNo,
+            examId: this.examId,
+            subject:this.course,
+            erMin:item.start,
+            erMax:item.end,
+            teacherId:item.teacherId,
+          })
+        })
       }else if(this.type[0] == 1){
         url="/exampaper/examDistributionRandomOne"
+        if(this.type[1] ==0){
+          this.tableData.forEach((item,index)=>{
+            data.push({
+              examCode:this.examNameNo,
+              examId: this.examId,
+              subject:this.course,
+              erNum:this.dataA.result.examinationPaperNum,
+              teacherId:item.teacherId,
+            })
+          })
+        }else if(this.type[1] == 1){
+          this.tableData.forEach((item,index)=>{
+            data.push({
+              examCode:this.examNameNo,
+              examId: this.examId,
+              subject:this.course,
+              erNum:item.num,
+              teacherId:item.teacherId,
+            })
+          })
+        }
+
       }
       this.$axios.post(url,data).then((res)=>{
         if(res.code == 200){
           this.$message.success('操作成功')
           this.dialogFormVisible = false;
-
+          this.fpjd = 1;
+          this.examId = "";
+          this.course = "";
         }
       })
     },
@@ -336,7 +391,23 @@ export default {
     },
     //修改模式
     modeChange(){
-      this.getListByKs()
+      if(this.type[0] == 0){
+        let res = this.dataA;
+        //考场
+        this.tableData = res.result.teacherName;
+        this.aaDate = [];
+        this.tableData.forEach((item,index)=>{
+          this.aaDate.push({
+            teacherId:"",
+            start:"",
+            end:"",
+            peopleCount:0
+          })
+        })
+        this.roomList = res.result.examinationRoomCode;
+      }else if(this.type[0] == 1){
+        //随机
+      }
     },
     //获取考试列表
     getKsList(){
@@ -364,17 +435,7 @@ export default {
       this.$axios.post(
           '/exampaper/examDistributionPaper',data
       ).then(res=>{
-        this.tableData = res.result.teacherName;
-        this.aaDate = [];
-        this.tableData.forEach((item,index)=>{
-          this.aaDate.push({
-            teacherId:"",
-            start:"",
-            end:"",
-            peopleCount:0
-          })
-        })
-        this.roomList = res.result.examinationRoomCode;
+        this.dataA = res;
       })
     },
     // 查询考试下的科目
@@ -397,12 +458,11 @@ export default {
       this.isAdd = true
     },
     editItemAction(item) {
-      console.log(item);
       // this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode}})
       let data = {
 
         "current": 1,
-        "examCode": item.examCode,
+        "examId": item.examId,
         "teacherId": item.teacherId,
         "schoolId": "",
         "size": 10
@@ -464,7 +524,8 @@ export default {
       let params = {
         current: this.forms.current,
         size: this.forms.pageSize,
-        name: this.forms.model.name,
+        // name: this.forms.model.name,
+        id:this.examId,
         "course": "",
         "provinceCode": "",
         "schoolId": "",

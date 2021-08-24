@@ -149,12 +149,18 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
-      this.examNameOption.map(item =>{
-        if(item.id == e){
-          this.forms.model.name = item.name
-          this.examId = item.id
-        }
-      })
+      if(e == ""){
+        this.forms.model.name = ""
+        this.examId = ""
+      }else{
+        this.examNameOption.map(item =>{
+          if(item.id == e){
+            this.forms.model.name = item.name
+            this.examId = item.id
+          }
+        })
+      }
+
     },
     //去查询联合考试状态
     // 新增
@@ -221,7 +227,7 @@ export default {
       let params = {
         current: this.forms.current,
         size: this.forms.pageSize,
-        name: this.forms.model.name,
+        id:this.examId
       }
       this.$axios
         .post('/exampaper/examPaperProductList', params)
