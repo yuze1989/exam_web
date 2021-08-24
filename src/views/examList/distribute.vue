@@ -117,7 +117,7 @@
         </el-form-item>
       </el-form>
 
-      <el-form v-show="fpjd==2">
+      <el-form v-show="fpjd==2" v-loading="loading">
         <el-form-item label="分配方式" :label-width="formLabelWidth">
           <el-cascader
               v-model="type"
@@ -274,6 +274,7 @@ export default {
       courseList:[],
       roomList:[],
       list: [],
+      loading:false,
       checkIds: [],
       listLoading: false,
       forms: {
@@ -345,6 +346,7 @@ export default {
 
     },
     get_ms(){
+      this.loading = true;
       this.fpjd=2;
       this.getListByKs()
     },
@@ -475,6 +477,7 @@ export default {
           '/exampaper/examDistributionPaper',data
       ).then(res=>{
         this.dataA = res;
+        this.loading = false;
       })
     },
     // 查询考试下的科目

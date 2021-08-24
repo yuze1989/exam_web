@@ -333,41 +333,18 @@ export default {
               name: item.admissionTicketCode,
               url: item.img,
               imgUrl: imgUrl,
-              // imgUrl: item.img + ossThumbnailSuffix(1000, 1000),
               permission: item.admissionTicketCode,
               level: item.grade,
               show: false,
               mark: item.score,
               edit: false,
             });
-            // cachedList.push({
-            //   id: item.id,
-            //   name: item.admissionTicketCode,
-            //   url: item.img + ossThumbnailSuffix(200, 200),
-            //   imgUrl: imgUrl,
-            //   // imgUrl: item.img + ossThumbnailSuffix(1000, 1000),
-            //   permission: item.admissionTicketCode,
-            //   level: item.grade,
-            //   show: false,
-            //   mark: item.course,
-            // });
+
           });
           this.paperList = list;
           if(type == 2){
             this.paperList[this.currentIndex].show = true;
           }
-          // this.cachedPaperList = cachedList;
-          // if (type && this.currentIndex <= this.paperList.length - 1) {
-          //   this.paperList[this.currentIndex].show = true;
-          //   this.$nextTick(() => {
-          //     const currentEle = this.$refs["markInput" + this.currentIndex];
-          //     if (currentEle) {
-          //       currentEle[0].focus();
-          //     }
-          //   });
-          // } else {
-          //   this.paperList[this.currentIndex].show = false;
-          // }
         }
       });
     },
@@ -408,7 +385,6 @@ export default {
     handleEditDialogImg(index) {
       this.editImgIndex = index;
       this.editImgDialogVisible = true;
-      console.log(this.editImgIndex);
     },
     // 上一个图片
     preViewImg() {
@@ -648,7 +624,7 @@ export default {
           level.active = false;
         }
       });
-      console.log(value,index);
+
       // this.queryPaperList();
     },
     // 点击打分
