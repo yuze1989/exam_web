@@ -82,7 +82,7 @@
             <div class="level-description" v-if="currentRuleLevel">
               <h3>{{ currentRuleLevel }}类卷</h3>
               <p class="word-wrap" style="height: 160px; overflow: auto">
-                {{ levelDescription.description }}
+                {{description}}
               </p>
             </div>
           </div>
@@ -556,6 +556,7 @@ export default {
       NoScore:0,
       NoGrade:0,
       Grade:0,
+      description:""
     };
   },
   created() {
@@ -582,12 +583,8 @@ export default {
       let url1 = '/exampaper/scoringProgress'
       this.$axios.post(url1,{
         "course": this.$route.query.course,
-        "current": 1,
         "examCode": this.$route.query.examNo,
         "examPaperId": this.$route.query.examId,
-        "grade": "",
-        "provinceCode": "",
-        "schoolId": "",
         "size": 10,
       }).then((res)=>{
             this.Score=res.result.Score;
@@ -603,10 +600,10 @@ export default {
         "examCode": this.$route.query.examNo,
         "examId": this.$route.query.examId,
       }).then((res)=>{
-        this.Score=res.Score;
-        this.NoScore=res.NoScore;
-        this.NoGrade=res.NoGrade;
-        this.Grade=res.Grade;
+        // this.Score=res.Score;
+        // this.NoScore=res.NoScore;
+        // this.NoGrade=res.NoGrade;
+        // this.Grade=res.Grade;
       })
     },
     startR(){
@@ -837,6 +834,7 @@ export default {
           });
           this.levelList = levelList;
           this.descriptionLevelList = examplesList;
+          console.log(examplesList,'------------------------');
           this.descriptionLevelList.map((item) => {
             item.active = false;
           });
@@ -844,6 +842,7 @@ export default {
           this.levelDescription.demoUrl =this.descriptionLevelList[0].imgUrl
           this.levelDescription.description = this.descriptionLevelList[0].imgUrlDesc;
           this.currentRuleLevel = this.descriptionLevelList[0].grade;
+          this.description = this.descriptionLevelList[0].takePic;
 
 
 
@@ -856,6 +855,7 @@ export default {
       });
       this.descriptionLevelList[index].active = true;
       this.currentRuleLevel = this.descriptionLevelList[index].grade;
+      this.description = this.descriptionLevelList[index].takePic;
       const currentDes = this.descriptionLevelList.find((item) => {
         return item.grade === this.descriptionLevelList[index].grade;
       });
@@ -863,8 +863,9 @@ export default {
         this.levelDescription.demoUrl =
             //currentDes.imgUrl + ossThumbnailSuffix(190, 200);
             currentDes.imgUrl;
-        this.levelDescription.description = currentDes.imgUrlDesc;
+
       }
+
     },
     unsetAllLevel() {
       this.levelList.forEach((levelInfo) => {
@@ -924,9 +925,6 @@ export default {
     },
     imgViewerEnter() {
       const scroller = document.querySelector(".content-container");
-      if(!scroller.offsetWidth){
-        return false
-      }
       const scrollBarWidth = scroller.offsetWidth - scroller.clientWidth;
       const chromeBarWidth = 17;
       const initPaddingRight = 20;
@@ -934,9 +932,7 @@ export default {
       scroller.style.overflowY = "hidden";
     },
     imgViewerLeave() {
-      if(!scroller.offsetWidth){
-        return false
-      }
+
       const scrollBarWidth =
           window.innerWidth - document.documentElement.offsetWidth;
       const scroller = document.querySelector(".content-container");
