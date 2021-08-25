@@ -276,7 +276,7 @@ export default {
           {},
         )
         .then((res) => {
-          console.log(res, 'rrr')
+
           if ((res.code = 200)) {
             this.forms.examineeCount = res.result.examineeCount
             this.forms.distributCount = res.result.distributCount
@@ -288,7 +288,15 @@ export default {
               parseInt(res.result.examineeCount) -
               parseInt(res.result.distributCount) //unDistributCount2 总待分配人数,不改变
             this.origionObj = { ...this.forms }
-            this.formsData = { examrooms: [] }
+            let list = [];
+            res.result.examRoomList.forEach((item)=>{
+              list.push({
+                Count: item.number,
+                en: item.numberEnd,
+                st: item.numberStart,
+              })
+            })
+            this.formsData = { examrooms: list }
             this.inpStudent()
           }
         })
@@ -373,7 +381,6 @@ export default {
       // this.loading = true
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.formsData.examrooms, 'examrooms')
           let examrooms = this.formsData.examrooms.map((item) => {
             return {
               number: item.Count,
