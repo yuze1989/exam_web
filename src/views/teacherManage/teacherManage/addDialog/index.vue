@@ -18,6 +18,14 @@
       :rules="rules"
       ref="teacherForm"
     >
+      <el-form-item label="权限类型" prop="roleType">
+        <el-select clearable  v-model="from.roleType" placeholder="请选择">
+          <!-- <el-option label="管理员" value="0"></el-option> -->
+          <el-option label="阅卷老师" value="1" ></el-option>
+          <el-option label="教辅老师" value="2"></el-option>
+          <el-option label="阅卷组长" value="3"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="角色名称" prop="role">
         <el-select clearable  v-model="from.role" placeholder="请选择" @change="changeRole">
           <el-option
@@ -99,8 +107,10 @@ export default {
         roleId: '',
         userName: '',
         provinceList: [],
+        roleType:""
       },
       rules: {
+        roleType: [{ required: true, message: '请选择', trigger: 'blur' }],
         role: [{ required: true, message: '请选择', trigger: 'blur' }],
         loginCode: [{ required: true,pattern:/^[A-Za-z0-9]+$/, message: '请输入（账号只能由字母和数字组成）', trigger: 'blur' }],
         password: [{ required: true, message: '请输入', trigger: 'blur' }],

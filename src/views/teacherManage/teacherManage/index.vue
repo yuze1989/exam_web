@@ -43,7 +43,6 @@
           <el-form-item  style="margin-bottom: 0">
             <el-button type="primary" @click="onSubmit">查询</el-button>
             <!--            <el-button type="warning" @click="reset">重置</el-button>-->
-
             <!--            <el-button type="warning" @click="reset">重置</el-button>-->
 
           </el-form-item>

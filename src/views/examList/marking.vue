@@ -582,6 +582,7 @@ export default {
         if(item.grade == value){
           this.minNum = item.scoreStart;
           this.maxNum = item.scoreEnd
+          this.markError = "只能输入"+this.minNum+"-" + this.maxNum + "的整数";
         }
       })
     },
@@ -599,17 +600,17 @@ export default {
       })
     },
     getFenZu(){
-      let url1 = '/exampaper/queryPaperGroupingList'
-      this.$axios.post(url1,{
-        "course": this.$route.query.course,
-        "examCode": this.$route.query.examNo,
-        "examId": this.$route.query.examId,
-      }).then((res)=>{
-        // this.Score=res.Score;
-        // this.NoScore=res.NoScore;
-        // this.NoGrade=res.NoGrade;
-        // this.Grade=res.Grade;
-      })
+      // let url1 = '/exampaper/queryPaperGroupingList'
+      // this.$axios.post(url1,{
+      //   "course": this.$route.query.course,
+      //   "examCode": this.$route.query.examNo,
+      //   "examId": this.$route.query.examId,
+      // }).then((res)=>{
+      //   // this.Score=res.Score;
+      //   // this.NoScore=res.NoScore;
+      //   // this.NoGrade=res.NoGrade;
+      //   // this.Grade=res.Grade;
+      // })
     },
     startR(){
       this.rotate = !this.rotate
@@ -667,9 +668,6 @@ export default {
       this.score = value.replace(/\D/g, "");
       if (!isNumber || value < this.minNum || value > this.maxNum) {
         this.markError = "只能输入"+this.minNum+"-" + this.maxNum + "的整数";
-        setTimeout(() => {
-          this.markError = "";
-        }, 600);
       }
       this.score =
           (value >= 0 && value <= this.maxScore && value.match(/^\d*/g)[0]) ||
@@ -890,8 +888,8 @@ export default {
             this.currentPosition += 1;
             this.startPosition += 1;
           }
-          // this.getJinDu();//获取进度
-          // this.getList()
+          this.getJinDu();//获取进度
+          this.queryPaperList()
         }
       });
     },
@@ -943,8 +941,9 @@ export default {
     },
     showMarkDialog() {
       this.markDlgVisible = !this.markDlgVisible;
-      this.grade = this.paperList[this.currentPosition].grade;
-      this.score = this.paperList[this.currentPosition].score;
+      console.log(this.paperList[this.currentPosition].grade);
+      this.level = this.paperList[this.currentPosition].grade || "";
+      this.mark = this.paperList[this.currentPosition].score || "";
     },
     submitLevelAndMark() {
       let data = {
@@ -968,6 +967,7 @@ export default {
           this.$message.success(`试卷评分更新成功！`);
           // this.getList()
           this.getJinDu();//获取进度
+          this.queryPaperList()
         }
       });
       // this.updatePaper({

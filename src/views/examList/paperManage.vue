@@ -279,7 +279,8 @@ export default {
       grade:"all",
       paperStopDialogVisible: false,
       data: { pages: 0, pageSize: 10, total: 0, records: [] },
-      xxList:["all",0,"仲裁组"]
+      xxList:["all",0,"仲裁组"],
+      ruleList:[]
     };
   },
   computed: {
@@ -298,7 +299,7 @@ export default {
     this.queryPaperList();  //获取评级列表
     this.getList();  //获取试卷列表
     // this.queryDealedCount();    // 获取已评分/未评分
-    // this.getRulesdetail();  //获取打分规则
+    this.getRulesdetail();  //获取打分规则
   },
   methods: {
     currentChange(){
@@ -407,26 +408,14 @@ export default {
     },
     // 获取打分规则
     getRulesdetail() {
-      getRulesdetail({
-        province: this.$route.query.province,
-      }).then((res) => {
-        this.rulesdetail = res.result || [];
-        const province = this.$route.query.province;
-        const course = this.$route.query.course;
-        let ruleScore = 0;
-        if (this.rulesdetail.length) {
-          for (let k = 0; k < this.rulesdetail.length; k++) {
-            if (
-              this.rulesdetail[k].rule.course == course &&
-              this.rulesdetail[k].rule.province == province
-            ) {
-              ruleScore = this.rulesdetail[k].rule.score;
-              break;
-            }
-          }
-        }
-        this.maxScore = ruleScore;
-      });
+      let data = {
+        "course": this.$route.query.course,
+        "examCode": this.$route.query.examNo,
+        "examId": this.$route.query.examId,
+      }
+      this.$axios.post('/exampaper/scoringRules',data).then((res)=>{
+        this.ruleList = res.result.list;
+      })
     },
     // 获取评级列表
     queryPaperList(type) {
@@ -594,6 +583,24 @@ export default {
           }
         });
       }else if(data.type == 2){
+        console.log(data);
+        let isX = true;
+        let min = "";
+        let max = "";
+        this.ruleList.forEach((item)=>{
+          if(data.grade == item.grade){
+            if(data.score > item.scoreEnd || data.score < item.scoreStart){
+              isX = false;
+              min = item.scoreStart;
+              max = item.scoreEnd;
+              return false
+            }
+          }
+        })
+        if(!isX){
+          this.$message.error(`该评级分数范围为`+min+"-"+max);
+          return  false;
+        }
         let params = {
           "course": this.$route.query.course,
           "examCode": this.$route.query.examNo,
