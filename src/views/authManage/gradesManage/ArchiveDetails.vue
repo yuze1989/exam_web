@@ -3,38 +3,74 @@
     <div class="header">
       <div class="from-wrap">
         <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
-<!--          <el-form-item>-->
-<!--            <el-select clearable -->
-<!--                v-model="search.archiveStatus"-->
-<!--                style="width: 130px; margin-right: 20px;"-->
-<!--                placeholder="归档状态"-->
-<!--            >-->
-<!--              <el-option-->
-<!--                  v-for="(item, index) in archiveStatus"-->
-<!--                  :key="index"-->
-<!--                  :label="item.name"-->
-<!--                  :value="item.id"-->
-<!--              ></el-option>-->
-<!--            </el-select>-->
-<!--          </el-form-item>-->
-<!--          <el-form-item>-->
-<!--            <el-select clearable -->
-<!--                v-model="search.examType"-->
-<!--                style="width: 130px; margin-right: 20px;"-->
-<!--                placeholder="考试类型"-->
-<!--            >-->
-<!--              <el-option-->
-<!--                  v-for="(item, index) in examType"-->
-<!--                  :key="index"-->
-<!--                  :label="item.name"-->
-<!--                  :value="item.id"-->
-<!--              ></el-option>-->
-<!--            </el-select>-->
-<!--          </el-form-item>-->
+          <el-form-item>
+            <el-row style="margin-right: 20px">
+              <el-col :span="10" style="position: relative;left: -10px">
+                <el-input v-model="search.min" placeholder="分数1" style="width: 80px" :min="0" :max="100" type="number" class="nn"></el-input>
+              </el-col>
+              <el-col :span="4" style="text-align: center">至</el-col>
+              <el-col :span="10">
+                <el-input
+                    class="nn"
+                    v-model="search.max"
+                    placeholder="分数2"
+                    style="width: 80px"
+                    type="number"
+                    :min="0" :max="100"
+                ></el-input>
+              </el-col>
+            </el-row>
+
+
+          </el-form-item>
+          <el-form-item>
+            <el-select clearable
+                       v-model="selections.provinceCode"
+                       placeholder="生源省份"
+                       value-key="province"
+                       clearable
+                       filterable
+            >
+              <el-option
+                  v-for="item in options"
+                  :key="item.provinceCode"
+                  :label="item.province"
+                  :value="item"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select clearable  v-model="form.examNameNo"  placeholder="请选择考试名称" @change="examNameChange">
+              <el-option
+                  v-for="item in examNameOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+                v-model="search.studioName"
+                placeholder="请输入机构名称"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+                v-model="search.score"
+                placeholder="请输入科目"
+            ></el-input>
+          </el-form-item>
           <el-form-item>
             <el-input
                 v-model="search.admissionTicketCode"
-                placeholder="请输入准考证号码"
+                placeholder="请输入准考证号"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input
+                v-model="search.examineeName"
+                placeholder="请输入姓名"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -164,7 +200,7 @@
 </template>
 
 <script>
-
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
   components: {
   },
@@ -181,6 +217,7 @@ export default {
         examType:"",
         examName:""
       },
+
       form: {
         pageIndex: 1,
         pageSize: 10,
@@ -192,10 +229,26 @@ export default {
       ],
       examType: [
         { name: '全部类型', id: "" },
-        { name: '画室考试', id: 0 },
+        { name: '机构考试', id: 0 },
         { name: '联合考试', id: 1 },
         { name: '线下考试', id: 2 },
       ],
+      selections: {
+        size: 10,
+        current: 1,
+        proviceName: '', //选择省份
+        examineeName: '', //学生姓名
+        examName: '',
+        provinceCode: '',
+        roomCode: '',
+        schoolId: '',
+        admissionTicketCode:"",//准考证号
+        studioName:"",//机构名称
+        score:"",//科目
+        min:"",//科目
+        max:"",//科目
+        examId:""//考试名称
+      },
 
       dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
         {
@@ -211,9 +264,34 @@ export default {
   },
   created() {
     this.getList();
+    this.getProvinceList()
+    this.getExamList()
   },
 
   methods: {
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.form.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    getProvinceList() {
+      this.$axios
+          .get(this.API.studentsManage.examRoomProvince)
+          .then((res) => {
+            this.options = res.result || []
+          })
+          .catch(() => {})
+    },
     onSubmit() {
       this.getList();
     },
@@ -255,17 +333,11 @@ export default {
         "examId": this.$route.query.id,
         "examineeName": "",
         "provinceCode": "",
-        "scoreEnd": "",
-        "scoreStart": "",
+        "scoreEnd": this.search.max,
+        "scoreStart": this.search.min,
         "studioId": "",
-        "studioName": "",
-        "subject": "",
-
-
-
-
-
-
+        "studioName": this.search.studioName,
+        "subject": this.search.score,
       };
       this.$axios
         .post('/score/hisFileDetailList', params)

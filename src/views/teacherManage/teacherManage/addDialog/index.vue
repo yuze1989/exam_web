@@ -8,7 +8,7 @@
     width="30%"
     center
   >
-    <div slot="title">教师管理</div>
+    <div slot="title">用户管理</div>
     <el-form
       label-width="120px"
       :model="from"
@@ -200,19 +200,33 @@ export default {
       this.$refs.teacherForm.validate((valid) => {
         console.log(this.from, '')
         if (valid) {
-          this.$axios
-            .post(this.API.teacher.create, this.from)
-            .then((res) => {
-              if ((res.code = 200)) {
-                this.$message({
-                  message: '新增成功',
-                  type: 'success',
-                })
-                this.$emit('addSuccess')
-                this.from = {}
-              }
-            })
-            .catch(() => {})
+          // this.$axios
+          //   .post(this.API.teacher.create, this.from)
+          //   .then((res) => {
+          //     if ((res.code = 200)) {
+          //       this.$message({
+          //         message: '新增成功',
+          //         type: 'success',
+          //       })
+          //       this.$emit('addSuccess')
+          //       this.from = {}
+          //     }
+          //   })
+          //   .catch(() => {})
+          let data = {
+            "loginCode": this.from.loginCode,
+            "password": this.from.password,
+            "roleId": this.from.roleId,
+            "userName": this.from.userName
+          }
+          this.$axios.post('/user/create',this.from).then((res)=>{
+                  this.$message({
+                    message: '新增成功',
+                    type: 'success',
+                  })
+                  this.$emit('addSuccess')
+                  this.from = {}
+          })
         } else {
         }
       })
@@ -221,7 +235,7 @@ export default {
       this.$refs.teacherForm.validate((valid) => {
         if (valid) {
           this.$axios
-            .post(this.API.teacher.update, {
+            .post('/user/update', {
               ...this.from,
             })
             .then((res) => {

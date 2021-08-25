@@ -170,7 +170,7 @@ export default {
     },
     editItemAction(item) {
       console.log(item);
-      this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode,"operStatus":item.operStatus,'examId':item.id}})
+      this.$router.push({name:'eaxmUpLoad',query:{'id':item.examCode,"operStatus":item.operStatus,'examId':item.id}})
     },
     toShowInvite(item) {
       this.editItemData = item
@@ -193,7 +193,7 @@ export default {
     changeStatus() {},
     changeCheckStatus() {},
     getStateString(item) {
-      // examType (integer, optional): 考试类型:0、画室考试;1、联合考试;2、线下考试 ,
+      // examType (integer, optional): 考试类型:0、机构考试;1、联合考试;2、线下考试 ,
       // examTypeStr 联合考试状态:-1,表示自己建的联合考试;0、未确认;1、同意;2、拒绝;3、禁用
       if(item.examType == 1){
         switch (item.status) {

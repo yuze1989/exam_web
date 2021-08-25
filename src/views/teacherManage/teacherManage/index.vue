@@ -13,7 +13,28 @@
           </el-button>
         </el-col>
         <el-col :span="20" style="display: flex;justify-content: flex-end;margin-bottom: 10px">
-
+          <el-form-item style="margin-bottom: 0">
+            <el-select clearable
+                       v-model="search.roleType"
+                       placeholder="请选择权限类型"
+                       value-key="province"
+            >
+              <el-option value="0" label="管理员"></el-option>
+              <el-option label="阅卷老师" value="1" ></el-option>
+              <el-option label="教辅老师" value="2"></el-option>
+              <el-option label="阅卷组长" value="3"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item style="margin-bottom: 0;" >
+            <el-select clearable
+                       v-model="search.state"
+                       placeholder="请选择用户状态"
+                       value-key="province"
+            >
+              <el-option value="0" label="启用"></el-option>
+              <el-option label="禁用" value="5" ></el-option>
+            </el-select>
+          </el-form-item>
             <el-form-item style="margin-bottom: 0">
               <el-input
                   v-model="forms.model.teacherName"
@@ -172,6 +193,8 @@ export default {
       search: {
         name: '',
         mobilePhone: '',
+        roleType:"",
+        state:""
       },
       forms: {
         model: {
@@ -293,8 +316,10 @@ export default {
       let params = {
         current: this.data.pageIndex,
         size: this.data.pageSize,
-        teacherName: this.forms.model.teacherName,
-        provinceCode: this.forms.model.provinceCode?  this.forms.model.provinceCode.provinceCode: ''
+        userName : this.forms.model.teacherName,
+        state:this.search.state,
+        roleType:this.search.roleType
+
       }
       this.$axios
         .post("/user/userList", params)

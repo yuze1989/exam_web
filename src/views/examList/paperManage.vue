@@ -128,7 +128,7 @@
       <!--工具条-->
       <el-col :span="24" class="toolbar">
         <myPagination
-            :current.sync="listQuery.pageIndex"
+            :current.sync="listQuery.current"
             :pages.sync="data.pages"
             :size.sync="listQuery.size"
             :total.sync="totalItem"
@@ -323,7 +323,6 @@ export default {
       this.$axios.post(url,data).then((response) => {
         const result = response.result || {};
         this.totalItem = result.total;
-        if (result.list && result.list.length) {
           const list = [];
           const cachedList = [];
           result.list.forEach((item) => {
@@ -347,7 +346,7 @@ export default {
           if(type == 2){
             this.paperList[this.currentIndex].show = true;
           }
-        }
+
       });
     },
     // 修改评级 子组件传递数据 type:0 为评级，1为打分
@@ -583,7 +582,6 @@ export default {
           }
         });
       }else if(data.type == 2){
-        console.log(data);
         let isX = true;
         let min = "";
         let max = "";

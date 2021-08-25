@@ -149,7 +149,7 @@ export default {
       ],
       examType: [
         { name: '全部类型', id: "" },
-        { name: '画室考试', id: 0 },
+        { name: '机构考试', id: 0 },
         { name: '联合考试', id: 1 },
         { name: '线下考试', id: 2 },
       ],

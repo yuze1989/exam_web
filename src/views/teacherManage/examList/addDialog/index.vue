@@ -293,7 +293,7 @@ export default {
         name: '', //考试名称
         price: '', //报名费 ,
         remark: '', //备注 ,
-        examType: '', //考试类型:0、画室内部考试;1、画室之间考试;2、校考之间考试;3、全国之间考试 ,
+        examType: '', //考试类型:0、机构内部考试;1、机构之间考试;2、校考之间考试;3、全国之间考试 ,
         enrollEndTime: '', //报名结束时间 ,
         enrollStartTime: '', // 报名开始时间 ,
         examEndTime: '', // 考试结束时间 ,
@@ -302,7 +302,7 @@ export default {
       examTypeStatus: [
         {
           value: '0',
-          label: '画室考试',
+          label: '机构考试',
         },
         {
           value: '1',
@@ -370,7 +370,7 @@ export default {
               name: result.name, //考试名称
               price: (result.price / 100).toFixed(2), //报名费 ,
               remark: result.remark, //备注,
-              examType: String(result.examType), //考试类型:0、画室内部考试;1、画室之间考试;2、校考之间考试;3、全国之间考试 ,
+              examType: String(result.examType), //考试类型:0、机构内部考试;1、机构之间考试;2、校考之间考试;3、全国之间考试 ,
               enrollEndTime: result.enrollEndTime, //报名结束时间 ,
               enrollStartTime: result.enrollStartTime, // 报名开始时间 ,
               examEndTime: result.examEndTime, // 考试结束时间 ,
