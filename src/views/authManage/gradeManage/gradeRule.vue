@@ -509,6 +509,7 @@ export default {
         this.form.rule.gradeLevel = res.result.gradeLevel;
         this.form.rule.takePic =res.result.takePic;
         this.form.rule.picUrl =res.result.picUrl;
+        this.form.ruleSort = res.result.ruleSort;
         res.result.exampleList.forEach((item,index)=>{
           this.form.examples.push({ grade: item.grade, provinceCode: res.result.provinceCode,scoreStart:item.scoreStart,scoreEnd:item.scoreEnd, course: res.result.course, percentage: item.percentage, imgUrl: item.imgUrl, imgUrlDesc: item.imgUrlDesc })
         })
