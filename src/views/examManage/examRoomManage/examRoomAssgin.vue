@@ -43,16 +43,22 @@
         <div class="roomAssgin_number">
             <div
               v-model="forms.examineeCount"
-              style="display: inline-block; width: 50%;text-align:center"
+              style="display: inline-block; width: 33%;text-align:center"
             >
-              考生数：{{ this.forms.examineeCount }}
+              考生人数：{{ this.forms.examineeCount }}
             </div>
             <div
               v-model="forms.distributCount"
-              style="display: inline-block;  width: 50%;text-align:center"
+              style="display: inline-block;  width: 33%;text-align:center"
             >
-              已分配数：{{ forms.distributCount }}
+              已分配考生人数：{{ forms.distributCount }}
             </div>
+          <div
+              v-model="forms.distributCount"
+              style="display: inline-block;  width: 33%;text-align:center"
+          >
+            未分配考生人数：{{forms.unDistributCount }}
+          </div>
         </div>
       </el-form-item>
       <el-form-item>
@@ -60,7 +66,7 @@
           <span v-model="forms.maxExamCode">
             已分配考场数{{ +forms.maxExamCode }}
           </span>
-          <span>未分配考生数：{{ forms.unDistributCount }}</span>
+          <span>已分配考场剩余容量：{{ forms.distributRoomCount  }}</span>
         </div>
       </el-form-item>
 
@@ -117,7 +123,7 @@
               max="50"
               v-model="examroom.Count"
               style="width: 150px;"
-              placeholder="请设置考场人数"
+              placeholder="请设置考场容量"
               @change="inpStudent('Count',idx)"
             ></el-input>
           </el-form-item>
@@ -180,6 +186,7 @@ export default {
         distributCount: '', //已分配考考生
         maxExamCode: '', //已分配考场数
         unDistributCount: '', //未分配学生
+        distributRoomCount:"",//已分配考场剩余容量
       },
       origionObj: {
         unDistributCount: '',
@@ -191,7 +198,7 @@ export default {
       rules: {
         st: [{ required: true, message: '输入正确考场编号', trigger: 'blur' }],
         en: [{ required: true, message: '输入正确考场编号', trigger: 'blur' }],
-        Count: [{ required: true, message: '输入正确人数', trigger: 'blur' }],
+        Count: [{ required: true, message: '输入正确容量数', trigger: 'blur' }],
       },
       count: 0,
       unDistributCount2: 0
@@ -219,6 +226,7 @@ export default {
         distributCount: '', //已分配考考生
         maxExamCode: '', //已分配考场数
         unDistributCount: '', //未分配学生
+        distributRoomCount:'',//已分配考场剩余容量
       }
       if(type==1){
         newForms.provinceCode = '' //省
@@ -272,6 +280,7 @@ export default {
           if ((res.code = 200)) {
             this.forms.examineeCount = res.result.examineeCount
             this.forms.distributCount = res.result.distributCount
+            this.forms.distributRoomCount = res.result.distributRoomCount
             this.forms.unDistributCount =
               parseInt(res.result.examineeCount) -
               parseInt(res.result.distributCount)
