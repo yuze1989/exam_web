@@ -102,8 +102,8 @@
       >
       </el-table-column>
       <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
-        <template>
-          {{item.score}}
+        <template slot-scope="scope">
+          {{scope.row.subjectList[index].score}}
         </template>
       </el-table-column>
 
@@ -149,7 +149,7 @@
       <el-row>
         <el-col :span="8" v-for="(o, index) in sjList" :key="o" style="padding: 10px">
           <el-card :body-style="{ padding: '0px' }">
-            <img :src="o.img" class="image">
+            <img :src="o.img" class="image" style="width: 100%">
             <div style="padding: 14px;">
               <div>科目名称：{{o.subjectName}}</div>
               <div>分数：{{o.score}}</div>
