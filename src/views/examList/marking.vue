@@ -692,7 +692,7 @@ export default {
             },
           ];
 
-          let tempGradeList = [];
+
           let xxList = [];
           for (let i = 0; i < resultList.length; i++) {
             const progress = Math.round(
@@ -716,16 +716,10 @@ export default {
               })
             }
 
-            if(resultList[i].grade){
-              tempGradeList.push({
-                key: i,
-                name: resultList[i].grade,
-              })
-            }
+
           }
           this.xxList = xxList;
           this.levelStatisticsList = list;
-          this.levelList = tempGradeList;
           this.xxListNum = res.result.countNum;
         }
 
@@ -792,6 +786,15 @@ export default {
           this.gradeList = [];
           let examplesList = [];
           let maxScore = 0;
+          let tempGradeList = [];
+          resultList.forEach((item,i)=>{
+            if(item.grade){
+              tempGradeList.push({
+                key: i,
+                name: item.grade,
+              })
+            }
+          })
           resultList.map((item) => {
             if (
                 item.course == this.$route.query.course &&
@@ -808,6 +811,8 @@ export default {
               active: false,
             });
           });
+          console.log(this.levelList);
+          this.levelList = tempGradeList;
           this.gradeList = levelList;
           this.descriptionLevelList = examplesList;
           this.descriptionLevelList.map((item) => {
