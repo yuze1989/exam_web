@@ -9,7 +9,7 @@
               size="medium"
               @click="add"
           >
-            新增老师
+            新增用户
           </el-button>
         </el-col>
         <el-col :span="20" style="display: flex;justify-content: flex-end;margin-bottom: 10px">
@@ -82,16 +82,16 @@
         prop="userName"
       ></el-table-column>
       <el-table-column
-          label="状态"
-          header-align="center"
-          align="center"
-          prop="stateStr"
-      ></el-table-column>
-      <el-table-column
           label="角色名称"
           header-align="center"
           align="center"
           prop="role"
+      ></el-table-column>
+      <el-table-column
+          label="用户状态"
+          header-align="center"
+          align="center"
+          prop="stateStr"
       ></el-table-column>
 <!--      <el-table-column-->
 <!--        label="省份"-->
@@ -100,7 +100,7 @@
 <!--        prop="province"-->
 <!--      ></el-table-column>-->
       <el-table-column
-        label="老师类型"
+        label="权限类型"
         header-align="center"
         align="center"
         prop="roleTypeStr"
@@ -297,7 +297,7 @@ export default {
         provinceCode: this.forms.model.provinceCode?  this.forms.model.provinceCode.provinceCode: ''
       }
       this.$axios
-        .post(this.API.teacher.list, params)
+        .post("/user/userList", params)
         .then((res) => {
           this.data.records = res.result.list
           this.data.pageIndex = res.result.pageNum

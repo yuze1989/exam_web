@@ -18,9 +18,9 @@
       :rules="rules"
       ref="teacherForm"
     >
-      <el-form-item label="权限类型" prop="roleType">
-        <el-select clearable  v-model="from.roleType" placeholder="请选择">
-          <!-- <el-option label="管理员" value="0"></el-option> -->
+      <el-form-item label="权限类型" prop="roleType" >
+        <el-select clearable  v-model="from.roleType" placeholder="请选择" @change="getRoleList">
+           <el-option label="管理员" value="0"></el-option>
           <el-option label="阅卷老师" value="1" ></el-option>
           <el-option label="教辅老师" value="2"></el-option>
           <el-option label="阅卷组长" value="3"></el-option>
@@ -168,14 +168,19 @@ export default {
         .catch(() => {})
     },
     getRoleList() {
-      this.$axios
-        .post(`${this.API.role.teacherRoles}`)
-        .then((res) => {
-          if ((res.code = 200)) {
-            this.roleList = res.result
-            console.log(res.result, 'res.result.list')
-          }
-        })
+      // this.$axios
+      //   .post(`${this.API.role.teacherRoles}`)
+      //   .then((res) => {
+      //     if ((res.code = 200)) {
+      //       this.roleList = res.result
+      //     }
+      //   })
+      let data = {
+        roleType:this.from.roleType
+      }
+      this.$axios.post("/role/roleList",data).then((res)=>{
+              this.roleList = res.result.list
+      })
     },
     confirm() {
 
