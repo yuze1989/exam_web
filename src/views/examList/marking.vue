@@ -48,14 +48,14 @@
           <div class="cards-statistics">
             <div
                 class="card"
-                v-for="level in levelStatisticsList"
+                v-for="level in xxList"
                 :key="level.name"
             >
               <div>
                 <span class="primary">{{ level.name }}类</span>
                 <span
-                >{{ level.totalDealCount || 0 }} /
-                  {{ level.total || 0 }}</span
+                >{{ level.count || 0 }} /
+                  {{ xxListNum || 0 }}</span
                 >
               </div>
               <el-progress
@@ -116,17 +116,17 @@
           <div class="bg"></div>
           <span
               v-if="
-              paperList[currentPosition] && paperList[currentPosition].level
+              paperList[currentPosition] && paperList[currentPosition].grade
             "
               class="image-header"
           >
             <span
-            >{{ paperList[currentPosition].level }}
-              <span v-if="paperList[currentPosition].level">类</span>
+            >{{ paperList[currentPosition].grade }}
+              <span v-if="paperList[currentPosition].grade">类</span>
             </span>
             <span
-            >{{ paperList[currentPosition].mark
-              }}<span v-if="paperList[currentPosition].mark">分</span>
+            >{{ paperList[currentPosition].score
+              }}<span v-if="paperList[currentPosition].score">分</span>
             </span>
           </span>
           <div class="previous-image box_img" @click="clickImg(-2)"  style="top: 100px!important;">
@@ -144,19 +144,19 @@
             <span
                 v-if="
                 paperList[currentPosition - 2] &&
-                paperList[currentPosition - 2].level
+                paperList[currentPosition - 2].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition - 2].level
-                }}<span v-if="paperList[currentPosition - 2].level"
+              >{{ paperList[currentPosition - 2].grade
+                }}<span v-if="paperList[currentPosition - 2].grade"
                 >类</span
                 ></span
               >
               <span
-              >{{ paperList[currentPosition - 2].mark
-                }}<span v-if="paperList[currentPosition - 2].level"
+              >{{ paperList[currentPosition - 2].score
+                }}<span v-if="paperList[currentPosition - 2].score"
                 >分</span
                 ></span
               >
@@ -177,19 +177,19 @@
             <span
                 v-if="
                 paperList[currentPosition  - 1] &&
-                paperList[currentPosition  - 1].level
+                paperList[currentPosition  - 1].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition  - 1].level
-                }}<span v-if="paperList[currentPosition  - 1].level"
+              >{{ paperList[currentPosition  - 1].grade
+                }}<span v-if="paperList[currentPosition  - 1].grade"
                 >类</span
                 ></span
               >
               <span
-              >{{ paperList[currentPosition  - 1].mark
-                }}<span v-if="paperList[currentPosition  - 1].level"
+              >{{ paperList[currentPosition  - 1].score
+                }}<span v-if="paperList[currentPosition  - 1].score"
                 >分</span
                 ></span
               >
@@ -221,17 +221,17 @@
             <span
                 v-if="
                 paperList[currentPosition + 1] &&
-                paperList[currentPosition + 1].level
+                paperList[currentPosition + 1].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition + 1].level }}
-                <span v-if="paperList[currentPosition + 1].level">类</span>
+              >{{ paperList[currentPosition + 1].grade }}
+                <span v-if="paperList[currentPosition + 1].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 1].mark }}
-                <span v-if="paperList[currentPosition + 1].mark">分</span>
+              >{{ paperList[currentPosition + 1].score }}
+                <span v-if="paperList[currentPosition + 1].score">分</span>
               </span>
             </span>
           </div>
@@ -250,17 +250,17 @@
             <span
                 v-if="
                 paperList[currentPosition + 2] &&
-                paperList[currentPosition + 2].level
+                paperList[currentPosition + 2].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition + 2].level }}
-                <span v-if="paperList[currentPosition + 2].level">类</span>
+              >{{ paperList[currentPosition + 2].grade }}
+                <span v-if="paperList[currentPosition + 2].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 2].mark }}
-                <span v-if=" [currentPosition + 2].mark">分</span>
+              >{{ paperList[currentPosition + 2].score }}
+                <span v-if=" [currentPosition + 2].score">分</span>
               </span>
             </span>
           </div>
@@ -275,17 +275,17 @@
           <div class="bg"></div>
           <span
               v-if="
-              paperList[currentPosition] && paperList[currentPosition].level
+              paperList[currentPosition] && paperList[currentPosition].grade
             "
               class="image-header"
           >
             <span
-            >{{ paperList[currentPosition].level }}
-              <span v-if="paperList[currentPosition].level">类</span>
+            >{{ paperList[currentPosition].grade }}
+              <span v-if="paperList[currentPosition].grade">类</span>
             </span>
             <span
-            >{{ paperList[currentPosition].mark
-              }}<span v-if="paperList[currentPosition].mark">分</span>
+            >{{ paperList[currentPosition].score
+              }}<span v-if="paperList[currentPosition].score">分</span>
             </span>
           </span>
           <vue-img-viewer
@@ -314,19 +314,19 @@
             <span
                 v-if="
                 paperList[currentPosition +1] &&
-                paperList[currentPosition +1].level
+                paperList[currentPosition +1].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition +1].level
-                }}<span v-if="paperList[currentPosition +1].level"
+              >{{ paperList[currentPosition +1].grade
+                }}<span v-if="paperList[currentPosition +1].grade"
                 >类</span
                 ></span
               >
               <span
-              >{{ paperList[currentPosition +1].mark
-                }}<span v-if="paperList[currentPosition +1].level"
+              >{{ paperList[currentPosition +1].score
+                }}<span v-if="paperList[currentPosition +1].grade"
                 >分</span
                 ></span
               >
@@ -347,19 +347,19 @@
             <span
                 v-if="
                 paperList[currentPosition  +2] &&
-                paperList[currentPosition  +2].level
+                paperList[currentPosition  +2].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition  +2].level
-                }}<span v-if="paperList[currentPosition  +2].level"
+              >{{ paperList[currentPosition  +2].grade
+                }}<span v-if="paperList[currentPosition  +2].grade"
                 >类</span
                 ></span
               >
               <span
-              >{{ paperList[currentPosition  +2].mark
-                }}<span v-if="paperList[currentPosition  +2].level"
+              >{{ paperList[currentPosition  +2].score
+                }}<span v-if="paperList[currentPosition  +2].grade"
                 >分</span
                 ></span
               >
@@ -379,17 +379,17 @@
             <span
                 v-if="
                 paperList[currentPosition +3] &&
-                paperList[currentPosition +3].level
+                paperList[currentPosition +3].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition +3].level }}
-                <span v-if="paperList[currentPosition +3].level">类</span>
+              >{{ paperList[currentPosition +3].grade }}
+                <span v-if="paperList[currentPosition +3].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition +3].mark }}
-                <span v-if="paperList[currentPosition +3].mark">分</span>
+              >{{ paperList[currentPosition +3].score }}
+                <span v-if="paperList[currentPosition +3].score">分</span>
               </span>
             </span>
           </div>
@@ -408,17 +408,17 @@
             <span
                 v-if="
                 paperList[currentPosition +4] &&
-                paperList[currentPosition +4].level
+                paperList[currentPosition +4].grade
               "
                 class="mark-level-container"
             >
               <span
-              >{{ paperList[currentPosition +4].level }}
-                <span v-if="paperList[currentPosition +4].level">类</span>
+              >{{ paperList[currentPosition +4].grade }}
+                <span v-if="paperList[currentPosition +4].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition +4].mark }}
-                <span v-if=" [currentPosition +4].mark">分</span>
+              >{{ paperList[currentPosition +4].score }}
+                <span v-if=" [currentPosition +4].score">分</span>
               </span>
             </span>
           </div>
@@ -531,6 +531,7 @@ export default {
       mList:[],
       imgList: [],
       levelList: [],
+      xxListNum:0,
       levelStatisticsList: [],
       imageHeaderVisible: true,
       descriptionLevelList: [],
@@ -556,22 +557,14 @@ export default {
       NoScore:0,
       NoGrade:0,
       Grade:0,
-      description:""
+      description:"",
+      xxList:""
     };
   },
   created() {
     this.account = sessionStorage.getItem("user")
         ? JSON.parse(sessionStorage.getItem("user")).account
         : "";
-    // this.getImgUrlIP()
-    // const routeParams = this.$route.query
-    // const query = {}
-    // if (routeParams.level == '未评级') {
-    //   query.status = 1
-    // } else if(routeParams.level == '全部') {
-    // } else {
-    //   query.grade = routeParams.level
-    // }
     this.getJinDu();//获取进度
     this.getFenZu();//获取分组
     this.queryPaperList(); //获取评级
@@ -626,8 +619,7 @@ export default {
     },
     getList(){
       let url = '';
-      //未评级
-      url = '/exampaper/examNoGradeList'
+      url = '/exampaper/examCorrectPaperList'
       let data = {
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
@@ -636,27 +628,13 @@ export default {
       }
       this.$axios.post(url,data).then((res) => {
         let list = res.result.list;
-        if(list.length == 0){
-          url = '/exampaper/examNoScoreList'
-          this.$axios.post(url,data).then((res) =>{
-            let list = res.result.list;
-            let imgList = [];
-            list.forEach((item,index)=>{
-              imgList.push(item.img)
-            })
-            this.paperList = list;
-            this.mList = list;
-            this.imgList = imgList;
-          })
-        }else{
-          let imgList = [];
-          list.forEach((item,index)=>{
-            imgList.push(item.img)
-          })
-          this.paperList = list;
-          this.mList = list;
-          this.imgList = imgList;
-        }
+        let imgList = [];
+        list.forEach((item,index)=>{
+          imgList.push(item.img)
+        })
+        this.paperList = list;
+        this.mList = list;
+        this.imgList = imgList;
 
 
       });
@@ -672,14 +650,14 @@ export default {
     handleVerifyScore(value) {
       let isNumber = /^\d*$/.test(value); // 验证是否是纯数字
       // 过滤非数字
-      this.mark = value.replace(/\D/g, "");
+      this.score = value.replace(/\D/g, "");
       if (!isNumber || value < 0 || value > 100) {
         this.markError = "只能输入0-" + this.maxScore + "的整数";
         setTimeout(() => {
           this.markError = "";
         }, 600);
       }
-      this.mark =
+      this.score =
           (value >= 0 && value <= this.maxScore && value.match(/^\d*/g)[0]) ||
           null;
     },
@@ -687,12 +665,8 @@ export default {
       let url1 = '/exampaper/queryGrade'
       this.$axios.post(url1,{
         "course": this.$route.query.course,
-        "current": 1,
         "examCode": this.$route.query.examNo,
         "examId": this.$route.query.examId,
-        "grade": "",
-        "provinceCode": "",
-        "schoolId": "",
         "size": 10,
       }).then((res)=>{
         let resultList = res.result.gradeNameCount;
@@ -719,6 +693,7 @@ export default {
           ];
 
           let tempGradeList = [];
+          let xxList = [];
           for (let i = 0; i < resultList.length; i++) {
             const progress = Math.round(
                 ((resultList[i].count || 0) /
@@ -735,6 +710,10 @@ export default {
                 percentage: progress <= 100 ? progress : 100,
                 active: false,
               });
+              xxList.push({
+                name: resultList[i].grade,
+                count: resultList[i].count,
+              })
             }
 
             if(resultList[i].grade){
@@ -743,11 +722,11 @@ export default {
                 name: resultList[i].grade,
               })
             }
-
           }
-          this.levelList = tempGradeList;
+          this.xxList = xxList;
           this.levelStatisticsList = list;
-          this.gradeList = tempGradeList;
+          this.levelList = tempGradeList;
+          this.xxListNum = res.result.countNum;
         }
 
 
@@ -779,10 +758,10 @@ export default {
               resolve(data);
               // this.unsetAllLevel()
               if (grade) {
-                this.paperList[this.currentPosition].level = grade;
+                this.paperList[this.currentPosition].grade = grade;
               }
               if (score) {
-                this.paperList[this.currentPosition].mark = score;
+                this.paperList[this.currentPosition].score = score;
               }
               if (this.currentPosition < this.paperList.length - 1) {
                 this.startPosition += 1;
@@ -808,12 +787,9 @@ export default {
       }
       this.$axios.post('/exampaper/scoringRules',data).then((res) => {
         if (res && res.result) {
-
-
-
           const resultList = res.result.list || [];
           const levelList = [];
-          this.levelList = [];
+          this.gradeList = [];
           let examplesList = [];
           let maxScore = 0;
           resultList.map((item) => {
@@ -832,9 +808,8 @@ export default {
               active: false,
             });
           });
-          this.levelList = levelList;
+          this.gradeList = levelList;
           this.descriptionLevelList = examplesList;
-          console.log(examplesList,'------------------------');
           this.descriptionLevelList.map((item) => {
             item.active = false;
           });
@@ -868,13 +843,13 @@ export default {
 
     },
     unsetAllLevel() {
-      this.levelList.forEach((levelInfo) => {
+      this.gradeList.forEach((levelInfo) => {
         levelInfo.active = false;
       });
     },
     // 点击A,B,C,D级
     switchCurrentLevel(index) {
-      this.currentLevel = this.levelList[index].name;
+      this.currentLevel = this.gradeList[index].name;
       // localStorage.setItem("paperId", this.paperList[this.currentPosition].id);
       // this.updatePaper({
       //   paperId: this.paperList[this.currentPosition].id,
@@ -887,11 +862,15 @@ export default {
         grade:this.currentLevel,
       }
       this.$axios.post("/exampaper/updateGrade",data).then((res) => {
-        console.log(res);
         if(res.code == 200){
           this.$message.success(`试卷评级更新成功！`);
-          this.getJinDu();//获取进度
-          this.getList()
+          this.markDlgVisible = false;
+          if (this.currentPosition < this.paperList.length - 1) {
+            this.currentPosition += 1;
+            this.startPosition += 1;
+          }
+          // this.getJinDu();//获取进度
+          // this.getList()
         }
       });
     },
@@ -906,12 +885,12 @@ export default {
         // this.currentPage += 1
         // const routeParams = this.$route.query
         // const query = {}
-        // if (routeParams.level === '未评级') {
+        // if (routeParams.grade === '未评级') {
         //   query.status = 1
-        // } else if(routeParams.level === '全部') {
+        // } else if(routeParams.grade === '全部') {
 
         // } else {
-        //     query.grade = routeParams.level
+        //     query.grade = routeParams.grade
         // }
         this.queryProgress();
         // this.queryPaperList(query).then(() => {
@@ -943,16 +922,16 @@ export default {
     },
     showMarkDialog() {
       this.markDlgVisible = !this.markDlgVisible;
-      this.level = this.paperList[this.currentPosition].level;
-      this.mark = this.paperList[this.currentPosition].mark;
+      this.grade = this.paperList[this.currentPosition].grade;
+      this.score = this.paperList[this.currentPosition].score;
     },
     submitLevelAndMark() {
       let data = {
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
         "examPaperId": this.paperList[this.currentPosition].id,
-        grade:this.level,
-        score:this.mark,
+        grade:this.grade,
+        score:this.score,
       }
       this.$axios.post("/exampaper/updateScore",data).then((res) => {
         if(res.code == 200){
@@ -962,13 +941,13 @@ export default {
               this.startPosition += 1;
             }
           this.$message.success(`试卷评分更新成功！`);
-          this.getList()
+          // this.getList()
           this.getJinDu();//获取进度
         }
       });
       // this.updatePaper({
       //   paperId: this.paperList[this.currentPosition].id,
-      //   grade: this.level,
+      //   grade: this.grade,
       //   score: this.mark,
       // }).then(() => {
       //   this.markDlgVisible = false;

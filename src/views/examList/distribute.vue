@@ -346,9 +346,18 @@ export default {
 
     },
     get_ms(){
-      this.loading = true;
-      this.fpjd=2;
-      this.getListByKs()
+
+      if(this.course && this.examNameNo){
+        this.getListByKs()
+        this.loading = true;
+        this.fpjd=2;
+      }else{
+        this.$message({
+          message: '请先选择考试与科目！',
+          type: 'warning'
+        })
+      }
+
     },
     selkc(row, type) {
       // 如果考场的号码为随机数, 那么可以根据考场的号码 从考场列表中获取index
@@ -490,6 +499,7 @@ export default {
     },
     //分配试卷
     fenpei(){
+      this.fpjd=1;
       this.getKsList()
       this.dialogFormVisible = true;
     },

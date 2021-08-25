@@ -33,6 +33,13 @@
         prop="examId"
       >
       </el-table-column>
+      <el-table-column
+          label="考试名称"
+          header-align="center"
+          align="center"
+          prop="examName"
+      >
+      </el-table-column>
        <el-table-column
         label="身份证"
         header-align="center"
