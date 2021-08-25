@@ -558,7 +558,8 @@ export default {
       NoGrade:0,
       Grade:0,
       description:"",
-      xxList:""
+      xxList:"",
+      hideSite:""
     };
   },
   created() {
@@ -818,12 +819,13 @@ export default {
           this.descriptionLevelList.map((item) => {
             item.active = false;
           });
+
           this.descriptionLevelList[0].active = true;
           this.levelDescription.demoUrl =this.descriptionLevelList[0].imgUrl
           this.levelDescription.description = this.descriptionLevelList[0].imgUrlDesc;
           this.currentRuleLevel = this.descriptionLevelList[0].grade;
           this.description = this.descriptionLevelList[0].takePic;
-
+          this.hideSite = this.descriptionLevelList[0].hideSite;
 
 
         }
@@ -836,6 +838,7 @@ export default {
       this.descriptionLevelList[index].active = true;
       this.currentRuleLevel = this.descriptionLevelList[index].grade;
       this.description = this.descriptionLevelList[index].takePic;
+      this.hideSite = this.descriptionLevelList[index].hideSite;
       const currentDes = this.descriptionLevelList.find((item) => {
         return item.grade === this.descriptionLevelList[index].grade;
       });

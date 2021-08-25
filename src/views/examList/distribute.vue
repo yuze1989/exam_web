@@ -391,6 +391,12 @@ export default {
       let url = ""
       if(this.type[0] == 0){
         url="/exampaper/examDistributionPatternOne"
+        let ddtype = "";
+        if(this.type[1] == 0){
+          ddtype = 1;
+        }else if(this.type[1] == 1){
+          ddtype = 2;
+        }
         this.tableData.forEach((item,index)=>{
           data.push({
             examCode:this.examNameNo,
@@ -399,6 +405,7 @@ export default {
             erMin:item.start,
             erMax:item.end,
             teacherId:item.teacherId,
+            modeType:ddtype,
           })
         })
       }else if(this.type[0] == 1){
@@ -411,6 +418,7 @@ export default {
               subject:this.course,
               erNum:this.dataA.result.examinationPaperNum,
               teacherId:item.teacherId,
+              modeType:1
             })
           })
         }else if(this.type[1] == 1){
@@ -421,6 +429,7 @@ export default {
               subject:this.course,
               erNum:item.num,
               teacherId:item.teacherId,
+              modeType:2
             })
           })
         }
