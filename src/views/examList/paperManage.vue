@@ -47,9 +47,7 @@
         </el-col>
         <el-col :span="3" style="text-align: right">
           <el-button
-            v-if="!this.listQuery.grade || this.listQuery.grade == 'all'"
             type="primary"
-            :disabled="!this.paperList.length || this.listQuery.score == 1"
             @click="jumpToMarkingAreaPage('first')"
             >快速评级</el-button
           >
@@ -253,8 +251,8 @@ export default {
       levelList: [],
       gradeList: [],
       scoreList: [
-        { key: "all", name: "全部", total: 0, active: true },
-        { key: "", name: "未打分", total: 0, active: false },
+        { key: "", name: "全部", total: 0, active: true },
+        { key: 0, name: "未打分", total: 0, active: false },
         { key: 1, name: "已打分", total: 0, active: false },
       ],
       cachedPaperList: [],
@@ -277,8 +275,11 @@ export default {
       maxScore: 100,
       editImgDialogVisible: false,
       editImgIndex: 0,
+      paperScore:"",
+      grade:"all",
       paperStopDialogVisible: false,
       data: { pages: 0, pageSize: 10, total: 0, records: [] },
+      xxList:["all",0,"仲裁组"]
     };
   },
   computed: {
@@ -301,7 +302,6 @@ export default {
   },
   methods: {
     currentChange(){
-
       this.getList()
     },
     getList(type){
@@ -310,14 +310,15 @@ export default {
         "current": this.listQuery.current,
         "examCode": this.$route.query.examNo,
         "examId": this.$route.query.examId,
-        "grade": "",
+        "grade": this.grade,
+        paperScore:this.paperScore,
         "provinceCode": "",
         "schoolId": "",
         "size": this.listQuery.size,
         "teacherId": ""
       }
       // todo 待完善
-      let url = '/exampaper/examCorrectPaperList'
+      let url = '/exampaper/examCorrectPaperListAll'
       this.$axios.post(url,data).then((response) => {
         const result = response.result || {};
         this.totalItem = result.total;
@@ -373,13 +374,14 @@ export default {
     // 已评分 / 未评分
     handleScore(value, index) {
       this.listQuery.score = value;
+      this.paperScore = value;
       this.scoreList.map((item, key) => {
         item.active = false;
         if (index === key) {
           item.active = true;
         }
       });
-      this.queryPaperList();
+      this.getList();
     },
     // 编辑
     handleEditDialogImg(index) {
@@ -460,7 +462,7 @@ export default {
           },
         ];
         res.result.gradeNameCount.forEach((item,index)=>{
-
+          this.xxList.push(item.grade)
           if(item.grade != ""){
             list.push({
               name: item.grade+"类",
@@ -616,6 +618,7 @@ export default {
     },
     // 筛选评级
     switchLevel(value, index) {
+      this.grade = this.xxList[index];
       this.listQuery.grade = value;
       this.levelList.forEach((level, key) => {
         if (index === key) {
@@ -624,8 +627,7 @@ export default {
           level.active = false;
         }
       });
-
-      // this.queryPaperList();
+      this.getList()
     },
     // 点击打分
     showMarkArea(index) {

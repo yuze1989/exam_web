@@ -442,7 +442,7 @@
           title="评分"
       >
         <div class="item">
-          <el-select v-model="level" placeholder="请选择评级">
+          <el-select v-model="level" placeholder="请选择评级" @change="changeL">
             <el-option
                 v-for="(item, index) in levelList"
                 :label="item.name"
@@ -455,11 +455,12 @@
           <el-input
               v-model="mark"
               @input="handleVerifyScore"
-              :min="0"
-              :max="100"
+              :min="minNum"
+              :max="maxNum"
               :minlength="1"
               :maxlength="100"
               placeholder="请输入当前考卷分数"
+              type="number"
           ></el-input>
           <p v-if="markError" class="text-red">{{ markError }}</p>
         </div>
@@ -517,6 +518,8 @@ export default {
   },
   data: () => {
     return {
+      maxNum:100,
+      minNum:0,
       value1:true,
       account: "",
       markError: "",
@@ -559,7 +562,8 @@ export default {
       Grade:0,
       description:"",
       xxList:"",
-      hideSite:""
+      hideSite:"",
+      selectL:"",
     };
   },
   created() {
@@ -573,12 +577,19 @@ export default {
     this.getList();//获取试卷
   },
   methods: {
+    changeL(value){
+      this.descriptionLevelList.forEach((item)=>{
+        if(item.grade == value){
+          this.minNum = item.scoreStart;
+          this.maxNum = item.scoreEnd
+        }
+      })
+    },
     getJinDu(){
       let url1 = '/exampaper/scoringProgress'
       this.$axios.post(url1,{
         "course": this.$route.query.course,
-        "examCode": this.$route.query.examNo,
-        "examPaperId": this.$route.query.examId,
+        "examId": this.$route.query.examId,
         "size": 10,
       }).then((res)=>{
             this.Score=res.result.Score;
@@ -620,11 +631,13 @@ export default {
     },
     getList(){
       let url = '';
-      url = '/exampaper/examCorrectPaperList'
+      url = '/exampaper/examCorrectPaperListAll'
       let data = {
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
         "examId":this.$route.query.examId,
+        "grade": "all",
+        paperScore:"",
         size:100
       }
       this.$axios.post(url,data).then((res) => {
@@ -652,8 +665,8 @@ export default {
       let isNumber = /^\d*$/.test(value); // 验证是否是纯数字
       // 过滤非数字
       this.score = value.replace(/\D/g, "");
-      if (!isNumber || value < 0 || value > 100) {
-        this.markError = "只能输入0-" + this.maxScore + "的整数";
+      if (!isNumber || value < this.minNum || value > this.maxNum) {
+        this.markError = "只能输入"+this.minNum+"-" + this.maxNum + "的整数";
         setTimeout(() => {
           this.markError = "";
         }, 600);
@@ -698,7 +711,7 @@ export default {
           for (let i = 0; i < resultList.length; i++) {
             const progress = Math.round(
                 ((resultList[i].count || 0) /
-                    (resultList[i].count || 0)) *
+                    (this.unmarkedCount || 0)) *
                 100
             );
             if(resultList[i].grade){
@@ -714,6 +727,7 @@ export default {
               xxList.push({
                 name: resultList[i].grade,
                 count: resultList[i].count,
+                percentage:progress
               })
             }
 
@@ -812,7 +826,6 @@ export default {
               active: false,
             });
           });
-          console.log(this.levelList);
           this.levelList = tempGradeList;
           this.gradeList = levelList;
           this.descriptionLevelList = examplesList;
@@ -940,6 +953,10 @@ export default {
         "examPaperId": this.paperList[this.currentPosition].id,
         grade:this.level,
         score:this.mark,
+      }
+      if(this.mark > this.maxNum || this.mark < this.minNum){
+        this.$message.error(`请填写合适的分数！`);
+        return false;
       }
       this.$axios.post("/exampaper/updateScore",data).then((res) => {
         if(res.code == 200){

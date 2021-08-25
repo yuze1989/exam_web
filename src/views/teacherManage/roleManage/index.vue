@@ -17,13 +17,6 @@
         border: 'none',
       }"
     >
-      <!-- <el-table-column
-        label="序号"
-        header-align="id"
-        align="center"
-        prop="id"
-      > -->
-      </el-table-column>
       <el-table-column
         label="角色ID"
         header-align="center"
@@ -123,18 +116,20 @@ export default {
   },
   created() {
     this.getList();
+
   },
 
   methods: {
+
     editItem(item) {
-      console.log(item,'item')
+
       this.isAddType = 0;
       this.isAdd = true;
       this.editItemData = item
     },
     //删除
     del(item){
-      console.log(item)
+
       this.editItemData = item
       this.showDel = true
     },

@@ -392,21 +392,42 @@ export default {
       if(this.type[0] == 0){
         url="/exampaper/examDistributionPatternOne"
         let ddtype = "";
+        let max = "";
+        let isF = true;
         if(this.type[1] == 0){
           ddtype = 1;
+          this.tableData.forEach((item,index)=>{
+            if(item.start && item.end){
+              if(index > 0){
+                if(item.start <= max){
+                  this.$message.error('考场不能重复！')
+                  isF = false;
+                  return false
+                }
+              }
+              max = item.end;
+            }
+
+          })
+          if(!isF){
+            return false;
+          }
         }else if(this.type[1] == 1){
           ddtype = 2;
         }
         this.tableData.forEach((item,index)=>{
-          data.push({
-            examCode:this.examNameNo,
-            examId: this.examId,
-            subject:this.course,
-            erMin:item.start,
-            erMax:item.end,
-            teacherId:item.teacherId,
-            modeType:ddtype,
-          })
+          if(item.start && item.end){
+            data.push({
+              examCode:this.examNameNo,
+              examId: this.examId,
+              subject:this.course,
+              erMin:item.start,
+              erMax:item.end,
+              teacherId:item.teacherId,
+              modeType:ddtype,
+            })
+          }
+
         })
       }else if(this.type[0] == 1){
         url="/exampaper/examDistributionRandomOne"

@@ -23,19 +23,30 @@
       :rules="rules"
       ref="roleForm"
     >
-      <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="from.roleName" placeholder="请输入"></el-input>
-      </el-form-item>
-      <el-form-item label="角色类型" prop="roleType">
+      <el-form-item label="权限类型" prop="roleType">
         <el-select clearable  v-model="from.roleType" placeholder="请选择">
           <!-- <el-option label="管理员" value="0"></el-option> -->
-          <el-option label="阅卷老师" value="1"></el-option>
+          <el-option label="阅卷老师" value="1" ></el-option>
           <el-option label="教辅老师" value="2"></el-option>
           <el-option label="阅卷组长" value="3"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="角色名称" prop="roleName">
+        <el-input v-model="from.roleName" placeholder="请输入"></el-input>
+      </el-form-item>
+
       <el-form-item label="备注" prop="roleRemark">
         <el-input v-model="from.roleRemark" placeholder="请输入"></el-input>
+      </el-form-item>
+      <el-form-item label="权限">
+        <el-tree
+            ref="tree"
+            :data="data"
+            show-checkbox
+            node-key="id"
+            :default-checked-keys="resourceCheckedKey"
+            :props="defaultProps">
+        </el-tree>
       </el-form-item>
     </el-form>
 
@@ -65,6 +76,9 @@ export default {
       },
     },
   },
+  mounted() {
+    this.getRule();//获取权限
+  },
   data() {
     return {
       from: {
@@ -76,13 +90,46 @@ export default {
         roleRemark: [{ required: true, message: '请输入', trigger: 'blur' }],
         roleType: [{ required: true, message: '请选择', trigger: 'blur' }],
       },
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      data:[],
+      resourceCheckedKey:[],
     }
   },
   methods: {
+    getRule(){
+      this.$axios
+          .post('/teacher/menuList')
+          .then((res) => {
+            let data = [];
+            res.result.list.forEach((item,index)=>{
+              let children = [];
+              item.menuList.forEach((a,b)=>{
+                children.push({
+                  id: a.id,
+                  label: a.nameCn
+                })
+              })
+              let xx = {
+                id: item.id,
+                label: item.nameCn,
+                children: children
+              }
+              data.push(xx)
+            })
+            this.data = data;
+
+          })
+          .catch(() => {});
+    },
     close() {
       this.$emit('update:visible', false)
+      this.resourceCheckedKey = [];
     },
     open() {
+
       if (!this.isAdd) {
         this.$axios
           .get(`${this.API.role.detail}?id=${this.editItem.id}`)
@@ -96,8 +143,21 @@ export default {
               }
             }
           })
+        this.$axios
+            .post(`teacher/byRoleIdMenuList?roleId=${this.editItem.id}`)
+            .then((res) => {
+              if ((res.code = 200)) {
+                let ids = [];
+                res.result.list.forEach((item,index)=>{
+                  ids.push(item.menuId)
+                })
+               this.resourceCheckedKey = ids;
+
+              }
+            })
       } else {
         this.from = {}
+        this.resourceCheckedKey = [];
       }
     },
     confirm() {
@@ -139,11 +199,25 @@ export default {
             .post(this.API.role.update, this.from)
             .then((res) => {
               if ((res.code = 200)) {
-                this.$message({
-                  message: '修改成功',
-                  type: 'success',
-                })
-                this.$emit('addSuccess')
+                let ids = this.$refs.tree.getCheckedKeys();
+                let data={
+                  menuId:ids,
+                  roleId:this.editItem.id
+                }
+                this.$axios
+                    .post('/teacher/updateByRoleIdMenuList',data)
+                    .then((res) => {
+                      if ((res.code = 200)) {
+                        this.$message({
+                          message: '修改成功',
+                          type: 'success',
+                        })
+                        this.form = "";
+                        this.resourceCheckedKey = [];
+                        this.$emit('addSuccess')
+                      }
+                    })
+                    .catch(() => {})
               }
             })
             .catch(() => {})
