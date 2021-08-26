@@ -17,6 +17,7 @@
               :effect="item.active ? 'dark' : 'light'"
               size="medium"
               class="common-mr pointer"
+              :style="item.name == '仲裁组'?{background:'#f35f62',color:'#fff'}:''"
             >
 
               <font v-if="item.name == '仲裁组'">

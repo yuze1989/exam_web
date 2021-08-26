@@ -435,14 +435,14 @@
         <div class="right-bottom">
           <div class="right-btns">
             <el-button
-                :disabled="role!=0"
+                :disabled="role==0"
                 v-for="(level, index) in levelList"
                 :key="level.name"
                 @click="switchCurrentLevel(index)"
             >{{ level.name }}
             </el-button>
           </div>
-          <el-button class="mark-btn" @click="showMarkDialog" :disabled="role!=0">评分</el-button>
+          <el-button class="mark-btn" @click="showMarkDialog" :disabled="role==0">评分</el-button>
         </div>
       </div>
       <el-dialog
