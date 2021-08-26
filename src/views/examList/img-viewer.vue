@@ -479,7 +479,7 @@ export default {
       this.$nextTick(() => {
         // 加载未缓存图片时，开启 loading
         if (this.$refs.image && !this.$refs.image.complete) {
-          this.showLoading()
+          // this.showLoading()
         }
       })
     },
@@ -491,7 +491,6 @@ export default {
       if(url){
         this.showExamplesPreviewer = true;
         this.targetUrl = url;
-        console.log(url)
       }
 
     },

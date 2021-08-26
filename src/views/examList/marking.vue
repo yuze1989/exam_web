@@ -307,6 +307,7 @@
             <el-image
                 :preview-src-list="imgList"
                 fit="cover"
+                :class="hideClass()"
                 :src="
                 imgList[currentPosition +1] ? imgList[currentPosition +1] : ''
               "
@@ -340,6 +341,7 @@
             <el-image
                 style="position: absolute;bottom: 0"
                 fit="cover"
+                :class="hideClass()"
                 :src="
                 imgList[currentPosition  +2] ? imgList[currentPosition  +2] : ''
               "
@@ -372,6 +374,7 @@
           <div class="next-image box_img" @click="clickImg(3)"  style="top: calc(50% + 100px);">
             <el-image
                 fit="cover"
+                :class="hideClass()"
                 :src="
                 imgList[currentPosition  +3] ? imgList[currentPosition +3] : ''
               "
@@ -401,6 +404,7 @@
             <el-image
                 style="position: absolute;bottom: 0"
                 fit="cover"
+                :class="hideClass()"
                 :src="
                 imgList[currentPosition +4] ? imgList[currentPosition +4] : ''
               "
@@ -431,13 +435,14 @@
         <div class="right-bottom">
           <div class="right-btns">
             <el-button
+                :disabled="role!=0"
                 v-for="(level, index) in levelList"
                 :key="level.name"
                 @click="switchCurrentLevel(index)"
             >{{ level.name }}
             </el-button>
           </div>
-          <el-button class="mark-btn" @click="showMarkDialog">评分</el-button>
+          <el-button class="mark-btn" @click="showMarkDialog" :disabled="role!=0">评分</el-button>
         </div>
       </div>
       <el-dialog
@@ -534,6 +539,7 @@ export default {
       markedCountTotal: 0,
       markDlgVisible: false,
       total: 0,
+      rule:localStorage.getItem("rule"),
       paperList: [],
       mList:[],
       imgList: [],
@@ -568,6 +574,7 @@ export default {
       xxList:"",
       hideSite:"",
       selectL:"",
+      isOne:true,
     };
   },
   created() {
@@ -656,7 +663,7 @@ export default {
     },
     getList(){
       let url = '';
-      url = '/exampaper/examCorrectPaperListAll'
+      url = '/exampaper/queryExamPaperSort'
       let data = {
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
@@ -668,11 +675,11 @@ export default {
       this.$axios.post(url,data).then((res) => {
         let list = res.result.list;
         let imgList = [];
-        let isOne = true;
+
         list.forEach((item,index)=>{
-          if(isOne){
-            if(item.grade=="" || item.score>-1){
-              isOne = false;
+          if(this.isOne){
+            if(item.grade=="" || (item.grade!=""&&item.score<=0)){
+              this.isOne = false;
               this.currentPosition = index
               this.startPosition = index;
             }
@@ -711,7 +718,7 @@ export default {
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
         "examId": this.$route.query.examId,
-        "size": 10,
+        "size": 100,
       }).then((res)=>{
         let resultList = res.result.gradeNameCount;
         this.unmarkedCount = res.result.countNum;
@@ -731,13 +738,21 @@ export default {
             },
             {
               name: "仲裁组",
-              count: "",
+              count:  res.result.arbitrationGradeCount,
               active: false,
             },
           ];
 
-
-          let xxList = [];
+          let xxList = [{
+            name: "仲裁组",
+            count:  res.result.arbitrationGradeCount,
+            active: false,
+            percentage:Math.round(
+                ((res.result.arbitrationGradeCount || 0) /
+                    (this.unmarkedCount || 0)) *
+                100
+            )
+          },];
           for (let i = 0; i < resultList.length; i++) {
             const progress = Math.round(
                 ((resultList[i].count || 0) /
@@ -1328,7 +1343,7 @@ export default {
           padding: 0 5px;
 
           .card {
-            flex: 0.33;
+            flex: 0.48;
             -webkit-border-radius: 10px;
             -moz-border-radius: 10px;
             border-radius: 10px;

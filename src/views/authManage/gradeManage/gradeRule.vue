@@ -31,12 +31,14 @@
 <!--        </el-col>-->
 <!--      </el-row>-->
       <el-row class="w200 mt-20">
-        <el-col :span="8" class="title18"><span>打分</span>算法:</el-col>
-        <el-col :span="12">
-          <el-select clearable  v-model="form.gradeRule" placeholder="请选择打分算法" size="medium" @change="seletChage">
-            <el-option v-for="item in gradeRuleList" :key="item.id" :value="item.id" :label="item.name" >
-            </el-option>
-          </el-select>
+        <el-col :span="8" class="title18" ><span>打分</span>算法:</el-col>
+        <el-col :span="12" >
+          <el-tooltip class="item" effect="dark" content="如果一张试卷批改教师数量等于1，那么系统自动取当前教师的分数；如果一张试卷教师批改数量等于2，那么系统自动取当前两位教师的分数平均数" placement="right">
+            <el-select clearable  v-model="form.gradeRule" placeholder="请选择打分算法" size="medium" @change="seletChage" >
+              <el-option v-for="item in gradeRuleList" :key="item.id" :value="item.id" :label="item.name" >
+              </el-option>
+            </el-select>
+          </el-tooltip>
         </el-col>
       </el-row>
       <el-row class="w200 mt-20">
@@ -75,9 +77,9 @@
         </el-col>
       </el-row>
       <el-row class="w200 mt-20">
-        <el-col :span="8" class="title18"><span>科目</span>分数:</el-col>
+        <el-col :span="8" class="title18"><span>科目</span>总分:</el-col>
         <el-col :span="12">
-          <el-input placeholder="请输入科目分数" v-model="form.rule.score"></el-input>
+          <el-input placeholder="请输入科目总分" v-model="form.rule.score"></el-input>
         </el-col>
       </el-row>
       <el-row class="w200 mt-20">
@@ -144,7 +146,7 @@
         <span class="titleStyle">设置作品照片要求</span>
       </el-row>
       <div class="sample">
-        <el-input class="sampleInput" type="textarea" :rows="9" placeholder="请输入内容" v-model="form.rule.takePic">
+        <el-input class="sampleInput" type="textarea" :rows="9" placeholder="适用于手机APP上传试卷" v-model="form.rule.takePic">
         </el-input>
         <div class="uploadCtn" @click="upToOss2()">
           <div class="uploadIcon">
@@ -431,27 +433,8 @@ export default {
         })
         return false
       }
-      if (!params.rule.takePic) {
-        this.$message({
-          message: '请填写作品照片要求',
-          type: 'info'
-        })
-        return false
-      }
-      if (!params.rule.takePic) {
-        this.$message({
-          message: '请填写作品照片要求',
-          type: 'info'
-        })
-        return false
-      }
-      if (!params.rule.picUrl) {
-        this.$message({
-          message: '请上传作品照片示例图',
-          type: 'info'
-        })
-        return false
-      }
+
+
       let url = null;
 
       let data = {

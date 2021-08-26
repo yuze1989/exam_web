@@ -20,7 +20,7 @@
             >
 
               <font v-if="item.name == '仲裁组'">
-                {{ item.name}}
+                {{ item.name}} ({{ item.count || 0 }}) 份
               </font>
                 <font v-else="">
                   {{ item.name }} ({{ item.count || 0 }}) 份
@@ -68,7 +68,7 @@
           class="paper-container"
         >
           <div class="paper">
-            <div  class="edit-level">
+            <div  class="edit-level" v-if="role!=0">
               <span
                 v-if="!paper.edit"
                 @click="handleSelectLevel(paper.id, index)"
@@ -90,7 +90,7 @@
               class="pointer"
               style="height: 160px; width: 100%"
             />
-            <div  class="image-mark-text">
+            <div  class="image-mark-text" v-if="role!=0">
               <el-input
                 :ref="`markInput${index}`"
                 v-if="paper.show"
@@ -169,7 +169,7 @@
           v-if="paperList.length - 1 !== editImgIndex"
           ><i class="el-icon-arrow-right"
         /></span>
-        <div class="edit-level">
+        <div class="edit-level" v-if="role!=0">
           <span
             v-if="!paperList[editImgIndex].edit"
             @click="handleSelectLevel(paperList[editImgIndex].id, editImgIndex)"
@@ -183,7 +183,7 @@
             @grade="selecteUpdateGrade"
           />
         </div>
-        <div class="image-mark-text">
+        <div class="image-mark-text" v-if="role!=0">
           <el-input
             v-if="paperList[editImgIndex].show"
             v-model="paperList[editImgIndex].mark"
@@ -200,6 +200,7 @@
           />
           <div
             v-if="!paperList[editImgIndex].show"
+
             @click="showMarkArea(editImgIndex)"
           >
             <i
@@ -280,7 +281,8 @@ export default {
       paperStopDialogVisible: false,
       data: { pages: 0, pageSize: 10, total: 0, records: [] },
       xxList:["all",0,"仲裁组"],
-      ruleList:[]
+      ruleList:[],
+      role:localStorage.getItem("role")
     };
   },
   computed: {
@@ -446,7 +448,7 @@ export default {
           },
           {
             name: "仲裁组",
-            count: "",
+            count: res.result.arbitrationGradeCount,
             active: false,
           },
         ];

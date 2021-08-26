@@ -388,6 +388,7 @@ export default {
               localStorage.setItem("user_name",res.result.userInfo.name)
               localStorage.setItem("user_logo",res.result.logo)
               localStorage.setItem("user_school",res.result.schoolName)
+              localStorage.setItem("role",res.result.userInfo.roleType)
             })
             .catch((err) => {
               this.logining = false

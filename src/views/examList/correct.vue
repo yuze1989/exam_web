@@ -30,6 +30,13 @@
           </el-button>
         </div>
       </div>
+      <div style="margin-top: 10px;
+    text-align: center;
+    color: #2c3aff;" v-if="role==0">
+        管理员账号可全程监管阅卷流程，但不参与阅卷。
+        <br>
+        如需阅卷，请用阅卷老师账号登录
+      </div>
     </div>
   </div>
 </template>
@@ -50,7 +57,8 @@ export default {
       courseList: [],
       examNameNo:"",
       examNameOption:[],
-      examNo:""
+      examNo:"",
+      role:localStorage.getItem("role")
     }
   },
   created() {
