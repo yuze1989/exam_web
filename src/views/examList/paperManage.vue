@@ -68,7 +68,7 @@
           class="paper-container"
         >
           <div class="paper">
-            <div v-if="paper.level" class="edit-level">
+            <div  class="edit-level">
               <span
                 v-if="!paper.edit"
                 @click="handleSelectLevel(paper.id, index)"
@@ -90,7 +90,7 @@
               class="pointer"
               style="height: 160px; width: 100%"
             />
-            <div v-if="paper.level" class="image-mark-text">
+            <div  class="image-mark-text">
               <el-input
                 :ref="`markInput${index}`"
                 v-if="paper.show"
@@ -147,7 +147,7 @@
     >
       <div
         v-if="paperList.length && paperList[editImgIndex]"
-        style="display: block; height: 560px"
+        style="display: block; "
       >
         <span class="close-button" @click="editImgDialogVisible = false"
           ><i class="el-icon-close"
@@ -169,7 +169,7 @@
           v-if="paperList.length - 1 !== editImgIndex"
           ><i class="el-icon-arrow-right"
         /></span>
-        <div v-if="paperList[editImgIndex].level" class="edit-level">
+        <div class="edit-level">
           <span
             v-if="!paperList[editImgIndex].edit"
             @click="handleSelectLevel(paperList[editImgIndex].id, editImgIndex)"
@@ -183,7 +183,7 @@
             @grade="selecteUpdateGrade"
           />
         </div>
-        <div v-if="paperList[editImgIndex].level" class="image-mark-text">
+        <div class="image-mark-text">
           <el-input
             v-if="paperList[editImgIndex].show"
             v-model="paperList[editImgIndex].mark"
@@ -329,7 +329,7 @@ export default {
           result.list.forEach((item) => {
             const imgName = item.img.substr(item.img.lastIndexOf("/") + 1);
             // const imgUrl = "http://192.168.1.11/" + imgName;
-            const imgUrl = item.img;
+            const imgUrl = item.imgas;
             list.push({
               id: item.id,
               name: item.admissionTicketCode,

@@ -131,6 +131,7 @@
           </span>
           <div class="previous-image box_img" @click="clickImg(-2)"  style="top: 100px!important;">
             <el-image
+                :class="hideClass()"
                 :preview-src-list="imgList"
                 fit="cover"
                 :src="
@@ -165,6 +166,7 @@
           <div class="previous-image box_img" @click="clickImg(-1)" style="bottom: 0px !important;">
             <el-image
                 style="position: absolute;bottom: 0"
+                :class="hideClass()"
                 fit="cover"
                 :src="
                 imgList[currentPosition  - 1] ? imgList[currentPosition  - 1] : ''
@@ -209,6 +211,7 @@
 
           <div class="next-image box_img" @click="clickImg(1)"  style="top: 100px;">
             <el-image
+                :class="hideClass()"
                 fit="cover"
                 :src="
                 imgList[currentPosition  + 1] ? imgList[currentPosition + 1] : ''
@@ -239,6 +242,7 @@
             <el-image
                 style="position: absolute;bottom: 0"
                 fit="cover"
+                :class="hideClass()"
                 :src="
                 imgList[currentPosition + 2] ? imgList[currentPosition + 2] : ''
               "
@@ -290,13 +294,13 @@
           </span>
           <vue-img-viewer
               ref="imgViewer"
-
               :container="'imgViewerContainer'"
               :image-urls="imgList"
               :visible="visible"
               :initial-scale="1"
               @positionUpdated="imgSwitchEnd"
               :start-position="startPosition"
+              :start-position2="hideSite"
           >
           </vue-img-viewer>
           <div class="previous-image box_img" @click="clickImg(1)"  style="top: 100px!important;">
@@ -577,6 +581,26 @@ export default {
     this.getList();//获取试卷
   },
   methods: {
+    hideClass(){
+      let hideSite = this.hideSite;
+      if(hideSite == 0){
+        return 'image hidebox hide0'
+      }else if(hideSite == 1){
+        return 'image hidebox hide1'
+      }else if(hideSite == 2){
+        return 'image hidebox hide2'
+      }else if(hideSite == 3){
+        return 'image hidebox hide3'
+      }else if(hideSite == 4){
+        return 'image hidebox hide4'
+      }else if(hideSite == 5){
+        return 'image hidebox hide5'
+      }else if(hideSite == 6){
+        return 'image hidebox hide6'
+      }else if(hideSite == 7){
+        return 'image hidebox hide7'
+      }
+    },
     changeL(value){
       this.descriptionLevelList.forEach((item)=>{
         if(item.grade == value){
@@ -647,7 +671,7 @@ export default {
         let isOne = true;
         list.forEach((item,index)=>{
           if(isOne){
-            if(item.grade=="" || item.score==null || item.score == 0){
+            if(item.grade=="" || item.score>-1){
               isOne = false;
               this.currentPosition = index
               this.startPosition = index;
@@ -845,6 +869,9 @@ export default {
           this.currentRuleLevel = this.descriptionLevelList[0].grade;
           this.description = this.descriptionLevelList[0].takePic;
           this.hideSite = this.descriptionLevelList[0].hideSite;
+          sessionStorage.setItem("hideSite",this.hideSite);
+
+
 
 
         }
@@ -858,6 +885,7 @@ export default {
       this.currentRuleLevel = this.descriptionLevelList[index].grade;
       this.description = this.descriptionLevelList[index].takePic;
       this.hideSite = this.descriptionLevelList[index].hideSite;
+      sessionStorage.setItem("hideSite",this.hideSite);
       const currentDes = this.descriptionLevelList.find((item) => {
         return item.grade === this.descriptionLevelList[index].grade;
       });
@@ -898,6 +926,7 @@ export default {
           }
           this.getJinDu();//获取进度
           this.queryPaperList()
+          this.getList();
         }
       });
     },
@@ -949,8 +978,8 @@ export default {
     },
     showMarkDialog() {
       this.markDlgVisible = !this.markDlgVisible;
-      console.log(this.paperList[this.currentPosition].grade);
       this.level = this.paperList[this.currentPosition].grade || "";
+      this.changeL(this.level)
       this.mark = this.paperList[this.currentPosition].score || "";
     },
     submitLevelAndMark() {
@@ -971,7 +1000,7 @@ export default {
               this.startPosition += 1;
             }
           this.$message.success(`试卷评分更新成功！`);
-          // this.getList()
+          this.getList()
           this.getJinDu();//获取进度
           this.queryPaperList()
         }
@@ -1028,7 +1057,51 @@ export default {
 </script>
 
 <style lang="scss">
+.hidebox:before{
+  content: "";
+  position: absolute;
+  height: 11.2%;
+  width: 29.2%;
+  background: #fff;
+  z-index: 7;
+}
+.hidebox.hide0:before{
+  top: 0;
+  left: 0;
+}
+.hidebox.hide1:before{
+  top: 0;
+  right: 0;
+}
+.hidebox.hide2:before{
+  left: 0;
+  bottom: 0;
+}
+.hidebox.hide3:before{
+  right: 0;
+  bottom: 0;
+}
+.hidebox.hide4:before{
+  top: 0;
+  left: 50%;
+  margin-left: -14.6%;
+}
+.hidebox.hide5:before{
+  left: 0;
+  top: 50%;
+  margin-top: -5.6%;
 
+}
+.hidebox.hide6:before{
+  left: 0;
+  right: 50%;
+  margin-top: -5.6%;
+}
+.hidebox.hide7:before{
+  bottom: 0;
+  left: 50%;
+  margin-left: -14.6%;
+}
 .aa{
   transition: all 2s;
 }

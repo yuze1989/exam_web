@@ -18,9 +18,9 @@
                <el-image
                    v-show="!loading"
                    ref="image"
+                   :class="hideClass()"
                    :src="finallyImageList[currentPosition]"
                    :alt="`图片${currentPosition + 1}`"
-                   class="image"
                    draggable="false"
                    @load="handleImageLoad"
                    @error="hideLoading"
@@ -129,6 +129,10 @@ export default {
     },
     // 起始位置
     startPosition: {
+      type: Number,
+      default: 0,
+    },
+    startPosition2: {
       type: Number,
       default: 0,
     },
@@ -301,6 +305,26 @@ export default {
     }
   },
   methods: {
+    hideClass(){
+      let hideSite = sessionStorage.getItem("hideSite")
+      if(hideSite == 0){
+        return 'image hidebox hide0'
+      }else if(hideSite == 1){
+        return 'image hidebox hide1'
+      }else if(hideSite == 2){
+        return 'image hidebox hide2'
+      }else if(hideSite == 3){
+        return 'image hidebox hide3'
+      }else if(hideSite == 4){
+        return 'image hidebox hide4'
+      }else if(hideSite == 5){
+        return 'image hidebox hide5'
+      }else if(hideSite == 6){
+        return 'image hidebox hide6'
+      }else if(hideSite == 7){
+        return 'image hidebox hide7'
+      }
+    },
     // ==================================== 对外方法 Start =============================================
     rotate(angle) {
       if (typeof angle === 'function') {
@@ -570,6 +594,51 @@ export default {
 }
 </script>
 <style>
+.hidebox:before{
+  content: "";
+  position: absolute;
+  height: 11.2%;
+  width: 29.2%;
+  background: #fff;
+  z-index: 7;
+}
+.hidebox.hide0:before{
+  top: 0;
+  left: 0;
+}
+.hidebox.hide1:before{
+  top: 0;
+  right: 0;
+}
+.hidebox.hide2:before{
+  left: 0;
+  bottom: 0;
+}
+.hidebox.hide3:before{
+  right: 0;
+  bottom: 0;
+}
+.hidebox.hide4:before{
+  top: 0;
+  left: 50%;
+  margin-left: -14.6%;
+}
+.hidebox.hide5:before{
+  left: 0;
+  top: 50%;
+  margin-top: -5.6%;
+
+}
+.hidebox.hide6:before{
+  left: 0;
+  right: 50%;
+  margin-top: -5.6%;
+}
+.hidebox.hide7:before{
+  bottom: 0;
+  left: 50%;
+  margin-left: -14.6%;
+}
 .el-image-viewer__wrapper .el-image-viewer__img{
   border: 1px solid #fff;
 }

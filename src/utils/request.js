@@ -88,9 +88,9 @@ service.interceptors.response.use(
     } else if (res.code == 111 || res.code == 103) {
       router.push({ path: '/login' })
     } else if(res.code == 506 || res.code == 505){
-      this.$message({
+      Message({
         showClose: true,
-        message: '错了哦，这是一条错误消息',
+        message: '登录过期，该账号已在其他地方登录！',
         type: 'error',
         duration:0,
         onClose:function (){
