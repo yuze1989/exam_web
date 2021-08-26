@@ -321,6 +321,7 @@ export default {
       // todo 待完善
       let url = '/exampaper/examCorrectPaperListAll'
       this.$axios.post(url,data).then((response) => {
+        console.log(data);
         const result = response.result || {};
         this.totalItem = result.total;
           const list = [];

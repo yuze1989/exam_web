@@ -69,7 +69,6 @@ service.interceptors.response.use(
     let res = {}
     res = response.data || {}
     if(response.config.url.includes("exportExcel")){
-      console.log(response,'aaa')
       const blob = new Blob([res], {type: "application/vnd.ms-excel;charset=utf-8"});//处理文档流
       const fileName = '导出列表.xls';
       const elink = document.createElement('a');
@@ -83,11 +82,21 @@ service.interceptors.response.use(
       document.body.removeChild(elink);
       return
     }
-    console.log(res,'http')
+
     if (res.code == 200) {
       return Promise.resolve(res);
     } else if (res.code == 111 || res.code == 103) {
       router.push({ path: '/login' })
+    } else if(res.code == 506 || res.code == 505){
+      this.$message({
+        showClose: true,
+        message: '错了哦，这是一条错误消息',
+        type: 'error',
+        duration:0,
+        onClose:function (){
+          router.push({ path: '/login' })
+        }
+      });
     } else {
       Message({
         type: "error",

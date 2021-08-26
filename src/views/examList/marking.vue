@@ -644,7 +644,15 @@ export default {
       this.$axios.post(url,data).then((res) => {
         let list = res.result.list;
         let imgList = [];
+        let isOne = true;
         list.forEach((item,index)=>{
+          if(isOne){
+            if(item.grade=="" || item.score==null || item.score == 0){
+              isOne = false;
+              this.currentPosition = index
+              this.startPosition = index;
+            }
+          }
           imgList.push(item.img)
         })
         this.paperList = list;
@@ -947,9 +955,7 @@ export default {
     },
     submitLevelAndMark() {
       let data = {
-        "course": this.$route.query.course,
-        "examCode": this.$route.query.examNo,
-        "examPaperId": this.paperList[this.currentPosition].id,
+        "paperId": this.paperList[this.currentPosition].id,
         grade:this.level,
         score:this.mark,
       }
@@ -957,7 +963,7 @@ export default {
         this.$message.error(`请填写合适的分数！`);
         return false;
       }
-      this.$axios.post("/exampaper/updateScore",data).then((res) => {
+      this.$axios.post("/exampaper/createScore",data).then((res) => {
         if(res.code == 200){
             this.markDlgVisible = false;
             if (this.currentPosition < this.paperList.length - 1) {

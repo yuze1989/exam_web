@@ -240,7 +240,6 @@ export default {
     imgStyle() {
       let { left, top } = this.position
       let styleKey = this.aspectRatio > 1 ? 'max-width' : 'max-height'
-      console.log(this.scale);
       return {
         transform: `translate3d(${left}px, ${top}px, 0) scale(${this.scale}) rotate(${this.rotateAngle}deg)`,
       }
@@ -625,6 +624,10 @@ export default {
     .image-container {
       position: relative;
       display: inline-block;
+      width: 100%;
+      .image{
+        width: 100%;
+      }
     }
 
     .image {

@@ -62,7 +62,6 @@
                 <el-input
                   type="text"
                   v-model="ruleForm2.validateCode"
-                  @keyup.native.prevent="keydown($event)"
                   auto-complete="off"
                   placeholder="请输入验证码"
                   style="width: 8rem;"
@@ -145,7 +144,6 @@
                 <el-input
                   type="text"
                   v-model="ruleForm2.validateCode"
-                  @keyup.native.prevent="keydown($event)"
                   auto-complete="off"
                   placeholder="请输入验证码"
                   style="width: 8rem;"

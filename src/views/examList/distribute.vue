@@ -125,7 +125,18 @@
               :props="{ expandTrigger: 'hover' }"
               @change="modeChange"></el-cascader>
         </el-form-item>
+        <el-row>
+          <el-col :span="6">
+            总共考场数：0
+          </el-col>
+          <el-col :span="6">
+            已分配考场数：0
+          </el-col>
+          <el-col :span="6">
+            待分配考场数：0
+          </el-col>
 
+        </el-row>
         <el-table
             v-if="type[0]==0"
             :data="tableData"
@@ -255,10 +266,10 @@ export default {
       },
       options:[
           {value: '0',label: '按考场分配',
-            children: [{value: '0',label: '模式1'}, {value: '1',label: '模式2' }]
+            children: [{value: '0',label: '一张试卷被一位老师阅读'}, {value: '1',label: '一张试卷被选中老师阅卷' }]
           },
         {value: '1',label: '按随机分配',
-          children: [{value: '0',label: '模式1'}, {value: '1',label: '模式2' }]
+          children: [{value: '0',label: '一张试卷被一位老师阅卷'}, {value: '1',label: '一张试卷被选中老师阅卷' }]
         }
       ],
       fpjd:1,
