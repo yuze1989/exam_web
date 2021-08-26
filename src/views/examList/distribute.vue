@@ -125,18 +125,18 @@
               :props="{ expandTrigger: 'hover' }"
               @change="modeChange"></el-cascader>
         </el-form-item>
-        <el-row>
-          <el-col :span="6">
-            总共考场数：0
-          </el-col>
-          <el-col :span="6">
-            已分配考场数：0
-          </el-col>
-          <el-col :span="6">
-            待分配考场数：0
-          </el-col>
+<!--        <el-row>-->
+<!--          <el-col :span="6">-->
+<!--            总共考场数：0-->
+<!--          </el-col>-->
+<!--          <el-col :span="6">-->
+<!--            已分配考场数：0-->
+<!--          </el-col>-->
+<!--          <el-col :span="6">-->
+<!--            待分配考场数：0-->
+<!--          </el-col>-->
 
-        </el-row>
+<!--        </el-row>-->
         <el-table
             v-if="type[0]==0"
             :data="tableData"

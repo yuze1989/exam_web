@@ -5,10 +5,10 @@
         各科目试卷上传进度
       </el-row>
       <el-row style="padding: 10px">
-        <el-col v-for="(item,index) in gradeList" :key="index" :span="4" style="padding: 0 5px;margin-bottom:10px">
+        <el-col v-for="(item,index) in gradeList" :key="index" :span="4" style="padding: 0 5px;margin-bottom:10px;padding-top: 20px">
           <div class="grade" style="position: relative">
-            <div class="label" style="position:absolute;z-index: 99;font-size: 14px;left: 10px;">{{item.course}} <span style="font-size: 12px;color:#82848a;">(已上传：{{item.count}})</span></div>
-            <el-progress :text-inside="true" :stroke-width="26" :percentage="Math.round(item.count/item.countNum)*100"></el-progress>
+            <div class="label" style="position:absolute;z-index: 99;font-size: 14px;left: 0px;top: -26px;">{{item.course}} <span style="font-size: 12px;color:#82848a;">(已上传：{{item.count}})</span></div>
+            <el-progress   :percentage="Math.round(item.count/item.countNum)*100"></el-progress>
           </div>
         </el-col>
       </el-row>
@@ -121,8 +121,12 @@
       <div v-if="courseName.length>0">
         <el-table-column v-for="(item, index) in courseName" :label="item.course" header-align="center" align="center">
           <template slot-scope="scope">
-
-            <img :src="scope.row.subjectMap[item.course]" alt="" style="max-height: 150px;max-width: 200px">
+            <el-image
+                v-if="scope.row.subjectMap[item.course]"
+                style="width: 100px; height: 100px"
+                :src="scope.row.subjectMap[item.course]"
+                :preview-src-list="[scope.row.subjectMap[item.course]]">
+            </el-image>
           </template>
         </el-table-column>
       </div>

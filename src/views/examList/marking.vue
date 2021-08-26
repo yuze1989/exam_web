@@ -1079,6 +1079,10 @@ export default {
   width: 29.2%;
   background: #fff;
   z-index: 7;
+  background-image: url(../../assets/zgt.png);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .hidebox.hide0:before{
   top: 0;
