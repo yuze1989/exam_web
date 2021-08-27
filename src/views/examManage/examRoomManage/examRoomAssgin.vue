@@ -414,7 +414,19 @@ export default {
           }
         });
       }else{
-
+        const obj = { st: '', en: '', Count: '' }
+        if (this.formsData.examrooms.length) {
+          const preObj = this.formsData.examrooms[
+          this.formsData.examrooms.length - 1
+              ]
+          if (preObj.st && preObj.en) {
+            obj.st = +preObj.en + 1
+            this.formsData.examrooms.push(obj)
+          }
+        } else {
+          obj.st = this.forms.maxExamCode + 1
+          this.formsData.examrooms.push(obj)
+        }
       }
 
 

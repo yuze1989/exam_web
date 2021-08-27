@@ -144,11 +144,14 @@
           prop="province"
       >
       </el-table-column>
-      <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
-        <template slot-scope="scope">
-          {{scope.row.subjectList[index].score}}
-        </template>
-      </el-table-column>
+      <template v-if="dataList.records.length>0">
+        <el-table-column v-for="(item, index) in dataList.records[0].subjectList" :label="item.subjectName" header-align="center" align="center">
+          <template slot-scope="scope">
+            {{scope.row.subjectList[index].score}}
+          </template>
+        </el-table-column>
+      </template>
+
 
       <el-table-column
           label="总分"
