@@ -516,6 +516,7 @@ export default {
           this.forms.checkStatus == -1 ? null : this.forms.checkStatus,
         payStatus: this.forms.payStatus == -1 ? null : this.forms.payStatus,
         source: this.forms.source == -1 ? null : this.forms.source,
+        examId:this.examId
       }
       this.$axios
         .post(this.API.studentsManage.examineeList, params)

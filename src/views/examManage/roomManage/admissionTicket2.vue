@@ -258,7 +258,8 @@ export default {
          examineeName : this.form.studentName,
          schoolId :this.form.schoolId,
          admissionTicketCode:this.form.admissionTicketCode,
-         studioName:this.form.studioName
+         studioName:this.form.studioName,
+         examId:this.examId
        }
        this.$axios
            .post('/ticket/unionExamQRcode', params)
@@ -298,7 +299,8 @@ export default {
         provinceCode : this.form.studentAreaCode,
         examineeName : this.form.studentName,
         studioName:this.form.studioName,
-        admissionTicketCode:this.form.admissionTicketCode
+        admissionTicketCode:this.form.admissionTicketCode,
+        examId:this.examId
       };
       apiUnionExamList(params).then((res) => {
                  this.data.records = res.result.list;

@@ -206,7 +206,8 @@ export default {
         Count: [{ required: true, message: '输入正确容量数', trigger: 'blur' }],
       },
       count: 0,
-      unDistributCount2: 0
+      unDistributCount2: 0,
+      isLastDistribut:0,
     }
   },
   methods: {
@@ -351,13 +352,34 @@ export default {
     },
 
     handleAdd() {
+      if(this.forms.distributRoomCount > 0 ){
+        let num =Math.abs(this.forms.distributRoomCount);
+        this.$confirm('上次考场还有'+num+"人，是否分配到上次考场？", '提示', {
+          confirmButtonText: '是',
+          cancelButtonText: '否',
+          type: 'warning',
+          distinguishCancelAndClose: true,
+        }).then(() => {
+          this.isLastDistribut = 1;
+          if(this.forms.unDistributCount){
+            
+          }
+        }).catch((action) => {
+          if(action == 'cancel'){
+            this.isLastDistribut = 0;
+          }
+        });
+      }else{
+
+      }
+      if(this.forms.distributRoomCount > 0 ){
+
+      }
+
       if(!this.forms.unDistributCount || this.forms.unDistributCount<1){
         this.$message.error("无可分配人数")
         return
       }
-      // if (this.forms.provinceCode == '') {
-      //   alert('请选择省份')
-      // } else {
         const obj = { st: '', en: '', Count: '' }
         if (this.formsData.examrooms.length) {
           const preObj = this.formsData.examrooms[
@@ -371,7 +393,6 @@ export default {
           obj.st = this.forms.maxExamCode + 1
           this.formsData.examrooms.push(obj)
         }
-      // }
     },
     upok(response, file, fileList) {
       this.studio.url = file.name
@@ -416,8 +437,6 @@ export default {
               })
             }
           })
-
-
           if (this.forms.unDistributCount < 0) {
             this.$message({
               type: 'error',
@@ -434,96 +453,37 @@ export default {
             this.loading = false
             return
           }
+
           let data = {
             detailList: examrooms,
             examId: this.forms.examId,
             provinceCode: this.forms.provinceCode,
           }
-          if(this.forms.distributRoomCount > 0 ){
-            let num =Math.abs(this.forms.distributRoomCount);
-            this.$confirm('上次考场还有'+num+"人，是否分配到上次考场？", '提示', {
-              confirmButtonText: '是',
-              cancelButtonText: '否',
-              type: 'warning',
-              distinguishCancelAndClose: true,
-            }).then(() => {
-              data.isLastDistribut = 1;
-              this.$axios
-                  .post(this.API.studentsManage.examRoomDistribut, data)
-                  .then((res) => {
-                    if (res.code == 200) {
-                      this.$message({
-                        type: 'success',
-                        message: '分配考场成功',
-                      })
-                      this.$emit('closeRoom')
-                      this.$emit('update:visible', false)
-                      this.$emit('cb', this.form)
-                      this.loading = false
-                    } else {
-                      this.$message({
-                        type: 'info',
-                        message: res.data.message + '请刷新重试',
-                      })
-                      this.loading = false
-                    }
+
+          this.$axios
+              .post(this.API.studentsManage.examRoomDistribut, data)
+              .then((res) => {
+                if (res.code == 200) {
+                  this.$message({
+                    type: 'success',
+                    message: '分配考场成功',
                   })
-                  .catch(() => {
-                    this.loading = false
-                  })
-            }).catch((action) => {
-              if(action == 'cancel'){
-                data.isLastDistribut = 0;
-                this.$axios
-                    .post(this.API.studentsManage.examRoomDistribut, data)
-                    .then((res) => {
-                      if (res.code == 200) {
-                        this.$message({
-                          type: 'success',
-                          message: '分配考场成功',
-                        })
-                        this.$emit('closeRoom')
-                        this.$emit('update:visible', false)
-                        this.$emit('cb', this.form)
-                        this.loading = false
-                      } else {
-                        this.$message({
-                          type: 'info',
-                          message: res.data.message + '请刷新重试',
-                        })
-                        this.loading = false
-                      }
-                    })
-                    .catch(() => {
-                      this.loading = false
-                    })
-              }
-            });
-          }else{
-            this.$axios
-                .post(this.API.studentsManage.examRoomDistribut, data)
-                .then((res) => {
-                  if (res.code == 200) {
-                    this.$message({
-                      type: 'success',
-                      message: '分配考场成功',
-                    })
-                    this.$emit('closeRoom')
-                    this.$emit('update:visible', false)
-                    this.$emit('cb', this.form)
-                    this.loading = false
-                  } else {
-                    this.$message({
-                      type: 'info',
-                      message: res.data.message + '请刷新重试',
-                    })
-                    this.loading = false
-                  }
-                })
-                .catch(() => {
+                  this.$emit('closeRoom')
+                  this.$emit('update:visible', false)
+                  this.$emit('cb', this.form)
                   this.loading = false
-                })
-          }
+                } else {
+                  this.$message({
+                    type: 'info',
+                    message: res.data.message + '请刷新重试',
+                  })
+                  this.loading = false
+                }
+              })
+              .catch(() => {
+                this.loading = false
+              })
+
         }else{
            this.loading = false
         }

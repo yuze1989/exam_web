@@ -20,9 +20,9 @@
                        value-key="province"
             >
               <el-option value="0" label="管理员"></el-option>
-              <el-option label="阅卷老师" value="1" ></el-option>
-              <el-option label="教辅老师" value="2"></el-option>
-              <el-option label="阅卷组长" value="3"></el-option>
+              <el-option label="阅卷权限" value="1" ></el-option>
+              <el-option label="教辅权限" value="2"></el-option>
+              <el-option label="仲裁权限" value="3"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item style="margin-bottom: 0;" >

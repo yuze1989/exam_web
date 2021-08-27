@@ -377,7 +377,8 @@ export default {
           examineeName: this.selections.examineeName,
           examName: this.selections.examName,
           studioName:this.selections.studioName,
-          admissionTicketCode:this.selections.admissionTicketCode
+          admissionTicketCode:this.selections.admissionTicketCode,
+          examId:this.examId
         })
         .then((res) => {
           if (res.code == 200) {

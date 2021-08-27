@@ -402,7 +402,7 @@ export default {
       let params = {
         current: this.forms.current,
         size: this.forms.pageSize,
-        // examId: this.examId,
+        examId: this.examId,
         name:this.examName,
         examStatus:
           this.forms.model.examStatus == -1
@@ -426,7 +426,6 @@ export default {
     },
     //删除
     del(item){
-      console.log(item)
       this.editItemData = item
       this.showDel = true
     }

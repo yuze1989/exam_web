@@ -216,6 +216,7 @@ export default {
         current : this.form.pageIndex ,
         size : this.form.size ,
         examName : this.examName,
+        examId : this.examId,
         no:  this.form.examNo
       };
       examinationList2(params).then((res) => {

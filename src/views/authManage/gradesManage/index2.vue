@@ -4,6 +4,16 @@
       <div class="from-wrap">
         <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
           <el-form-item>
+            <el-select clearable  v-model="form.examNameNo"  placeholder="请选择考试名称" @change="examNameChange" style="margin-right: 5px">
+              <el-option
+                  v-for="item in examNameOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
             <el-row style="margin-right: 20px">
               <el-col :span="10" style="position: relative;left: -10px">
                 <el-input v-model="search.min" placeholder="分数1" style="width: 80px" :min="0" :max="100" type="number" class="nn"></el-input>
@@ -23,32 +33,8 @@
 
 
           </el-form-item>
-          <el-form-item>
-            <el-select clearable
-                v-model="selections.provinceCode"
-                placeholder="生源省份"
-                value-key="province"
-                clearable
-                filterable
-            >
-              <el-option
-                  v-for="item in options"
-                  :key="item.provinceCode"
-                  :label="item.province"
-                  :value="item"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-select clearable  v-model="form.examNameNo"  placeholder="请选择考试名称" @change="examNameChange">
-              <el-option
-                  v-for="item in examNameOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
+
+
           <el-form-item>
             <el-input
                 v-model="search.studioName"
@@ -72,6 +58,22 @@
                 v-model="search.examineeName"
                 placeholder="请输入姓名"
             ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-select clearable
+                       v-model="selections.provinceCode"
+                       placeholder="生源省份"
+                       value-key="province"
+                       clearable
+                       filterable
+            >
+              <el-option
+                  v-for="item in options"
+                  :key="item.provinceCode"
+                  :label="item.province"
+                  :value="item"
+              ></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>

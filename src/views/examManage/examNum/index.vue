@@ -204,6 +204,7 @@ export default {
       this.listLoading = true
       let params = {
         ...this.form,
+        examId:this.examId
       }
       this.$axios
         .post(this.API.studentsManage.ticketList, params)

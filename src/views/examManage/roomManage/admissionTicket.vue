@@ -257,6 +257,7 @@ export default {
          current : this.form.pageIndex ,
          size : this.form.pageSize ,
          examName : this.form.examName,
+         examId:this.examId,
          roomCode :  this.form.examNo,
          provinceCode : this.form.studentAreaCode,
          examineeName : this.form.studentName,
@@ -299,7 +300,8 @@ export default {
         provinceCode : this.form.studentAreaCode,
         examineeName : this.form.studentName,
         studioName:this.form.studioName,
-        admissionTicketCode:this.form.admissionTicketCode
+        admissionTicketCode:this.form.admissionTicketCode,
+        examId:this.examId
       };
       apiUnionExamList(params).then((res) => {
                  this.data.records = res.result.list;

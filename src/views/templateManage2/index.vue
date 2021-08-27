@@ -208,7 +208,8 @@ export default {
         current : this.form.pageIndex ,
         size : this.form.size ,
         // name : this.form.examName,
-        examName : this.examName
+        examName : this.examName,
+        examId : this.examId,
       };
       examinationList3(params).then((res) => {
         this.data.records = res.result.list;
