@@ -64,7 +64,7 @@
       <el-form-item>
         <div class="already_number">
           <span v-model="forms.maxExamCode">
-            已分配考场数{{ +forms.maxExamCode }}
+            已分配考场数{{ forms.maxExamCode }}
           </span>
           <span>已分配考场剩余容量：{{ forms.distributRoomCount  }}</span>
         </div>
@@ -86,7 +86,9 @@
               type="number"
               min="1"
               max="50"
+              :disabled="examroom.isEdit"
               style="width: 100px;"
+              @blur="number2()"
               @change="inpStudent('st',idx)"
               v-model="examroom.st"
               placeholder="考场编号"
@@ -103,6 +105,7 @@
               type="number"
               min="1"
               max="50"
+              :disabled="examroom.isEdit"
               @focus="removal"
               @blur="number()"
               @change="inpStudent('en',idx)"
@@ -121,6 +124,7 @@
               type="number"
               min="1"
               max="50"
+              :disabled="examroom.isEdit"
               v-model="examroom.Count"
               style="width: 150px;"
               placeholder="请设置考场容量"
@@ -130,6 +134,7 @@
         </div>
         <div style="width: 100px;">
           <el-button
+              v-if="!examroom.isEdit"
             type="text"
             v-show="idx == formsData.examrooms.length - 1"
             @click.native="toDel"
@@ -288,16 +293,19 @@ export default {
               parseInt(res.result.examineeCount) -
               parseInt(res.result.distributCount) //unDistributCount2 总待分配人数,不改变
             this.origionObj = { ...this.forms }
+            this.forms.maxExamCode = res.result.distributRoomCount
+            this.forms.distributRoomCount =res.result.distributSurplusCount
             let list = [];
             res.result.examRoomList.forEach((item)=>{
               list.push({
                 Count: item.number,
                 en: item.numberEnd,
                 st: item.numberStart,
+                isEdit:true,
               })
             })
             this.formsData = { examrooms: list }
-            this.inpStudent()
+            // this.inpStudent()
           }
         })
         .catch(() => {})
@@ -318,6 +326,23 @@ export default {
           })
         }
         return item
+
+      })
+    },
+    number2() {
+      this.formsData.examrooms.map((item, index) => {
+
+        if(index>0){
+          if (item.st < this.formsData.examrooms[index-1].en) {
+            item.en = ''
+            this.$message({
+              type: 'error',
+              message: '第一个考场数值必须大于上面第二个考场',
+            })
+          }
+        }
+        return item
+
       })
     },
     toDel() {
@@ -354,40 +379,44 @@ export default {
     inpStudent(type,index) {
       let n = 0 //考场数量
       let n2 = 0 //总分配人数
-      this.formsData.examrooms.forEach((item, index) => {
-        if (item.st && item.en) {
-          if (item.Count) {
-            n += +item.Count * (+item.en - +item.st + 1)
-          }
-          n2 += +item.en - +item.st + 1
-        }
-      })
-      // console.log(`当前操作第${index}行,当前操作-${type},总分配人数${this.forms.maxExamCode += n2},总待分配人数${this.forms.unDistributCount -= n}`)
-      const { distributCount, unDistributCount, maxExamCode } = this.origionObj
-      let un = unDistributCount
-      if((un - n) < 0){
-        this.$message.error("超出待分配人数")
-        this.formsData.examrooms[index][type] = ""
-        return
-      }
-      this.forms.distributCount = +distributCount
-      this.forms.unDistributCount = +unDistributCount
-      this.forms.maxExamCode = +maxExamCode
-      this.forms.distributCount += n
-      this.forms.unDistributCount -= n
-      this.forms.maxExamCode += n2
+      // this.formsData.examrooms.forEach((item, index) => {
+      //   if (item.st && item.en) {
+      //     if (item.Count) {
+      //       n += +item.Count * (+item.en - +item.st + 1)
+      //     }
+      //     n2 += +item.en - +item.st + 1
+      //   }
+      // })
+      // // console.log(`当前操作第${index}行,当前操作-${type},总分配人数${this.forms.maxExamCode += n2},总待分配人数${this.forms.unDistributCount -= n}`)
+      // const { distributCount, unDistributCount, maxExamCode } = this.origionObj
+      // let un = unDistributCount
+      // if((un - n) < 0){
+      //   this.$message.error("超出待分配人数")
+      //   this.formsData.examrooms[index][type] = ""
+      //   return
+      // }
+      // this.forms.distributCount = +distributCount
+      // this.forms.unDistributCount = +unDistributCount
+      // this.forms.maxExamCode = +maxExamCode
+      // this.forms.distributCount += n
+      // this.forms.unDistributCount -= n
+      // this.forms.maxExamCode += n2
     },
     submitForm(formName) {
       // this.loading = true
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let examrooms = this.formsData.examrooms.map((item) => {
-            return {
-              number: item.Count,
-              numberEnd: item.en,
-              numberStart: item.st,
+          let examrooms = []
+          this.formsData.examrooms.forEach((item,idnex)=>{
+            if(!item.isEdit){
+              examrooms.push({
+                number: item.Count,
+                numberEnd: item.en,
+                numberStart: item.st,
+              })
             }
           })
+
 
           if (this.forms.unDistributCount < 0) {
             this.$message({
@@ -410,62 +439,29 @@ export default {
             examId: this.forms.examId,
             provinceCode: this.forms.provinceCode,
           }
-          this.$confirm('是否分配到上次考场', '提示', {
-            confirmButtonText: '是',
-            cancelButtonText: '否',
-            type: 'warning'
-          }).then(() => {
-            data.isLastDistribut =1;
-            this.$axios
-                .post(this.API.studentsManage.examRoomDistribut, data)
-                .then((res) => {
-                  if (res.code == 200) {
-                    this.$message({
-                      type: 'success',
-                      message: '分配考场成功',
-                    })
-                    this.$emit('closeRoom')
-                    this.$emit('update:visible', false)
-                    this.$emit('cb', this.form)
-                    this.loading = false
-                  } else {
-                    this.$message({
-                      type: 'info',
-                      message: res.data.message + '请刷新重试',
-                    })
-                    this.loading = false
-                  }
+          this.$axios
+            .post(this.API.studentsManage.examRoomDistribut, data)
+            .then((res) => {
+              if (res.code == 200) {
+                this.$message({
+                  type: 'success',
+                  message: '分配考场成功',
                 })
-                .catch(() => {
-                  this.loading = false
+                this.$emit('closeRoom')
+                this.$emit('update:visible', false)
+                this.$emit('cb', this.form)
+                this.loading = false
+              } else {
+                this.$message({
+                  type: 'info',
+                  message: res.data.message + '请刷新重试',
                 })
-          }).catch(() => {
-            data.isLastDistribut =0;
-            this.$axios
-                .post(this.API.studentsManage.examRoomDistribut, data)
-                .then((res) => {
-                  if (res.code == 200) {
-                    this.$message({
-                      type: 'success',
-                      message: '分配考场成功',
-                    })
-                    this.$emit('closeRoom')
-                    this.$emit('update:visible', false)
-                    this.$emit('cb', this.form)
-                    this.loading = false
-                  } else {
-                    this.$message({
-                      type: 'info',
-                      message: res.data.message + '请刷新重试',
-                    })
-                    this.loading = false
-                  }
-                })
-                .catch(() => {
-                  this.loading = false
-                })
-          });
-
+                this.loading = false
+              }
+            })
+            .catch(() => {
+              this.loading = false
+            })
         }else{
            this.loading = false
         }

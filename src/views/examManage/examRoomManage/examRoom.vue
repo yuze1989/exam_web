@@ -369,7 +369,6 @@ export default {
         /\s|[\r\n]/gi,
         '',
       )
-      console.log('1111222')
       this.$axios
         .post(this.API.studentsManage.examRoomList, {
           current: this.selections.current,

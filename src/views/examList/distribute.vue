@@ -467,15 +467,18 @@ export default {
         }
 
       }
-      this.$axios.post(url,data).then((res)=>{
-        if(res.code == 200){
-          this.$message.success('操作成功')
-          this.dialogFormVisible = false;
-          this.fpjd = 1;
-          this.examId = "";
-          this.course = "";
-        }
-      })
+      if(data.length > 0){
+        this.$axios.post(url,data).then((res)=>{
+          if(res.code == 200){
+            this.$message.success('操作成功')
+            this.dialogFormVisible = false;
+            this.fpjd = 1;
+            this.examId = "";
+            this.course = "";
+          }
+        })
+      }
+
     },
     seletChage(){
       this.$forceUpdate()
