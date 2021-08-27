@@ -64,6 +64,7 @@
                   v-model="ruleForm2.validateCode"
                   auto-complete="off"
                   placeholder="请输入验证码"
+                  @keyup.native.prevent="keydown($event)"
                   style="width: 8rem;"
                 ></el-input>
               </el-col>
@@ -278,7 +279,9 @@ export default {
 
     keydown(event) {
       if (event.keyCode == 13) {
-        this.login()
+        if(this.ruleForm2.validateCode.length == 4){
+          this.login()
+        }
       }
     },
     handleReset2() {
