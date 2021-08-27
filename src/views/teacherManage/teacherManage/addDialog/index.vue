@@ -20,8 +20,8 @@
     >
       <el-form-item label="权限类型" prop="roleType" >
         <el-select clearable  v-model="from.roleType" placeholder="请选择" @change="getRoleList">
-           <el-option label="管理员权限" value="0"></el-option>
-          <el-option label="阅卷权限" value="1" ></el-option>
+           <el-option label="管理员权限" value="0" ></el-option>
+          <el-option label="阅卷权限" value="1"></el-option>
           <el-option label="教辅权限" value="2"></el-option>
           <el-option label="仲裁权限" value="3"></el-option>
         </el-select>
@@ -80,6 +80,9 @@ import SelectProvince from '@/components/SelectProvinceMultiple'
 export default {
   components: { SelectProvince },
   name: 'addRole',
+  roleTypeList:[
+      '管理员权限','阅卷权限','教辅权限','仲裁权限'
+  ],
   props: {
     visible: {
       type: Boolean,
@@ -140,7 +143,7 @@ export default {
       if (!this.isAdd) {
         this.rules.password = [{ required: false, message: '请输入', trigger: 'blur' }],
         this.$axios
-          .get(`${this.API.teacher.detail}?id=${this.editItem.id}`)
+          .get(`/user/detail?id=${this.editItem.id}`)
           .then((res) => {
             if ((res.code = 200)) {
               this.from = {
@@ -151,6 +154,7 @@ export default {
                 roleId: this.editItem.roleId,
                 provinceList: res.result.provinceList,
                 userName: this.editItem.userName,
+                roleType:this.roleTypeList[res.result.roleType]
               }
               console.log(this.from,' this.from')
             }

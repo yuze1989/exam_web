@@ -25,7 +25,7 @@
     >
       <el-form-item label="权限类型" prop="roleType">
         <el-select clearable  v-model="from.roleType" placeholder="请选择">
-           <el-option label="管理员" value="0"></el-option>
+           <el-option label="管理员权限" value="0"></el-option>
           <el-option label="阅卷权限" value="1" ></el-option>
           <el-option label="教辅权限" value="2"></el-option>
           <el-option label="仲裁权限" value="3"></el-option>
@@ -207,12 +207,13 @@ export default {
             .then((res) => {
               if ((res.code = 200)) {
                 let ids = this.$refs.tree.getCheckedKeys();
-                let data={
-                  menuId:ids,
+                let params={
+                  menuIdList:ids,
                   roleId:this.editItem.id
                 }
+                console.log(params);
                 this.$axios
-                    .post('/teacher/updateByRoleIdMenuList',data)
+                    .post('/teacher/updateByRoleIdMenuList',params)
                     .then((res) => {
                       if ((res.code = 200)) {
                         this.$message({

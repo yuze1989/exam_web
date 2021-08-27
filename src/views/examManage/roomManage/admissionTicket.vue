@@ -268,7 +268,10 @@ export default {
        this.$axios
            .post('/ticket/unionExamExport', params)
            .then((res) => {
-             window.open(res.result)
+             const a = document.createElement('a');
+             a.setAttribute("download",'')
+             a.setAttribute("href",res.result)
+             a.click()
            })
            .catch(() => {});
      },
