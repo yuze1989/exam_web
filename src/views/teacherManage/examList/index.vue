@@ -262,6 +262,7 @@ export default {
         current: this.forms.current,
         pageSize: this.forms.pageSize,
         name: this.forms.model.name,
+        examId:this.examId,
         examStatus:
           this.forms.model.examStatus == -1
             ? null

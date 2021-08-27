@@ -168,8 +168,12 @@ export default {
       })
     },
     ticketGenerate() {
+      let data = {
+        ...this.form,
+        examId:this.examId
+      }
       this.$axios
-        .post(this.API.studentsManage.ticketGenerate, {})
+        .post(this.API.studentsManage.ticketGenerate, data)
         .then((res) => {
           if (res.code == 200) {
             Message.success('准考证号生成成功')

@@ -40,7 +40,6 @@ export const constantRoutes = [
         component: resolve => require(["@/views/common/404.vue"], resolve),//() => import("@/views/common/404.vue"),
         hidden: true
     },
-
     {
         path: "/401",
         component: resolve => require(["@/views/common/401.vue"], resolve),//() => import("@/views/common/401.vue"),
@@ -66,7 +65,7 @@ export const constantRoutes = [
         component: Layout,
         hidden: true,
         children: [{
-            path: "/profile",
+            path: "/index",
             component: resolve => require(["@/views/profile/index.vue"], resolve),//() => import("@/views/profile/index.vue"),
             meta: {
                 name: "账户设置",

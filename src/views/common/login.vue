@@ -381,7 +381,7 @@ export default {
               if (res.result.menuList && res.result.menuList.length > 0) {
                 // path = this.findPath(res.result.menuList)
                 // this.$router.push({ path: path })
-                this.$router.push('/')
+                this.$router.push('/index')
               } else {
                 this.$message.error('该账号暂未开放权限')
               }

@@ -1,13 +1,18 @@
 <template>
-  <div class="app-container">
-    <el-card>
-      <el-tabs v-model="activeTab" tab-position="left" :stretch="true">
-        <el-tab-pane label="基本信息" name="basic">
-          <div class="form-title">基本设置</div>
-          <basic />
-        </el-tab-pane>
-      </el-tabs>
-    </el-card>
+  <div class="app-container" style="height: 100%;background: #F9FBFF;position: absolute;width: 100%">
+    <img src="../../assets/welcome.png" alt="" style="width: 32%;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);">
+<!--    <el-card>-->
+<!--      <el-tabs v-model="activeTab" tab-position="left" :stretch="true">-->
+<!--        <el-tab-pane label="基本信息" name="basic">-->
+<!--          <div class="form-title">基本设置</div>-->
+<!--          <basic />-->
+<!--        </el-tab-pane>-->
+<!--      </el-tabs>-->
+<!--    </el-card>-->
   </div>
 </template>
 

@@ -14,6 +14,21 @@
             </el-select>
           </el-form-item>
           <el-form-item>
+            <el-select clearable  v-model="search.score"  placeholder="查询分数条件" @change="examNameChange" style="margin-right: 5px">
+              <el-option
+                  key="总分"
+                  label="总分"
+                  value="总分">
+              </el-option>
+              <el-option
+                  v-for="item in courseList"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
             <el-row style="margin-right: 20px">
               <el-col :span="10" style="position: relative;left: -10px">
                 <el-input v-model="search.min" placeholder="分数1" style="width: 80px" :min="0" :max="100" type="number" class="nn"></el-input>
@@ -41,12 +56,7 @@
                 placeholder="请输入机构名称"
             ></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-input
-                v-model="search.score"
-                placeholder="请输入科目"
-            ></el-input>
-          </el-form-item>
+
           <el-form-item>
             <el-input
                 v-model="search.admissionTicketCode"
@@ -222,6 +232,7 @@ export default {
       listLoading: false,
       dialogTableVisible:false,
       sjList:[],
+      courseList:[],
       //新增界面数据
       search: {
         admissionTicketCode : "",
@@ -276,7 +287,22 @@ export default {
         if(item.id == e){
           this.form.examName = item.name
           this.examId = item.id
+          this.getExamDetails()
         }
+      })
+    },
+    // 查询考试下的科目
+    getExamDetails(){
+      this.$axios.get(
+          '/examsubject/listByExamId?examId='+this.examId
+      ).then(res=>{
+        this.courseList = [];
+        res.result.forEach((item,index) =>{
+          this.courseList.push({
+            key: index,
+            name: item.subjectName,
+          })
+        })
       })
     },
     getProvinceList() {

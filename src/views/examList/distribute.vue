@@ -655,8 +655,8 @@ export default {
       let params = {
         current: this.forms.current,
         size: this.forms.pageSize,
-        // name: this.forms.model.name,
-        id:this.examId,
+        name: this.forms.model.name,
+        examId:this.examId,
         "course": "",
         "provinceCode": "",
         "schoolId": "",

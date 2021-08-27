@@ -88,7 +88,7 @@
               max="50"
               :disabled="examroom.isEdit"
               style="width: 100px;"
-              @blur="number2()"
+              @blur="number2(examroom.st)"
               @change="inpStudent('st',idx)"
               v-model="examroom.st"
               placeholder="考场编号"
@@ -208,6 +208,8 @@ export default {
       count: 0,
       unDistributCount2: 0,
       isLastDistribut:0,
+      init_num:0,
+      init_pp:0,
     }
   },
   methods: {
@@ -253,7 +255,6 @@ export default {
       }
     },
     examChange(value){
-      console.log(value,'value')
       this.init('1')
       this.getProvinceList(value)
     },
@@ -287,6 +288,8 @@ export default {
             this.forms.examineeCount = res.result.examineeCount
             this.forms.distributCount = res.result.distributCount
             this.forms.distributRoomCount = res.result.distributRoomCount
+            this.init_num = res.result.notDistributCount;
+            this.init_pp = res.result.distributCount;
             this.forms.unDistributCount =
               parseInt(res.result.examineeCount) -
               parseInt(res.result.distributCount)
@@ -319,7 +322,7 @@ export default {
     //输入框比较
     number() {
       this.formsData.examrooms.map((item, index) => {
-        if (item.en < item.st) {
+        if (item.en/1 < item.st/1) {
           item.en = ''
           this.$message({
             type: 'error',
@@ -327,14 +330,12 @@ export default {
           })
         }
         return item
-
       })
     },
     number2() {
       this.formsData.examrooms.map((item, index) => {
-
         if(index>0){
-          if (item.st < this.formsData.examrooms[index-1].en) {
+          if (item.st/1 <= this.formsData.examrooms[index-1].en/1) {
             item.en = ''
             this.$message({
               type: 'error',
@@ -352,63 +353,116 @@ export default {
     },
 
     handleAdd() {
+      if(!this.forms.unDistributCount || this.forms.unDistributCount<1){
+        this.$message.error("无可分配人数")
+        return
+      }
       if(this.forms.distributRoomCount > 0 ){
         let num =Math.abs(this.forms.distributRoomCount);
-        this.$confirm('上次考场还有'+num+"人，是否分配到上次考场？", '提示', {
+        this.$confirm('上次考场还有'+num+"个座位，是否分配到上次考场？", '提示', {
           confirmButtonText: '是',
           cancelButtonText: '否',
           type: 'warning',
           distinguishCancelAndClose: true,
         }).then(() => {
           this.isLastDistribut = 1;
-          if(this.forms.unDistributCount){
-            
+          if(this.forms.unDistributCount <= this.forms.distributRoomCount){
+            // let distributCount = this.forms.distributCount;
+            // let unDistributCount = this.
+            this.forms.distributCount = this.forms.distributCount + this.forms.unDistributCount; //已分配考生=已分配考生+未分配考生
+            this.forms.distributRoomCount = this.forms.distributRoomCount - this.forms.unDistributCount;//剩余容量 = 剩余容量 - 未分配考生
+            this.forms.unDistributCount = 0; //未分配为0
+          }else{
+            this.forms.distributCount = this.forms.distributCount + this.forms.distributRoomCount; //已分配考生=已分配考生+剩余容量
+            this.forms.unDistributCount = this.forms.unDistributCount - this.forms.distributRoomCount; //未分配考生 = 未分配考生 - 剩余容量
+            this.forms.distributRoomCount = 0;//剩余容量为0
+
+
+            const obj = { st: '', en: '', Count: '' }
+            if (this.formsData.examrooms.length) {
+              const preObj = this.formsData.examrooms[
+              this.formsData.examrooms.length - 1
+                  ]
+              if (preObj.st && preObj.en) {
+                obj.st = +preObj.en + 1
+                this.formsData.examrooms.push(obj)
+              }
+            } else {
+              obj.st = this.forms.maxExamCode + 1
+              this.formsData.examrooms.push(obj)
+            }
+
           }
         }).catch((action) => {
           if(action == 'cancel'){
             this.isLastDistribut = 0;
+
+            const obj = { st: '', en: '', Count: '' }
+            if (this.formsData.examrooms.length) {
+              const preObj = this.formsData.examrooms[
+              this.formsData.examrooms.length - 1
+                  ]
+              if (preObj.st && preObj.en) {
+                obj.st = +preObj.en + 1
+                this.formsData.examrooms.push(obj)
+              }
+            } else {
+              obj.st = this.forms.maxExamCode + 1
+              this.formsData.examrooms.push(obj)
+            }
+
           }
         });
       }else{
 
       }
-      if(this.forms.distributRoomCount > 0 ){
 
-      }
 
-      if(!this.forms.unDistributCount || this.forms.unDistributCount<1){
-        this.$message.error("无可分配人数")
-        return
-      }
-        const obj = { st: '', en: '', Count: '' }
-        if (this.formsData.examrooms.length) {
-          const preObj = this.formsData.examrooms[
-            this.formsData.examrooms.length - 1
-          ]
-          if (preObj.st && preObj.en) {
-            obj.st = +preObj.en + 1
-            this.formsData.examrooms.push(obj)
-          }
-        } else {
-          obj.st = this.forms.maxExamCode + 1
-          this.formsData.examrooms.push(obj)
-        }
+
     },
     upok(response, file, fileList) {
       this.studio.url = file.name
     },
     inpStudent(type,index) {
       let n = 0 //考场数量
+      let n1 = 0 ; //考场容量
       let n2 = 0 //总分配人数
-      // this.formsData.examrooms.forEach((item, index) => {
-      //   if (item.st && item.en) {
-      //     if (item.Count) {
-      //       n += +item.Count * (+item.en - +item.st + 1)
-      //     }
-      //     n2 += +item.en - +item.st + 1
-      //   }
-      // })
-      // // console.log(`当前操作第${index}行,当前操作-${type},总分配人数${this.forms.maxExamCode += n2},总待分配人数${this.forms.unDistributCount -= n}`)
+      let n3 = 0;
+
+      console.log(`当前操作第${index}行,当前操作-${type},总分配人数${this.forms.maxExamCode += n2},总待分配人数${this.forms.unDistributCount -= n}`)
+
+      //考场数
+      this.formsData.examrooms.forEach((item, index) => {
+        if (item.st && item.en) {
+          if (item.Count) {
+            n1 += +item.Count/1 * (+item.en/1 - +item.st + 1)
+            if(!item.isEdit){
+              n3 += (item.Count/1) * ((item.en/1) - (item.st/1)+1)
+            }
+          }
+          n += (+item.en/1 - +item.st + 1)
+          // n2 += +item.en - +item.st + 1
+        }
+
+      })
+
+
+      console.log((n3));
+      console.log(this.init_pp/1); //已分配人数
+      console.log(this.init_num/1); //未分配人数
+      if(n3 >= this.init_num/1){
+          this.forms.unDistributCount = 0; //未分配考生人数
+          this.forms.distributCount = this.init_pp + this.init_num/1;//已分配考生人数
+        }else{
+          this.forms.unDistributCount = this.init_num - n3; //未分配考生人数
+          this.forms.distributCount = this.init_pp + n3;//已分配考生人数
+        }
+
+
+      this.forms.maxExamCode = n;//已分配考场数
+      this.forms.distributRoomCount = (n1/1) - (this.forms.distributCount/1); //已分配考场容量
+
+
       // const { distributCount, unDistributCount, maxExamCode } = this.origionObj
       // let un = unDistributCount
       // if((un - n) < 0){
@@ -445,7 +499,7 @@ export default {
             this.loading = false
             return
           }
-          if (Object.keys(examrooms).length === 0) {
+          if (Object.keys(examrooms).length === 0 && this.isLastDistribut == 0) {
             this.$message({
               type: 'error',
               message: '请填写考场配置',
@@ -453,12 +507,22 @@ export default {
             this.loading = false
             return
           }
-
-          let data = {
-            detailList: examrooms,
-            examId: this.forms.examId,
-            provinceCode: this.forms.provinceCode,
+          let data  = "";
+          if(examrooms.length == 0){
+            data = {
+              examId: this.forms.examId,
+              provinceCode: this.forms.provinceCode,
+              isLastDistribut:this.isLastDistribut
+            }
+          }else{
+            data = {
+              detailList: examrooms,
+              examId: this.forms.examId,
+              provinceCode: this.forms.provinceCode,
+              isLastDistribut:this.isLastDistribut
+            }
           }
+
 
           this.$axios
               .post(this.API.studentsManage.examRoomDistribut, data)

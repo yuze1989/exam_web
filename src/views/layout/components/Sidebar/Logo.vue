@@ -13,7 +13,7 @@
         </div>
          <h1 class="sidebar-title">{{ user.name }}</h1>
       </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+      <router-link v-else key="expand" class="sidebar-logo-link" to="/index">
         <div class="avatar-wrapper">
 <!--           <img :src="user.imgs?user.imgs:''" class="user-avatar" />-->
           <h1 class="sidebar-title">{{ title }}</h1>

@@ -11,7 +11,6 @@
       </el-select>
         <el-input v-model="form.examNo" style="width:200px"  placeholder="考试编号"
         ></el-input>
-
        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button
       >
@@ -172,7 +171,8 @@ export default {
         current : this.form.pageIndex ,
         size : this.form.pageSize ,
         name : this.form.examName,
-        no:  this.form.examNo
+        no:  this.form.examNo,
+        examId:this.examId,
       };
       examinationList(params).then((res) => {
                  this.data.records = res.result.records;
