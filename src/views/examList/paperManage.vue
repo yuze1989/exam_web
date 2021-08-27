@@ -582,6 +582,7 @@ export default {
             } else {
               this.getList();
             }
+            this.queryPaperList();  //获取评级列表
             // this.queryDealedCount();
           }
         });
