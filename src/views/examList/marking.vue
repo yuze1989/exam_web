@@ -435,14 +435,14 @@
         <div class="right-bottom">
           <div class="right-btns">
             <el-button
-                :disabled="role==0"
+                :disabled="rule==0"
                 v-for="(level, index) in levelList"
                 :key="level.name"
                 @click="switchCurrentLevel(index)"
             >{{ level.name }}
             </el-button>
           </div>
-          <el-button class="mark-btn" @click="showMarkDialog" :disabled="role==0">评分</el-button>
+          <el-button class="mark-btn" @click="showMarkDialog" :disabled="rule==0">评分</el-button>
         </div>
       </div>
       <el-dialog
@@ -539,7 +539,7 @@ export default {
       markedCountTotal: 0,
       markDlgVisible: false,
       total: 0,
-      rule:localStorage.getItem("rule"),
+      rule:localStorage.getItem("role"),
       paperList: [],
       mList:[],
       imgList: [],

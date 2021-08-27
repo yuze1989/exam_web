@@ -125,18 +125,25 @@
               :props="{ expandTrigger: 'hover' }"
               @change="modeChange"></el-cascader>
         </el-form-item>
-<!--        <el-row>-->
-<!--          <el-col :span="6">-->
-<!--            总共考场数：0-->
-<!--          </el-col>-->
-<!--          <el-col :span="6">-->
-<!--            已分配考场数：0-->
-<!--          </el-col>-->
-<!--          <el-col :span="6">-->
-<!--            待分配考场数：0-->
-<!--          </el-col>-->
-
-<!--        </el-row>-->
+        <el-row   v-if="type[0]==0">
+          <el-col :span="6">
+            总共考场数：{{examinationRoomNum}}
+          </el-col>
+          <el-col :span="6">
+            已分配考场数：{{ assignedExaminationNum  }}
+          </el-col>
+          <el-col :span="6">
+            待分配考场数：{{ noAssignedExaminationNum  }}
+          </el-col>
+        </el-row>
+        <el-row   v-if="type[0]==1">
+          <el-col :span="6">
+            总共试卷数：{{dataA.result.examinationPaperNum}}
+          </el-col>
+          <el-col :span="6">
+            未分配试卷数：{{ all_no  }}
+          </el-col>
+        </el-row>
         <el-table
             v-if="type[0]==0"
             :data="tableData"
@@ -175,6 +182,12 @@
               label="人数">
             <template slot-scope="scope">
                 <span> {{scope.row.people}}人</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+              label="未分配试卷数量">
+            <template slot-scope="scope">
+              <span> {{scope.row.paper}}张</span>
             </template>
           </el-table-column>
         </el-table>
@@ -254,6 +267,7 @@ export default {
       formLabelWidth: '120px',
       outerVisible: false,
       innerVisible: false,
+      all_no:0,
       form: {
         name: '',
         region: '',
@@ -284,6 +298,7 @@ export default {
       examIdList:[],
       courseList:[],
       roomList:[],
+      paperList:[],
       list: [],
       loading:false,
       checkIds: [],
@@ -320,6 +335,9 @@ export default {
       aaDate:[],
       tableData:[],
       dataA:"",
+      noAssignedExaminationNum:0,
+      assignedExaminationNum:0,
+      examinationRoomNum:0,
     }
   },
 
@@ -373,6 +391,7 @@ export default {
     selkc(row, type) {
       // 如果考场的号码为随机数, 那么可以根据考场的号码 从考场列表中获取index
       let n = 0
+      let n1 = 0
       // let num = +this.aaDate[0].examCode // examCode
       let num = 1 // examCode
       num = num - 1
@@ -385,13 +404,16 @@ export default {
         return false
       } else if (row.start && row.end && +row.end == +row.start) {
         n = this.roomList[+row.start - 1 - num].examinationRoomNum
+        n1 = this.paperList[this.roomList[+row.start - 1 - num].examinationRoomCode]
       } else if(row.start && row.end && +row.end > +row.start){
         for (let i = (+row.start - 1 - num); i < (+row.end - num); i++) {
           n += this.roomList[i].examinationRoomNum
+          n1 += this.paperList[this.roomList[i].examinationRoomCode]
         }
 
       }
       row.people = n
+      row.paper = n1;
 
     },
     tijiao(){
@@ -499,6 +521,7 @@ export default {
           })
         })
         this.roomList = res.result.examinationRoomCode;
+        this.paperList = res.result.noExamPaperNum;
       }else if(this.type[0] == 1){
         //随机
       }
@@ -521,7 +544,7 @@ export default {
       let data = {
         "course": this.course,
         "current": 1,
-        "examCode": this.examNameNo,
+        "examId": this.examId,
         "provinceCode": "",
         "schoolId": "",
         "size": 10
@@ -531,6 +554,15 @@ export default {
       ).then(res=>{
         this.dataA = res;
         this.loading = false;
+        this.assignedExaminationNum = res.result.assignedExaminationNum;
+        this.examinationRoomNum = res.result.examinationRoomNum;
+        this.noAssignedExaminationNum = res.result.noAssignedExaminationNum;
+        let all = 0 ;
+        for(let key in res.result.noExamPaperNum){
+          all += res.result.noExamPaperNum[key]
+        }
+        this.all_no = all;
+
       })
     },
     // 查询考试下的科目
