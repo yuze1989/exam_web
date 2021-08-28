@@ -670,15 +670,24 @@ export default {
         "examId":this.$route.query.examId,
         "grade": "all",
         paperScore:"",
-        size:100
+        size:10000
       }
       this.$axios.post(url,data).then((res) => {
         let list = res.result.list;
         let imgList = [];
+        list.forEach((item,index)=>{
+          if(this.isOne){
+            if(item.grade==""){
+              this.isOne = false;
+              this.currentPosition = index
+              this.startPosition = index;
+            }
+          }
+        })
 
         list.forEach((item,index)=>{
           if(this.isOne){
-            if(item.grade=="" || (item.grade!=""&&item.score<=0)){
+            if(item.grade!=""&&item.score<=0){
               this.isOne = false;
               this.currentPosition = index
               this.startPosition = index;

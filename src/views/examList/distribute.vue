@@ -77,7 +77,7 @@
             <el-button
               type="text"
               size="small"
-              @click="editItemAction(scope.row)"
+              @click="editItemAction(scope.row,1)"
             >
               <span>查看</span>
             </el-button>
@@ -649,7 +649,10 @@ export default {
       this.isAddType = 1
       this.isAdd = true
     },
-    editItemAction(item) {
+    editItemAction(item,type) {
+      if(type == 1){
+        this.forms1.current = 1;
+      }
       this.item = item;
       // this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode}})
       this.a =item.examId;
@@ -665,7 +668,8 @@ export default {
         this.sj_list = res.result.list;
         this.dialogTableVisible2 = true;
         this.total1 =res.result.total;
-        this.data1 = res.result
+        this.data1 = res.result;
+
       })
     },
     toShowInvite(item) {
