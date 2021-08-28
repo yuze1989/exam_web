@@ -256,7 +256,7 @@ export default {
     //获取考试列表
     getKsList(){
       this.$axios
-          .post('/ticket/examlist')
+          .post('/ticket/examlist?archiveStatus=0')
           .then((res) => {
             this.examIdList = res.result;
             if(this.one && this.id){

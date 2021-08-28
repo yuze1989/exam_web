@@ -269,7 +269,7 @@ export default {
             : this.forms.model.examStatus,
       }
       this.$axios
-        .post('/teacher/examList', params)
+        .post('/teacher/examList?archiveStatus=0', params)
         .then((res) => {
           this.list = res.result.records
           this.data = res.result

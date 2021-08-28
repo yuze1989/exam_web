@@ -570,7 +570,7 @@ export default {
 
       }
       this.$axios
-          .post('/ticket/examlist')
+          .post('/ticket/examlist?archiveStatus=0')
           .then((res) => {
             this.examIdList = res.result;
           })
@@ -601,7 +601,8 @@ export default {
         for(let key in res.result.noExamPaperNum){
           all += res.result.noExamPaperNum[key]
         }
-        this.all_no = all;
+        // this.all_no = all;
+        this.all_no = res.result.noExamPaperNumCount;
 
       })
     },
