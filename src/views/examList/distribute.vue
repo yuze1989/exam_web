@@ -185,7 +185,7 @@
             </template>
           </el-table-column>
           <el-table-column
-              label="未分配试卷数量">
+              label="未分配试卷数量  ">
             <template slot-scope="scope">
               <span> {{scope.row.paper}}张</span>
             </template>
@@ -204,7 +204,7 @@
           <el-table-column
               label="数量">
             <template slot-scope="scope">
-              <span v-if="type[1]==0">考卷数量 {{dataA.result.examinationPaperNum}}</span>
+              <span v-if="type[1]==0">考卷数量 {{dataA.result.noExamPaperNumCount}}</span>
               <span v-if="type[1]==1">考卷数量 <el-input type="number" min="0" v-model="scope.row.num" style="width: 150px"></el-input></span>
             </template>
           </el-table-column>
