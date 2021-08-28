@@ -280,7 +280,9 @@ export default {
     keydown(event) {
       if (event.keyCode == 13) {
         if(this.ruleForm2.validateCode.length == 4){
-          this.login()
+          if(this.ruleForm2.validateCode){
+            this.login()
+          }
         }
       }
     },
