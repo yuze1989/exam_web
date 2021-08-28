@@ -619,7 +619,7 @@ export default {
             } else {
               this.getList(2);
             }
-
+            this.nextViewImg()
             // this.queryDealedCount();
           }
         });
@@ -668,6 +668,7 @@ export default {
       if (index < this.paperList.length - 1) {
         this.currentIndex = index + 1;
       }
+
       this.updatePaper({ paperId, score: this.paperList[index].mark,grade: this.paperList[index].level, type: 2 });
     },
     // 跳转到评分页面

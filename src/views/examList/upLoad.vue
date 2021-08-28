@@ -125,7 +125,7 @@
                 v-if="scope.row.subjectMap[item.course]"
                 style="width: 100px; height: 100px"
                 :src="scope.row.subjectMap[item.course]"
-                :preview-src-list="[scope.row.subjectMap[item.course]]">
+                :preview-src-list="[scope.row.imgSubjectMap[item.course]]">
             </el-image>
           </template>
         </el-table-column>
