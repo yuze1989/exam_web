@@ -211,7 +211,7 @@ export default {
   },
   methods: {
     bindEidt(row){
-      this.$axios.post('/teacher/examTeacherDelete?examId='+this.$route.params.examId+"&id="+row.id)
+      this.$axios.post('/teacher/examTeacherDelete?examId='+this.$route.query.examId+"&id="+row.id)
           .then((res) => {
             this.$message.success('操作成功')
             this.getOrderList()
@@ -222,7 +222,7 @@ export default {
     },
     edit(){
       let data={
-        "examId": this.$route.params.examId,
+        "examId": this.$route.query.examId,
         "subjectList": this.checkList,
         "teacherIds": this.examNameNo
       }
@@ -243,7 +243,7 @@ export default {
     // 查询考试下的科目
     getExamDetails(){
       this.$axios.get(
-          '/examsubject/listByExamId?examId='+this.$route.params.examId
+          '/examsubject/listByExamId?examId='+this.$route.query.examId
       ).then(res=>{
         this.courseList = res.result;
 
@@ -334,7 +334,7 @@ export default {
       let params = {
         current: this.forms.current,
         pageSize: this.forms.pageSize,
-        examId:this.$route.params.examId,
+        examId:this.$route.query.examId,
         teacherName:this.teacherName
       }
       this.$axios

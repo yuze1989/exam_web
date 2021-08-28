@@ -202,7 +202,7 @@ export default {
       this.isAdd = true
     },
     editItemAction(item) {
-      this.$router.push({ name: 'TeacherExamList', params: {
+      this.$router.push({ name: 'TeacherExamList', query: {
         examId: item.id
       }})
     },
