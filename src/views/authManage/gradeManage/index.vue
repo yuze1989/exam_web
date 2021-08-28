@@ -43,13 +43,7 @@
           prop="examName"
       >
       </el-table-column>
-      <el-table-column
-          label="省份"
-          header-align="center"
-          align="center"
-          prop="province"
-      >
-      </el-table-column>
+
       <el-table-column
           label="科目"
           header-align="center"

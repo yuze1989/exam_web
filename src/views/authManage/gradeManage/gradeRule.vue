@@ -374,6 +374,7 @@ export default {
         return false
       }
       let n = 0
+      let n1 = 0;
       for (let i = 0; i < params.examples.length; i++) {
         const item = params.examples[i]
         item.course = params.course
@@ -391,7 +392,8 @@ export default {
           })
           return false
         }
-        if (!item.scoreStart) {
+
+        if (item.scoreStart !=0 && !item.scoreStart) {
           this.$message({
             message: '请填写阶梯对应范围最低值',
             type: 'warning'
@@ -412,11 +414,12 @@ export default {
           })
           return false
         }
+        n1 += item.percentage/1;
         n += (+item.percentage)
       }
-      if (n > 100) {
+      if (n != 100) {
         this.$message({
-          message: '阶梯占比不能超过100%',
+          message: '阶梯占比总和需要等于100%,当前为'+n+'%',
           type: 'warning'
         })
         return false

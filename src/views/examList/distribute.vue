@@ -280,7 +280,7 @@ export default {
       },
       options:[
           {value: '0',label: '按考场分配',
-            children: [{value: '0',label: '一张试卷被一位老师阅读'}, {value: '1',label: '一张试卷被选中老师阅卷' }]
+            children: [{value: '0',label: '一张试卷被一位老师阅卷'}, {value: '1',label: '一张试卷被选中老师阅卷' }]
           },
         {value: '1',label: '按随机分配',
           children: [{value: '0',label: '一张试卷被一位老师阅卷'}, {value: '1',label: '一张试卷被选中老师阅卷' }]
@@ -367,6 +367,7 @@ export default {
             this.forms.model.name = item.name
             this.examId = item.id
             this.examNameNo = item.no
+            this.course = ""
             this.getExamDetails()
           }
         })
@@ -557,6 +558,8 @@ export default {
         this.assignedExaminationNum = res.result.assignedExaminationNum;
         this.examinationRoomNum = res.result.examinationRoomNum;
         this.noAssignedExaminationNum = res.result.noAssignedExaminationNum;
+        this.type = ""
+        console.log(this.type);
         let all = 0 ;
         for(let key in res.result.noExamPaperNum){
           all += res.result.noExamPaperNum[key]
@@ -668,6 +671,7 @@ export default {
           this.list = res.result.list
           this.data = res.result
           this.listLoading = false
+
         })
         .catch(() => {
           this.listLoading = false
