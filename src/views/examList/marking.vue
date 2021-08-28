@@ -889,9 +889,9 @@ export default {
 
           this.descriptionLevelList[0].active = true;
           this.levelDescription.demoUrl =this.descriptionLevelList[0].imgUrl
-          this.levelDescription.description = this.descriptionLevelList[0].imgUrlDesc;
+          // this.levelDescription.description = this.descriptionLevelList[0].imgUrlDesc;
           this.currentRuleLevel = this.descriptionLevelList[0].grade;
-          this.description = this.descriptionLevelList[0].takePic;
+          this.description = this.descriptionLevelList[0].imgUrlDesc;
           this.hideSite = this.descriptionLevelList[0].hideSite;
           sessionStorage.setItem("hideSite",this.hideSite);
 
@@ -907,7 +907,8 @@ export default {
       });
       this.descriptionLevelList[index].active = true;
       this.currentRuleLevel = this.descriptionLevelList[index].grade;
-      this.description = this.descriptionLevelList[index].takePic;
+      // this.description = this.descriptionLevelList[index].takePic;
+      this.description = this.descriptionLevelList[index].imgUrlDesc;
       this.hideSite = this.descriptionLevelList[index].hideSite;
       sessionStorage.setItem("hideSite",this.hideSite);
       const currentDes = this.descriptionLevelList.find((item) => {
