@@ -27,7 +27,7 @@
                    @abort="hideLoading"
                    @mousedown="handleImageMouseDown"
                    @wheel.stop="wheelScale"
-                   :preview-src-list="finallyImageList">
+                   :preview-src-list="imageUrls1">
                 </el-image>
 
             </span>
@@ -120,6 +120,10 @@ export default {
     },
     // 图片地址
     imageUrls: {
+      type: Array,
+      default: () => [],
+    },
+    imageUrls1: {
       type: Array,
       default: () => [],
     },

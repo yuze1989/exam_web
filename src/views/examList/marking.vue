@@ -201,7 +201,8 @@
               ref="imgViewer"
 
               :container="'imgViewerContainer'"
-              :image-urls="imgList"
+              :image-urls="imgList1"
+              :image-urls1="imgList1"
               :visible="visible"
               :initial-scale="1"
               @positionUpdated="imgSwitchEnd"
@@ -543,6 +544,7 @@ export default {
       paperList: [],
       mList:[],
       imgList: [],
+      imgList1: [],
       levelList: [],
       xxListNum:0,
       levelStatisticsList: [],
@@ -675,6 +677,7 @@ export default {
       this.$axios.post(url,data).then((res) => {
         let list = res.result.list;
         let imgList = [];
+        let imgList1 = [];
         list.forEach((item,index)=>{
           if(this.isOne){
             if(item.grade==""){
@@ -694,10 +697,12 @@ export default {
             }
           }
           imgList.push(item.img)
+          imgList1.push(item.imgas)
         })
         this.paperList = list;
         this.mList = list;
         this.imgList = imgList;
+        this.imgList1 = imgList1;
 
 
       });
