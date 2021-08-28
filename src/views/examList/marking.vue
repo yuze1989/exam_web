@@ -125,8 +125,7 @@
               <span v-if="paperList[currentPosition].grade">类</span>
             </span>
             <span
-            >{{ paperList[currentPosition].score
-              }}<span v-if="paperList[currentPosition].score">分</span>
+            >{{ paperList[currentPosition].score >= 0 ? paperList[currentPosition].score : "" }}<span v-if="paperList[currentPosition].score>=0">分</span>
             </span>
           </span>
           <div class="previous-image box_img" @click="clickImg(-2)"  style="top: 100px!important;">
@@ -156,8 +155,7 @@
                 ></span
               >
               <span
-              >{{ paperList[currentPosition - 2].score
-                }}<span v-if="paperList[currentPosition - 2].score"
+              >{{ paperList[currentPosition - 2].score >= 0 ? paperList[currentPosition - 2].score : "" }}<span v-if="paperList[currentPosition - 2].score>=0"
                 >分</span
                 ></span
               >
@@ -190,8 +188,8 @@
                 ></span
               >
               <span
-              >{{ paperList[currentPosition  - 1].score
-                }}<span v-if="paperList[currentPosition  - 1].score"
+              >{{ paperList[currentPosition -1].score >= 0 ? paperList[currentPosition -1].score : "" }}
+                <span v-if="paperList[currentPosition  - 1].score>=0"
                 >分</span
                 ></span
               >
@@ -234,8 +232,8 @@
                 <span v-if="paperList[currentPosition + 1].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 1].score }}
-                <span v-if="paperList[currentPosition + 1].score">分</span>
+              >{{ paperList[currentPosition + 1].score >= 0 ? paperList[currentPosition + 1].score : "" }}
+                <span v-if="paperList[currentPosition + 1].score>=0">分</span>
               </span>
             </span>
           </div>
@@ -264,8 +262,8 @@
                 <span v-if="paperList[currentPosition + 2].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 2].score }}
-                <span v-if=" [currentPosition + 2].score">分</span>
+              >{{ paperList[currentPosition + 2].score >= 0 ? paperList[currentPosition + 2].score : "" }}
+                <span v-if=" [currentPosition + 2].score>=0">分</span>
               </span>
             </span>
           </div>
@@ -289,8 +287,7 @@
               <span v-if="paperList[currentPosition].grade">类</span>
             </span>
             <span
-            >{{ paperList[currentPosition].score
-              }}<span v-if="paperList[currentPosition].score">分</span>
+            >{{ paperList[currentPosition].score >= 0 ? paperList[currentPosition].score : "" }}<span v-if="paperList[currentPosition].score>=0">分</span>
             </span>
           </span>
           <vue-img-viewer
@@ -331,8 +328,7 @@
                 ></span
               >
               <span
-              >{{ paperList[currentPosition +1].score
-                }}<span v-if="paperList[currentPosition +1].grade"
+              >{{ paperList[currentPosition + 1].score >= 0 ? paperList[currentPosition + 1].score : "" }}<span v-if="paperList[currentPosition +1].grade>=0"
                 >分</span
                 ></span
               >
@@ -365,8 +361,7 @@
                 ></span
               >
               <span
-              >{{ paperList[currentPosition  +2].score
-                }}<span v-if="paperList[currentPosition  +2].grade"
+              >{{ paperList[currentPosition + 2].score >= 0 ? paperList[currentPosition + 2].score : "" }}<span v-if="paperList[currentPosition  +2].grade>=0"
                 >分</span
                 ></span
               >
@@ -396,8 +391,8 @@
                 <span v-if="paperList[currentPosition +3].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition +3].score }}
-                <span v-if="paperList[currentPosition +3].score">分</span>
+              >{{ paperList[currentPosition + 3].score >= 0 ? paperList[currentPosition + 3].score : "" }}
+                <span v-if="paperList[currentPosition +3].score>=0">分</span>
               </span>
             </span>
           </div>
@@ -426,8 +421,8 @@
                 <span v-if="paperList[currentPosition +4].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition +4].score }}
-                <span v-if=" [currentPosition +4].score">分</span>
+              >{{ paperList[currentPosition + 4].score >= 0 ? paperList[currentPosition + 4].score : "" }}
+                <span v-if=" [currentPosition +4].score>=0">分</span>
               </span>
             </span>
           </div>
