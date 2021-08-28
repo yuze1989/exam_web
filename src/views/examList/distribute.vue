@@ -244,9 +244,11 @@
             </div>
           </template>
         </el-table-column>
+
       </el-table>
-      <p v-if="loading">加载中...</p>
-      <p v-if="noMore">没有更多了</p>
+
+      <!--工具条-->
+
       <el-dialog
           width="50%"
           title="试卷图"
@@ -254,6 +256,15 @@
           append-to-body>
         <img :src="fd_img" alt="" style="width: 100%">
       </el-dialog>
+
+        <myPagination
+            :current.sync="forms1.current"
+            :pages.sync="data1.pages"
+            :size.sync="forms1.pageSize"
+            :total.sync="data1.total"
+            @cb="currentChange1"
+        />
+
     </el-dialog>
 
   </section>
@@ -283,6 +294,7 @@ export default {
         resource: '',
         desc: ''
       },
+
       options:[
           {value: '0',label: '按考场分配',
             children: [{value: '0',label: '一张试卷被一位老师阅卷'}, {value: '1',label: '一张试卷被选中老师阅卷' }]
@@ -316,6 +328,14 @@ export default {
           examStatus: -1, //0、未开始;1、正在进行;2、结束考试
         },
       },
+      forms1: {
+        current: 1,
+        pageSize: 10,
+        model: {
+          name: '',
+          examStatus: -1, //0、未开始;1、正在进行;2、结束考试
+        },
+      },
       status: [
         { name: '同意', id: 1 },
         { name: '拒绝', id: 2 },
@@ -328,6 +348,7 @@ export default {
         { name: '结束考试', id: 2 },
       ],
       data: { pages: 0, pageSize: 10, total: 0, records: [] },
+      data1: { pages: 0, pageSize: 10, total: 0, records: [] },
       dialogTitle: '',
       isAdd: false, //展示弹窗
       isAddType: 1, //1新增  0编辑
@@ -348,6 +369,8 @@ export default {
       a:"",
       b:"",
       c:true,
+      total1:0,
+      item:""
     }
   },
   computed: {
@@ -627,20 +650,22 @@ export default {
       this.isAdd = true
     },
     editItemAction(item) {
+      this.item = item;
       // this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode}})
       this.a =item.examId;
       this.b = item.teacherId;
       let data = {
-        "current": 1,
+        "current": this.forms1.current,
         "examId": item.examId,
         "teacherId": item.teacherId,
         "schoolId": "",
-        "size": 1000,
+        "size": this.forms1.pageSize,
       }
       this.$axios.post('/exampaper/examDistributionPaperQuer',data).then((res)=>{
         this.sj_list = res.result.list;
         this.dialogTableVisible2 = true;
-        this.total =res.result.total;
+        this.total1 =res.result.total;
+        this.data1 = res.result
       })
     },
     toShowInvite(item) {
@@ -691,6 +716,9 @@ export default {
     currentChange() {
       this.getOrderList()
     },
+    currentChange1() {
+      this.editItemAction(this.item)
+    },
     auditItem(scope) {},
     // 订单列表
     getOrderList() {
@@ -739,7 +767,6 @@ export default {
     },
     //删除
     del(item){
-      console.log(item)
       this.editItemData = item
       this.showDel = true
     }
