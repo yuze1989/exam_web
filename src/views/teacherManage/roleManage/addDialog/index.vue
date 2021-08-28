@@ -129,7 +129,10 @@ export default {
       this.resourceCheckedKey = [];
     },
     open() {
-
+      if(this.isAdd == 1){
+        this.$refs.tree.setCheckedKeys([]);
+        this.resourceCheckedKey = [];
+      }
       if (!this.isAdd) {
         this.$axios
           .get(`${this.API.role.detail}?id=${this.editItem.id}`)
@@ -151,6 +154,7 @@ export default {
                 res.result.list.forEach((item,index)=>{
                   ids.push(item.menuId)
                 })
+                this.$refs.tree.setCheckedKeys([]);
                this.resourceCheckedKey = ids;
 
               }
@@ -211,7 +215,6 @@ export default {
                   menuIdList:ids,
                   roleId:this.editItem.id
                 }
-                console.log(params);
                 this.$axios
                     .post('/teacher/updateByRoleIdMenuList',params)
                     .then((res) => {
