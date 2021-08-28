@@ -547,7 +547,6 @@ export default {
             this.$message.success('操作成功')
             this.dialogFormVisible = false;
             this.fpjd = 1;
-            this.examId = "";
             this.course = "";
           }
         })

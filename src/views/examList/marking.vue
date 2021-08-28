@@ -458,7 +458,7 @@
         </div>
         <div class="item">
           <el-input
-              v-model="mark"
+              v-model="mark<0?0:mark"
               @input="handleVerifyScore"
               :min="minNum"
               :max="maxNum"

@@ -11,7 +11,7 @@
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>考试</span>名称:</el-col>
         <el-col :span="12">
-          <el-select clearable  v-model="form.rule.examId" placeholder="请选择考试" size="medium" @change="examNameChange">
+          <el-select clearable  v-model="form.rule.examId" placeholder="请选择考试" size="medium" :disabled="$route.params.id" @change="examNameChange">
             <el-option v-for="item in examIdList" :key="item.id" :value="item.id" :label="item.name">
             </el-option>
           </el-select>
