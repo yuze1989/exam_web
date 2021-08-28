@@ -12,14 +12,19 @@ export function apiUnionExamList(data) {
 
   // 考试查询
   export function apiExamList(data) {
-      console.log(data);
+
+    let url="";
+
+
       if(data == undefined){
-        data = {archiveStatus:0};
-    }
+        url = '/ticket/examlist?archiveStatus=0'
+    }else{
+          url = '/ticket/examlist'
+      }
     return request({
-      url: '/ticket/examlist',
+      url: url,
       method: 'POST',
-    data
+
     })
   }
  // 查询考试下的省份

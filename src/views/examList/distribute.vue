@@ -224,7 +224,9 @@
 
 <!--    查看-->
     <el-dialog title="查看" :visible.sync="dialogTableVisible2">
-      <el-table :data="sj_list">
+      <el-table :data="sj_list"
+                v-infinite-scroll="load"
+                infinite-scroll-disabled="disabled">
         <el-table-column prop="admissionTicketCode" label="准考证" width="250"></el-table-column>
         <el-table-column prop="province" label="省份" width="200"></el-table-column>
         <el-table-column prop="examinationRoomCode" label="考场"></el-table-column>
@@ -243,6 +245,8 @@
           </template>
         </el-table-column>
       </el-table>
+      <p v-if="loading">加载中...</p>
+      <p v-if="noMore">没有更多了</p>
       <el-dialog
           width="50%"
           title="试卷图"
@@ -262,6 +266,7 @@ export default {
   data() {
     return {
       fd_img:"",
+      count: 10,
       examNameOption: [],
       dialogFormVisible:false,
       formLabelWidth: '120px',
@@ -338,14 +343,46 @@ export default {
       noAssignedExaminationNum:0,
       assignedExaminationNum:0,
       examinationRoomNum:0,
+      total:0,
+      current:1,
+      a:"",
+      b:"",
+      c:true,
     }
   },
-
+  computed: {
+    noMore () {
+      return this.count >= this.total;
+    },
+    disabled () {
+      return this.loading || this.noMore
+    }
+  },
   created() {
     this.getOrderList()
     this.getExamList()
   },
   methods: {
+    load() {
+      // this.loading = true
+      // if(this.c){
+      //   this.c = false;
+      //   this.current++;
+      //   let data = {
+      //     "current": this.current,
+      //     "examId": this.a,
+      //     "teacherId": this.b,
+      //     "schoolId": "",
+      //     "size": 20
+      //   }
+      //   this.$axios.post('/exampaper/examDistributionPaperQuer',data).then((res)=>{
+      //     this.sj_list += res.result.list;
+      //     this.loading = false;
+      //     this.c = true;
+      //   })
+      // }
+
+    },
     ddd(img){
       this.fd_img = img;
       this.innerVisible = true;
@@ -590,17 +627,19 @@ export default {
     },
     editItemAction(item) {
       // this.$router.push({name:'eaxmUpLoad',params:{'id':item.examCode}})
+      this.a =item.examId;
+      this.b = item.teacherId;
       let data = {
-
         "current": 1,
         "examId": item.examId,
         "teacherId": item.teacherId,
         "schoolId": "",
-        "size": 10
+        "size": 1000,
       }
       this.$axios.post('/exampaper/examDistributionPaperQuer',data).then((res)=>{
         this.sj_list = res.result.list;
         this.dialogTableVisible2 = true;
+        this.total =res.result.total;
       })
     },
     toShowInvite(item) {

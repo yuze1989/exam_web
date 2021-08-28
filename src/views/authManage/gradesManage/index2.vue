@@ -350,8 +350,8 @@ export default {
 
     getList() {
       let roleId = this.search.state == -1 ? null : this.search.state;
-      if(this.search.max != "" || this.search.min != ""){
-        if(this.examId || this.search.score){
+      if(this.search.max !=undefined || this.search.min != undefined){
+        if(!this.examId || !this.search.score){
           this.$message.error('请先确定考试名称和查询分数条件！');
           return false
         }
