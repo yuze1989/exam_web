@@ -542,30 +542,43 @@ export default {
     },
     //审核
     submitCheck() {
-      let params = {
-        checkStatus: this.selectCheck,
-        remark: this.remark,
-      }
-      if (this.isCheckMore) {
-        params.ids = [...this.checkIds].map((res) => res.id)
-      } else {
-        params.id = this.checkId
-      }
-      let api = this.isCheckMore? this.API.studentsManage.examineeBatchCheck: this.API.studentsManage.examineeCheck
-      this.$axios
-        .post(`${api}`, params)
-        .then((res) => {
-          if (res.code == 200) {
-            this.$message.success('操作成功')
-            this.showCheck = false
-            this.getOrderList()
-            this.checkIds = []
-            this.checkId = ''
-          }
-        })
-        .catch((err) => {
-          this.listLoading = false
-        })
+      this.$confirm('审核通过后信息不能修改，是否确定?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {
+          checkStatus: this.selectCheck,
+          remark: this.remark,
+        }
+        if (this.isCheckMore) {
+          params.ids = [...this.checkIds].map((res) => res.id)
+        } else {
+          params.id = this.checkId
+        }
+        let api = this.isCheckMore? this.API.studentsManage.examineeBatchCheck: this.API.studentsManage.examineeCheck
+        this.$axios
+            .post(`${api}`, params)
+            .then((res) => {
+              if (res.code == 200) {
+                this.$message.success('操作成功')
+                this.showCheck = false
+                this.getOrderList()
+                this.checkIds = []
+                this.checkId = ''
+              }
+            })
+            .catch((err) => {
+              this.listLoading = false
+            })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+
+
     },
     // 删除
     del(row) {
