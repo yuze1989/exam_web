@@ -80,9 +80,6 @@ import SelectProvince from '@/components/SelectProvinceMultiple'
 export default {
   components: { SelectProvince },
   name: 'addRole',
-  roleTypeList:[
-      '管理员权限','阅卷权限','教辅权限','仲裁权限'
-  ],
   props: {
     visible: {
       type: Boolean,
@@ -103,6 +100,9 @@ export default {
     return {
       roleList: [],
       options:[],
+      roleTypeList:[
+        '管理员权限','阅卷权限','教辅权限','仲裁权限'
+      ],
       from: {
         loginCode: '',
         password: '',
@@ -146,6 +146,8 @@ export default {
           .get(`/user/detail?id=${this.editItem.id}`)
           .then((res) => {
             if ((res.code = 200)) {
+              console.log(this.roleTypeList);
+              console.log(res.result.roleType);
               this.from = {
                 id: this.editItem.id,
                 loginCode: this.editItem.loginCode,

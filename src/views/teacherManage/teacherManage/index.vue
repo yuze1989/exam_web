@@ -275,7 +275,6 @@ export default {
           type: 'warning',
         })
         .then(() => {
-          console.log('111')
           that.$axios
             .post(that.API.teacher.setState, {
               id: item.id,

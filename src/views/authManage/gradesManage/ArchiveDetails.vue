@@ -31,12 +31,13 @@
           <el-form-item>
             <el-row style="margin-right: 20px">
               <el-col :span="10" style="position: relative;left: -10px">
-                <el-input v-model="search.min" placeholder="分数1" style="width: 80px" :min="0" :max="100" type="number" class="nn"></el-input>
+                <el-input v-model="search.min" placeholder="分数1" style="width: 80px" :min="0" :max="100" type="number" class="nn"     @change="tip"></el-input>
               </el-col>
               <el-col :span="4" style="text-align: center">至</el-col>
               <el-col :span="10">
                 <el-input
                     class="nn"
+                    @change="tip"
                     v-model="search.max"
                     placeholder="分数2"
                     style="width: 80px"
@@ -270,7 +271,9 @@ export default {
       subjectName2: false,
       subjectName3: false,
       subjectName4: false,
-      arr:[]
+      arr:[],
+      examNameOption:[],
+      options:[],
     };
   },
   created() {
@@ -280,6 +283,13 @@ export default {
   },
 
   methods: {
+    tip(value){
+      if(!(this.examId && this.search.score)){
+        if(value != ""){
+          this.$message.error('请先确定考试和科目');
+        }
+      }
+    },
     // 考试改变监听
     examNameChange(e){
       this.examNameOption.map(item =>{

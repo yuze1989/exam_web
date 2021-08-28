@@ -144,6 +144,41 @@
       />
     </el-col>
 
+    <el-dialog
+        :visible.sync="dialogFormVisible"
+        width="50%"
+        center
+    >
+      <div slot="title">管理员验证</div>
+      <el-form
+          label-width="120px"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          ref="delForm"
+      >
+        <p style="    text-align: center;
+    color: red;
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 15px;">停止阅卷之前，请确认试卷上传已完成！</p>
+        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+          <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button type="primary" @click="confirm1">确认</el-button>
+      </div>
+    </el-dialog>
+
   </section>
 </template>
 
@@ -154,7 +189,10 @@ export default {
       list: [],
       checkIds: [],
       listLoading: false,
+      dialogFormVisible:false,
       admissionTicketCode:"",
+      admin_username:"",
+      admin_password:"",
       forms: {
         current: 1,
         pageSize: 10,
@@ -194,28 +232,30 @@ export default {
   },
   methods: {
     saveRule(){},
-    stop(){
-      this.$confirm("此操作将停止阅卷, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-          .then(() => {
-            this.$axios.post('/exampaper/stopMarking')
-                .then((res)=>{
-                  this.$message({
-                    type: "success",
-                    message: "成功",
-                  });
-                })
+    confirm1(){
+      if(this.admin_username == "" || this.admin_password == ""){
+        this.$message.error('请先确认管理员账号与密码！');
+        return false;
+      }
+      let data = {
+        examId:this.$route.query.examId,
+        loginUser:this.admin_username,
+        password:this.admin_password
 
-          })
-          .catch(() => {
+      }
+      this.$axios.post('/exampaper/stopMarking',data)
+          .then((res)=>{
+            this.dialogFormVisible = false;
+            this.admin_username = "";
+            this.admin_password = "";
             this.$message({
-              type: "info",
-              message: "已取消操作",
+              type: "success",
+              message: "成功",
             });
-          });
+          })
+    },
+    stop(){
+      this.dialogFormVisible = true;
     },
     //查询进度
     getGrade(){

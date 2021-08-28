@@ -144,12 +144,18 @@
         </div>
       </div>
 
-      <el-form-item>
+      <el-form-item style="margin-bottom: 15px">
         <el-button style="width: 80%;" @click="handleAdd">
           + 新增考场配置
         </el-button>
       </el-form-item>
       <el-form-item>
+        <p
+            v-if="is_show"
+            style="margin: 0;
+    padding: 0;
+    height: 24px;
+    color: #ff4242;">新增后需要点击确认，否则数据不会保存！</p>
         <el-button
           type="primary"
           :loading="loading"
@@ -210,7 +216,11 @@ export default {
       isLastDistribut:0,
       init_num:0,
       init_pp:0,
+      is_show:false,
     }
+  },
+  created() {
+    this.is_show = false;
   },
   methods: {
     getExamList() {
@@ -391,6 +401,7 @@ export default {
               obj.st = this.forms.maxExamCode + 1
               this.formsData.examrooms.push(obj)
             }
+            this.is_show = true;
 
           }
         }).catch((action) => {
@@ -410,6 +421,7 @@ export default {
               obj.st = this.forms.maxExamCode + 1
               this.formsData.examrooms.push(obj)
             }
+            this.is_show = true;
 
           }
         });
