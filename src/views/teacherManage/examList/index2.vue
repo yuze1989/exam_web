@@ -211,11 +211,7 @@ export default {
   },
   methods: {
     bindEidt(row){
-      let data={
-        "examId": this.$route.params.examId,
-        "id": row.id
-      }
-      this.$axios.post('/teacher/examTeacherDelete',data)
+      this.$axios.post('/teacher/examTeacherDelete?examId='+this.$route.params.examId+"&id="+row.id)
           .then((res) => {
             this.$message.success('操作成功')
             this.getOrderList()
