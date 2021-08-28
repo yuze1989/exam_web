@@ -65,7 +65,7 @@
                   auto-complete="off"
                   placeholder="请输入验证码"
                   @keyup.native.prevent="keydown($event)"
-                  style="width: 8rem;"
+                  style="width: 8rem;ime-mode:disabled"
                 ></el-input>
               </el-col>
               <el-col :span="10">
@@ -147,7 +147,7 @@
                   v-model="ruleForm2.validateCode"
                   auto-complete="off"
                   placeholder="请输入验证码"
-                  style="width: 8rem;"
+                  style="width: 8rem; ime-mode:disabled;"
                 ></el-input>
               </el-col>
               <el-col :span="10">

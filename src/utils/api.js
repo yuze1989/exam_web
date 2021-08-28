@@ -42,7 +42,7 @@ const API = {
       examRoomDistribut:"/examinee/examRoomDistribut",  //考场分配
       examRoomList:"/examinee/examRoomList",//考场信息查询
       examRoomProvince:"/examinee/examRoomProvince",//获取生源省列表
-      examlist:"/ticket/examlist", // 新增学生 获取考试列表
+      examlist:"/ticket/examlist?archiveStatus=0", // 新增学生 获取考试列表
       roomsList:"/studio/getStudioByExamId",// 新增学生 根据考试id获取学生列表      
 
       examineeBatchCheck:"/examinee/examineeBatchCheck",//考生信息批量审核(审核状态:0未审核；1通过；2未通过)
@@ -58,7 +58,7 @@ const API = {
       getAddressByExamId: "/examinee/getAddressByExamId",//获取地址
     },
     ticketManage:{ //准考证管理
-      getTicketExamlist:'/ticket/examlist',// 获取准考证下考试
+      getTicketExamlist:'/ticket/examlist?archiveStatus=0',// 获取准考证下考试
       getCreateTicketQrCode:'/ticket/qrCodeCreate',// 二维码模板新增POST 
       getTicketQrCodeDetail:'/ticket/qrCodeDetail',// 获取根据id或二维码模板信息POST 
       getTicketQrCodeList:'/ticket/qrCodeList',// 二维码查询POST 
