@@ -279,7 +279,7 @@ export default {
     tip(value){
       if(!(this.examId && this.search.score)){
         if(value != ""){
-          this.$message.error('请先确定考试和科目');
+          this.$message.error('请先确定考试名称和查询分数条件！');
         }
       }
     },
@@ -350,6 +350,14 @@ export default {
 
     getList() {
       let roleId = this.search.state == -1 ? null : this.search.state;
+      if(this.search.max != "" || this.search.min != ""){
+        if(this.examId || this.search.score){
+          this.$message.error('请先确定考试名称和查询分数条件！');
+          return false
+        }
+      }
+
+
       let params = {
         current: this.form.pageIndex,
         size: this.form.pageSize,

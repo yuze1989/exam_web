@@ -12,6 +12,10 @@ export function apiUnionExamList(data) {
 
   // 考试查询
   export function apiExamList(data) {
+      console.log(data);
+      if(data == undefined){
+        data = {archiveStatus:0};
+    }
     return request({
       url: '/ticket/examlist',
       method: 'POST',

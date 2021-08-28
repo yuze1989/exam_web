@@ -175,7 +175,7 @@ export default {
 
     // 查询考试列表
     getExamList(){
-      apiExamList().then(res=>{
+      apiExamList("").then(res=>{
         this.examNameOption = res.result
       })
     },
