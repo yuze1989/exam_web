@@ -129,9 +129,27 @@ export default {
     },
     //删除
     del(item){
+      // this.editItemData = item
+      // this.showDel = true
+      this.$confirm('此操作将删除该账号, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post("/role/delete?id="+item.id).then((res)=>{
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        })
 
-      this.editItemData = item
-      this.showDel = true
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     // 新增
     add() {

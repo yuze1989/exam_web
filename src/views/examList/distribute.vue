@@ -387,23 +387,6 @@ export default {
   },
   methods: {
     load() {
-      // this.loading = true
-      // if(this.c){
-      //   this.c = false;
-      //   this.current++;
-      //   let data = {
-      //     "current": this.current,
-      //     "examId": this.a,
-      //     "teacherId": this.b,
-      //     "schoolId": "",
-      //     "size": 20
-      //   }
-      //   this.$axios.post('/exampaper/examDistributionPaperQuer',data).then((res)=>{
-      //     this.sj_list += res.result.list;
-      //     this.loading = false;
-      //     this.c = true;
-      //   })
-      // }
 
     },
     ddd(img){
@@ -537,16 +520,24 @@ export default {
             })
           })
         }else if(this.type[1] == 1){
+          let n = 0;
           this.tableData.forEach((item,index)=>{
-            data.push({
-              examCode:this.examNameNo,
-              examId: this.examId,
-              subject:this.course,
-              erNum:item.num,
-              teacherId:item.teacherId,
-              modeType:2
-            })
+            if(item.num){
+              n = n/1+item.num/1;
+              data.push({
+                examCode:this.examNameNo,
+                examId: this.examId,
+                subject:this.course,
+                erNum:item.num,
+                teacherId:item.teacherId,
+                modeType:2
+              })
+            }
           })
+          if(n> this.all_no){
+            this.$message.error('考卷数量不可超过未分配试卷数量！')
+            return  false;
+          }
         }
 
       }
@@ -560,6 +551,8 @@ export default {
             this.course = "";
           }
         })
+      }else{
+        this.$message.error('无可提交数据！')
       }
 
     },
@@ -568,7 +561,6 @@ export default {
     },
     //修改模式
     modeChange(){
-      if(this.type[0] == 0){
         let res = this.dataA;
         //考场
         this.tableData = res.result.teacherName;
@@ -583,9 +575,7 @@ export default {
         })
         this.roomList = res.result.examinationRoomCode;
         this.paperList = res.result.noExamPaperNum;
-      }else if(this.type[0] == 1){
-        //随机
-      }
+
     },
     //获取考试列表
     getKsList(){
@@ -619,7 +609,6 @@ export default {
         this.examinationRoomNum = res.result.examinationRoomNum;
         this.noAssignedExaminationNum = res.result.noAssignedExaminationNum;
         this.type = ""
-        console.log(this.type);
         let all = 0 ;
         for(let key in res.result.noExamPaperNum){
           all += res.result.noExamPaperNum[key]
