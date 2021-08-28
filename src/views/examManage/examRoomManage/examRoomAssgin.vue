@@ -387,6 +387,9 @@ export default {
             this.forms.unDistributCount = this.forms.unDistributCount - this.forms.distributRoomCount; //未分配考生 = 未分配考生 - 剩余容量
             this.forms.distributRoomCount = 0;//剩余容量为0
 
+            this.init_pp = this.forms.distributCount;
+            this.init_num = this.forms.unDistributCount;
+
 
             const obj = { st: '', en: '', Count: '' }
             if (this.formsData.examrooms.length) {
