@@ -458,7 +458,7 @@
         </div>
         <div class="item">
           <el-input
-              v-model="mark<0?0:mark"
+              v-model="mark"
               @input="handleVerifyScore"
               :min="minNum"
               :max="maxNum"
@@ -1006,12 +1006,17 @@ export default {
       this.level = this.paperList[this.currentPosition].grade || "";
       this.changeL(this.level)
       this.mark = this.paperList[this.currentPosition].score || "";
+      if(this.mark < 0 ){
+        this.mark = "";
+      }
     },
     submitLevelAndMark() {
       let data = {
-        "paperId": this.paperList[this.currentPosition].id,
+        "examPaperId": this.paperList[this.currentPosition].id,
         grade:this.level,
         score:this.mark,
+        "examId": this.$route.query.examId,
+        "course": this.$route.query.course,
       }
       if(this.mark > this.maxNum || this.mark < this.minNum){
         this.$message.error(`请填写合适的分数！`);

@@ -607,6 +607,7 @@ export default {
         let params = {
           "course": this.$route.query.course,
           "examCode": this.$route.query.examNo,
+          "examId": this.$route.query.examId,
           examPaperId:data.paperId,
           grade:data.grade,
           score:data.score,
