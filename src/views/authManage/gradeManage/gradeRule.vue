@@ -488,8 +488,8 @@ export default {
       const id = this.id;
       this.$axios.get('/rules/detail?id='+id).then(res=>{
         this.result = res.result;
-        this.form.gradeRule = 0;
-        this.form.hideSite = 4;
+        this.form.gradeRule = res.result.gradeRule;
+        this.form.hideSite = res.result.hideSite;
         this.form.course = res.result.course
         this.form.rule.score = res.result.score
         this.form.rule.gradeLevel = res.result.gradeLevel;
