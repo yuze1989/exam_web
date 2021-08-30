@@ -386,6 +386,49 @@ export default {
               if (res.result.menuList && res.result.menuList.length > 0) {
                 // path = this.findPath(res.result.menuList)
                 // this.$router.push({ path: path })
+
+                if(res.result.userInfo.roleType == 1){
+                  let menu = localStorage.getItem("menu");
+                  let id = JSON.parse(menu)[0].id
+                  if(id == 96){
+                    menu = [
+                      {
+                        "id": 93,
+                        "nameCn": "试卷管理",
+                        "nameEn": null,
+                        "remark": null,
+                        "parentId": 0,
+                        "orderNumber": 88,
+                        "enabled": null,
+                        "iconClass": null,
+                        "url": null,
+                        "openAuth": false,
+                        "type": 1,
+                        "code": "10093",
+                        "isSys": false,
+                        "usable": 0
+                      },{
+                        "id": 96,
+                        "nameCn": "批改试卷",
+                        "nameEn": null,
+                        "remark": null,
+                        "parentId": 93,
+                        "orderNumber": 91,
+                        "enabled": null,
+                        "iconClass": null,
+                        "url": null,
+                        "openAuth": false,
+                        "type": 1,
+                        "code": "10096",
+                        "isSys": false,
+                        "usable": 1
+                      }
+                    ]
+                    localStorage.setItem("menu",JSON.stringify(menu))
+                    console.log(localStorage.getItem("menu"));
+
+                  }
+                }
                 this.$router.push('/index')
               } else {
                 this.$message.error('该账号暂未开放权限')

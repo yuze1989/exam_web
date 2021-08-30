@@ -55,7 +55,7 @@
                 <span class="primary">{{ level.name }}类</span>
                 <span
                 >{{ level.count || 0 }} /
-                  {{ xxListNum || 0 }}</span
+                  {{ level.all || 0 }}</span
                 >
               </div>
               <el-progress
@@ -707,7 +707,7 @@ export default {
     },
     getImgUrlIP() {
       getImgUrlIP().then((res) => {
-        console.log(res);
+
       });
     },
     handleVerifyScore(value) {
@@ -760,14 +760,23 @@ export default {
                 ((res.result.arbitrationGradeCount || 0) /
                     (this.unmarkedCount || 0)) *
                 100
-            )
+            ),
+            all:this.unmarkedCount || 0
           },];
+          console.log(this.descriptionLevelList);
+          let rule = localStorage.getItem("role");
           for (let i = 0; i < resultList.length; i++) {
-            const progress = Math.round(
-                ((resultList[i].count || 0) /
-                    (this.unmarkedCount || 0)) *
-                100
+            let progress;
+            let all;
+            if(rule == 1){
+              all = (this.unmarkedCount || 0)*((this.descriptionLevelList[i].percentage/100 ) || 0)
+            }else{
+              all = (this.unmarkedCount || 0)
+            }
+            progress = Math.round(
+                ((resultList[i].count || 0) / (all/1 || 0) * 100)
             );
+
             if(resultList[i].grade){
               list.push({
                 name: resultList[i].grade,
@@ -775,13 +784,15 @@ export default {
                 // dealCount: resultList[i].dealCount,
                 // totalDealCount: resultList[i].totalDealCount,
                 // total: resultList[i].total,
-                percentage: progress <= 100 ? progress : 100,
+                percentage: progress,
                 active: false,
+
               });
               xxList.push({
                 name: resultList[i].grade,
                 count: resultList[i].count,
-                percentage:progress
+                percentage:progress,
+                all:all
               })
             }
 
@@ -861,6 +872,7 @@ export default {
               tempGradeList.push({
                 key: i,
                 name: item.grade,
+                percentage:item.percentage,
               })
             }
           })
@@ -1192,6 +1204,7 @@ export default {
   }
 
   .el-progress-bar__inner {
+    max-width: 100% !important;
     background-color: #204bd6;
   }
 
