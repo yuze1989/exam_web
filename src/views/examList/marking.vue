@@ -773,6 +773,7 @@ export default {
             }else{
               all = (this.unmarkedCount || 0)
             }
+            all = Math.ceil(all)
             progress = Math.round(
                 ((resultList[i].count || 0) / (all/1 || 0) * 100)
             );

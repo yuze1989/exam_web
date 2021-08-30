@@ -674,19 +674,19 @@ export default {
     },
     // 跳转到评分页面
     jumpToMarkingAreaPage(start) {
+      let startId = start;
       if (this.paperList && this.paperList.length) {
-        let startId = start;
         if (start === "first") {
           startId = this.paperList[0].id;
         }
-        const urlParams = this.$route.query;
-        urlParams.level = this.activeLevel;
-        urlParams.startId = typeof startId !== "object" ? startId : -1;
-        this.$router.push({
-          path: "/marking",
-          query: urlParams,
-        });
       }
+      const urlParams = this.$route.query;
+      urlParams.level = this.activeLevel;
+      urlParams.startId = typeof startId !== "object" ? startId : -1;
+      this.$router.push({
+        path: "/marking",
+        query: urlParams,
+      });
     },
   },
 };

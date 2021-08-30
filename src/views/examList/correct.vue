@@ -67,11 +67,18 @@ export default {
   methods: {
     // 查询考试列表
     getExamList(){
-      apiExamList().then(res=>{
+      // apiExamList().then(res=>{
+      //   this.examNameOption = res.result;
+      //   if(this.oddCode){
+      //     this.examNameChange(this.oddCode)
+      //   }
+      // })
+      let data = {
+
+      }
+      this.$axios.post('/teacher/teacherExamList').then((res)=>{
+        console.log(res);
         this.examNameOption = res.result;
-        if(this.oddCode){
-          this.examNameChange(this.oddCode)
-        }
       })
     },
     // 考试改变监听
