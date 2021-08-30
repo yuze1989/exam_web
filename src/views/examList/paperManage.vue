@@ -639,6 +639,7 @@ export default {
         }
       });
       this.getList()
+      this.queryPaperList()
     },
     // 点击打分
     showMarkArea(index) {
