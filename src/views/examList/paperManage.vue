@@ -613,6 +613,7 @@ export default {
         })
         if(!isX){
           this.$message.error(`该评级分数范围为`+min+"-"+max);
+          this.getList()
           return  false;
         }
         let params = {
