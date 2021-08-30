@@ -67,19 +67,20 @@ export default {
   methods: {
     // 查询考试列表
     getExamList(){
-      // apiExamList().then(res=>{
-      //   this.examNameOption = res.result;
-      //   if(this.oddCode){
-      //     this.examNameChange(this.oddCode)
-      //   }
-      // })
-      let data = {
 
+      if(localStorage.getItem("role") == 0){
+        apiExamList().then(res=>{
+          this.examNameOption = res.result;
+          if(this.oddCode){
+            this.examNameChange(this.oddCode)
+          }
+        })
+      }else{
+        this.$axios.post('/teacher/teacherExamList').then((res)=>{
+          this.examNameOption = res.result;
+        })
       }
-      this.$axios.post('/teacher/teacherExamList').then((res)=>{
-        console.log(res);
-        this.examNameOption = res.result;
-      })
+
     },
     // 考试改变监听
     examNameChange(e){
