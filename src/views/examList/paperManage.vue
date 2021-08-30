@@ -624,6 +624,12 @@ export default {
           grade:data.grade,
           score:data.score,
         }
+
+        if(!data.grade){
+          this.$message.error(`请先对该试卷进行评级！`);
+          this.getList()
+          return  false;
+        }
         this.$axios.post("/exampaper/updateScore",params).then((res) => {
           if (res) {
             this.$message.success(`试卷评级更新成功！`);
@@ -634,7 +640,11 @@ export default {
             }
             this.nextViewImg()
             // this.queryDealedCount();
+          }else{
+            this.getList()
           }
+        }).catch((error)=>{
+          this.getList()
         });
       }
 
