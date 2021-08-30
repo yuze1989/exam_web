@@ -283,7 +283,8 @@ export default {
       data: { pages: 0, pageSize: 10, total: 0, records: [] },
       xxList:["all",0,"仲裁组"],
       ruleList:[],
-      role:localStorage.getItem("role")
+      role:localStorage.getItem("role"),
+      gradeIndex:0,
     };
   },
   computed: {
@@ -386,6 +387,7 @@ export default {
         }
       });
       this.getList();
+      this.queryPaperList();
     },
     // 编辑
     handleEditDialogImg(index) {
@@ -470,6 +472,14 @@ export default {
         })
         this.levelList = list;
         this.gradeList = tempGradeList;
+
+        this.levelList.forEach((level, key) => {
+          if (this.gradeIndex === key) {
+            level.active = true;
+          } else {
+            level.active = false;
+          }
+        });
 
       })
        return false
@@ -629,6 +639,7 @@ export default {
     },
     // 筛选评级
     switchLevel(value, index) {
+      this.gradeIndex = index;
       this.grade = this.xxList[index];
       this.listQuery.grade = value;
       this.levelList.forEach((level, key) => {
