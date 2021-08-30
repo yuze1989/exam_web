@@ -953,7 +953,7 @@ export default {
         "examCode": this.$route.query.examNo,
         "examPaperId": this.paperList[this.currentPosition].id,
         grade:this.currentLevel,
-        examId:this.examId,
+        examId:this.$route.query.examId,
       }
       this.$axios.post("/exampaper/updateGrade",data).then((res) => {
         if(res.code == 200){
