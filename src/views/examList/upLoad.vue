@@ -148,6 +148,7 @@
         :visible.sync="dialogFormVisible"
         width="50%"
         center
+
     >
       <div slot="title">管理员验证</div>
       <el-form
@@ -175,7 +176,7 @@
       </el-form>
 
       <div slot="footer">
-        <el-button type="primary" @click="confirm1">确认</el-button>
+        <el-button type="primary"   v-loading="loading" @click="confirm1">确认</el-button>
       </div>
     </el-dialog>
 
@@ -224,6 +225,7 @@ export default {
         id: 0,
       },
       courseName:[],
+      loading:false,
     }
   },
   created() {
@@ -243,16 +245,23 @@ export default {
         password:this.admin_password
 
       }
-      this.$axios.post('/exampaper/stopMarking',data)
-          .then((res)=>{
-            this.dialogFormVisible = false;
-            this.admin_username = "";
-            this.admin_password = "";
-            this.$message({
-              type: "success",
-              message: "成功",
-            });
-          })
+
+      if(!this.loading){
+        this.loading = true;
+        this.$axios.post('/exampaper/stopMarking',data)
+            .then((res)=>{
+              this.dialogFormVisible = false;
+              this.admin_username = "";
+              this.admin_password = "";
+              this.$message({
+                type: "success",
+                message: "成功",
+              });
+              this.loading = false;
+            })
+      }
+
+
     },
     stop(){
       this.dialogFormVisible = true;

@@ -8,7 +8,7 @@ import qs from 'qs'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 500000 // request timeout
+  timeout: 500000000 // request timeout
 });
 
 // const address = {
@@ -23,7 +23,6 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    console.log(config,'config')
     if (store.getters.token) {
       config.headers["Art-Token"] = getToken();
     }
@@ -48,7 +47,6 @@ service.interceptors.request.use(
     return config;
   },
   error => {
-    console.log(error,'error22')
     return Promise.reject(error);
   }
 );

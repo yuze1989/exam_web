@@ -226,6 +226,10 @@ export default {
         "subjectList": this.checkList,
         "teacherIds": this.examNameNo
       }
+      if(data.subjectList.length == 0){
+        this.$message.error('请先选择关联的科目！')
+        return false;
+      }
       this.$axios.post('/teacher/relationTeacher',data)
           .then((res) => {
             this.$message.success('操作成功')

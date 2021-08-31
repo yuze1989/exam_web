@@ -635,6 +635,8 @@ export default {
     },
     //分配试卷
     fenpei(){
+      this.examId = "";
+      this.course = "";
       this.fpjd=1;
       this.getKsList()
       this.dialogFormVisible = true;
