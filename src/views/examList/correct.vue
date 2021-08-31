@@ -96,14 +96,15 @@ export default {
     },
     // 查询考试下的科目
     getExamDetails(){
-      this.$axios.get(
-          '/examsubject/listByExamId?examId='+this.examNameNo
+      let data = { "examId": this.examNameNo}
+      this.$axios.post(
+          '/exampaper/selectAccount',data
       ).then(res=>{
         this.courseList = [];
-        res.result.forEach((item,index) =>{
+        res.result.list.forEach((item,index) =>{
           this.courseList.push({
             key: index,
-            name: item.subjectName,
+            name: item.subject,
             color: this.colorList[index]
           })
         })

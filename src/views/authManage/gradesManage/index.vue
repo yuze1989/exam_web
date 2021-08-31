@@ -2,7 +2,9 @@
   <section class="form_border">
     <div class="header">
       <div class="from-wrap">
+        <el-button type="primary" @click="stopLr" style="float: left">停止录入成绩</el-button>
         <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
+
           <el-form-item>
             <el-input
                 v-model="search.admissionTicketCode"
@@ -110,16 +112,65 @@
         @cb="currentChange"
       />
     </el-col>
+
+    <el-dialog
+        :visible.sync="dialogFormVisible"
+        width="50%"
+        center
+    >
+      <div slot="title">管理员验证</div>
+      <el-form
+          label-width="120px"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          ref="delForm"
+      >
+        <p style="    text-align: center;
+    color: red;
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 15px;"></p>
+        <el-form-item label="选择考试" prop="username" style="margin-bottom: 15px">
+          <el-select clearable  v-model="examId"  placeholder="请选择考试名称" @change="examNameChange" style="margin-right: 5px">
+            <el-option
+                v-for="item in examNameOption"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+          <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button type="primary" @click="confirm1">确认</el-button>
+      </div>
+    </el-dialog>
   </section>
 </template>
 
 <script>
-
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
+
   components: {
   },
   data() {
     return {
+      dialogFormVisible:false,
+      admin_username:"",
+      admin_password:"",
       listLoading: false,
       //新增界面数据
       search: {
@@ -135,14 +186,55 @@ export default {
       subjectName2: false,
       subjectName3: false,
       subjectName4: false,
-      arr:[]
+      arr:[],
+      examId:"",
+      examNameOption:[]
+
     };
   },
   created() {
     this.getList();
+    this.getExamList();
   },
 
   methods: {
+    // 考试改变监听
+    examNameChange(e){
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.form.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    confirm1(){
+      let data = {
+        "examId": this.examId,
+        "loginUser": this.admin_username,
+        "password": this.admin_password,
+      }
+      this.$axios.post("/score/stopExam",data).then((res)=>{
+        if(res.code == 200){
+          this.dialogFormVisible = false;
+          this.$message({
+            message: '停止成功',
+            type: 'success',
+            duration: 1500,
+          })
+        }
+      })
+    },
+    stopLr(){
+      this.dialogFormVisible = true;
+      this.admin_username = "";
+      this.admin_password = "";
+    },
     onSubmit() {
       this.getList();
     },

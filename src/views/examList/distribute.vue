@@ -473,6 +473,7 @@ export default {
         let isF = true;
         if(this.type[1] == 0){
           ddtype = 1;
+          let is_no = false;
           this.tableData.forEach((item,index)=>{
             if(item.start && item.end){
               if(index > 0){
@@ -484,8 +485,15 @@ export default {
               }
               max = item.end;
             }
-
+            if(item.paper == 0){
+                  is_no = true;
+            }
           })
+          if(is_no){
+            this.$message.error('请确认未分配试卷数量不为0！')
+            isF = false;
+            return false
+          }
           if(!isF){
             return false;
           }
