@@ -53,12 +53,12 @@
             >
               <div>
                 <span class="primary">{{ level.name }}类</span>
-                <span
-                >{{ level.count || 0 }} /
-                  {{ level.all || 0 }}</span
-                >
+
+                <span v-if="level.name=='仲裁组'">{{ level.count || 0 }}</span>
+                <span v-if="level.name!='仲裁组'">{{ level.count || 0 }} / {{ level.all || 0 }}</span>
               </div>
               <el-progress
+                  v-if="level.name!='仲裁组'"
                   text-inside
                   :stroke-width="20"
                   :percentage="level.percentage"

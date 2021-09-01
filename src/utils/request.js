@@ -8,7 +8,7 @@ import qs from 'qs'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 500000000 // request timeout
+  timeout: 5000000000 // request timeout
 });
 
 // const address = {
@@ -86,15 +86,21 @@ service.interceptors.response.use(
     } else if (res.code == 111 || res.code == 103) {
       router.push({ path: '/login' })
     } else if(res.code == 506 || res.code == 505){
-      Message({
+      router.push({ path: '/login' })
+      var m ;
+      m.close()
+      m = Message({
         showClose: true,
         message: '登录过期，该账号已在其他地方登录！',
         type: 'error',
         duration:0,
-        onClose:function (){
-          router.push({ path: '/login' })
-        }
       });
+    }else if(res.code == 500){
+      Message({
+        type: "error",
+        message: res.message,
+      })
+      return Promise.resolve(res);
     } else {
       Message({
         type: "error",

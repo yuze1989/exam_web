@@ -65,12 +65,11 @@ export function filterAsyncChildenRouters(childens, subMenus) {
   let childenRouter = [];
 
 
-
-    childens.forEach((router, index) => {
+  console.log(childens);
+  console.log(subMenus);
+  childens.forEach((router, index) => {
       subMenus.forEach((item, index) => {
         if(item.parentId == 106 && item.id == router.id){
-          console.log(router);
-          console.log(item);
         }
       if (item.id == router.id) {
         childenRouter.push({ ...router, meta: { ...router.meta, name: item.nameCn, usable: item.usable } })
@@ -104,12 +103,25 @@ const actions = {
     const menus = data.menus;
     let realRoutes = new Array()
     let parentMenus = new Array()
+    let parentIdList= new Array()
 
     menus.forEach((item, index) => {
       if (item.parentId == 0) {
         parentMenus.push(item)
+        parentIdList.push(item.id)
       }
     })
+    menus.forEach((item, index) => {
+      if (item.parentId != 0 && parentIdList.indexOf(item.parentId) == -1) {
+        parentIdList.push(item.parentId)
+        parentMenus.push(item)
+      }
+    })
+
+
+    console.log(menus);
+    console.log(parentMenus);
+    console.log(parentIdList);
 
     //父标签重排
     let newA = [];

@@ -118,7 +118,7 @@
         width="50%"
         center
     >
-      <div slot="title">管理员验证</div>
+      <div slot="title">停止手工录入成绩</div>
       <el-form
           label-width="120px"
           label-position="right"
@@ -131,7 +131,7 @@
     font-size: 20px;
     padding: 0;
     margin: 0;
-    margin-bottom: 15px;"></p>
+    margin-bottom: 15px;">停止之前，请确认成绩录入已经完成，一旦停止就不能再录入成绩</p>
         <el-form-item label="选择考试" prop="username" style="margin-bottom: 15px">
           <el-select clearable  v-model="examId"  placeholder="请选择考试名称" @change="examNameChange" style="margin-right: 5px">
             <el-option

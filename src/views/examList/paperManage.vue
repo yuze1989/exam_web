@@ -63,41 +63,47 @@
         </div>
       </div>
       <ul v-if="paperList.length" class="paper-list clearfix">
+
         <li
-          v-for="(paper, index) in paperList"
-          :key="paper.id"
-          class="paper-container"
+            v-for="(paper, index) in paperList"
+            :key="paper.id"
+            class="paper-container"
+            style="position: relative"
         >
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;left: 0;z-index: 999;" v-if="paper.isArbitrate == 1">
+
+          </el-badge>
           <div class="paper">
             <div  class="edit-level" v-if="role!=0">
               <span
-                v-if="!paper.edit"
-                @click="handleSelectLevel(paper.id, index)"
-                class="level"
-                >修改评级</span
+                  v-if="!paper.edit"
+                  @click="handleSelectLevel(paper.id, index)"
+                  class="level"
+              >修改评级</span
               >
               <selecte-grade
-                v-else
-                :grade="paper.level"
-                :option="gradeList"
-                @grade="selecteUpdateGrade"
+                  v-else
+                  :grade="paper.level"
+                  :option="gradeList"
+                  @grade="selecteUpdateGrade"
               />
             </div>
             <el-image
-              :src="paper.url"
-              :alt="paper.name"
-              fit="cover"
-              @click="handleEditDialogImg(index)"
-              class="pointer"
-              style="height: 160px; width: 100%"
+                :src="paper.url"
+                :alt="paper.name"
+                fit="cover"
+                @click="handleEditDialogImg(index)"
+                class="pointer"
+                style="height: 160px; width: 100%"
             />
             <div  class="image-mark-text" v-if="role!=0">
               <el-input
-                :ref="`markInput${index}`"
-                v-if="paper.show"
-                v-model="paper.mark"
-                @input="handleVerifyScore(paper.mark, index)"
-                @keyup.native.enter="
+                  :ref="`markInput${index}`"
+                  v-if="paper.show"
+                  :class="paper.name"
+                  v-model="paper.mark"
+                  @input="handleVerifyScore(paper.mark, index)"
+                  @keyup.native.enter="
                   markPaperAndToNext(paper.id, index, $event)
                 "
               />
@@ -117,8 +123,8 @@
             <div class="mark">
               <span class="label">分数</span>
               <span
-                class="val mark-val"
-                :class="{ good: parseInt(paper.mark) >= 0 }"
+                  class="val mark-val"
+                  :class="{ good: parseInt(paper.mark) >= 0 }"
               >
                 {{ parseInt(paper.mark) >= 0 ? paper.mark : "--" }}</span
               >
@@ -350,6 +356,7 @@ export default {
           this.paperList = list;
           if(type == 2){
             this.paperList[this.currentIndex].show = true;
+            let classN = 'markInput'+this.currentIndex;
           }
 
       });
@@ -420,6 +427,9 @@ export default {
       }
       this.$axios.post('/exampaper/scoringRules',data).then((res)=>{
         this.ruleList = res.result.list;
+        if(res.result.list[0].score){
+          this.maxScore = res.result.list[0].score;
+        }
       })
     },
     // 获取评级列表
@@ -666,9 +676,11 @@ export default {
     },
     // 点击打分
     showMarkArea(index) {
+      let that = this;
       this.paperList.forEach((item, key) => {
         if (index === key) {
           item.show = true;
+          console.log(item);
         } else {
           item.show = false;
         }
@@ -680,7 +692,7 @@ export default {
       let isNumber = /^\d*$/.test(value); // 验证是否是纯数字
       // 过滤非数字
       this.paperList[index].mark = value.replace(/\D/g, "");
-      if (!isNumber || value < 0 || value >= this.maxScore) {
+      if (!isNumber || value < 0 || value > this.maxScore) {
         this.$message.error("只能输入0-" + this.maxScore + "的整数");
       }
       this.paperList[index].mark =
@@ -693,6 +705,7 @@ export default {
       if (index < this.paperList.length - 1) {
         this.currentIndex = index + 1;
       }
+
 
       this.updatePaper({ paperId, score: this.paperList[index].mark,grade: this.paperList[index].level, type: 2 });
     },
@@ -717,6 +730,9 @@ export default {
 </script>
 
 <style lang="scss">
+.zcz sup{
+  border-radius: 3px;
+}
 .editImgDialog {
   .el-dialog {
     border-radius: 0;
@@ -804,6 +820,7 @@ export default {
     }
   }
 }
+
 .paper-list-container {
   .el-input__inner {
     height: 30px;

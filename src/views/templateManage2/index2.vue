@@ -195,7 +195,11 @@ export default {
                 message: '导出成功',
                 type: 'success',
               })
-              window.open(res.result)
+              const a = document.createElement('a');
+              a.setAttribute("download",'')
+              a.setAttribute("href",res.result)
+              a.click()
+
               // this.$emit('addSuccess')
             }
           })

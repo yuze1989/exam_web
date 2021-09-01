@@ -64,7 +64,6 @@ const actions = {
           "username": data.username,
         }
       }).then(response => {
-        console.log(response,'111')
         if (response.code == "200") {
           response.result.user ={}
           console.log(response)

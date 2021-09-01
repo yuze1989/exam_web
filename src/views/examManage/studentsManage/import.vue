@@ -1,69 +1,75 @@
 <template>
+<div>
   <el-dialog
-    :visible.sync="visible"
-    :show-close="true"
-    :close-on-click-modal="false"
-    :before-close="handleClose"
-    @open="open"
-    width="50%"
-    center
+      :visible.sync="visible"
+      :show-close="true"
+      :close-on-click-modal="false"
+      :before-close="handleClose"
+      @open="open"
+      width="50%"
+      center
   >
     <div slot="title">导入学生信息</div>
     <el-form
-      label-width="120px"
-      :model="from"
-      label-position="right"
-      class="demo-ruleForm"
-      center
-      :rules="rules"
-      ref="inviteForm"
+        label-width="120px"
+        :model="from"
+        label-position="right"
+        class="demo-ruleForm"
+        center
+        :rules="rules"
+        ref="inviteForm"
     >
       <el-form-item label="考试名称"  prop="examId" style="width: 400px;">
         <el-select clearable
-          style="width: 250px;"
-          v-model="from.examId"
-          placeholder="考试名称"
-          @change="examChange"
+                   style="width: 250px;"
+                   v-model="from.examId"
+                   placeholder="考试名称"
+                   @change="examChange"
         >
           <el-option
-            v-for="item in examList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+              v-for="item in examList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           ></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="考试地址" prop="address">
         <el-select clearable
-          style="width: 250px;"
-          v-model="from.address"
-          placeholder="选择考试地址"
-          value-key="value"
+                   style="width: 250px;"
+                   v-model="from.address"
+                   placeholder="选择考试地址"
+                   value-key="value"
         >
           <el-option
-            v-for="item in addressList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+              v-for="item in addressList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           ></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="文件上传" style="width: 400px;">
         <el-upload
-          class="upload-demo"
-          ref="upload"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :file-list="fileList"
-          :limit="1"
-          accept=".xlsx,.xls,"
-          :on-change="handle"
-          :auto-upload="false"
+            class="upload-demo"
+            ref="upload"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :file-list="fileList"
+            :limit="1"
+            accept=".xlsx,.xls,"
+            :on-change="handle"
+            :auto-upload="false"
         >
           <el-button slot="trigger" size="small" type="primary">
             上传文件
           </el-button>
+          <div class="tips" style="position: absolute;
+    top: 0;
+    left: 115px;
+    width: 350px;
+    color: #f32727;">导入学生信息需要一定时间，请稍后过来查询！</div>
           <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
           <div slot="tip" class="el-upload__tip">上传学生信息excel文件</div>
         </el-upload>
@@ -74,6 +80,22 @@
       <el-button type="primary" @click="confirm">保存</el-button>
     </div>
   </el-dialog>
+  <el-dialog title="错误信息" :visible.sync="dialogTableVisible">
+    <el-table :data="gridData">
+      <el-table-column label="排序" width="80">
+        <template slot-scope="scope">
+          {{++scope.$index}}
+        </template>
+      </el-table-column>
+      <el-table-column property="name" label="姓名" width="140"></el-table-column>
+      <el-table-column property="gender" label="性别" width="60"></el-table-column>
+      <el-table-column property="identification" label="身份证" width="220"></el-table-column>
+      <el-table-column property="mobile" label="手机" width="180"></el-table-column>
+      <el-table-column property="province" label="省份" width="120"></el-table-column>
+      <el-table-column property="remark" label="备注" width="260"></el-table-column>
+    </el-table>
+  </el-dialog>
+</div>
 </template>
 
 <script>
@@ -97,6 +119,8 @@ export default {
   },
   data() {
     return {
+      dialogTableVisible:false,
+      gridData:[],
       file: '',
       fileList:[],
       addressList:[],
@@ -201,13 +225,21 @@ export default {
               param,
             )
             .then((res) => {
+              if(res.code == 200){
                 this.$message({
                   message: res.result?res.result:"导入成功",
                   type: 'success',
                 })
                 this.handleClose()
+              }else if(res.code == 500){
+                this.gridData = res.result;
+                this.dialogTableVisible = true;
+              }
+
             })
-            .catch(() => {})
+            .catch((error) => {
+              console.log(error);
+            })
         } else {
         }
       })

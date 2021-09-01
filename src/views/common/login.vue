@@ -425,7 +425,7 @@ export default {
                       }
                     ]
                     localStorage.setItem("menu",JSON.stringify(menu))
-                    console.log(localStorage.getItem("menu"));
+
 
                   }
                 }
