@@ -82,7 +82,16 @@
             </el-table>
             <!-- 注意事项 -->
             <div class="careful-matter">
-                <textarea v-model="form.carefulMatter" style="margin-top:30px;width: 368px;height: 146px;padding: 10px;border-radius: 4px;border: 1px solid #ece9e9;font-size: 14px;"  name="" id="" placeholder="备注信息"></textarea>
+              <el-input
+                  type="textarea"
+                  placeholder="备注信息"
+                  v-model="form.carefulMatter"
+                  maxlength="100"
+                  rows="6"
+                  style="margin: 15px 0"
+                  show-word-limit
+              >
+              </el-input>
             </div>
             <!-- 保存 -->
                 <el-button
