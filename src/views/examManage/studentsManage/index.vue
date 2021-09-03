@@ -422,7 +422,6 @@ export default {
     },
     //修改学生
     toEditItem(row){
-      console.log(row,'row')
       this.editItemData = row
       this.isAddType = false
       this.isAdd = true
@@ -526,7 +525,6 @@ export default {
           this.forms.pageNum = res.result.pageNum
           this.forms.pageSize = res.result.pageSize
           this.forms.total = res.result.total
-          console.log(this.result.list, 'this.list')
           this.listLoading = false
         })
         .catch(() => {
@@ -603,7 +601,7 @@ export default {
             })
         })
         .catch((err) => {
-          console.log(err, 'err')
+
         })
     },
     addSuccess() {

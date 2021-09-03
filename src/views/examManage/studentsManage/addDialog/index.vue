@@ -250,7 +250,6 @@ export default {
       this.from.url = ""
     },
     handleChange(file, fileList) {
-
       this.file = file
       this.fileList = [file]
       this.showBtnImg = fileList.length <1
@@ -315,7 +314,6 @@ export default {
         .catch(() => {})
     },
     getRoomList(examId) {
-
       this.$axios
         .get(`${this.API.studentsManage.roomsList}?examId=${examId}`, {})
         .then((res) => {
@@ -354,8 +352,7 @@ export default {
       this.getExamList()
       this.fileList= []
       this.file=""
-      this.showBtnImg= true,
-
+      this.showBtnImg= true
       if (this.isAdd) {
         this.from = {}
       } else {
@@ -421,7 +418,6 @@ export default {
           if(this.file){
             param.append('examineeFile', this.file.raw)
           }
-
           let url = `${this.API.studentsManage.examineeCreate}?${str}`
           this.$axios
             .post(url, param)

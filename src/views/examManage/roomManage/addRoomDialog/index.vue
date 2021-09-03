@@ -131,7 +131,7 @@ export default {
     add() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-        console.log(this.API)
+
         creatStudio(this.from).then((res) => {
               if (res) {
                 this.$message({
@@ -149,7 +149,7 @@ export default {
      edit() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-        console.log(this.API)
+
         updateStudio(this.from).then((res) => {
               if (res) {
                 this.$message({

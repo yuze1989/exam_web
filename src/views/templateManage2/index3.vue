@@ -179,7 +179,7 @@ export default {
       apiGetProvinceByExamId({
         examId: this.form.examNameNo
       }).then(res=>{
-        console.log(res.result);
+
         this.studentAreaOption = res.result
       })
     },

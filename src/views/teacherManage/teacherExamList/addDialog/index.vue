@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     examChange(e){
-      console.log(e)
+
     },
     changeRole(payload) {
       const role = this.roleList.filter((item)=>item.id == payload)
@@ -102,7 +102,7 @@ export default {
           .get(`${this.API.teacher.detail}?id=${this.editItem.id}`)
           .then((res) => {
             if ((res.code = 200)) {
-              console.log(res, 'rr')
+
               // this.from = {
               //   // province: "北京",
               //   // provinceCode: "北京",
@@ -135,7 +135,7 @@ export default {
         .then((res) => {
           if ((res.code = 200)) {
             this.roleList = res.result.list
-            console.log(res.result.list, 'res.result.list')
+
           }
         })
     },
@@ -154,7 +154,7 @@ export default {
     // api
     add() {
       this.$refs.teacherForm.validate((valid) => {
-        console.log(this.from, '')
+
         if (valid) {
           this.$axios
             .post(this.API.teacher.create, this.from)

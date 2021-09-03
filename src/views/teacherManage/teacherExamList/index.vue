@@ -162,7 +162,7 @@ export default {
   },
   created() {
     this.examId = this.$route.params.examId
-    console.log(this.examId, 'examId考试id')
+
     this.getList()
     this.getList()
     this.getProvinceList()
@@ -190,7 +190,7 @@ export default {
       this.getList()
     },
     editItem(item) {
-      console.log(item, 'item')
+
       this.isAddType = 0
       this.isAdd = true
       this.editItemData = item
@@ -205,7 +205,7 @@ export default {
           type: 'warning',
         })
         .then(() => {
-          console.log('111')
+
           that.$axios
             .post(that.API.teacher.setState, {
               id: item.id,
@@ -231,7 +231,7 @@ export default {
           type: 'warning',
         })
         .then(() => {
-          console.log('111')
+
           that.$axios
             .post(that.API.teacher.setState, {
               id: item.id,

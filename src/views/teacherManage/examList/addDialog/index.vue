@@ -354,7 +354,7 @@ export default {
       rows.splice(index, 1)
     },
     open() {
-      console.log(this.editItem, this.isAdd, 'this.isAdd')
+
       if (this.isAdd) {
         this.from = {}
         this.address = [{}]
@@ -363,7 +363,6 @@ export default {
         this.$axios
           .get(this.API.examinfo.detail + '?id=' + this.editItem.id)
           .then((res) => {
-            console.log(res, '详情')
             let result = res.result
             this.from = {
               id: result.id, //id

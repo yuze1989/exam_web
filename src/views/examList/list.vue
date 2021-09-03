@@ -169,7 +169,7 @@ export default {
       this.isAdd = true
     },
     editItemAction(item) {
-      console.log(item);
+
       this.$router.push({name:'eaxmUpLoad',query:{'id':item.examCode,"operStatus":item.operStatus,'examId':item.id}})
     },
     toShowInvite(item) {
@@ -262,7 +262,7 @@ export default {
     },
     //删除
     del(item){
-      console.log(item)
+
       this.editItemData = item
       this.showDel = true
     }

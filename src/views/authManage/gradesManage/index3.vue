@@ -279,7 +279,7 @@ export default {
   },
   watch: {
     dataList (val) {
-      console.log(val,'val---------')
+
     }
   },
   mounted() {},

@@ -351,7 +351,7 @@ export default {
   },
   methods: {
     dataChange(item,index){
-      console.log(item,index,'item,index')
+
       this.provinceList.map(j =>{
         if(item.province == j.provinceCode){
           this.address[index].province = j.province
@@ -414,7 +414,7 @@ export default {
     // api
 
     add() {
-      console.log(this.address,'this.address,')
+
       this.$refs.examForm.validate((valid) => {
         if (valid) {
           // 时间校验
@@ -540,7 +540,7 @@ export default {
       this.subject.splice(index, 1)
     },
     edit() {
-      console.log(this.address,'this.address,')
+
       this.$refs.examForm.validate((valid) => {
         if (valid) {
           if(this.from.enrollEndTime < this.from.enrollStartTime){

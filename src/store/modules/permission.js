@@ -64,9 +64,6 @@ export function filterAsyncChildenRouters(childens, subMenus) {
 
   let childenRouter = [];
 
-
-  console.log(childens);
-  console.log(subMenus);
   childens.forEach((router, index) => {
       subMenus.forEach((item, index) => {
         if(item.parentId == 106 && item.id == router.id){
@@ -608,7 +605,6 @@ const actions = {
       if(meanId.indexOf(item) == -1){
         dataAll.forEach((a)=>{
           if(a.id == item){
-            console.log(item);
             parentMenus.push(a)
             menus.push(a)
           }

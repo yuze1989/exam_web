@@ -117,7 +117,7 @@ export default {
     open() {
       this.examId =  this.editItem.id,
       this.getList()
-      console.log(this.editItem, 'this.editItem.id联合考试')
+
     },
     confirm() {
       this.commit()
@@ -133,7 +133,6 @@ export default {
         .post(`${this.API.examinfo.unionList}?examId=${this.examId}`)
         .then((res) => {
           this.list = res.result
-          console.log(res,'ppppp')
         })
         .catch(() => {})
     },

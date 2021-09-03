@@ -86,7 +86,7 @@
     methods: {
       handleAdd(){
         if(this.forms.province==''){
-          console.log(this.forms.province)
+
           alert('!请选择省份')
         }else{
          this.examrooms.push({
@@ -106,7 +106,7 @@
           if (valid) {
             alert('submit!');//这里就是符合规则，然后去调对应的接口
           } else {
-            console.log('error submit!!');
+
             return false;
           }
         });

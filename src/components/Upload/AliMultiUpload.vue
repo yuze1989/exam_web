@@ -131,7 +131,7 @@ export default {
 
     handleSuccess(response, file, fileList) {
       //this.isLoading = false;
-      console.log("handleSuccess ========" + fileList);
+
     },
 
     beforeUpload(file) {
@@ -158,7 +158,7 @@ export default {
       } else {
         this.type = file.type;
       }
-      console.log("beforeUpload ========" + file);
+
       this.filesCount++;
       this.isLoading = true;
       return true;

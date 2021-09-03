@@ -137,7 +137,7 @@ export default {
           subject: [{}]
         };
       } else {
-        console.log(this.editItem.address.split(","),'pp')
+
         this.from = {
           name: this.editItem.name,
           price: (this.editItem.price/100).toFixed(2),
@@ -199,7 +199,7 @@ export default {
       this.subject = [...this.subject.push("")] 
     },
     delSubject(index){
-      console.log(index,'index')
+
       this.subject.splice(index,1);
     },
     edit() {

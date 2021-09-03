@@ -456,7 +456,7 @@ export default {
       let n2 = 0 //总分配人数
       let n3 = 0;
 
-      console.log(`当前操作第${index}行,当前操作-${type},总分配人数${this.forms.maxExamCode += n2},总待分配人数${this.forms.unDistributCount -= n}`)
+      //console.log(`当前操作第${index}行,当前操作-${type},总分配人数${this.forms.maxExamCode += n2},总待分配人数${this.forms.unDistributCount -= n}`)
 
       //考场数
       this.formsData.examrooms.forEach((item, index) => {
@@ -474,9 +474,6 @@ export default {
       })
 
 
-      console.log((n3));
-      console.log(this.init_pp/1); //已分配人数
-      console.log(this.init_num/1); //未分配人数
       if(n3 >= this.init_num/1){
           this.forms.unDistributCount = 0; //未分配考生人数
           this.forms.distributCount = this.init_pp + this.init_num/1;//已分配考生人数

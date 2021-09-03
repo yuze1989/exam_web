@@ -301,7 +301,7 @@ export default {
     },
     //删除
     del(item){
-      console.log(item)
+
       this.editItemData = item
       this.showDel = true
     }
