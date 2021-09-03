@@ -226,12 +226,15 @@ export default {
             "userName": this.from.userName
           }
           this.$axios.post('/user/create',this.from).then((res)=>{
-                  this.$message({
-                    message: '新增成功',
-                    type: 'success',
-                  })
-                  this.$emit('addSuccess')
-                  this.from = {}
+            if(res.code == 200){
+              this.$message({
+                message: '新增成功',
+                type: 'success',
+              })
+              this.$emit('addSuccess')
+              this.from = {}
+            }
+
           })
         } else {
         }

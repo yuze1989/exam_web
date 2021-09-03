@@ -350,6 +350,7 @@ export default {
               show: false,
               mark: item.score,
               edit: false,
+              isArbitrate:item.isArbitrate,
             });
 
           });
@@ -597,7 +598,10 @@ export default {
         }
         this.$axios.post("/exampaper/updateGrade",params).then((res) => {
           if (res) {
-            this.$message.success(`试卷评级更新成功！`);
+            if(res.code == 200){
+              this.$message.success(`试卷评级更新成功！`);
+            }
+
             if (flagType) {
               this.getList();
             } else {
@@ -642,7 +646,7 @@ export default {
         }
         this.$axios.post("/exampaper/updateScore",params).then((res) => {
           if (res) {
-            this.$message.success(`试卷评级更新成功！`);
+            this.$message.success(`试卷分数更新成功！`);
             if (flagType) {
               this.getList(2);
             } else {

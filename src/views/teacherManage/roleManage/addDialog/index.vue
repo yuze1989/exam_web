@@ -180,22 +180,21 @@ export default {
     add() {
       this.$refs.roleForm.validate((valid) => {
         if (valid) {
+          let form = {
+            menuIdList:this.$refs.tree.getCheckedKeys(),
+            roleName: this.from.roleName,
+            roleRemark: this.from.roleRemark,
+            roleType: this.from.roleType,
+          }
           this.$axios
-            .post(this.API.role.create, this.from)
+            .post(this.API.role.create, form)
             .then((res) => {
-              if ((res.code = 200)) {
-                let form = {
-                  menuIdList:this.$refs.tree.getCheckedKeys(),
-                  roleId:res.result
-                }
-                this.$axios.post("/teacher/insertRoleMenu",form).then((res)=>{
-                  this.$message({
-                    message: '新增成功',
-                    type: 'success',
-                  })
-                  this.$emit('addSuccess')
+              if ((res.code == 200)) {
+                this.$message({
+                  message: '新增成功',
+                  type: 'success',
                 })
-
+                this.$emit('addSuccess')
               }
             })
             .catch(() => {})

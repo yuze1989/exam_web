@@ -387,48 +387,6 @@ export default {
                 // path = this.findPath(res.result.menuList)
                 // this.$router.push({ path: path })
 
-                if(res.result.userInfo.roleType == 1){
-                  let menu = localStorage.getItem("menu");
-                  let id = JSON.parse(menu)[0].id
-                  if(id == 96){
-                    menu = [
-                      {
-                        "id": 93,
-                        "nameCn": "试卷管理",
-                        "nameEn": null,
-                        "remark": null,
-                        "parentId": 0,
-                        "orderNumber": 88,
-                        "enabled": null,
-                        "iconClass": null,
-                        "url": null,
-                        "openAuth": false,
-                        "type": 1,
-                        "code": "10093",
-                        "isSys": false,
-                        "usable": 0
-                      },{
-                        "id": 96,
-                        "nameCn": "批改试卷",
-                        "nameEn": null,
-                        "remark": null,
-                        "parentId": 93,
-                        "orderNumber": 91,
-                        "enabled": null,
-                        "iconClass": null,
-                        "url": null,
-                        "openAuth": false,
-                        "type": 1,
-                        "code": "10096",
-                        "isSys": false,
-                        "usable": 1
-                      }
-                    ]
-                    localStorage.setItem("menu",JSON.stringify(menu))
-
-
-                  }
-                }
                 this.$router.push('/index')
               } else {
                 this.$message.error('该账号暂未开放权限')
@@ -437,6 +395,7 @@ export default {
               localStorage.setItem("user_logo",res.result.logo)
               localStorage.setItem("user_school",res.result.schoolName)
               localStorage.setItem("role",res.result.userInfo.roleType)
+              localStorage.setItem("roleName",res.result.userInfo.role)
             })
             .catch((err) => {
               this.logining = false

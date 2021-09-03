@@ -52,7 +52,7 @@
             </el-dropdown-menu>
           </el-dropdown>
           <div style="position: absolute;left:66px;width: 100px;height: 44px;">
-            <div class="admin" style="font-size: 15px">管理员</div>
+            <div class="admin" style="font-size: 15px">{{user.roleName}}</div>
             <div class="admin" style="font-size: 13px">{{user.name}}</div>
           </div>
         </div>
@@ -75,13 +75,14 @@ export default {
   },
   created() {
     this.$bus.$on("upDateUserInfo", (params) => {
-      console.log("logo upDateUserInfo");
       this.user.name = localStorage.getItem("user_name");
+      this.user.roleName = localStorage.getItem("roleName")
       if (localStorage.getItem("user_avatar") !== "null") {
         this.user.imgs = localStorage.getItem("user_avatar");
       }
     });
     this.user.name = localStorage.getItem("user_name");
+    this.user.roleName = localStorage.getItem("roleName")
     if (localStorage.getItem("user_avatar") !== "null") {
       this.user.imgs = localStorage.getItem("user_avatar");
     }
@@ -91,7 +92,7 @@ export default {
       let img = localStorage.getItem("user_logo")?require("../../../../assets/school/tx.png"):localStorage.getItem("user_logo")
       return img;
     },
-    async logout() {
+    logout() {
       // await this.$store.dispatch("user/logout");
       this.$router.push("/login");
     },

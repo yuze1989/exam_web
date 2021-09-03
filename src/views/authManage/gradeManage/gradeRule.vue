@@ -115,7 +115,8 @@
           </div>
           <div class="ruleBody">
             <div class="ruleTextArea">
-              <el-input class="ruleInput" type="textarea" :rows="6" placeholder="请输入内容" v-model="exam.imgUrlDesc">
+              <el-input class="ruleInput" type="textarea" :rows="6" placeholder="请输入内容"  maxlength="200"
+                        show-word-limit v-model="exam.imgUrlDesc">
               </el-input>
               <el-input v-model="exam.percentage" type="number" :min="0">
                 <template slot="append">%</template>

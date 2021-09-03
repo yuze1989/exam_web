@@ -33,7 +33,7 @@
             </span>
           </div>
         </div>
-        <div class="pos-tip">{{ currentPosition + 1 }} / {{ totalCount }}</div>
+        <div class="pos-tip"> <span @dblclick="chagedd">  {{ currentPosition + 1 }} </span> / {{ totalCount }}</div>
         <div
           class="arrow arrow-prev hover-icon"
           :class="{ disabled: currentPosition === 0 }"
@@ -204,6 +204,8 @@ export default {
         left: 0,
         top: 0,
       },
+      isEditN:false,
+      editNum:"",
       mouse: {
         x: 0,
         y: 0,
@@ -211,6 +213,7 @@ export default {
     }
   },
   computed: {
+
     isSlotMode() {
       return !!this.$slots.default
     },
@@ -309,6 +312,29 @@ export default {
     }
   },
   methods: {
+    change(e){
+      this.chanNum = e.data;
+      this.$forceUpdate()
+    },
+    chagedd(){
+      this.$prompt('请输入目标位置', '跳转', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '已跳转'
+        });
+        this.currentPosition = value-1
+        this.$emit('positionUpdated', this.currentPosition)
+        this.resetImage()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消跳转'
+        });
+      });
+    },
     hideClass(){
       let hideSite = sessionStorage.getItem("hideSite")
       if(hideSite == 0){

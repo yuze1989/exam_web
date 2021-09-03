@@ -545,7 +545,7 @@ export const asyncRouter = [
                 path: "/teacherManage",
                 id: 104,
                 code: 10104,
-                name:'teacherManage',
+                name:'rolerManage',
                 component: resolve => require(["@/views/teacherManage/teacherManage/index.vue"], resolve),
                 meta: {
                     name: '教师用户',

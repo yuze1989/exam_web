@@ -144,10 +144,11 @@
             可分配试卷数：{{ all_no  }}
           </el-col>
         </el-row>
-        <div v-if="(type[0]==0&&type[1] == 0)">
+        <div v-if="table1">
           <el-table
               :data="tableData"
-              style="width: 100%">
+              style="width: 100%"
+          key="1">
             <el-table-column
                 prop="teacherName"
                 label="老师"
@@ -168,16 +169,22 @@
                 </el-option>
               </el-select>
                 至
-                <el-select clearable  style="width:70px;"  v-model="scope.row.end"  placeholder="" @change="selkc(scope.row, 'end')">
+                <el-select clearable  style="width:70px;"  v-model="scope.row.end"   placeholder="" @change="selkc(scope.row, 'end')">
                   <el-option
-                      v-for="item in roomList"
-                      :key="item.examinationRoomCode"
+                      v-for="(item,key) in roomList"
+                      :key="key"
                       :label="item.examinationRoomCode"
                       :value="item.examinationRoomCode"
                       :disabled="item.disabled">
                   </el-option>
                 </el-select>
                 考场
+              </template>
+            </el-table-column>
+            <el-table-column
+                label="待分配考场数">
+              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 0)">
+                <span> {{scope.row.youxiao}}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -194,18 +201,93 @@
             </el-table-column>
           </el-table>
         </div>
-        <div  v-if="(type[0]==0&&type[1] == 1)">
+        <div  v-if="table2">
           <el-table
+              :data="tableData"
+              style="width: 100%"
+              key="2"
+              >
+            <el-table-column
+                prop="teacherName"
+                label="老师"
+                width="180"
+            >
+            </el-table-column>
+            <el-table-column
+                label="考场"
+                width="280">
+              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
+                第<el-select clearable  style="width:70px;"  v-model="scope.row.start"  placeholder="" @change="selkc(scope.row, 'start')">
+                <el-option
+                    v-for="item in roomList"
+                    :key="item.examinationRoomCode"
+                    :label="item.examinationRoomCode"
+                    :value="item.examinationRoomCode"
+                    :disabled="item.disabled">
+                </el-option>
+              </el-select>
+                至
+                <el-select clearable  style="width:70px;"  v-model="scope.row.end"  placeholder="" @change="selkc(scope.row, 'end',scope.$index)">
+                  <el-option
+                      v-for="item in roomList"
+                      :label="item.examinationRoomCode"
+                      :value="item.examinationRoomCode"
+                      :disabled="item.disabled">
+                  </el-option>
+                </el-select>
+                考场
+              </template>
+            </el-table-column>
+            <el-table-column
+                label="待分配考场数">
+              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
+                <span> {{scope.row.youxiao}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+                label="人数">
+              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
+                <span> {{scope.row.people}}人</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+                label="可分配试卷数量  ">
+              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
+                <span> {{scope.row.paper}}张</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div v-if="table3">
+          <el-table
+              key="3"
               :data="tableData"
               style="width: 100%">
             <el-table-column
-                v-if="(type[0]==0&&type[1] == 1)"
-                label="勾选"
+                prop="teacherName"
+                label="老师"
+                width="180"
+            >
+            </el-table-column>
+            <el-table-column
+                label="数量">
+              <template slot-scope="scope">
+                <span>试卷数量 <el-input type="number" min="0" v-model="scope.row.num" style="width: 150px" @change="ccx(scope.row)"></el-input></span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div v-if="table4">
+          <el-table
+              key="4"
+              :data="tableData"
+              style="width: 100%"
+              @selection-change="handleSelectionChange">
+            <el-table-column
                 width="70"
+                type="selection"
+                v-if="table4"
             >
-              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
-                <el-checkbox :key="scope.$index" v-model="scope.row.check"></el-checkbox>
-              </template>
             </el-table-column>
             <el-table-column
                 prop="teacherName"
@@ -214,74 +296,14 @@
             >
             </el-table-column>
             <el-table-column
-                label="考场"
-                width="280">
-              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
-                第<el-select clearable  style="width:70px;"  v-model="scope.row.start"  placeholder="" @change="selkc(scope.row, 'start')">
-                <el-option
-                    v-for="item in roomList"
-                    :key="item.examinationRoomCode"
-                    :label="item.examinationRoomCode"
-                    :value="item.examinationRoomCode"
-                    :disabled="item.disabled">
-                </el-option>
-              </el-select>
-                至
-                <el-select clearable  style="width:70px;"  v-model="scope.row.end"  placeholder="" @change="selkc(scope.row, 'end')">
-                  <el-option
-                      v-for="item in roomList"
-                      :key="item.examinationRoomCode"
-                      :label="item.examinationRoomCode"
-                      :value="item.examinationRoomCode"
-                      :disabled="item.disabled">
-                  </el-option>
-                </el-select>
-                考场
-              </template>
-            </el-table-column>
-            <el-table-column
-                label="人数">
-              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
-                <span> {{scope.row.people}}人</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-                label="可分配试卷数量  ">
-              <template slot-scope="scope" v-if="(type[0]==0&&type[1] == 1)">
-                <span> {{scope.row.paper}}张</span>
+                label="数量">
+              <template slot-scope="scope">
+                <span>试卷数量 {{dataA.result.noExamPaperNumCount}}</span>
               </template>
             </el-table-column>
           </el-table>
         </div>
 
-
-        <el-table
-            v-if="type[0]==1"
-            :data="tableData"
-            style="width: 100%">
-          <el-table-column
-              v-if="(type[1]==1)"
-              label="勾选"
-              width="70"
-          >
-            <template slot-scope="scope" v-if="(type[1]==1)">
-              <el-checkbox :key="scope.$index" v-model="scope.row.check"></el-checkbox>
-            </template>
-          </el-table-column>
-          <el-table-column
-              prop="teacherName"
-              label="老师"
-              width="180"
-          >
-          </el-table-column>
-          <el-table-column
-              label="数量">
-            <template slot-scope="scope">
-              <span v-if="type[1]==1">试卷数量 {{dataA.result.noExamPaperNumCount}}</span>
-              <span v-if="type[1]==0">试卷数量 <el-input type="number" min="0" v-model="scope.row.num" style="width: 150px" @change="ccx(scope.row)"></el-input></span>
-            </template>
-          </el-table-column>
-        </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <div v-show="fpjd==1">
@@ -446,6 +468,16 @@ export default {
       total1:0,
       item:"",
       all_init:0,
+      multipleSelection: [],
+      table1:false,
+      table2:false,
+      table3:false,
+      table4:false,
+      tableData1:[],
+      tableData2:[],
+      tableData3:[],
+      tableData4:[],
+
     }
   },
   computed: {
@@ -461,6 +493,20 @@ export default {
     this.getExamList()
   },
   methods: {
+    handleSelectionChange(val){
+      this.multipleSelection = val;
+      this.tableData.forEach((item,index)=>{
+        item.check = false;
+      })
+
+      this.tableData.forEach((item,index)=>{
+        val.forEach((a,b)=>{
+          if(a.teacherId == item.teacherId){
+            item.check = true;
+          }
+        })
+      })
+    },
     ccx(row){
       if(row.num && row.num > this.all_no/1){
         this.$message({
@@ -533,11 +579,11 @@ export default {
 
     },
     selkc(row, type) {
-      if(this.noAssignedExaminationNum <=0){
-        this.$message({
-          message: '无待分配考场！',
-          type: 'error'
-        })
+      if(this.noAssignedExaminationNum <0){
+          this.$message({
+            message: '无待分配考场！',
+            type: 'error'
+          })
         return  false;
       }
 
@@ -545,6 +591,7 @@ export default {
       // 如果考场的号码为随机数, 那么可以根据考场的号码 从考场列表中获取index
       let n = 0
       let n1 = 0
+      let n2 = 0
       // let num = +this.aaDate[0].examCode // examCode
       let num = 1 // examCode
       num = num - 1
@@ -563,16 +610,68 @@ export default {
         n = this.roomList[+row.start - 1 - num].examinationRoomNum
         n1 = this.paperList[this.roomList[+row.start - 1 - num].examinationRoomCode]
       } else if(row.start && row.end && +row.end > +row.start){
-        min = (+row.start - 1 - num);
-        max =  (row.end-1 - num);
-        for (let i = (+row.start - 1 - num); i < (+row.end - num); i++) {
+
+        let min = 0;
+        let max = 0;
+        this.roomList.forEach((item,index)=>{
+          if(item.examinationRoomCode == row.start){
+            min = index;
+          }
+          if(item.examinationRoomCode == row.end){
+            max = index;
+          }
+        })
+        for (let i = min; i <= max; i++) {
+          if(!this.roomList[i]){
+            this.roomList[i].examinationRoomNum = 0;
+          }
           n += this.roomList[i].examinationRoomNum
           n1 += this.paperList[this.roomList[i].examinationRoomCode]
+          if(this.paperList[this.roomList[i].examinationRoomCode] != 0){
+            n2 += 1;
+          }
+
         }
       }
+      row.people = n
+      row.paper = n1;
+      row.youxiao = n2;
 
       let yfp = this.assignedExaminationNumInit ; //已分配考场数
       let dfp = 0 ; //待分配考场数
+
+      if(this.type[0] == 0 && this.type[1] == 1){
+        let aList = [];
+        this.tableData.forEach((item,index)=>{
+          if(item.start && item.end && item.start != "" && item.end != ""){
+            //都输入了
+            this.roomList.forEach((a,b)=>{
+              if(a.examinationRoomCode/1<=item.end && a.examinationRoomCode/1>=item.start){
+                //区间范围内
+                if(this.paperList[a.examinationRoomCode] != 0){
+                  aList.push(a.examinationRoomCode)
+                }
+              }
+            })
+          }
+        })
+        aList = Array.from(new Set(aList))
+        yfp += aList.length;
+
+        if(this.examinationRoomNum/1 - yfp < 0){
+          this.$message({
+            message: '超出待分配考场数！',
+            type: 'warning'
+          })
+          return  false;
+        }
+
+        this.noAssignedExaminationNum = this.examinationRoomNum/1 - yfp ; //未分配
+        this.assignedExaminationNum = yfp ; //已分配
+        return  false;
+      }
+
+
 
       //判断
       // 清空选中
@@ -580,15 +679,15 @@ export default {
           a.disabled = false;
       })
       this.tableData.forEach((item,index)=>{
-        if(index != 0 && item.start <= this.tableData[index-1].end){
-          if(item.start != ""){
-            this.$message({
-              message: '当前老师考场起始值应该大于上一位老师考场结束值！',
-              type: 'warning'
-            })
-          }
-          throw new Error()
-        }
+        // if(index != 0 && item.start <= this.tableData[index-1].end){
+        //   if(item.start != ""){
+        //     this.$message({
+        //       message: '当前老师考场起始值应该大于上一位老师考场结束值！',
+        //       type: 'warning'
+        //     })
+        //   }
+        //   throw new Error()
+        // }
         if(item.start && item.end && item.start != "" && item.end != ""){
           //都输入了
           this.roomList.forEach((a,b)=>{
@@ -598,22 +697,23 @@ export default {
             }
           })
 
-          yfp += (item.end/1 - item.start/1)+1;
+          yfp += item.youxiao;
         }
       })
-      this.assignedExaminationNum = yfp ; //已分配
+      if((this.examinationRoomNum/1 - yfp) < 0){
+        this.$message({
+          message: '超出待分配考场数！',
+          type: 'warning'
+        })
+        return  false;
+      }
+
       this.noAssignedExaminationNum = this.examinationRoomNum/1 - yfp ; //未分配
+      this.assignedExaminationNum = yfp ; //已分配
 
 
-      this.tableData.forEach((item,index)=>{
-        if(item.start && item.end){
-
-        }
-      })
 
 
-      row.people = n
-      row.paper = n1;
 
     },
     tijiao(){
@@ -623,7 +723,7 @@ export default {
 
       let url = ""
       if(this.type[0] == 0){
-        if(this.noAssignedExaminationNum <=0){
+        if(this.noAssignedExaminationNum < 0){
           this.$message({
             message: '无待分配考场！',
             type: 'error'
@@ -676,8 +776,8 @@ export default {
           })
         }else if(this.type[1] == 1){
           ddtype = 2;
+          let is_no = false;
           this.tableData.forEach((item,index)=>{
-            if(item.check){
               if(item.start && item.end){
                 data.push({
                   examCode:this.examNameNo,
@@ -689,12 +789,18 @@ export default {
                   modeType:ddtype,
                 })
               }
+            if(item.paper == 0){
+              is_no = true;
             }
+
           })
-          if(data.length == 0){
-            this.$message.error('请先勾选老师！')
-            return  false;
+
+          if(is_no){
+            this.$message.error('请确认可分配试卷数量不为0！')
+            isF = false;
+            return false
           }
+
         }
 
       }else if(this.type[0] == 1){
@@ -702,8 +808,10 @@ export default {
           this.$message.error('没有可分配的试卷！')
           return  false;
         }
-        url="/exampaper/examDistributionRandomOne"
+
+
         if(this.type[1] ==0){
+          url="/exampaper/examDistributionRandomOne"
           this.tableData.forEach((item,index)=>{
             if(item.num){
               data.push({
@@ -721,16 +829,17 @@ export default {
             return  false;
           }
         }else if(this.type[1] == 1){
+          url="/exampaper/examDistributionRandomTwo"
           let n = 0;
           this.tableData.forEach((item,index)=>{
             if(item.check){
-              if(this.dataA.result.examinationPaperNum && this.dataA.result.examinationPaperNum != 0){
+              if(this.dataA.result.noExamPaperNumCount && this.dataA.result.noExamPaperNumCount != 0){
                 // n = n/1+item.num/1;
                 data.push({
                   examCode:this.examNameNo,
                   examId: this.examId,
                   subject:this.course,
-                  erNum:this.dataA.result.examinationPaperNum,
+                  erNum:this.dataA.result.noExamPaperNumCount,
                   teacherId:item.teacherId,
                   modeType:2
                 })
@@ -764,20 +873,71 @@ export default {
     },
     //修改模式
     modeChange(){
-        let res = this.dataA;
-        //考场
-        this.tableData = res.result.teacherName;
-        this.aaDate = [];
-        this.tableData.forEach((item,index)=>{
-          this.aaDate.push({
-            teacherId:"",
-            start:"",
-            end:"",
-            peopleCount:0
-          })
+      let res = [];
+      res = JSON.parse(JSON.stringify(this.dataA));
+
+      //考场
+      this.aaDate = [];
+      this.tableData.forEach((item,index)=>{
+        this.aaDate.push({
+          teacherId:"",
+          start:"",
+          startIndex:"",
+          end:"",
+          endIndex:"",
+          peopleCount:0
         })
-        this.roomList = res.result.examinationRoomCode;
-        this.paperList = res.result.noExamPaperNum;
+      })
+
+      if(this.type[0]==0 && this.type[1] == 0){
+        this.table1 = true;
+        this.table2 = false;
+        this.table3 = false;
+        this.table4 = false;
+        this.tableData = [];
+        this.$forceUpdate()
+        this.tableData = res.result.teacherName;
+      }else if(this.type[0]==0 && this.type[1] == 1){
+        this.table1 = false;
+        this.table2 = true;
+        this.table3 = false;
+        this.table4 = false;
+        this.tableData = [];
+        this.$forceUpdate()
+        this.tableData = res.result.teacherName;
+      }else if(this.type[0]==1 && this.type[1] == 0){
+        this.table1 = false;
+        this.table2 = false;
+        this.table3 = true;
+        this.table4 = false;
+        this.tableData = [];
+        this.$forceUpdate()
+        this.tableData = res.result.teacherName;
+      }else if(this.type[0]==1 && this.type[1] == 1){
+        this.table1 = false;
+        this.table2 = false;
+        this.table3 = false;
+        this.table4 = true;
+        this.tableData = [];
+        this.$forceUpdate()
+        this.tableData= res.result.teacherName;
+      }
+
+        // res = JSON.parse(JSON.stringify(this.dataA));
+
+      this.assignedExaminationNum = res.result.assignedExaminationNum;
+      this.assignedExaminationNumInit = res.result.assignedExaminationNum;
+      this.examinationRoomNum = res.result.examinationRoomNum;
+      this.noAssignedExaminationNum = res.result.noAssignedExaminationNum;
+      let all = 0 ;
+      for(let key in res.result.noExamPaperNum){
+        all += res.result.noExamPaperNum[key]
+      }
+
+      this.all_no = res.result.noExamPaperNumCount;
+      this.all_init = res.result.noExamPaperNumCount;
+      this.roomList = res.result.examinationRoomCode;
+      this.paperList = res.result.noExamPaperNum;
 
     },
     //获取考试列表
@@ -801,13 +961,17 @@ export default {
         "examId": this.examId,
         "provinceCode": "",
         "schoolId": "",
-        "size": 10
+        "size": 1000
       }
       this.$axios.post(
           '/exampaper/examDistributionPaper',data
       ).then(res=>{
         this.dataA = res;
         this.loading = false;
+        this.table1 = false;
+        this.table2 = false;
+        this.table3 = false;
+        this.table4 = false;
         this.assignedExaminationNum = res.result.assignedExaminationNum;
         this.assignedExaminationNumInit = res.result.assignedExaminationNum;
         this.examinationRoomNum = res.result.examinationRoomNum;

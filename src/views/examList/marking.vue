@@ -763,7 +763,6 @@ export default {
             ),
             all:this.unmarkedCount || 0
           },];
-          console.log(this.descriptionLevelList);
           let rule = localStorage.getItem("role");
           for (let i = 0; i < resultList.length; i++) {
             let progress;
