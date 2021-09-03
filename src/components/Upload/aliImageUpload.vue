@@ -71,7 +71,7 @@ export default {
       return ret;
     },
     beforeUpload(file) {
-      console.log("beforeUpload");
+
 
       let isUseSize = true;
       let isImage = true;
@@ -81,7 +81,6 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 20;
       return new Promise(async (resolve, reject) => {
         let ret = this.isCheckSize && !(await this.checkUploadSize(file));
-        console.log("ret" + JSON.stringify(ret));
         if (ret) {
           reject();
         } else if (!isLt2M) {
@@ -228,7 +227,6 @@ export default {
                 "https://trainfiles.oss-cn-hangzhou.aliyuncs.com/",
                 url
               );
-              console.log("url:" + url);
               this.$emit("update:imageUrl", res.url);
               this.$emit("files", {
                 size: item.file.size,
@@ -238,7 +236,7 @@ export default {
               //this.list.push(res.url);
               //console.log(res)
               this.$emit("upload", this.originImgUrl(res.url));
-              console.log(item.file);
+
               loading.close();
             });
             // return result.url;

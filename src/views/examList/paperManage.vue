@@ -331,7 +331,7 @@ export default {
       // todo 待完善
       let url = '/exampaper/examCorrectPaperListAll'
       this.$axios.post(url,data).then((response) => {
-        console.log(data);
+
         const result = response.result || {};
         this.totalItem = result.total;
           const list = [];
@@ -688,7 +688,7 @@ export default {
       this.paperList.forEach((item, key) => {
         if (index === key) {
           item.show = true;
-          console.log(item);
+
         } else {
           item.show = false;
         }

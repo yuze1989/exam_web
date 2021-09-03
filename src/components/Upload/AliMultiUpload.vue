@@ -194,7 +194,6 @@ export default {
       //   });
     },
     uploadImg(item) {
-      console.log(item);
       const OSS = require("ali-oss");
       this.$axios.post("art/tool/ossAppConfig", {}).then((res) => {
         if (parseInt(res.code) === 0) {

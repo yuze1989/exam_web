@@ -172,7 +172,7 @@ export default {
       this.$axios
         .get(`${this.API.studentsManage.getAddressByExamId}?examId=${examId}`, {})
         .then((res) => {
-          console.log(res,'res')
+
           this.addressList = res.result.map((item) => ({
             value: item.examAddress,
             label: item.examAddress,
@@ -200,7 +200,7 @@ export default {
     },
     // api
     commit() {
-      console.log(this.fileList, 'confirm')
+
       if (!this.from.examId) {
         this.$message({
           message: '请先选择考试',
@@ -238,7 +238,7 @@ export default {
 
             })
             .catch((error) => {
-              console.log(error);
+
             })
         } else {
         }

@@ -122,7 +122,7 @@ export default {
     }
   },
   created() {
-    console.log(this.isAdd);
+
   },
   methods: {
     selectedProvince(payload) {
@@ -146,8 +146,7 @@ export default {
           .get(`/user/detail?id=${this.editItem.id}`)
           .then((res) => {
             if ((res.code = 200)) {
-              console.log(this.roleTypeList);
-              console.log(res.result.roleType);
+
               this.from = {
                 id: this.editItem.id,
                 loginCode: this.editItem.loginCode,
@@ -158,7 +157,7 @@ export default {
                 userName: this.editItem.userName,
                 roleType:this.roleTypeList[res.result.roleType]
               }
-              console.log(this.from,' this.from')
+
             }
           })
       }else{
@@ -204,7 +203,7 @@ export default {
     // api
     add() {
       this.$refs.teacherForm.validate((valid) => {
-        console.log(this.from, '')
+
         if (valid) {
           // this.$axios
           //   .post(this.API.teacher.create, this.from)

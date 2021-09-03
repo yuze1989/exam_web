@@ -234,7 +234,7 @@ export default {
       this.getList()
     },
     editItem(item) {
-      console.log(item, 'item')
+
       this.isAddType = 0
       this.isAdd = true
       this.editItemData = item
@@ -249,7 +249,7 @@ export default {
           type: 'warning',
         })
         .then(() => {
-          console.log('111')
+
           that.$axios
             .post(that.API.teacher.setState, {
               id: item.id,

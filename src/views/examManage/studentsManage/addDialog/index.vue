@@ -250,14 +250,13 @@ export default {
       this.from.url = ""
     },
     handleChange(file, fileList) {
-      console.log(file,'file')
-      console.log(fileList,'fileList')
+
       this.file = file
       this.fileList = [file]
       this.showBtnImg = fileList.length <1
     },
     handleRemove(file, fileList){
-      console.log(file, fileList,'file, fileLis')
+
       if(fileList.length <1){
         this.showBtnImg = true
       }
@@ -316,11 +315,7 @@ export default {
         .catch(() => {})
     },
     getRoomList(examId) {
-      console.log(
-        `${this.API.studentsManage.roomsList}?examId=${examId}`,
-        examId,
-        'examId',
-      )
+
       this.$axios
         .get(`${this.API.studentsManage.roomsList}?examId=${examId}`, {})
         .then((res) => {
@@ -335,7 +330,6 @@ export default {
       this.$axios
         .get(`${this.API.studentsManage.getAddressByExamId}?examId=${examId}`, {})
         .then((res) => {
-          console.log(res,'res')
           this.addressList = res.result.map((item) => ({
             value: item.examAddress,
             label: item.examAddress,
@@ -361,7 +355,7 @@ export default {
       this.fileList= []
       this.file=""
       this.showBtnImg= true,
-      console.log(this.editItem, this.isAdd, 'this.isAdd')
+
       if (this.isAdd) {
         this.from = {}
       } else {
@@ -427,7 +421,7 @@ export default {
           if(this.file){
             param.append('examineeFile', this.file.raw)
           }
-          console.log('11', this.fileList[0])
+
           let url = `${this.API.studentsManage.examineeCreate}?${str}`
           this.$axios
             .post(url, param)
@@ -448,22 +442,7 @@ export default {
     //  修改
     edit() {
       this.$refs.studentsForm.validate((valid) => {
-        console.log(
-          {
-            examId: this.from.examId, //考试id
-            studioId: this.from.studioId, // 机构id
-            contactName: this.from.contactName, //联系人
-            name: this.from.name,
-            identification: this.from.identification,
-            mobile: this.from.mobile,
-            province: this.from.province,
-            provinceCode: this.from.provinceCode,
-            gender: this.from.gender, //:男，女，其他
-            examineeFile: this.from.examineeFile, // 文件
-            address:this.from.address,
-          },
-          '提交信息',
-        )
+
 
         if (valid) {
           let data = {

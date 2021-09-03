@@ -62,9 +62,9 @@ export default {
 
     handleSelect(key, keyPath) {
       let currentSchoolId = localStorage.getItem("currentSchoolId");
-      console.log(currentSchoolId);
+
               this.activeIndex = key;
-        console.log("key:" + key);
+
         this.$router.push({
           path: key,
           params: { data: "query" },

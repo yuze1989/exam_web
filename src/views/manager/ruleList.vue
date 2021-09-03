@@ -98,7 +98,6 @@ export default {
     //显示编辑界面
     handleEdit: function (index, row) {
       this.$store.state.scoreRule = row
-      console.log('row', row)
       this.$router.push({ path: '/gradeRule', query: { id: row.id } })
     },
     handleCurrentChange(val) {

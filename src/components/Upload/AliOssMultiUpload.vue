@@ -90,7 +90,7 @@ export default {
         let extension = file.name
           .substring(file.name.lastIndexOf(".") + 1)
           .toLowerCase();
-        console.log("ret" + JSON.stringify(ret));
+
         if (ret) {
           reject();
         } else if (

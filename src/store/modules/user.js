@@ -52,7 +52,7 @@ const actions = {
   login({
     commit
   }, data) {
-    console.log(commit,data)
+
     return new Promise((resolve, reject) => {
       request({
         url: "/user/login",
@@ -66,7 +66,7 @@ const actions = {
       }).then(response => {
         if (response.code == "200") {
           response.result.user ={}
-          console.log(response)
+
           commit("SET_TOKEN", response.result.token);
           commit("SET_MENU", response.result.menuList);
           commit("SET_USERNAME", response.result.user.userName);

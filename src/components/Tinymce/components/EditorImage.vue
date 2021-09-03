@@ -68,7 +68,7 @@ export default {
       this.images = [];
     },
     upload(lists) {
-      console.log("lists" + JSON.stringify(lists));
+
       this.imageKeys = lists;
       this.$emit("successCBK", this.imageKeys);
       this.list = [];

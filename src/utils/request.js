@@ -73,7 +73,7 @@ service.interceptors.response.use(
       elink.download = fileName;
       elink.style.display = 'none';
       elink.href = URL.createObjectURL(blob);
-      console.log( URL.createObjectURL(blob),' URL.createObjectURL(blob)')
+
       document.body.appendChild(elink);
       elink.click();
       URL.revokeObjectURL(elink.href); // 释放URL 对象
@@ -111,7 +111,7 @@ service.interceptors.response.use(
     return Promise.reject(res);
   },
   error => {
-    console.log(error.message,'error.message');
+
     Message({
       message: "访问异常，请联系管理员",
       type: "error",

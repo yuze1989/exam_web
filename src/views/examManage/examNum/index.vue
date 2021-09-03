@@ -218,7 +218,7 @@ export default {
           this.form.pageNum = res.result.pageNum
           this.form.pageSize = res.result.pageSize
           this.form.total = res.result.total
-          console.log(this.result.list, 'this.list')
+
         })
         .catch(() => {
           this.listLoading = false

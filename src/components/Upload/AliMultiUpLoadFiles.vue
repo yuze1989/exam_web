@@ -41,7 +41,7 @@ export default {
   },
   watch: {
     image(o, val) {
-      console.log("watch" + JSON.stringify(o));
+
       this.imageList = o;
       this.list = [...o];
     },
@@ -79,10 +79,10 @@ export default {
       return ret;
     },
     beforeUpload(file) {
-      console.log("file" + file);
+
       return new Promise(async (resolve, reject) => {
         let ret = this.isCheckSize && !(await this.checkUploadSize(file));
-        console.log("ret" + JSON.stringify(ret));
+
         if (ret) {
           reject();
         } else {
@@ -96,10 +96,10 @@ export default {
       this.$emit("update", this.list);
     },
     handleUploadChange(file, fileList) {
-      console.log("handleUploadChange", JSON.stringify(fileList));
+
     },
     handleRemove(file, fileList) {
-      console.log("handleRemove", JSON.stringify(fileList));
+
       let files = [];
       this.list.forEach((item) => {
         if (item.url != file.url) {
@@ -145,7 +145,7 @@ export default {
               url
             );
             res.url = res.url.replace('https://trainfiles.oss-cn-hangzhou.aliyuncs.com/',url)
-            console.log("res" + res);
+
             this.list.push({
               size: item.file.size,
               name: item.file.name,

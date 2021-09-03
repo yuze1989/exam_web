@@ -91,7 +91,7 @@ export default {
     beforeUpload(file) {
       return new Promise(async (resolve, reject) => {
         let ret = this.isCheckSize && !(await this.checkUploadSize(file));
-        console.log("ret" + JSON.stringify(ret));
+
         const isLt2M = file.size / 1024 / 1024 < 100;
         let extension = file.name
           .substring(file.name.lastIndexOf(".") + 1)
@@ -150,7 +150,7 @@ export default {
             timeout: 120000,
           });
 
-          console.log("传图开始：" + 120000);
+
 
           const filename = new Date().valueOf(); //Date.parse(new Date());
           const fileExt = item.file.name.toLowerCase().split(".").splice(-1);
@@ -163,8 +163,8 @@ export default {
             fileExt[0];
           // console.log("newFilename"+newFilename)
           client.put(newFilename, item.file).then((res) => {
-            console.log("uploadvideo res:" + JSON.stringify(res));
-            console.log("传图完成：" + 120000);
+
+
             let url = this.ossMess.host.replace(this.ossMess.dir, "");
             res.url = res.url.replace(
               "http://trainfiles.oss-cn-hangzhou.aliyuncs.com/",
