@@ -321,13 +321,27 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
       }).then(({ value }) => {
-        this.$message({
-          type: 'success',
-          message: '已跳转'
-        });
-        this.currentPosition = value-1
-        this.$emit('positionUpdated', this.currentPosition)
-        this.resetImage()
+        var leg = this.finallyImageList.length;
+        if(value-1 > leg){
+          this.$message({
+            type: 'error',
+            message: '超出试卷最大页！'
+          });
+          return false
+        }else if(value-1 < 0){
+          this.$message({
+            type: 'error',
+            message: '低于试卷最小页！'
+          });
+        }else{
+          this.$message({
+            type: 'success',
+            message: '已跳转'
+          });
+          this.currentPosition = value-1
+          this.$emit('positionUpdated', this.currentPosition)
+          this.resetImage()
+        }
       }).catch(() => {
         this.$message({
           type: 'info',

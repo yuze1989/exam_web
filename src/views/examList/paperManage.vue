@@ -646,13 +646,17 @@ export default {
         }
         this.$axios.post("/exampaper/updateScore",params).then((res) => {
           if (res) {
-            this.$message.success(`试卷分数更新成功！`);
-            if (flagType) {
-              this.getList(2);
-            } else {
-              this.getList(2);
+            if(res.code == 200){
+              this.$message.success(`试卷分数更新成功！`);
+              if (flagType) {
+                this.getList(2);
+              } else {
+                this.getList(2);
+              }
+              this.nextViewImg()
             }
-            this.nextViewImg()
+
+
             // this.queryDealedCount();
           }else{
             this.getList()

@@ -147,7 +147,7 @@
         <span class="titleStyle">设置作品照片要求</span>
       </el-row>
       <div class="sample">
-        <el-input class="sampleInput" type="textarea" :rows="9" placeholder="适用于手机APP上传试卷" v-model="form.rule.takePic">
+        <el-input class="sampleInput" type="textarea" :rows="9" placeholder="适用于手机APP上传试卷" v-model="form.rule.takePic" maxlength="200" show-word-limit>
         </el-input>
         <div class="uploadCtn" @click="upToOss2()">
           <div class="uploadIcon">

@@ -605,10 +605,20 @@ export default {
         row[type] = ''
         return false
       } else if (row.start && row.end && +row.end == +row.start) {
-        min = +row.start - 1 - num;
-        max = min;
-        n = this.roomList[+row.start - 1 - num].examinationRoomNum
-        n1 = this.paperList[this.roomList[+row.start - 1 - num].examinationRoomCode]
+        this.roomList.forEach((item,index)=>{
+          if(item.examinationRoomCode == row.start){
+            min = index;
+          }
+          if(item.examinationRoomCode == row.end){
+            max = index;
+          }
+        })
+        n = this.roomList[min].examinationRoomNum
+
+        n1 = this.paperList[row.start]
+        if(this.paperList[this.roomList[min].examinationRoomCode] != 0){
+          n2 += 1;
+        }
       } else if(row.start && row.end && +row.end > +row.start){
 
         let min = 0;
@@ -739,18 +749,19 @@ export default {
           let is_no = false;
           this.tableData.forEach((item,index)=>{
             if(item.start && item.end){
-              if(index > 0){
-                if(item.start <= max){
-                  this.$message.error('考场不能重复！')
-                  isF = false;
-                  return false
-                }
+              // if(index > 0){
+              //   if(item.start <= max){
+              //     this.$message.error('考场不能重复！')
+              //     isF = false;
+              //     return false
+              //   }
+              // }
+              // max = item.end;
+              if(item.paper == 0){
+                is_no = true;
               }
-              max = item.end;
             }
-            if(item.paper == 0){
-                  is_no = true;
-            }
+
           })
           if(is_no){
             this.$message.error('请确认可分配试卷数量不为0！')
@@ -788,10 +799,11 @@ export default {
                   teacherId:item.teacherId,
                   modeType:ddtype,
                 })
+                if(item.paper == 0){
+                  is_no = true;
+                }
               }
-            if(item.paper == 0){
-              is_no = true;
-            }
+
 
           })
 
