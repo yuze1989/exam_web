@@ -293,12 +293,12 @@
           <vue-img-viewer
               ref="imgViewer"
               :container="'imgViewerContainer'"
-              :image-urls="imgList"
+              :image-urls="imgList1"
+              :image-urls1="imgList1"
               :visible="visible"
               :initial-scale="1"
               @positionUpdated="imgSwitchEnd"
               :start-position="startPosition"
-              :start-position2="hideSite"
           >
           </vue-img-viewer>
           <div class="previous-image box_img" @click="clickImg(1)"  style="top: 100px!important;">
