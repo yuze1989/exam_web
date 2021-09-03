@@ -56,7 +56,7 @@
                 <el-checkbox v-model="form.subjectList.xb">性别</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox disabled v-model="form.subjectList.ksbh">考试编号</el-checkbox>
+                <el-checkbox v-model="form.subjectList.ksbh">考试编号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox v-model="form.subjectList.ksdz">考试地址</el-checkbox>
@@ -141,7 +141,7 @@ export default {
           km:true,
           kc:false,
           xb:false,
-          ksbh:true,
+          ksbh:false,
           ksdz:false,
           zwh:false
         },

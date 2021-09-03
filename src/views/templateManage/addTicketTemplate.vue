@@ -36,7 +36,7 @@
               </div>
               <div class="display-center">
                    <div class="title">考试标题</div>
-                   <el-input v-model="form.examTitle" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题" ></el-input>
+                   <el-input v-model="form.examTitle" @change="fontS" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题" ></el-input>
               </div>
             </div>
              <!--列表-->
@@ -102,7 +102,7 @@
     font-weight: 700;
     letter-spacing: 40px;
     padding-left: 40px;">准考证</div>
-              <div style="font-size: 24px;" v-if="isShow" :class="{ isShow: !isShow }">{{form.examTitle}}</div>
+              <div :style="fontSz" v-if="isShow" :class="{ isShow: !isShow }">{{form.examTitle}}</div>
             </div>
             <div class="template-example-dom" >
 
@@ -214,6 +214,7 @@ export default {
       examId:"",
       oddCode:"",
       oddPro:"",
+      fontSz:"font-size:24px;"
     };
   },
   created() {
@@ -228,8 +229,17 @@ export default {
       this.getList();
     }
   },
-
   methods: {
+    fontS(){
+      var x = this.form.examTitle;
+      if(x < 14){
+        this.fontSz = "font-size:24px;"
+      }else {
+        this.fontSz = "font-size:16px;"
+      }
+
+
+    },
     //获取模板详情
     get_mb(){
       this.$axios
