@@ -85,7 +85,7 @@
       <myPagination
           :current.sync="form.pageIndex"
           :pages.sync="data.pages"
-          :size.sync="form.pageSize"
+          :size.sync="form.size"
           :total.sync="data.total"
           @cb="currentChange"
       />
@@ -206,7 +206,7 @@ export default {
     getList() {
       let params = {
         current : this.form.pageIndex ,
-        size : this.form.size ,
+        size  : this.form.size ,
         // name : this.form.examName,
         examName : this.examName,
         examId : this.examId,

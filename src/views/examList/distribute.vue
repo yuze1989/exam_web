@@ -749,14 +749,6 @@ export default {
           let is_no = false;
           this.tableData.forEach((item,index)=>{
             if(item.start && item.end){
-              // if(index > 0){
-              //   if(item.start <= max){
-              //     this.$message.error('考场不能重复！')
-              //     isF = false;
-              //     return false
-              //   }
-              // }
-              // max = item.end;
               if(item.paper == 0){
                 is_no = true;
               }
@@ -771,16 +763,19 @@ export default {
           if(!isF){
             return false;
           }
+          data = {
+            examCode:this.examNameNo,
+            examId: this.examId,
+            subject:this.course,
+            modeType:ddtype,
+            examinationRoomTeachers:[]
+          }
           this.tableData.forEach((item,index)=>{
             if(item.start && item.end){
-              data.push({
-                examCode:this.examNameNo,
-                examId: this.examId,
-                subject:this.course,
+              data.examinationRoomTeachers.push({
                 erMin:item.start,
                 erMax:item.end,
                 teacherId:item.teacherId,
-                modeType:ddtype,
               })
             }
 
@@ -788,16 +783,19 @@ export default {
         }else if(this.type[1] == 1){
           ddtype = 2;
           let is_no = false;
+          data = {
+            examCode:this.examNameNo,
+            examId: this.examId,
+            subject:this.course,
+            modeType:ddtype,
+            examinationRoomTeachers:[]
+          }
           this.tableData.forEach((item,index)=>{
               if(item.start && item.end){
-                data.push({
-                  examCode:this.examNameNo,
-                  examId: this.examId,
-                  subject:this.course,
+                data.examinationRoomTeachers.push({
                   erMin:item.start,
                   erMax:item.end,
                   teacherId:item.teacherId,
-                  modeType:ddtype,
                 })
                 if(item.paper == 0){
                   is_no = true;
@@ -824,15 +822,18 @@ export default {
 
         if(this.type[1] ==0){
           url="/exampaper/examDistributionRandomOne"
+          data = {
+            examCode:this.examNameNo,
+            examId: this.examId,
+            subject:this.course,
+            modeType:1,
+            paperNumTeachers:[]
+          }
           this.tableData.forEach((item,index)=>{
             if(item.num){
-              data.push({
-                examCode:this.examNameNo,
-                examId: this.examId,
-                subject:this.course,
+              data.paperNumTeachers.push({
                 erNum:item.num,
                 teacherId:item.teacherId,
-                modeType:1
               })
             }
           })
@@ -843,17 +844,20 @@ export default {
         }else if(this.type[1] == 1){
           url="/exampaper/examDistributionRandomTwo"
           let n = 0;
+          data = {
+            examCode:this.examNameNo,
+            examId: this.examId,
+            subject:this.course,
+            modeType:2,
+            paperNumTeachers:[]
+          }
           this.tableData.forEach((item,index)=>{
             if(item.check){
               if(this.dataA.result.noExamPaperNumCount && this.dataA.result.noExamPaperNumCount != 0){
                 // n = n/1+item.num/1;
-                data.push({
-                  examCode:this.examNameNo,
-                  examId: this.examId,
-                  subject:this.course,
+                data.paperNumTeachers.push({
                   erNum:this.dataA.result.noExamPaperNumCount,
                   teacherId:item.teacherId,
-                  modeType:2
                 })
               }
             }
@@ -866,7 +870,17 @@ export default {
         }
 
       }
-      if(data.length > 0){
+      let isGo = false;
+      if(this.type[0] == 0){
+        if(data.examinationRoomTeachers.length > 0){
+          isGo = true;
+        }
+      }else if(this.type[0] == 1){
+        if(data.paperNumTeachers.length > 0){
+          isGo = true;
+        }
+      }
+      if(isGo){
         this.$axios.post(url,data).then((res)=>{
           if(res.code == 200){
             this.$message.success('操作成功')

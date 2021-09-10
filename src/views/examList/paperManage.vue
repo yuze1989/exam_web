@@ -100,7 +100,8 @@
               <el-input
                   :ref="`markInput${index}`"
                   v-if="paper.show"
-                  :class="paper.name"
+                  v-fo
+                  :class="`markInput${index}`"
                   v-model="paper.mark"
                   @input="handleVerifyScore(paper.mark, index)"
                   @keyup.native.enter="
@@ -709,6 +710,8 @@ export default {
     },
     // 设置分数并跳转到下一张
     markPaperAndToNext(paperId, index, $event) {
+      let a = index + 1;
+      let pr = document.querySelector(".markInput"+index);
       this.paperList[index].show = false;
       if (index < this.paperList.length - 1) {
         this.currentIndex = index + 1;

@@ -24,12 +24,13 @@ import load from "./dynamicLoadScript";
 
 // why use this cdn, detail see https://github.com/PanJiaChen/tinymce-all-in-one
 const tinymceCDN =
-  "https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js";
+  "https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.5/tinymce.min.js";
 
 export default {
   name: "Tinymce",
   components: { editorImage },
   props: {
+
     id: {
       type: String,
       default: () => {
@@ -165,6 +166,8 @@ export default {
         advlist_bullet_styles: "square",
         advlist_number_styles: "default",
         default_link_target: "_blank",
+        automatic_uploads:false,
+        images_upload_url:"/file/upload",
         link_title: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         init_instance_callback: (editor) => {

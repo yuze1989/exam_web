@@ -260,7 +260,7 @@ export default {
       this.listLoading = true
       let params = {
         current: this.forms.current,
-        pageSize: this.forms.pageSize,
+        size: this.forms.pageSize,
         name: this.forms.model.name,
         examId:this.examId,
         examStatus:

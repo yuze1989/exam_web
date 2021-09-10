@@ -195,7 +195,7 @@ export default {
     getList() {
       let params = {
         current : this.form.pageIndex ,
-        pageSize : this.form.size ,
+        size : this.form.pageSize ,
         studioName:this.form.studentName
       };
       this.$axios

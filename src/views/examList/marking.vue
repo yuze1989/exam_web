@@ -619,7 +619,7 @@ export default {
       this.$axios.post(url1,{
         "course": this.$route.query.course,
         "examId": this.$route.query.examId,
-        "size": 10,
+        "size": 20,
       }).then((res)=>{
             this.Score=res.result.Score;
             this.NoScore=res.result.NoScore;
@@ -767,11 +767,8 @@ export default {
           for (let i = 0; i < resultList.length; i++) {
             let progress;
             let all;
-            if(rule == 1){
-              all = (this.unmarkedCount || 0)*((this.descriptionLevelList[i].percentage/100 ) || 0)
-            }else{
-              all = (this.unmarkedCount || 0)
-            }
+
+            all = (this.unmarkedCount || 0)*((this.descriptionLevelList[i].percentage/100 ) || 0)
             all = Math.ceil(all)
             progress = Math.round(
                 ((resultList[i].count || 0) / (all/1 || 0) * 100)

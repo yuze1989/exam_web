@@ -201,7 +201,7 @@ export default {
         {id:1,name:'随机顺序'},
       ],
       hideSiteList: [
-        {id:"",name:'不隐藏'},
+        {id:-1,name:'不隐藏'},
         {id:0,name:'左上'},
         {id:1,name:'右上'},
         {id:2,name:'左下'},

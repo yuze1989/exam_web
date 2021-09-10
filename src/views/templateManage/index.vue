@@ -92,7 +92,7 @@
       <myPagination
         :current.sync="form.pageIndex"
         :pages.sync="data.pages"
-        :size.sync="form.pageSize"
+        :size.sync="form.size"
         :total.sync="data.total"
         @cb="currentChange"
       />

@@ -48,6 +48,13 @@ Object.defineProperty(Vue.prototype, "$dayjs", {
   value: dayjs
 });
 
+// main.js
+Vue.directive('fo', {
+  inserted (el, binding, vnode) {
+    // 聚焦元素
+    el.querySelector('input').focus()
+  }
+})
 
 Vue.config.productionTip = false;
 
