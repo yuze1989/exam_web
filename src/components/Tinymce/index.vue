@@ -155,6 +155,8 @@ export default {
         advlist_bullet_styles: "square",
         advlist_number_styles: "default",
         default_link_target: "_blank",
+        automatic_uploads:false,
+        images_upload_url:"/file/upload",
         link_title: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         init_instance_callback: (editor) => {
