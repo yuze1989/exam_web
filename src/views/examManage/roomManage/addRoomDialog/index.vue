@@ -8,7 +8,7 @@
     width="30%"
     center
   >
-    <div slot="title">{{from.studioCode ? '编辑' : '新增'}}机构信息</div>
+    <div slot="title">{{editItem.id ? '编辑' : '新增'}}机构信息</div>
     <el-form
       label-width="100px"
       :model="from"
@@ -18,14 +18,14 @@
       :rules="rules"
       ref="ruleForm"
     >
-     <el-form-item label="机构编号" prop="studioName" v-if="from.studioCode">
-       {{ from.studioCode}}
+     <el-form-item label="机构编码" prop="studioCode">
+       <el-input v-model="from.studioCode" placeholder="请输入机构编码"></el-input>
       </el-form-item>
       <el-form-item label="机构名称" prop="studioName">
         <el-input v-model="from.studioName" placeholder="请输入机构名称"></el-input>
       </el-form-item>
          <el-form-item label="机构地区" prop="studioAreaCode">
-        <el-select clearable  v-model="from.studioAreaCode" placeholder="请选择" @change="studioAreaChange">
+        <el-select clearable  v-model="from.studioAreaCode" placeholder="请选择省" @change="studioAreaChange">
           <el-option
             v-for="item in studioAreaOption"
             :key="item.provinceCode"
@@ -33,6 +33,14 @@
             :value="item.provinceCode">
           </el-option>
         </el-select>
+           <el-select clearable  v-model="from.studioCityName" placeholder="请选择市" @change="studioAreaChange2">
+             <el-option
+                 v-for="item in studioAreaOption2"
+                 :key="item.provinceCode"
+                 :label="item.province"
+                 :value="item.provinceCode">
+             </el-option>
+           </el-select>
       </el-form-item>
         <el-form-item label="机构联系人" prop="contactName">
         <el-input v-model="from.contactName" placeholder="请输入机构联系人姓名"></el-input>
@@ -78,7 +86,19 @@ export default {
     studioAreaChange(e){
       this.studioAreaOption.map(item =>{
         if(item.provinceCode == e){
-          this.from.studioAreaName = item.province
+          this.from.studioAreaName = item.province;
+          this.from.proviceCode = item.provinceCode;
+          this.getAllProvinces2();
+        }
+      })
+    },
+    // 区域改变监听
+    studioAreaChange2(e){
+
+      this.studioAreaOption2.map(item =>{
+        if(item.provinceCode == e){
+          this.from.studioCityCode  = item.provinceCode
+          this.from.studioCityName  = item.province
         }
       })
     },
@@ -86,6 +106,13 @@ export default {
      getAllProvinces(){
       getAllProvince().then(res=>{
         this.studioAreaOption = res.result
+      })
+    },
+    // 获取市
+    getAllProvinces2(){
+      this.from.studioCityName = "";
+      this.$axios.get('/examinfo/allCity?provinceCode='+this.from.proviceCode).then(res=>{
+        this.studioAreaOption2 = res.result
       })
     },
     close() {
@@ -105,7 +132,7 @@ export default {
       } else {
         this.from = {
           studioName: this.editItem.studioName,  // 机构名称
-           studioCode : this.editItem.studioCode, //机构编码
+          studioCode : this.editItem.studioCode, //机构编码
           studioAreaName: this.editItem.studioAreaName, // 机构区域名称
           studioAreaCode : this.editItem.studioAreaCode, // 机构区域编码
           contactName : this.editItem.contactName , //机构联系人姓名
@@ -172,8 +199,12 @@ export default {
         studioAreaCode: "",
         studioAreaName: "",
         contactName: '',
-        contactMobile: ""
+        contactMobile: "",
+        proviceCode:"",
+        studioCityCode:"",
+        studioCityName:""
       },
+      studioAreaOption2:[],
       studioAreaOption: [],
       rules: {
         studioName: [{ required: true, message: "请输入机构名称", trigger: "blur" }],
@@ -184,7 +215,7 @@ export default {
           { required: true, message: "请输入机构联系人", trigger: "blur" },
         ],
          contactMobile  : [
-          { required: true, message: "请输入机构联系人手机号", trigger: "blur" },
+          {required: true, message: "请输入机构联系人手机号", trigger: "blur" },
           {validator: this.$rules.phoneNumber, trigger: 'blur'}
         ],
       },
@@ -194,6 +225,11 @@ export default {
 </script>
 
 <style>
+.el-select{
+  width: 48%;
+  margin-right: 2%;
+
+}
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
