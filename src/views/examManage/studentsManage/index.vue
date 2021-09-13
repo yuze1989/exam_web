@@ -10,7 +10,7 @@
         source:'',//报名来源:1手机；2后台 ,
         studioName:'',//: 机构名称 -->
       <el-row style="display: flex;justify-content: flex-end">
-        <el-select clearable  v-model="forms.examName"  placeholder="请选择考试名称" @change="examNameChange"         style="width: 200px; margin-right: 20px; margin-bottom: 5px">
+        <el-select clearable  v-model="forms.examName"  placeholder="请选择考试名称" @change="examNameChange"    style="width: 200px; margin-right: 20px; margin-bottom: 5px">
           <el-option
               v-for="item in examNameOption"
               :key="item.id"
@@ -81,6 +81,8 @@
         <el-button type="primary" @click="add">新增学生信息</el-button>
         <el-button type="primary" @click="onImport">批量导入</el-button>
         <el-button type="primary" @click="checkMore">批量审核</el-button>
+        <el-button type="primary" @click="oneKey">一键审核</el-button>
+        <el-button type="primary" @click="oneKey2">导出学生信息</el-button>
       </el-row>
     </div>
 
@@ -171,7 +173,7 @@
         prop="price"
       >
         <template slot-scope="scope">
-          <span>{{ (scope.row.price / 100).toFixed(2) }}</span>
+          <span>{{ (scope.row.price).toFixed(2) }}</span>
         </template>
       </el-table-column>
 
@@ -266,6 +268,32 @@
       />
     </el-col>
 
+    <el-dialog
+        title="批量审核学生信息"
+        :visible.sync="dialogVisible" >
+      <p style="color: red;margin-top: 0;padding-top: 0">提示：对查询结果中，未审核状态下的学生信息，将全部被审核，审核之前请确认学生信息的准确性。</p>
+      <el-select clearable  style="width: 100%;" v-model="selectCheck2" placeholder="请选择">
+        <el-option
+            v-for="item in checkOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+        ></el-option>
+      </el-select>
+      <br/>
+      <el-input
+          style="width: 100%;margin-top: 10px;"
+          type="textarea"
+          :rows="5"
+          placeholder="请输入内容"
+          v-model="remark2"
+      ></el-input>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="disTrue">确 定</el-button>
+  </span>
+    </el-dialog>
+
     <!--选择审核修改-->
     <el-dialog title="审核学生信息" :visible.sync="showCheck" center>
       <el-select clearable  style="width: 350px;" v-model="selectCheck" placeholder="请选择">
@@ -316,7 +344,7 @@ export default {
       examName:"",
       examId:"",
       examNameOption: [],
-
+      dialogVisible:false,
       //新增
       isAddType: true,//true新增 flase修改
       isAdd: false,
@@ -326,7 +354,9 @@ export default {
       //审核
       showCheck: false,
       selectCheck: 1,
+      selectCheck2: 1,
       remark: '',
+      remark2: '',
       checkId: '',
       checkIds: [],
       isCheckMore: false,
@@ -400,20 +430,6 @@ export default {
     // 上传文件
     onImport(file, fileList) {
       this.showImport = true
-      // var formFile = new FormData()
-      // formFile.append('file', file.file)
-      // this.fileList = []
-      // this.$axios
-      //   .post(this.API.studentsManage.examineeBatchImport, formFile)
-      //   .then((res) => {
-      //     this.$message.success('导入成功')
-      //     this.forms.current = 1
-      //     this.getOrderList()
-      //     this.fileList = []
-      //   })
-      //   .catch((err) => {
-      //     this.listLoading = false
-      //   })
     },
     // 新增学生
     add() {
@@ -537,6 +553,67 @@ export default {
     onSubmit() {
       this.forms.current = 1
       this.getOrderList()
+    },
+    oneKey2(){
+      this.listLoading =true;
+      let data = {
+        "checkStatus": this.forms.checkStatus,
+        "examId": this.examId,
+        "examName": this.forms.examId,
+        "examineeName": this.forms.examineeName,
+        "payStatus": this.forms.payStatus,
+        "provinceCode": "",
+        "remark": this.forms.remark2,
+        "source": this.forms.source,
+        "status": this.selectCheck2,
+        "studioName": this.forms.studioName,
+        schoolId:"",
+      }
+      this.$axios
+          .post(`/examinee/examineeExport`,data)
+          .then((res) => {
+            this.listLoading =false;
+            if (res.code == 200) {
+              const a = document.createElement('a');
+              a.setAttribute("download",'')
+              a.setAttribute("href",res.result)
+              a.click()
+            }
+          })
+          .catch((err) => {
+            this.listLoading = false
+          })
+    },
+    disTrue(){
+      let data = {
+        "checkStatus": this.forms.checkStatus,
+        "examId": this.examId,
+        "examName": this.forms.examId,
+        "examineeName": this.forms.examineeName,
+        "payStatus": this.forms.payStatus,
+        "provinceCode": "",
+        "remark": this.forms.remark2,
+        "source": this.forms.source,
+        "status": this.selectCheck2,
+        "studioName": this.forms.studioName,
+      }
+      this.$axios
+          .post(`/examinee/examineeOneCheck`,data)
+          .then((res) => {
+            if (res.code == 200) {
+              this.$message.success('操作成功')
+              this.dialogVisible = false
+              this.getOrderList()
+              this.selectCheck2 = "1"
+              this.forms.remark2 = ''
+            }
+          })
+          .catch((err) => {
+            this.listLoading = false
+          })
+    },
+    oneKey(){
+      this.dialogVisible = true;
     },
     //审核
     submitCheck() {

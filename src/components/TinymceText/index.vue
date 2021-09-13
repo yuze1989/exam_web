@@ -30,7 +30,6 @@ export default {
   name: "Tinymce",
   components: { editorImage },
   props: {
-
     id: {
       type: String,
       default: () => {
@@ -167,7 +166,9 @@ export default {
         advlist_number_styles: "default",
         default_link_target: "_blank",
         automatic_uploads:false,
-        images_upload_url:"/file/upload",
+        images_upload_handler: (blobInfo, success, failure) => {
+          this.handleImgUpload(blobInfo, success, failure)
+        },
         link_title: false,
         nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
         init_instance_callback: (editor) => {
@@ -186,6 +187,25 @@ export default {
           });
         },
       });
+    },
+    // 上传本地 图片执行事件
+    handleImgUpload(blobInfo, success, failure) {
+      let formdata = new FormData()
+      // append 方法中的第一个参数就是 我们要上传文件 在后台接收的文件名
+      // 这个值要根据后台来定义
+      // 第二个参数是我们上传的文件
+      formdata.append('file', blobInfo.blob())
+      console.log(formdata)
+      // axios 定义上传方法
+      this.$axios.post("/file/upload",formdata).then(res => {
+        if (res.code != 200) {
+          // 上传失败执行此方法，将失败信息填入参数中
+          failure('HTTP Error: ' + res.message);
+          return
+        }
+        // 上传成功之后，将对应完整的图片路径拼接在success的参数中
+        success(res.result);
+      })
     },
     destroyTinymce() {
       const tinymce = window.tinymce.get(this.tinymceId);

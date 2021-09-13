@@ -35,34 +35,48 @@
             <el-input v-model="form.qrcodeName" style="width:200px;margin-left:34px;"  placeholder="请输入二维码名称"></el-input>
           </div>
           <div class="display-center">
+            <div class="title">二维码大小</div>
+            <el-select clearable  v-model="form.sizeType" style="width:200px;margin-left:34px;" placeholder="请选择二维码大小" @change="sizeTypeChange">
+              <el-option
+                  v-for="item in sizeTypeOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="display-center">
             <div class="title">二维码字段</div>
             <div>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox disabled v-model="form.subjectList.zkzh">准考证号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.sfzhm">身份证号码</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.xm">姓名</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox disabled v-model="form.subjectList.km"> 科目</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.kc">考场</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.xb">性别</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.ksbh">考试编号</el-checkbox>
+                <el-checkbox v-model="form.subjectList.sfzhm">学生ID号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox v-model="form.subjectList.ksdz">考试地址</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.ksbh">考试编号</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.xm">姓名</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.xb">性别</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox disabled v-model="form.subjectList.km">科目</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.kc">考场</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
                 <el-checkbox v-model="form.subjectList.zwh">座位号</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.jgbh">机构编号</el-checkbox>
               </el-row>
 
             </div>
@@ -76,16 +90,17 @@
       <div class="template-example" >
         <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
           <div class="template-example-dom" ref="ticketFile">
-            <div class="title">
+            <div class="title" @drop="drop" @dragover.prevent>
               <div class="top" style="height: 117px;padding-top: 15px">
-                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.zkzh">准考证：E0000000001</div>
+                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
                 <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.sfzhm">身份证号码：330591208808080808</div>
                 <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
+                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
               </div>
 
-              <img src="@/assets/erweima.png" alt="" style="width: 220px;height: 220px;position: absolute;left: 30px;top: 140px">
+              <img src="@/assets/erweima.png" alt="" style="width: 220px;height: 220px;position: absolute;left: 30px;top: 160px">
 
-              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;margin-top: 10px" v-show="form.subjectList.ksbh">考试编号：100101</div>
+              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;margin-top: 25px" v-show="form.subjectList.ksbh">考试编号：100101</div>
               <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.xm">姓名：张三</div>
               <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.km">科目：素描</div>
               <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.kc">考场：001</div>
@@ -121,6 +136,10 @@ export default {
         name: "",
         mobilePhone: "",
       },
+      sizeTypeOption:[
+        {id:0,name:"5 x 4"},
+        {id:1,name:"5 x 7"},
+      ],
       studentAreaOption: [],
       examNameOption: [],
       form: {
@@ -134,6 +153,8 @@ export default {
         carefulMatter: '',
         examTitle: '',
         qrcodeName:"",
+        sizeType:"",
+        sizeId:"",
         subjectList: {
           zkzh:true,
           sfzhm:false,
@@ -143,7 +164,8 @@ export default {
           xb:false,
           ksbh:false,
           ksdz:false,
-          zwh:false
+          zwh:false,
+          jgbh:false,
         },
       },
       isShow:true,
@@ -170,6 +192,27 @@ export default {
   },
 
   methods: {
+    drop(event){
+      var num,num2;
+      this.droppedItem = event.dataTransfer.getData("item");
+      num = ChineseJudgementJ(this.droppedItem);//中文
+      num2 = numberJudge(this.droppedItem);//中文
+
+      if(num != ""){
+        this.droppedItem =num;
+      }else{
+        this.droppedItem = ""
+      }
+      if(num2 != ""){
+
+      }
+    },
+    dragstart(data,event){
+      event.dataTransfer.setData("item",data)
+    },
+    dragend(event){
+      event.dataTransfer.clearData()
+    },
     //获取模板详情
     get_mb(){
       this.$axios
@@ -179,6 +222,7 @@ export default {
             this.form.studentAreaName =res.result.province;
             this.form.studentAreaCode =res.result.provinceCode;
             this.form.qrcodeName =res.result.qrcodeName;
+            this.sizeTypeChange(res.result.sizeType)
 
             let dArr = res.result.subjectList;
             let zdArr = {
@@ -186,11 +230,12 @@ export default {
               km:"科目",
               ksbh:"考试编号",
               ksdz:"考试地址",
-              sfzhm:"身份证号码",
+              sfzhm:"学生ID号",
               xb:"性别",
               xm:"姓名",
               zkzh:"准考证号",
               zwh:"座位号",
+              jgbh:"机构编号",
             }
             for(let i = 0 ; i < dArr.length; i++){
               for(let a in zdArr){
@@ -262,7 +307,8 @@ export default {
         province: this.form.studentAreaName,
         provinceCode: this.form.studentAreaCode,
         qrcodeName : this.form.qrcodeName ,
-        subjectList:[]
+        subjectList:[],
+        sizeType:this.form.sizeId
       }
 
       let zdArr = {
@@ -270,11 +316,12 @@ export default {
         km:"科目",
         ksbh:"考试编号",
         ksdz:"考试地址",
-        sfzhm:"身份证号码",
+        sfzhm:"学生ID号",
         xb:"性别",
         xm:"姓名",
         zkzh:"准考证号",
         zwh:"座位号",
+        jgbh:"机构编号",
       }
 
 
@@ -351,6 +398,17 @@ export default {
           this.getExamDetails()
           this.getProvinceByExamId()
           // this.geSubjectList()
+        }
+      })
+    },
+    sizeTypeChange(e){
+      console.log(e);
+      this.sizeTypeOption.map(item =>{
+        if(item.id == e){
+          this.form.sizeType = item.name
+          this.form.sizeId = item.id
+
+
         }
       })
     },

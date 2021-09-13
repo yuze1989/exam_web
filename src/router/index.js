@@ -461,6 +461,16 @@ export const asyncRouter = [
                     name: '机构关联考试',
                     icon: 'classmate'
                 },
+            },
+            {
+                path: "/jigouTj",
+                id: 115,
+                code: 10115,
+                component: resolve => require(["@/views/examManage/roomManage/jigouTj.vue"], resolve),
+                meta: {
+                    name: '机构统计',
+                    icon: 'classmate'
+                },
             }
         ]
     },

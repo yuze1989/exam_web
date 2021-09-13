@@ -10,6 +10,12 @@
       center
   >
     <div slot="title">导入学生信息</div>
+    <p style="color: red;margin-top: 0;padding-top: 0">提示：导入学生信息，正在后台导入，请稍后查看批量导入结果页面</p>
+    <el-row style="padding: 20px 0">
+      <el-col :span="12" style="text-align: right;padding-right: 20px;color: #409eff"><a href="">查看批量导入结果</a></el-col>
+      <el-col :span="12" style="padding-left: 20px;color: #409eff"><a href="">导入学生信息模板下载</a></el-col>
+    </el-row>
+
     <el-form
         label-width="120px"
         :model="from"
@@ -65,11 +71,11 @@
           <el-button slot="trigger" size="small" type="primary">
             上传文件
           </el-button>
-          <div class="tips" style="position: absolute;
-    top: 0;
-    left: 115px;
-    width: 350px;
-    color: #f32727;">导入学生信息需要一定时间，请稍后过来查询！</div>
+<!--          <div class="tips" style="position: absolute;-->
+<!--    top: 0;-->
+<!--    left: 115px;-->
+<!--    width: 350px;-->
+<!--    color: #f32727;">导入学生信息需要一定时间，请稍后过来查询！</div>-->
           <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
           <div slot="tip" class="el-upload__tip">上传学生信息excel文件</div>
         </el-upload>
