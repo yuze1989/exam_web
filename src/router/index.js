@@ -157,6 +157,15 @@ export const constantRoutes = [
                     icon: 'classtime'
                 },
             },
+            {
+                path: "/daoRuList",
+                name:"daoRuList",
+                component: resolve => require(["@/views/examManage/studentsManage/list.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
+                meta: {
+                    name: '导入列表',
+                    icon: 'classtime'
+                },
+            },
         ]
     },
 

@@ -38,6 +38,9 @@ service.interceptors.request.use(
     if(config.url.includes("ticketCreate")){
       config.headers["content-type"] = "multipart/form-data";
     }
+    if(config.url.includes("import/list")){
+      config.headers["content-type"] = "application/json";
+    }
     
     // if (address[config.url]) {
     //   config.url = address[config.url] + config.url;

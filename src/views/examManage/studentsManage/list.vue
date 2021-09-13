@@ -1,14 +1,6 @@
 <template>
   <section class="form_border">
     <div class="header" style="display: block">
-      <!-- checkStatus:'',//审核状态:0未审核；1通过；2未通过 ,
-        examName:'',//考试名称 
-        examineeName: '',//考生姓名
-        payStatus: '',//支付状态:0未支付；1已支付 ,
-        provinceCode:'',
-        schoolId:'',// 机构id ,
-        source:'',//报名来源:1手机；2后台 ,
-        studioName:'',//: 机构名称 -->
       <el-row style="display: flex;justify-content: flex-end">
         <el-select clearable  v-model="forms.examName"  placeholder="请选择考试名称" @change="examNameChange"    style="width: 200px; margin-right: 20px; margin-bottom: 5px">
           <el-option
@@ -18,23 +10,19 @@
               :value="item.id">
           </el-option>
         </el-select>
-        <el-input
-            style="width: 200px; margin-right: 20px; margin-bottom: 5px"
-            v-model="forms.examineeName"
-            placeholder="姓名"
-        ></el-input>
-
-        <el-input
-            style="width: 200px; margin-right: 20px;margin-bottom: 5px"
-            v-model="forms.studioName"
-            placeholder="机构名称"
-        ></el-input>
-
+        <el-select clearable  v-model="forms.address"  placeholder="请选择考试地址"     style="width: 200px; margin-right: 20px; margin-bottom: 5px">
+          <el-option
+              v-for="item in addressList"
+              :key="item.examAddress"
+              :label="item.examAddress"
+              :value="item.examAddress">
+          </el-option>
+        </el-select>
 
         <el-select clearable
                    v-model="forms.checkStatus"
                    style="width: 200px; margin-right: 20px;margin-bottom: 5px"
-                   placeholder="审核状态"
+                   placeholder="请选择导入状态"
                    @change="changeCheckStatus"
         >
           <el-option
@@ -45,60 +33,13 @@
           ></el-option>
         </el-select>
 
-        <el-select clearable
-                   v-model="forms.payStatus"
-                   style="width: 200px; margin-right: 20px;"
-                   placeholder="支付状态"
-                   @change="changeStatus"
-        >
-          <el-option
-              v-for="(item, index) in payStatusList"
-              :key="index"
-              :label="item.name"
-              :value="item.id"
-          ></el-option>
-        </el-select>
 
-        <el-select clearable
-                   v-model="forms.source"
-                   style="width: 200px; margin-right: 20px;"
-                   placeholder="报名来源"
-                   @change="changeStatus"
-        >
-          <el-option
-              v-for="(item, index) in sourceList"
-              :key="index"
-              :label="item.name"
-              :value="item.id"
-          ></el-option>
-        </el-select>
         <el-button type="primary" style="margin-left: 20px;height: 40px;" @click="onSubmit">
           查询
         </el-button>
       </el-row>
-      <el-row style="margin-top: 6px;margin-bottom: 0px;display:block;justify-content: flex-start">
-        <!--      <el-button type="warning" @click="reset">重置</el-button>-->
-        <el-button type="primary" @click="add">新增学生信息</el-button>
-        <el-button type="primary" @click="onImport">批量导入</el-button>
-        <el-button type="primary" @click="checkMore">批量审核</el-button>
-        <el-button type="primary" @click="oneKey">一键审核</el-button>
-        <el-button type="primary" @click="oneKey2">导出学生信息</el-button>
-      </el-row>
     </div>
 
-    <!-- 导入 导出 -->
-    <!-- <div class="export-box">
-      <el-upload
-        :action="this.API.upload"
-        class="upload"
-        :limit="1"
-        accept=".xls, .xlsx"
-        :http-request="onImport"
-        :file-list="[]"
-      >
-        <el-button size="small" type="primary">批量导入报名信息</el-button>
-      </el-upload>
-    </div> -->
 
     <!--列表-->
     <el-table
@@ -114,9 +55,10 @@
       @selection-change="handleSelectionChange"
       ref="multipleTable"
     >
+
+
       <el-table-column
-        type="selection"
-        label="考试编码"
+        label="考试编号"
         header-align="center"
         align="center"
         prop="examCode"
@@ -130,132 +72,50 @@
       ></el-table-column>
 
       <el-table-column
-        label="姓名"
-        header-align="center"
-        align="center"
-        prop="name"
-      ></el-table-column>
-
-      <el-table-column
-        label="身份证号"
+        label="考试地址"
         header-align="center"
         align="center"
         maxlength="18"
-        prop="identification"
+        prop="examAddress"
       ></el-table-column>
 
       <el-table-column
-        label="手机号码"
+        label="导入日期"
         header-align="center"
         align="center"
         maxlength="11"
-        prop="mobile"
+        prop="importDate"
       ></el-table-column>
 
       <el-table-column
-        label="机构编码"
+        label="导入成功数据"
         header-align="center"
         align="center"
-        prop="studioCode"
+        prop="successNum"
       ></el-table-column>
 
       <el-table-column
-        label="机构名称"
+        label="导入失败数量"
         header-align="center"
         align="center"
-        prop="studioName"
+        prop="failNum"
       ></el-table-column>
 
       <el-table-column
-        label="报名费用"
-        header-align="center"
-        align="center"
-        prop="price"
-      >
-        <template slot-scope="scope">
-          <span>{{ (scope.row.price).toFixed(2) }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        label="支付状态"
-        header-align="center"
-        align="center"
-        prop="payStatusStr"
-      ></el-table-column>
-
-      <el-table-column
-        label="报名来源"
-        header-align="center"
-        align="center"
-        prop="sourceStr"
-      ></el-table-column>
-
-      <!-- <el-table-column label="支付状态" header-align="center" align="center">
-        <template slot-scope="scope">
-          <span>{{ getStateString(scope.row) }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="报名来源" header-align="center" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.source == 2 ? '后台' : '手机' }}</span>
-        </template>
-      </el-table-column> -->
-
-      <el-table-column label="照片" header-align="center" align="center">
-        <template slot-scope="scope">
-          <img :src="scope.row.url" style="width: 50px; height: 50px;" />
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        label="审核状态"
-        header-align="center"
-        align="center"
-        prop="checkStatusStr"
-      ></el-table-column>
-
-      <!-- <el-table-column label="审核状态" header-align="center" align="center">
-        <template slot-scope="scope">
-          <span>{{ getcheckStatusString(scope.row) }}</span>
-        </template>
-      </el-table-column> -->
-
-      <!-- //审核状态  0:待审核,1:通过,2:拒绝 支付状态 1:待支付,2:成功,3:失败,4:处理 -->
-      <el-table-column
-        label="操作"
-        width="180"
+        label="导入失败数据"
         header-align="center"
         align="center"
       >
         <template slot-scope="scope">
-          <el-button
-            v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
-            type="text"
-            size="small"
-            @click="toshowCheck(scope.row)"
-          >
-            审核
-          </el-button>
-          <el-button
-            v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
-            type="text"
-            size="small"
-            @click="toEditItem(scope.row)"
-          >
-            修改
-          </el-button>
-          <el-button
-            v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
-            type="text"
-            size="small"
-            @click="del(scope.row)"
-          >
-            删除
-          </el-button>
+          <a :href="scope.row.failUrl" target="_blank" style="color:#409eff;" v-if="scope.row.failUrl != ''">excel下载地址</a>
         </template>
       </el-table-column>
+      <el-table-column
+        label="导入状态"
+        header-align="center"
+        align="center"
+        prop="importStatusStr"
+      ></el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -375,12 +235,14 @@ export default {
         schoolId: '', // 机构id ,
         source: '', //报名来源:1手机；2后台 ,
         studioName: '', //: 机构名称
+        address:""
       },
       checkStatusList: [
-        { name: '全部审核状态', id: -1 },
-        { name: '待审核', id: 0 },
-        { name: '审核通过', id: 1 },
-        { name: '审核拒绝', id: 2 },
+        { name: '全部导入状态', id: "" },
+        { name: '正在导入', id: 0 },
+        { name: '部分成功', id: 1 },
+        { name: '成功', id: 2 },
+        { name: '失败', id: 3 },
       ],
       payStatusList: [
         { name: '全部支付状态', id: -1 },
@@ -405,6 +267,7 @@ export default {
       enbaleItem: {},
       checkItem: {},
       isEdit: false,
+      addressList:[],
     }
   },
   created() {
@@ -424,7 +287,14 @@ export default {
         if(item.id == e){
           this.forms.examName = item.name
           this.examId = item.id
+          this.addressList = [];
+          this.getDz()
         }
+      })
+    },
+    getDz(){
+      this.$axios.get("/examinfo/detail?id="+this.examId).then((res)=>{
+        this.addressList = res.result.addressList;
       })
     },
     // 上传文件
@@ -526,18 +396,17 @@ export default {
     getOrderList() {
       this.listLoading = true
       let params = {
-        ...this.forms,
-        checkStatus:
-          this.forms.checkStatus == -1 ? null : this.forms.checkStatus,
-        payStatus: this.forms.payStatus == -1 ? null : this.forms.payStatus,
-        source: this.forms.source == -1 ? null : this.forms.source,
-        examId:this.examId
+        current:this.forms.current,
+        size:this.forms.size,
+        schoolId:"",
+        importStatus:this.forms.checkStatus,
+        examId:this.examId,
+        examAddress:this.forms.address
       }
       this.$axios
-        .post(this.API.studentsManage.examineeList, params)
+        .post('/exam/import/list', params)
         .then((res) => {
           this.list = res.result.list
-          // this.list = []
           this.forms.pageNum = res.result.pageNum
           this.forms.pageSize = res.result.pageSize
           this.forms.total = res.result.total
@@ -585,43 +454,32 @@ export default {
           })
     },
     disTrue(){
-      this.$confirm('请谨慎选择一键审核，一旦点击确定。请不要重复提交，系统后台就会进行处理，并且请稍后查询审核状态！', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        let data = {
-          "checkStatus": this.forms.checkStatus,
-          "examId": this.examId,
-          "examName": this.forms.examId,
-          "examineeName": this.forms.examineeName,
-          "payStatus": this.forms.payStatus,
-          "provinceCode": "",
-          "remark": this.forms.remark2,
-          "source": this.forms.source,
-          "status": this.selectCheck2,
-          "studioName": this.forms.studioName,
-        }
-        this.$axios.post(`/examinee/examineeOneCheck`,data)
-            .then((res) => {
-              if (res.code == 200) {
-                this.$message.success('操作成功')
-                this.dialogVisible = false
-                this.getOrderList()
-                this.selectCheck2 = "1"
-                this.forms.remark2 = ''
-              }
-            })
-            .catch((err) => {
-              this.listLoading = false
-            })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        });
-      });
-
+      let data = {
+        "checkStatus": this.forms.checkStatus,
+        "examId": this.examId,
+        "examName": this.forms.examId,
+        "examineeName": this.forms.examineeName,
+        "payStatus": this.forms.payStatus,
+        "provinceCode": "",
+        "remark": this.forms.remark2,
+        "source": this.forms.source,
+        "status": this.selectCheck2,
+        "studioName": this.forms.studioName,
+      }
+      this.$axios
+          .post(`/examinee/examineeOneCheck`,data)
+          .then((res) => {
+            if (res.code == 200) {
+              this.$message.success('操作成功')
+              this.dialogVisible = false
+              this.getOrderList()
+              this.selectCheck2 = "1"
+              this.forms.remark2 = ''
+            }
+          })
+          .catch((err) => {
+            this.listLoading = false
+          })
     },
     oneKey(){
       this.dialogVisible = true;
