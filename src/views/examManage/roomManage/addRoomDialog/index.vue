@@ -8,7 +8,7 @@
     width="30%"
     center
   >
-    <div slot="title">{{editItem.id ? '编辑' : '新增'}}机构信息</div>
+    <div slot="title">{{!isAdd ? '编辑' : '新增'}}机构信息</div>
     <el-form
       label-width="100px"
       :model="from"
@@ -19,10 +19,12 @@
       ref="ruleForm"
     >
      <el-form-item label="机构编码" prop="studioCode">
-       <el-input v-model="from.studioCode" placeholder="请输入机构编码"></el-input>
+       <el-input v-model="from.studioCode" :disabled="!isAdd"   maxlength="20"
+                 show-word-limit placeholder="请输入机构编码"></el-input>
       </el-form-item>
       <el-form-item label="机构名称" prop="studioName">
-        <el-input v-model="from.studioName" placeholder="请输入机构名称"></el-input>
+        <el-input v-model="from.studioName"   maxlength="20"
+                  show-word-limit placeholder="请输入机构名称"></el-input>
       </el-form-item>
          <el-form-item label="机构地区" prop="studioAreaCode">
         <el-select clearable  v-model="from.studioAreaCode" placeholder="请选择省" @change="studioAreaChange">
@@ -43,7 +45,8 @@
            </el-select>
       </el-form-item>
         <el-form-item label="机构联系人" prop="contactName">
-        <el-input v-model="from.contactName" placeholder="请输入机构联系人姓名"></el-input>
+        <el-input v-model="from.contactName"   maxlength="10"
+                  show-word-limit placeholder="请输入机构联系人姓名"></el-input>
       </el-form-item>
          <el-form-item label="手机号码" prop="contactMobile">
         <el-input v-model="from.contactMobile" type="number" placeholder="请输入手机号码"
@@ -161,11 +164,15 @@ export default {
 
         creatStudio(this.from).then((res) => {
               if (res) {
-                this.$message({
-                  message: "新增成功",
-                  type: "success",
-                });
-                this.$emit("addSuccess");
+                if(res.code == 200){
+                  this.$message({
+                    message: "新增成功",
+                    type: "success",
+                  });
+                  this.$emit("addSuccess");
+                }
+
+
               }
             })
             .catch(() => {});

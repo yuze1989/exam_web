@@ -16,17 +16,22 @@
               @click="switchLevel(item.name, index)"
               :effect="item.active ? 'dark' : 'light'"
               size="medium"
-              class="common-mr pointer"
+              :class="item.min>=0?'common-mr pointer hh':'common-mr pointer'"
               :style="item.name == '仲裁组'?{background:'#f35f62',color:'#fff'}:''"
             >
 
               <font v-if="item.name == '仲裁组'">
                 {{ item.name}} ({{ item.count || 0 }}) 份
               </font>
-                <font v-else="">
+                <font v-else-if="item.name == '未评级'">
                   {{ item.name }} ({{ item.count || 0 }}) 份
                 </font>
+                <font v-else-if="item.name != ''">
+                  <p style="margin:0">{{ item.name }} ({{ item.count || 0 }}) 份</p>
+                  <p style="margin:0">区间 {{item.min}} - {{item.max}}分</p>
+                </font>
             </el-tag>
+
             </div>
 
           </div>
@@ -103,6 +108,11 @@
                   v-fo
                   :class="`markInput${index}`"
                   v-model="paper.mark"
+                  :min="0"
+                  :max="maxNum"
+                  :minlength="1"
+                  :maxlength="100"
+                  type="number"
                   @input="handleVerifyScore(paper.mark, index)"
                   @keyup.native.enter="
                   markPaperAndToNext(paper.id, index, $event)
@@ -195,6 +205,11 @@
           <el-input
             v-if="paperList[editImgIndex].show"
             v-model="paperList[editImgIndex].mark"
+            :min="0"
+            :max="maxNum"
+            :minlength="1"
+            :maxlength="100"
+            type="number"
             @input="
               handleVerifyScore(paperList[editImgIndex].mark, editImgIndex)
             "
@@ -307,10 +322,12 @@ export default {
   },
   created() {
     this.account = localStorage.getItem("user_name")
-    this.queryPaperList();  //获取评级列表
+
     this.getList();  //获取试卷列表
     // this.queryDealedCount();    // 获取已评分/未评分
     this.getRulesdetail();  //获取打分规则
+
+
   },
   methods: {
     currentChange(){
@@ -432,6 +449,7 @@ export default {
         if(res.result.list[0].score){
           this.maxScore = res.result.list[0].score;
         }
+        this.queryPaperList();  //获取评级列表
       })
     },
     // 获取评级列表
@@ -467,6 +485,7 @@ export default {
             active: false,
           },
         ];
+        let that = this;
         res.result.gradeNameCount.forEach((item,index)=>{
           this.xxList.push(item.grade)
           if(item.grade != ""){
@@ -474,6 +493,8 @@ export default {
               name: item.grade+"类",
               count: item.count,
               active: false,
+              min:that.ruleList[index].scoreStart,
+              max:that.ruleList[index].scoreEnd,
             })
             tempGradeList.push({
               key: index,
@@ -698,15 +719,16 @@ export default {
     // 校验分数
     handleVerifyScore(value, index) {
       this.$message.closeAll();
-      let isNumber = /^\d*$/.test(value); // 验证是否是纯数字
-      // 过滤非数字
-      this.paperList[index].mark = value.replace(/\D/g, "");
-      if (!isNumber || value < 0 || value > this.maxScore) {
-        this.$message.error("只能输入0-" + this.maxScore + "的整数");
-      }
-      this.paperList[index].mark =
-        (value >= 0 && value <= this.maxScore && value.match(/^\d*/g)[0]) ||
-        null;
+      // let isNumber = /^[0-9]{1,20}$/.test(value); // 验证是否是纯数字
+      // // 过滤非数字
+      // this.paperList[index].mark = value.replace(/\D/g, "");
+      // console.log(value,!isNumber);
+      // if (value < 0 || value > this.maxScore) {
+      //   this.$message.error("只能输入0-" + this.maxScore + "的分数");
+      // }
+      // this.paperList[index].mark =
+      //   (value >= 0 && value <= this.maxScore && value.match(/^\d*/g)[0]) ||
+      //   null;
     },
     // 设置分数并跳转到下一张
     markPaperAndToNext(paperId, index, $event) {
@@ -741,6 +763,12 @@ export default {
 </script>
 
 <style lang="scss">
+.hh{
+  height: 50px;
+}
+.hh p{
+  height: 20px;
+}
 .zcz sup{
   border-radius: 3px;
 }

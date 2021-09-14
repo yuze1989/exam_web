@@ -11,7 +11,7 @@
            <div class="basic-info">
              <div class="display-center">
                <div class="title">考试名称</div>
-               <el-select clearable  v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+               <el-select clearable  v-model="form.examNameNo" :disabled="$route.params.examId" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
                  <el-option
                      v-for="item in examNameOption"
                      :key="item.id"
@@ -22,7 +22,8 @@
              </div>
              <div class="display-center">
                <div class="title">考试标题</div>
-               <el-input v-model="form.examTitle" @change="fontS" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题" ></el-input>
+               <el-input v-model="form.examTitle" @change="fontS" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题"  maxlength="30"
+                         show-word-limit></el-input>
              </div>
              <!--               <div class="display-center">-->
              <!--                    <div class="title">考生省份</div>-->
@@ -37,11 +38,13 @@
              <!--               </div>-->
              <div class="display-center">
                <div class="title">主办单位</div>
-               <el-input v-model="form.organizer" style="width:200px;margin-left:50px;"  placeholder="请输入主办单位"></el-input>
+               <el-input v-model="form.organizer" style="width:200px;margin-left:50px;"  placeholder="请输入主办单位" maxlength="30"
+                         show-word-limit></el-input>
              </div>
              <div class="display-center">
                <div class="title">承办单位</div>
-               <el-input v-model="form.undertaker" style="width:200px;margin-left:50px;"  placeholder="请输入承办单位"></el-input>
+               <el-input v-model="form.undertaker" style="width:200px;margin-left:50px;"  placeholder="请输入承办单位" maxlength="30"
+                         show-word-limit></el-input>
              </div>
            </div>
            <div class="title" style="padding-left: 50px">模板配置选项</div>
@@ -131,7 +134,7 @@
            <!--            </div>-->
          </div>
        </el-col>
-       <el-col :span="8" :md="16" :lg="8">
+       <el-col :span="8" :md="16" :xl="8" :lg="16">
          <!-- 模板示例 -->
          <div class="template-example" >
            <div class="bg" style="background: #f1f1f1;margin-left: 10px; padding: 30px 30px 80px;width: 499px;height:706px;border-radius: 2px" ref="ticketFile">
@@ -216,7 +219,7 @@
            <!-- <img class="real_pic" :src="imgUrl" /> -->
          </div>
        </el-col>
-       <el-col :span="8" :md="16" :lg="8">
+       <el-col :span="8" :md="16" :xl="8" :lg="16">
          <div class="template-example" >
            <div class="bg" style="background: #f1f1f1;margin-left: 10px; padding: 30px 30px 80px;width: 499px;height:706px;border-radius: 2px" ref="ticketFile">
              <div class="bob" id="bob2" style="max-height: 650px;overflow-y: auto;overflow-x:hidden;">
@@ -240,6 +243,8 @@ export default {
   name: "AddTicketTemplate",
   data() {
     return {
+      bh:"",
+      zh:"",
        imgUrl: '',
        listLoading: false,
       sels: [], //列表选中列
@@ -321,9 +326,28 @@ export default {
             this.form.organizer =res.result.organizer;
             this.form.examTitle =res.result.examTitle;
             this.form.carefulMatter =res.result.remark;
+            this.form.carefulMatter2 =res.result.content?res.result.content:"";
             this.oddCode = res.result.examId;
             this.oddPro = res.result.provinceCode;
             this.form.undertaker = res.result.undertaker
+
+            let dArr = res.result.configList?res.result.configList:[];
+            let zdArr = {
+              zbdw:"主办单位",
+              cbdw:"承办单位",
+              ksdz:"考试地址",
+              kch:"考场号",
+              zwh:"座位号"
+            }
+            for(let i = 0 ; i < dArr.length; i++){
+              for(let a in zdArr){
+                if(dArr[i].configName == zdArr[a]){
+                  this.form.subjectList[a] = true
+                }
+              }
+            }
+
+
             this.getExamList()
             this.getList();
           })
@@ -343,25 +367,26 @@ export default {
       return new File([u8arr], '截图.png', {type:mime});
     },
     getImage() {
-      this.isShow = false;
-      var that = this;
-      setTimeout(function (){
-        html2canvas(that.$refs.ticketFile).then(canvas => {
-          // this.$message({
-          //     message: '图片已生成可以保存模版',
-          //     type: 'success',
-          //   })
-          let dataURL = canvas.toDataURL("image/png");
-          that.imgUrl = dataURL;
-
-          var a = that;
-          setTimeout(function (){
-            a.show()
-          },100)
-
-          that.examConfirm()
-        });
-      },10)
+      // this.isShow = false;
+      // var that = this;
+      // setTimeout(function (){
+      //   html2canvas(that.$refs.ticketFile).then(canvas => {
+      //     // this.$message({
+      //     //     message: '图片已生成可以保存模版',
+      //     //     type: 'success',
+      //     //   })
+      //     let dataURL = canvas.toDataURL("image/png");
+      //     that.imgUrl = dataURL;
+      //
+      //     var a = that;
+      //     setTimeout(function (){
+      //       a.show()
+      //     },100)
+      //
+      //
+      //   });
+      // },10)
+      this.examConfirm()
 
     } ,
 
@@ -408,6 +433,28 @@ export default {
     },
       // 保存
     examConfirm(){
+      if(this.bh>=650){
+        this.$message({
+          message: '模板背面高度超出，请合理规划！',
+          type: 'warning',
+        })
+        return false
+      }
+      if(this.zh>=660){
+        this.$message({
+          message: '模板正面高度超出，请合理规划！',
+          type: 'warning',
+        })
+        return false
+      }
+
+      if(!this.form.examNameNo){
+        this.$message({
+          message: '请先选择考试名称',
+          type: 'warning',
+        })
+        return false
+      }
 
       let data = {
         examId : this.form.examNameNo,
@@ -442,9 +489,9 @@ export default {
       }
 
 
-      let formData = new FormData();
-      let file = this.base64toFile(this.imgUrl);
-      formData.append('ticketFile', file);
+      // let formData = new FormData();
+      // let file = this.base64toFile(this.imgUrl);
+      // formData.append('ticketFile', file);
 
       if(this.examId != undefined){
         data.id = this.examId;
@@ -468,12 +515,14 @@ export default {
             .post(url, data)
             .then((res) => {
               if (res) {
-                this.$message({
-                  message: '添加成功',
-                  type: 'success',
-                })
-                this.$router.go(-1);
-                this.$emit('addSuccess')
+                if(res.code == 200){
+                  this.$message({
+                    message: '添加成功',
+                    type: 'success',
+                  })
+                  this.$router.go(-1);
+                  this.$emit('addSuccess')
+                }
               }
             })
             .catch(() => {})
@@ -504,6 +553,8 @@ export default {
     },
   // 考试改变监听
     examNameChange(e){
+      this.form.examNameNo = ""
+      this.form.examName =""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examNameNo = item.id;
@@ -536,6 +587,8 @@ export default {
     erd.listenTo(document.getElementById("bob"), function(element) {
         //执行操作
       let h = element.scrollHeight;
+      that.zh = h;
+      console.log(that.zh);
       if(h>=660){
         that.$message({
           message: '模板正面高度超出，请合理规划！',
@@ -546,6 +599,8 @@ export default {
     erd.listenTo(document.getElementById("bob2"), function(element) {
       //执行操作
       let h = element.scrollHeight;
+      that.bh = h;
+      console.log(that.bh);
       if(h>=650){
         that.$message({
           message: '模板背面高度超出，请合理规划！',
@@ -696,22 +751,23 @@ padding-left:200px;
                  .line5{
             text-align: center;
           width: 94px;
-      
-            height: 40px;
+                   border-left: 1px blue solid;
+
+                   height: 40px;
              line-height: 40px;
          }
                  .line3{
             text-align: center;
           width: 80px;
-          border-right: 1px blue solid;
             height: 40px;
              line-height: 40px;
          }
                  .line4{
             text-align: center;
           width: 64px;
-          border-right: 1px blue solid;
-            height: 40px;
+                   border-left: 1px blue solid;
+
+                   height: 40px;
              line-height: 40px;
          }
     }

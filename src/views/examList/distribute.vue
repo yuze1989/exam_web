@@ -550,6 +550,7 @@ export default {
       if(e == ""){
         this.forms.model.name = ""
         this.examId = ""
+        this.examNameNo = ""
       }else{
         this.examNameOption.map(item =>{
           if(item.id == e){

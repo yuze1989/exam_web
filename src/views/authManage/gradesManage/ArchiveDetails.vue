@@ -3,16 +3,16 @@
     <div class="header">
       <div class="from-wrap">
         <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent style="display: flex;justify-content: flex-end;height: 36px">
-          <el-form-item>
-            <el-select clearable  v-model="form.examNameNo"  placeholder="请选择考试名称" @change="examNameChange">
-              <el-option
-                  v-for="item in examNameOption"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
+<!--          <el-form-item>-->
+<!--            <el-select clearable  v-model="form.examNameNo"  placeholder="请选择考试名称" @change="examNameChange">-->
+<!--              <el-option-->
+<!--                  v-for="item in examNameOption"-->
+<!--                  :key="item.id"-->
+<!--                  :label="item.name"-->
+<!--                  :value="item.id">-->
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
           <el-form-item>
             <el-select clearable  v-model="search.score"  placeholder="查询分数条件" @change="examNameChange" style="margin-right: 5px">
               <el-option
@@ -292,6 +292,8 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.form.examName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name
@@ -364,6 +366,8 @@ export default {
           return false
         }
       }
+
+      this.examId = this.$route.query.id
 
       let params = {
         current: this.form.pageIndex,

@@ -1,7 +1,7 @@
 <template>
    <section class="form_border">
     <div class="header" style="display: flex;justify-content: flex-end">
-      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange" style="margin-right: 10px">
+      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange" style="margin-right: 10px;width: 200px">
         <el-option
             v-for="item in examNameOption"
             :key="item.id"
@@ -74,7 +74,7 @@
       <div style="color:red">
         当前选择会覆盖之前的选择
       </div>
-      <el-select clearable  v-model="selectRoomIds" multiple placeholder="请选择机构">
+      <el-select clearable  v-model="selectRoomIds" collapse-tags multiple placeholder="请选择机构" style="width: 200px;">
         <el-option
           v-for="item in roomOptions"
           :key="item.id"
@@ -143,6 +143,8 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.form.examName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name

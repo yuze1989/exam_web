@@ -253,10 +253,13 @@ export default {
               this.dialogFormVisible = false;
               this.admin_username = "";
               this.admin_password = "";
-              this.$message({
-                type: "success",
-                message: "成功",
-              });
+              if(res.code == 200){
+                this.$message({
+                  type: "success",
+                  message: "成功",
+                });
+              }
+
               this.loading = false;
             })
       }
@@ -374,7 +377,9 @@ export default {
           id: item.id,
         })
         .then((res) => {
-          this.$message.success('操作成功')
+          if(res.code == 200){
+            this.$message.success('操作成功')
+          }
           this.forms.current = 1
           this.getOrderList()
         })

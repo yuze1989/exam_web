@@ -2,7 +2,7 @@
   <section class="form_border">
     <div class="header">
       <el-col :span="4">
-        <el-button type="primary" @click="dialogFormVisible=true">关联老师</el-button>
+        <el-button type="primary" @click="dialogFormVisible=true">关联阅卷老师</el-button>
       </el-col>
       <el-col :span="20"  style="padding-bottom: 10px">
         <el-form :inline="true" class="demo-form-inline" style="display: flex;justify-content: flex-end">
@@ -88,10 +88,10 @@
     </el-col>
 
 <!--    教师关联-->
-    <el-dialog title="教师关联" :visible.sync="dialogFormVisible">
+    <el-dialog title="阅卷教师关联" :visible.sync="dialogFormVisible">
       <el-form>
         <el-form-item label="选择教师">
-          <el-select clearable  v-model="examNameNo" filterable style="display: flex;margin-left:50px;" placeholder="请选择教师" multiple>
+          <el-select clearable  v-model="examNameNo" filterable collapse-tags style="display: flex;margin-left:50px;" placeholder="请选择教师" multiple>
             <el-option
                 v-for="item in teacherList"
                 :key="item.id"

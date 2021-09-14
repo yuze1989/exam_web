@@ -51,7 +51,7 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <div style="position: absolute;left:66px;width: 100px;height: 44px;">
+          <div style="position: absolute;left:66px;width: 130px;height: 44px;">
             <div class="admin" style="font-size: 15px">{{user.roleName}}</div>
             <div class="admin" style="font-size: 13px">{{user.name}}</div>
           </div>
@@ -111,7 +111,7 @@ export default {
   transition: opacity 1.5s;
 }
 .admin{
-  width: 100px;
+  width: 126px;
   height: 22px;
   line-height: 22px;
   color: #f1f1f1 !important;

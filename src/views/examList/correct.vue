@@ -84,6 +84,9 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examNameNo = ""
+      this.examName = "";
+      this.examNo = "";
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.examNameNo = item.id;

@@ -2,6 +2,10 @@
   <section class="form_border">
     <div class="header" style="display: block">
       <el-row style="display: flex;justify-content: flex-end">
+        <el-button type="primary" style="height: 40px;position: absolute;left: 0" @click="go_o">
+          返回
+        </el-button>
+
         <el-select clearable  v-model="forms.examName"  placeholder="请选择考试名称" @change="examNameChange"    style="width: 200px; margin-right: 20px; margin-bottom: 5px">
           <el-option
               v-for="item in examNameOption"
@@ -240,7 +244,6 @@ export default {
       checkStatusList: [
         { name: '全部导入状态', id: "" },
         { name: '正在导入', id: 0 },
-        { name: '部分成功', id: 1 },
         { name: '成功', id: 2 },
         { name: '失败', id: 3 },
       ],
@@ -283,6 +286,9 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.forms.examName=""
+      this.forms.address = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.forms.examName = item.name
@@ -523,6 +529,9 @@ export default {
       });
 
 
+    },
+    go_o(){
+      this.$router.push({ path: '/studentsManage'})
     },
     // 删除
     del(row) {

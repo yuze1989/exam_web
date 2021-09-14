@@ -504,6 +504,13 @@ export default {
             return
           }
 
+          if(this.from.remark.length > 1100){
+            this.$message({
+              message: '请限制考试说明字数在1100字内',
+            })
+            return
+          }
+
           let data = {
             ...this.from,
             addressList: this.address,
@@ -585,6 +592,12 @@ export default {
           if(errCount>0){
             this.$message({
               message: '考试科目结束时间应大于开始时间',
+            })
+            return
+          }
+          if(this.from.remark.length > 1100){
+            this.$message({
+              message: '请限制考试说明字数在1100字内',
             })
             return
           }

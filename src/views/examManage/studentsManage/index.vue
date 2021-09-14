@@ -420,6 +420,8 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.forms.examName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.forms.examName = item.name
@@ -555,6 +557,13 @@ export default {
       this.getOrderList()
     },
     oneKey2(){
+      if(!this.examId){
+        this.$message({
+          type: 'warning',
+          message: '请先选择考试名称'
+        });
+        return false;
+      }
       this.listLoading =true;
       let data = {
         "checkStatus": this.forms.checkStatus,
@@ -624,6 +633,13 @@ export default {
 
     },
     oneKey(){
+      if(!this.examId){
+        this.$message({
+          type: 'warning',
+          message: '请先选择考试名称'
+        });
+        return false;
+      }
       this.dialogVisible = true;
     },
     //审核

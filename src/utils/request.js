@@ -36,7 +36,7 @@ service.interceptors.request.use(
       config.responseType = 'blob';
     }
     if(config.url.includes("ticketCreate")){
-      config.headers["content-type"] = "multipart/form-data";
+      config.headers["content-type"] = "application/json";
     }
     if(config.url.includes("import/list")){
       config.headers["content-type"] = "application/json";

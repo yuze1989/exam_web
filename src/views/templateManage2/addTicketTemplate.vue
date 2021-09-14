@@ -10,7 +10,7 @@
         <div class="basic-info">
           <div class="display-center">
             <div class="title">考试名称</div>
-            <el-select clearable  v-model="form.examNameNo" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+            <el-select clearable  v-model="form.examNameNo" :disabled="this.$route.params.examId" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
               <el-option
                   v-for="item in examNameOption"
                   :key="item.id"
@@ -89,7 +89,7 @@
       <!-- 模板示例 -->
       <div class="template-example" >
         <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
-          <div class="template-example-dom" ref="ticketFile">
+          <div  :class="class1" ref="ticketFile">
             <div class="title" @drop="drop" @dragover.prevent>
               <div class="top" style="height: 117px;padding-top: 15px">
                 <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
@@ -98,17 +98,18 @@
                 <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
               </div>
 
-              <img src="@/assets/erweima.png" alt="" style="width: 220px;height: 220px;position: absolute;left: 30px;top: 160px">
+              <img src="@/assets/erweima.png" alt="" :class="class2" style="width: 220px;height: 220px;position: absolute;left: 30px;top: 160px">
 
-              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;margin-top: 25px" v-show="form.subjectList.ksbh">考试编号：100101</div>
-              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.xm">姓名：张三</div>
-              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.km">科目：素描</div>
-              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.kc">考场：001</div>
-              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;" v-show="form.subjectList.xb">性别：男</div>
-              <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.zwh">座位号：01</div>
+              <div :class="class2">
+                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;margin-top: 25px" v-show="form.subjectList.ksbh">考试编号：100101</div>
+                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.xm">姓名：张三</div>
+                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.km">科目：素描</div>
+                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.kc">考场：001</div>
+                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;" v-show="form.subjectList.xb">性别：男</div>
+                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.zwh">座位号：01</div>
+              </div>
             </div>
           </div>
-
         </div>
 
         <!-- <img class="real_pic" :src="imgUrl" /> -->
@@ -142,6 +143,8 @@ export default {
       ],
       studentAreaOption: [],
       examNameOption: [],
+      class1:"class0 template-example-dom",
+      class2:"right",
       form: {
         pageIndex: 1,
         size: 10,
@@ -389,6 +392,7 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.form.examName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name
@@ -402,11 +406,18 @@ export default {
       })
     },
     sizeTypeChange(e){
-      console.log(e);
       this.sizeTypeOption.map(item =>{
         if(item.id == e){
           this.form.sizeType = item.name
           this.form.sizeId = item.id
+
+          if(item.id == 0){
+            this.class1 = "class0 template-example-dom"
+            this.class2 = "right"
+          }else{
+            this.class1 = "class1 template-example-dom"
+            this.class2 = "bottom"
+          }
 
 
         }
@@ -435,7 +446,20 @@ export default {
 
 <style lang="scss" scoped>
 @import "./index.scss";
-
+.bottom{
+  position: absolute;
+  top: 400px;
+  left: -180px;
+}
+img.bottom{
+  top: 180px !important;
+}
+.class0{
+  height: 400px !important;
+}
+.class1{
+  height: 700px !important;
+}
 .header{
   display: flex;
   padding-left:200px;

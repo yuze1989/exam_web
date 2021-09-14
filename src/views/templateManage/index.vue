@@ -183,6 +183,8 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.examName =""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.examName = item.name

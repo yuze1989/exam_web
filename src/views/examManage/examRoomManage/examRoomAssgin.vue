@@ -17,7 +17,21 @@
         </el-select>
 
         <el-select clearable
-          placeholder="选择省份"
+                   v-model="forms.address"
+                   placeholder="考试地址"
+                   value-key="value"
+                   style="margin-left: 10px;"
+        >
+          <el-option
+              v-for="item in addressList"
+              :key="item.examAddress"
+              :label="item.examAddress"
+              :value="item.examAddress"
+          ></el-option>
+        </el-select>
+
+        <el-select clearable
+          placeholder="选择生源"
           v-model="forms.provinceCode"
           style="margin-left: 10px;"
           @change="provinceChange"
@@ -183,6 +197,7 @@ export default {
       formsData: {
         examrooms: [],
       },
+      addressList:[],
       examList: [],
       loading: false,
       forms2: {},
@@ -198,6 +213,7 @@ export default {
         maxExamCode: '', //已分配考场数
         unDistributCount: '', //未分配学生
         distributRoomCount:"",//已分配考场剩余容量
+        address:""
       },
       origionObj: {
         unDistributCount: '',
@@ -265,11 +281,21 @@ export default {
       }
     },
     examChange(value){
+      this.forms.address = ""
       this.init('1')
       this.getProvinceList(value)
+      this.getDz(value)
     },
     provinceChange(value){
       this.init('2')
+    },
+    getDz(examId){
+      if(examId){
+        this.$axios.get("/examinfo/detail?id="+examId).then((res)=>{
+          this.addressList = res.result.addressList;
+        })
+      }
+
     },
     getProvinceList(examId) {
       this.$axios.get(`${this.API.examinfo.getProvinceByExamId}?examId=${examId}`).then(res=>{
@@ -286,10 +312,14 @@ export default {
         this.$message.error("请先选择查询的考试")
         return
       }
+      if(!this.forms.address){
+        this.$message.error("请先选择考试地址")
+        return
+      }
       this.forms.maxExamCode=0
       this.$axios
         .get(
-          `${this.API.studentsManage.examRoomCount}?examId=${this.forms.examId}&provinceCode=${this.forms.provinceCode}`,
+          `${this.API.studentsManage.examRoomCount}?examId=${this.forms.examId}&address=${this.forms.address}&&provinceCode=${this.forms.provinceCode}`,
           {},
         )
         .then((res) => {
@@ -536,14 +566,16 @@ export default {
             data = {
               examId: this.forms.examId,
               provinceCode: this.forms.provinceCode,
-              isLastDistribut:this.isLastDistribut
+              isLastDistribut:this.isLastDistribut,
+              address:this.forms.address
             }
           }else{
             data = {
               detailList: examrooms,
               examId: this.forms.examId,
               provinceCode: this.forms.provinceCode,
-              isLastDistribut:this.isLastDistribut
+              isLastDistribut:this.isLastDistribut,
+              address:this.forms.address
             }
           }
 

@@ -10,7 +10,7 @@
     height: 40px;"
           >导出准考证</el-button
         >
-      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange">
+      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange" style="width: 160px">
         <el-option
             v-for="item in examNameOption"
             :key="item.id"
@@ -18,15 +18,23 @@
             :value="item.id">
         </el-option>
       </el-select>
-        <el-input v-model="form.examNo" style="width:200px;margin-left:15px;"  placeholder="输入考场"
+      <el-select clearable  v-model="form.address"  placeholder="请选择考试地址" style="width: 160px;margin-left:15px;">
+        <el-option
+            v-for="item in addressList"
+            :key="item.examAddress"
+            :label="item.examAddress"
+            :value="item.examAddress">
+        </el-option>
+      </el-select>
+        <el-input v-model="form.examNo" style="width:120px;margin-left:15px;"  placeholder="输入考场"
         ></el-input>
-         <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="学生姓名"
+         <el-input v-model="form.studentName" style="width:120px;margin-left:15px;"  placeholder="学生姓名"
         ></el-input>
-      <el-input v-model="form.admissionTicketCode" style="width:200px;margin-left:15px;"  placeholder="准考证号"
+      <el-input v-model="form.admissionTicketCode" style="width:140px;margin-left:15px;"  placeholder="准考证号"
       ></el-input>
-      <el-input v-model="form.studioName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
+      <el-input v-model="form.studioName" style="width:120px;margin-left:15px;"  placeholder="机构名称"
       ></el-input>
-       <el-select clearable  v-model="form.studentAreaCode" style="width:200px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
+       <el-select clearable  v-model="form.studentAreaCode" style="width:160px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
           <el-option
             v-for="item in studentAreaOption"
             :key="item.provinceCode"
@@ -182,7 +190,7 @@ export default {
   name: "AdmissionTicket",
   data() {
     return {
-
+      addressList:[],
       examName:"",
       examId:"",
       examNameOption: [],
@@ -205,7 +213,8 @@ export default {
         examName: '',
         examNo: '',
         admissionTicketCode:"",
-        studioName:""
+        studioName:"",
+        address:""
       },
 
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -233,11 +242,21 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.form.examName =""
+      this.form.address = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name
           this.examId = item.id
+          this.addressList = [];
+          this.getDz()
         }
+      })
+    },
+    getDz(){
+      this.$axios.get("/examinfo/detail?id="+this.examId).then((res)=>{
+        this.addressList = res.result.addressList;
       })
     },
      // 生成和导出二维码
@@ -246,6 +265,11 @@ export default {
      },
      // 导出准考证
      exportTicket(){
+       this.$message({
+         message: "功能优化中，敬请期待！",
+         type: "warning",
+       });
+       return false
        if(this.form.examName == ""){
          this.$message({
            message: "请先填写考试名称！",

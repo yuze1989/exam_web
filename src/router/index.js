@@ -46,6 +46,11 @@ export const constantRoutes = [
         hidden: true
     },
     {
+        path: "/qrcode",
+        component: resolve => require(["@/views/examManage/roomManage/qrcode.vue"], resolve),//() => import("@/views/common/401.vue"),
+        hidden: true
+    },
+    {
         path: "/",
         component: Layout,
         hidden: true,

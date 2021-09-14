@@ -610,7 +610,7 @@ export default {
         if(item.grade == value){
           this.minNum = item.scoreStart;
           this.maxNum = item.scoreEnd
-          this.markError = "只能输入"+this.minNum+"-" + this.maxNum + "的整数";
+          this.markError = "只能输入"+this.minNum+"-" + this.maxNum + "的分数";
         }
       })
     },
@@ -715,7 +715,7 @@ export default {
       // 过滤非数字
       this.score = value.replace(/\D/g, "");
       if (!isNumber || value < this.minNum || value > this.maxNum) {
-        this.markError = "只能输入"+this.minNum+"-" + this.maxNum + "的整数";
+        this.markError = "只能输入"+this.minNum+"-" + this.maxNum + "的分数";
       }
       this.score =
           (value >= 0 && value <= this.maxScore && value.match(/^\d*/g)[0]) ||
@@ -1553,6 +1553,7 @@ export default {
           position: absolute;
           width: 80px;
           height: 40px;
+          z-index: 99;
           line-height: 40px;
           text-align: center;
           left: 50%;

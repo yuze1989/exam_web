@@ -1,21 +1,11 @@
 <template>
   <section>
     <el-row class="toolbar" style="padding-bottom: 0px;height: 66px;padding-top: 15px" type="flex">
-      <el-col :span="6">
-        <el-button
-          type="primary"
-          style="margin-left: 10px;"
-          class="meiyuan_btn"
-          @click="roomassgin"
-        >
-          考场分配
-        </el-button>
-      </el-col>
-      <el-col :span="18" style="float: right;">
+      <el-col :span="24" style="float: right;">
         <el-form :inline="true" :model="selections" style="float: right;">
 
           <el-form-item>
-            <el-select clearable  v-model="selections.examName"  placeholder="请选择考试名称" @change="examNameChange">
+            <el-select clearable  v-model="selections.examName"  placeholder="请选择考试名称" style="width: 180px" @change="examNameChange">
               <el-option
                   v-for="item in examNameOption"
                   :key="item.id"
@@ -26,6 +16,26 @@
           </el-form-item>
 
           <el-form-item>
+            <el-select clearable  v-model="selections.address"  placeholder="请选择考试地址" >
+              <el-option
+                  v-for="item in addressList"
+                  :key="item.examAddress"
+                  :label="item.examAddress"
+                  style="width: 140px"
+                  :value="item.examAddress">
+              </el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item>
+            <el-input
+                v-model="selections.roomCode"
+                style="width: 140px;"
+                placeholder="请输入考场编号"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item >
             <el-input
                 v-model="selections.admissionTicketCode"
                 style="width: 140px;"
@@ -57,7 +67,6 @@
               v-model="selections.provinceCode"
               placeholder="生源省份"
               value-key="province"
-              clearable
               filterable
             >
               <el-option
@@ -84,7 +93,26 @@
         </el-form>
       </el-col>
     </el-row>
-
+    <el-row style="padding-bottom: 10px">
+      <el-col :span="6">
+        <el-button
+            type="primary"
+            style="margin-left: 10px;"
+            class="meiyuan_btn"
+            @click="roomassgin"
+        >
+          考场分配
+        </el-button>
+        <el-button
+            type="primary"
+            style="margin-left: 10px;"
+            class="meiyuan_btn"
+            @click="exportKc"
+        >
+          导出考场信息
+        </el-button>
+      </el-col>
+    </el-row>
     <!--列表-->
     <div class="form_border">
       <el-table
@@ -141,7 +169,7 @@
 
         <el-table-column
           prop="studioName"
-          label="所属机构"
+          label="机构名称"
           header-align="center"
 
           align="center"
@@ -149,13 +177,36 @@
 
         <el-table-column
           prop="province"
-          label="所属省份"
+          label="生源省份"
 
           header-align="center"
           align="center"
         ></el-table-column>
+        <el-table-column
+            prop="address"
+            label="考试地址"
 
-<!--         //审核状态  0:待审核,1:通过,2:拒绝 支付状态 1:待支付,2:成功,3:失败,4:处理-->
+            header-align="center"
+            align="center"
+        ></el-table-column>
+        <el-table-column
+            prop="examinationRoomCode"
+            label="考场编号"
+
+            header-align="center"
+            align="center"
+        ></el-table-column>
+        <el-table-column
+            prop="examinationRoomSeat"
+            label="座位号"
+
+            header-align="center"
+            align="center"
+        ></el-table-column>
+
+
+
+        <!--         //审核状态  0:待审核,1:通过,2:拒绝 支付状态 1:待支付,2:成功,3:失败,4:处理-->
 <!--        <el-table-column label="操作" header-align="center" align="center">-->
 <!--          <template slot-scope="scope">-->
 <!--            <el-button-->
@@ -273,6 +324,7 @@ export default {
         admissionTicketCode:"",//准考证号
         studioName:"",//机构名称
       },
+      addressList:[],
       ruleForm: {
         id: '',
         roomCode: '',
@@ -294,11 +346,20 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.selections.address = ""
+      this.selections.examName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.selections.examName = item.name
           this.examId = item.id
+          this.getDz()
         }
+      })
+    },
+    getDz(){
+      this.$axios.get("/examinfo/detail?id="+this.examId).then((res)=>{
+        this.addressList = res.result.addressList;
       })
     },
     // selectedProvince(payload) {
@@ -360,6 +421,38 @@ export default {
       this.selections.examName = ''
       this.getExamRoomList('select')
     },
+    exportKc(){
+      if(!this.examId){
+        this.$message.warning('请先选择考试名称！')
+        return false;
+      }
+      this.listLoading = true
+
+      let data = {
+        address:this.selections.address,
+        roomCode:this.selections.roomCode,
+        current: this.selections.current,
+        size: this.selections.size,
+        provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
+        examineeName: this.selections.examineeName,
+        examName: this.selections.examName,
+        studioName:this.selections.studioName,
+        admissionTicketCode:this.selections.admissionTicketCode,
+        examId:this.examId
+      }
+      this.$axios.post('/examinee/examRoomExport',data).then((res)=>{
+        if(res.code == 200){
+          const a = document.createElement('a');
+          a.setAttribute("download",'')
+          a.setAttribute("href",res.result)
+          a.click()
+        }
+        this.listLoading = false
+
+      }).catch((err) => {
+        this.listLoading = false
+      })
+    },
     getExamRoomList(type) {
       this.listLoading = true
       if (type == 'select') {
@@ -371,6 +464,8 @@ export default {
       )
       this.$axios
         .post(this.API.studentsManage.examRoomList, {
+          address:this.selections.address,
+          roomCode:this.selections.roomCode,
           current: this.selections.current,
           size: this.selections.size,
           provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',

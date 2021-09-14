@@ -72,6 +72,8 @@ export default {
     },
     open() {
       this.from.id = this.editItem.id
+      this.from.username = "";
+      this.from.password = "";
     },
     confirm() {
       this.del();
@@ -90,11 +92,14 @@ export default {
             .post(`${this.API.examinfo.delete}?id=${data.id}&username=${data.username}&password=${data.password}`, {})
             .then((res) => {
               if (res) {
-                this.$message({
-                  message: "删除成功",
-                  type: "success",
-                });
-                this.$emit("addSuccess");
+                if(res.code == 200){
+                  this.$message({
+                    message: "删除成功",
+                    type: "success",
+                  });
+                  this.$emit("addSuccess");
+                }
+
               }
             })
             .catch(() => {});

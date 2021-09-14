@@ -188,6 +188,8 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.forms.model.name=""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.forms.model.name = item.name

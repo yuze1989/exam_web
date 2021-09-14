@@ -268,6 +268,9 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.form.examNameNo = ""
+      this.form.examName = ""
+      this.form.rule.examId = ""
       this.examIdList.map(item =>{
         if(item.id == e){
           this.form.examNameNo = item.id;

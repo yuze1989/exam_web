@@ -147,10 +147,13 @@ export default {
             id: item.id
           }).then(res=>{
             if(res){
-              that.$message({
-                type: 'success',
-                message: '删除成功!'
-               });
+              if(res.code == 200){
+                that.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+              }
+
                that.getList();
             }else{
              that.$message({

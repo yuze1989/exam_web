@@ -200,6 +200,8 @@ export default {
   methods: {
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.form.examName= ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name

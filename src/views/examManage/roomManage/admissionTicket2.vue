@@ -10,7 +10,7 @@
 <!--        <el-button class="association_btn" type="primary" size="medium" @click="exportTicket"-->
 <!--          >导出准考证</el-button-->
 <!--        >-->
-      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange">
+      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange" style="width: 160px">
         <el-option
             v-for="item in examNameOption"
             :key="item.id"
@@ -18,15 +18,31 @@
             :value="item.id">
         </el-option>
       </el-select>
-        <el-input v-model="form.examNo" style="width:200px;margin-left:15px;"  placeholder="输入考场"
+      <el-select clearable  v-model="form.subjectName"  placeholder="请选择考试科目" style="width: 160px;margin-left:15px;">
+        <el-option
+            v-for="item in subjectNameList"
+            :key="item.subjectName"
+            :label="item.subjectName"
+            :value="item.subjectName">
+        </el-option>
+      </el-select>
+      <el-select clearable  v-model="form.address"  placeholder="请选择考试地址" style="width: 160px;margin-left:15px;">
+        <el-option
+            v-for="item in addressList"
+            :key="item.examAddress"
+            :label="item.examAddress"
+            :value="item.examAddress">
+        </el-option>
+      </el-select>
+        <el-input v-model="form.examNo" style="width:120px;margin-left:15px;"  placeholder="输入考场"
         ></el-input>
-         <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="学生姓名"
+         <el-input v-model="form.studentName" style="width:120px;margin-left:15px;"  placeholder="学生姓名"
         ></el-input>
-      <el-input v-model="form.admissionTicketCode" style="width:200px;margin-left:15px;"  placeholder="准考证号"
+      <el-input v-model="form.admissionTicketCode" style="width:120px;margin-left:15px;"  placeholder="准考证号"
       ></el-input>
-      <el-input v-model="form.studioName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
+      <el-input v-model="form.studioName" style="width:160px;margin-left:15px;"  placeholder="机构名称"
       ></el-input>
-       <el-select clearable  v-model="form.studentAreaCode" style="width:200px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
+       <el-select clearable  v-model="form.studentAreaCode" style="width:160px;margin-left:15px;" placeholder="请选择生源省份" @change="studioAreaChange">
           <el-option
             v-for="item in studentAreaOption"
             :key="item.provinceCode"
@@ -195,6 +211,7 @@ export default {
       dialogTableVisible:false,
       selectRoomIds: [],
       roomOptions: [],
+      subjectNameList:[],
       form: {
         pageIndex: 1,
         pageSize: 10,
@@ -216,6 +233,7 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
+      addressList:[],
     };
   },
   created() {
@@ -233,15 +251,43 @@ export default {
     },
     // 考试改变监听
     examNameChange(e){
+      this.examId = ""
+      this.form.examName = ""
+      this.form.address = ""
+      this.form.subjectName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name
           this.examId = item.id
+          this.subjectNameList = [];
+          this.addressList = [];
+          this.getkm();
+          this.getDz()
         }
       })
     },
+    getDz(){
+      this.$axios.get("/examinfo/detail?id="+this.examId).then((res)=>{
+        this.addressList = res.result.addressList;
+      })
+    },
+    //科目
+    getkm(){
+      this.$axios
+          .get('/examsubject/listByExamId?examId='+this.examId)
+          .then((res) => {
+            this.subjectNameList = res.result;
+          })
+          .catch(() => {});
+    },
      // 生成和导出二维码
      exportQR(){
+       this.$message({
+         message: "功能优化中，敬请期待！",
+         type: "warning",
+       });
+       return false
+      // this.listLoading = true;
        if(this.form.examName == ""){
          this.$message({
            message: "请先填写考试名称！",
@@ -249,24 +295,22 @@ export default {
          });
          return false
        }
-       let params = {
-         current : this.form.pageIndex ,
-         size : this.form.pageSize ,
-         examName : this.form.examName,
-         roomCode :  this.form.examNo,
-         provinceCode : this.form.studentAreaCode,
-         examineeName : this.form.studentName,
-         schoolId :this.form.schoolId,
-         admissionTicketCode:this.form.admissionTicketCode,
-         studioName:this.form.studioName,
-         examId:this.examId
-       }
-       this.$axios
-           .post('/ticket/unionExamQRcode', params)
-           .then((res) => {
-             window.open(res.result)
-           })
-           .catch(() => {});
+       let { href } = this.$router.resolve({ path: '/qrcode' ,query:{
+           current : this.form.pageIndex ,
+           size : this.form.pageSize ,
+           examName : this.form.examName,
+           roomCode :  this.form.examNo,
+           provinceCode : this.form.studentAreaCode,
+           examineeName : this.form.studentName,
+           schoolId :this.form.schoolId,
+           admissionTicketCode:this.form.admissionTicketCode,
+           studioName:this.form.studioName,
+           examId:this.examId,
+           subjectName:this.form.subjectName,
+           address:this.form.address,
+         }})
+       window.open(href, '_blank')
+
      },
      // 导出准考证
      exportTicket(){
@@ -300,7 +344,9 @@ export default {
         examineeName : this.form.studentName,
         studioName:this.form.studioName,
         admissionTicketCode:this.form.admissionTicketCode,
-        examId:this.examId
+        examId:this.examId,
+        subjectName:this.form.subjectName,
+        address:this.form.address,
       };
       apiUnionExamList(params).then((res) => {
                  this.data.records = res.result.list;
