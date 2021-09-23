@@ -1,10 +1,11 @@
 <template>
    <section class="form_border">
-    <div class="header" style="display: block;padding-left: 150px">
+    <div class="header" style="display: flex;
+    justify-content: flex-end;">
+<!--        <el-button class="meiyuan_btn" type="primary" size="medium" @click="exportQR"-->
+<!--          >生成和导出二维码</el-button-->
+<!--        >-->
 
-        <el-button class="association_btn" type="primary" size="medium" @click="go_d" style="position: absolute;left: 20px"
-          >下载二维码</el-button
-        >
       <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange" style="width: 160px">
         <el-option
             v-for="item in examNameOption"
@@ -13,45 +14,16 @@
             :value="item.id">
         </el-option>
       </el-select>
-      <el-select clearable  v-model="form.subjectName"  placeholder="请选择考试科目" style="width: 150px;margin-left:15px;">
-        <el-option
-            v-for="item in subjectNameList"
-            :key="item.subjectName"
-            :label="item.subjectName"
-            :value="item.subjectName">
-        </el-option>
-      </el-select>
-      <el-select clearable  v-model="form.address"  placeholder="请选择考试地址" style="width: 150px;margin-left:15px;">
-        <el-option
-            v-for="item in addressList"
-            :key="item.examAddress"
-            :label="item.examAddress"
-            :value="item.examAddress">
-        </el-option>
-      </el-select>
-        <el-input v-model="form.examNo" style="width:90px;margin-left:15px;"  placeholder="输入考场"
-        ></el-input>
-         <el-input v-model="form.studentName" style="width:90px;margin-left:15px;"  placeholder="学生姓名"
-        ></el-input>
-      <el-input v-model="form.admissionTicketCode" style="width:120px;margin-left:15px;"  placeholder="准考证号"
-      ></el-input>
-      <el-input v-model="form.studioName" style="width:120px;margin-left:15px;"  placeholder="机构名称"
-      ></el-input>
-       <el-select clearable  v-model="form.studentAreaCode" style="width:144px;margin-left:14px;" placeholder="请选择生源省份" @change="studioAreaChange">
+       <el-select clearable  v-model="form.studentAreaCode" style="width:160px;margin-left:15px;" placeholder="请选择导出状态">
           <el-option
             v-for="item in studentAreaOption"
-            :key="item.provinceCode"
-            :label="item.province"
-            :value="item.provinceCode">
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
           </el-option>
         </el-select>
-      <el-input v-model="form.gender" style="width:120px;margin-left:15px;"  placeholder="性别"
-      ></el-input>
        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button
-      >
-      <el-button class="meiyuan_btn" type="primary" size="medium" @click="exportQR"
-      >生成二维码</el-button
       >
     </div>
     <!--列表-->
@@ -67,10 +39,10 @@
       }"
     >
       <el-table-column
-        label="考试编码"
-        header-align="center"
-        align="center"
-        prop="examCode"
+          label="考试编号"
+          header-align="center"
+          align="center"
+          prop="examNo"
       >
       </el-table-column>
       <el-table-column
@@ -80,81 +52,39 @@
         prop="examName"
       >
       </el-table-column>
+      <el-table-column
+          label="创建时间"
+          header-align="center"
+          align="center"
+          prop="createTime"
+      >
+      </el-table-column>
        <el-table-column
-        label="考试类型"
+        label="导出状态"
         header-align="center"
         align="center"
       >
           <template slot-scope="scope">
-            <div>{{ scope.row.examTypeStr == 0 ? '机构考试' :scope.row.examTypeStr == 1 ? '联合考试' :'线下考试'  }}</div>
+            <div>{{ scope.row.status == 0 ? '生成中' :scope.row.status == 1 ? '生成成功' :'生成失败'  }}</div>
           </template>
       </el-table-column>
-       <el-table-column
-        label="准考证号"
-        header-align="center"
-        align="center"
-        prop="admissionTicketCode"
+      <el-table-column
+          label="下载地址"
+          header-align="center"
+          align="center"
       >
+        <template slot-scope="scope">
+          <a style="color: #409EFF" target="_blank" v-if="scope.row.downloadUrl" :href="scope.row.downloadUrl">PDF下载</a>
+        </template>
       </el-table-column>
-       <el-table-column
-        label="姓名"
-        header-align="center"
-        align="center"
-        prop="name"
-      >
-      </el-table-column>
-       <el-table-column
-        label="身份证号"
-        header-align="center"
-        align="center"
-        prop="identification"
-      >
-      </el-table-column>
-       <el-table-column
-        label="机构编码"
-        header-align="center"
-        align="center"
-        prop="studioCode"
-      >
-      </el-table-column>
-       <el-table-column
-        label="机构名称"
-        header-align="center"
-        align="center"
-        prop="studioName"
-      >
-      </el-table-column>
-       <el-table-column
-        label="所属省份"
-        header-align="center"
-        align="center"
-        prop="province"
-      >
-      </el-table-column> <el-table-column
-        label="考场"
-        header-align="center"
-        align="center"
-        prop="examinationRoomCode"
-      >
-      </el-table-column>
-       <!-- <el-table-column
-        label="二维码"
-        header-align="center"
-        align="center"
-      >
-         <template slot-scope="scope">
-            <img :src="scope.row.url" style="width:100px;height:100px" />
-          </template>
-      </el-table-column> -->
-       <!-- <el-table-column
+        <el-table-column
       fixed="right"
       label="操作"
       width="200">
       <template slot-scope="scope">
-        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联机构</el-button>
-        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
+        <el-button @click="del(scope.row.id)" type="text" size="small" >删除</el-button>
       </template>
-    </el-table-column> -->
+    </el-table-column>
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -198,6 +128,7 @@ export default {
   name: "AdmissionTicket",
   data() {
     return {
+      addressList:[],
       examName:"",
       examId:"",
       examNameOption: [],
@@ -207,11 +138,15 @@ export default {
         name: "",
         mobilePhone: "",
       },
-      studentAreaOption: [],
+      studentAreaOption: [
+        {id:"",name:"全部状态"},
+        {id:0,name:"正在处理"},
+        {id:1,name:"生成成功"},
+        {id:-1,name:"生成失败"},
+      ],
       dialogTableVisible:false,
       selectRoomIds: [],
       roomOptions: [],
-      subjectNameList:[],
       form: {
         pageIndex: 1,
         pageSize: 10,
@@ -222,10 +157,7 @@ export default {
         examNo: '',
         admissionTicketCode:"",
         studioName:"",
-        address:"",
-        subjectName:"",
-        gender:"",
-
+        address:""
       },
 
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -236,17 +168,39 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
-      addressList:[],
       daochu:{},
     };
   },
   created() {
-      this.getAllProvinces()
+      // this.getAllProvinces()
      this.getList();
     this.getExamList()
   },
 
   methods: {
+    del(id){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post('/exam/export_record/delete?id='+id).then((res)=>{
+          if(res.code == 200){
+            this.getList();
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
     // 查询考试列表
     getExamList(){
       apiExamList().then(res=>{
@@ -256,19 +210,12 @@ export default {
     // 考试改变监听
     examNameChange(e){
       this.examId = ""
-      this.form.examName = ""
+      this.form.examName =""
       this.form.address = ""
-      this.addressList = [];
-      this.subjectNameList = [];
-      this.form.subjectName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
           this.form.examName = item.name
-          this.examId = item.id
-          this.subjectNameList = [];
-          this.addressList = [];
-          this.getkm();
-          this.getDz()
+          this.examId = item.no
         }
       })
     },
@@ -277,41 +224,30 @@ export default {
         this.addressList = res.result.addressList;
       })
     },
-    //科目
-    getkm(){
-      this.$axios
-          .get('/examsubject/listByExamId?examId='+this.examId)
-          .then((res) => {
-            this.subjectNameList = res.result;
-          })
-          .catch(() => {});
-    },
      // 生成和导出二维码
      exportQR(){
-       if(this.daochu.examId == ""){
+
+     },
+     // 导出准考证
+     exportTicket(){
+       if(this.daochu.examName == ""){
          this.$message({
            message: "请先根据考试名称查询！",
            type: "error",
          });
          return false
        }
-
        this.$axios
-           .post('/ticket/qrcodeExport', this.daochu)
+           .post('/ticket/ticketExport', this.daochu)
            .then((res) => {
              if(res.code== 200){
                this.$message({
-                 message: "已提交导出请求，请稍后到下载二维码下载！",
+                 message: "已提交导出请求，请稍后到导出列表下载！",
                  type: "success",
                });
              }
            })
            .catch(() => {});
-
-     },
-     // 导出准考证
-    go_d(){
-      this.$router.push({path:"/daochuList",query:{type:'qrcode'}})
      },
         // 区域改变监听
     studioAreaChange(e){
@@ -321,7 +257,7 @@ export default {
         }
       })
     },
-         // 获取所有区域
+     // 获取所有区域
      getAllProvinces(){
        this.$axios
            .get(this.API.studentsManage.examRoomProvince)
@@ -329,25 +265,19 @@ export default {
              this.studentAreaOption = res.result || []
            })
            .catch(() => {})
+
     },
   // 获取列表
     getList() {
       let params = {
         current : this.form.pageIndex ,
         size : this.form.pageSize ,
-        examName : this.form.examName,
-        roomCode :  this.form.examNo,
-        provinceCode : this.form.studentAreaCode,
-        examineeName : this.form.studentName,
-        studioName:this.form.studioName,
-        admissionTicketCode:this.form.admissionTicketCode,
-        examId:this.examId,
-        subjectName:this.form.subjectName,
-        address:this.form.address,
-        gender:this.form.gender,
+        type:this.$route.query.type,
+        status:this.form.studentAreaCode,
+        exam_no:this.examId
       };
-      this.daochu=params;
-      apiUnionExamList(params).then((res) => {
+      this.daochu = params;
+      this.$axios.post('/exam/export_record/list',params).then((res) => {
                  this.data.records = res.result.list;
                 this.data.current = res.result.current;
                 this.data.total = res.result.total;
@@ -398,8 +328,9 @@ export default {
 
 <style lang="scss" scoped>
 @import "./schoolManage.scss";
-.header>div{
-  margin-bottom: 10px;
+.header{
+display: flex;
+padding-left:200px;
 }
 </style>
 

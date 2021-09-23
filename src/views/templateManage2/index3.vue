@@ -193,13 +193,21 @@ export default {
       var str = []
       for (var p in obj) {
         if (obj[p]) {
-          str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          str.push(p + '=' + obj[p])
         }
       }
       return str.join('&')
     },
     // 保存
     examConfirm(){
+      if(!this.form.examNameNo){
+        this.$message({
+          message: '请选择考试名称',
+          type: 'warning',
+        })
+        return false;
+      }
+
       let data = {
         examId  : this.examId,
         identification : this.identification?"1":"0",
@@ -211,7 +219,7 @@ export default {
       this.$axios
           .post(url, data)
           .then((res) => {
-            if (res) {
+            if (res.code==200) {
               this.$message({
                 message: '保存成功',
                 type: 'success',

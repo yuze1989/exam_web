@@ -220,7 +220,7 @@ export default {
           this.$axios
             .post(this.API.order.open, params)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: "操作成功",
                   type: "success",

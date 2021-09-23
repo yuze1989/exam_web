@@ -14,7 +14,7 @@
           </slot>
           <!-- draggable: false 禁止 chrome 拖拽图片 -->
           <div class="image-box">
-            <span class="image-container" :style="imgStyle">
+            <span :class="class1" :style="imgStyle">
                <el-image
                    v-show="!loading"
                    ref="image"
@@ -27,13 +27,13 @@
                    @abort="hideLoading"
                    @mousedown="handleImageMouseDown"
                    @wheel.stop="wheelScale"
-                   :preview-src-list="imageUrls1">
+                   >
                 </el-image>
 
             </span>
           </div>
         </div>
-        <div class="pos-tip"> <span @dblclick="chagedd">  {{ currentPosition + 1 }} </span> / {{ totalCount }}</div>
+        <div class="pos-tip"> <span @dblclick="chagedd">  {{ thisCurrent }} </span> / {{ allLength }}</div>
         <div
           class="arrow arrow-prev hover-icon"
           :class="{ disabled: currentPosition === 0 }"
@@ -61,11 +61,15 @@
               @click="decreaseScale"
             />
             <div class="divide" />
-            <SvgIcon
-              class="icon hover-icon"
-              name="zhongzhi"
-              @click="onResetClick"
-            />
+<!--            <SvgIcon-->
+<!--              class="icon hover-icon"-->
+<!--              name="zhongzhi"-->
+<!--              @click="onResetClick"-->
+<!--            />-->
+            <span class="r_left" @click="rotateImg(-90)">
+            </span>
+            <span class="r_right" @click="rotateImg(90)">
+            </span>
           </slot>
           <slot name="extraOperate"></slot>
         </div>
@@ -136,6 +140,15 @@ export default {
       type: Number,
       default: 0,
     },
+    //总数
+    allLength:{
+      type: Number,
+      default: 0,
+    },
+    thisCurrent:{
+      type: Number,
+      default: 0,
+    },
     startPosition2: {
       type: Number,
       default: 0,
@@ -200,6 +213,7 @@ export default {
       rotateAngle: 0,
       aspectRatio: 1,
       clickTimer:null,
+      class1:"image-container",
       position: {
         left: 0,
         top: 0,
@@ -210,6 +224,7 @@ export default {
         x: 0,
         y: 0,
       },
+      rote:0,
     }
   },
   computed: {
@@ -252,7 +267,7 @@ export default {
       let { left, top } = this.position
       let styleKey = this.aspectRatio > 1 ? 'max-width' : 'max-height'
       return {
-        transform: `translate3d(${left}px, ${top}px, 0) scale(${this.scale}) rotate(${this.rotateAngle}deg)`,
+        transform: `translate3d(${left}px, ${top}px, 0) scale(${this.scale}) rotate(${this.rote}deg)`,
       }
     },
     scaleTipStyle() {
@@ -268,6 +283,12 @@ export default {
     slotModeVisible: 'handleVisible',
     startPosition: function (val, old) {
       this.currentPosition = val
+    },
+    thisCurrent: function (val, old) {
+      this.thisCurrent = val
+    },
+    allLength: function (val, old) {
+      this.allLength = val
     },
     // 切换图片 src 时触发
     currentPosition: 'handleImageSourceChange',
@@ -312,16 +333,21 @@ export default {
     }
   },
   methods: {
+    rotateImg(value){
+      this.rote = this.rote + value/1;
+      this.$emit('roteImg', this.rote)
+    },
     change(e){
       this.chanNum = e.data;
       this.$forceUpdate()
     },
     chagedd(){
+      return false
       this.$prompt('请输入目标位置', '跳转', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
       }).then(({ value }) => {
-        var leg = this.finallyImageList.length;
+        var leg = this.allLength;
         if(value-1 > leg){
           this.$message({
             type: 'error',
@@ -464,7 +490,6 @@ export default {
     },
     resetImage() {
       this.scale = this.initialScale || 1
-      this.rotateAngle = 0
       this.position = {
         left: 0,
         top: 0,
@@ -497,6 +522,30 @@ export default {
       let width = e.target.offsetWidth
       let height = e.target.offsetHeight
       this.aspectRatio = width / height
+
+      //长宽自适应
+      let src = this.finallyImageList[this.currentPosition]
+      let img = new Image()
+      img.src = src;
+      let nWidth, nHeight
+      if (img.naturalWidth) { // 现代浏览器
+        nWidth = img.naturalWidth
+        nHeight = img.naturalHeight
+      } else { // IE6/7/8
+        let image = new Image()
+        image.src = src
+        image.onload = function() {
+          callback(image.width, image.height)
+        }
+      }
+
+      if(nWidth>nHeight){
+        this.class1 = "image-container"
+      }else{
+        this.class1 = "image-container2"
+      }
+
+
     },
     handleImageLoad(e) {
       this.initAspectRatio(e)
@@ -506,16 +555,17 @@ export default {
     // 更新position点
     updatePosition(next) {
       const _next = this.currentPosition + next
+      const _thisC = this.thisCurrent + next
       if (_next >= this.finallyImageList.length) {
-        // this.currentPosition = 0
         return
       } else if (_next < 0) {
-        // this.currentPosition = this.finallyImageList.length - 1
         return
       } else {
         this.currentPosition = _next
+        this.thisCurrent = _thisC
       }
       this.$emit('positionUpdated', this.currentPosition)
+      this.$emit('currentUpdated', this.thisCurrent)
       this.resetImage()
     },
     handleImageSourceChange() {
@@ -637,6 +687,35 @@ export default {
 }
 </script>
 <style>
+.r_left{
+  width: 24px;
+  height: 24px;
+  background: url("../../assets/left.png") no-repeat;
+  display: inline-block;
+  position: relative;
+  top: 4px;
+  left: 16px;
+  cursor: pointer;
+}
+.r_right{
+  width: 24px;
+  height: 24px;
+  background: url("../../assets/right.png") no-repeat;
+  display: inline-block;
+  position: relative;
+  top: 4px;
+  left: 34px;
+  cursor: pointer;
+}
+.image-container2 img,.image-container2 .el-image{
+  height: 100%;
+  width: auto;
+}
+.image-container img,.image-container .el-image{
+  width: 100%;
+  height: auto;
+}
+
 .hidebox:before{
   content: "";
   position: absolute;
@@ -743,6 +822,22 @@ export default {
       width: 100%;
       .image{
         width: 100%;
+        img{
+          width: 100%;
+          height: auto;
+        }
+      }
+    }
+    .image-container2 {
+      position: relative;
+      display: inline-block;
+      height: 100%;
+      .image{
+        height: 100%;
+        img{
+          height: 100%;
+          width: auto;
+        }
       }
     }
 

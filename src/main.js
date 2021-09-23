@@ -20,7 +20,6 @@ import { bus } from './Bus'
 import { Tab, Tabs,CountDown,Button} from 'vant';
 import { validater } from '@/api/valid';
 
-
 Vue.use(ElementUI);
 
 Vue.use(Tab);

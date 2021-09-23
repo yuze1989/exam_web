@@ -88,8 +88,8 @@
     </el-col>
 
 <!--    教师关联-->
-    <el-dialog title="阅卷教师关联" :visible.sync="dialogFormVisible">
-      <el-form>
+    <el-dialog title="阅卷教师关联" :visible.sync="dialogFormVisible" >
+      <el-form >
         <el-form-item label="选择教师">
           <el-select clearable  v-model="examNameNo" filterable collapse-tags style="display: flex;margin-left:50px;" placeholder="请选择教师" multiple>
             <el-option
@@ -106,7 +106,7 @@
           </el-checkbox-group>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer" v-loading="isLoad">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="edit">确 定</el-button>
       </div>
@@ -163,6 +163,7 @@ export default {
   },
   data() {
     return {
+      isLoad:false,
       list: [],
       checkIds: [],
       listLoading: false,
@@ -230,6 +231,7 @@ export default {
         this.$message.error('请先选择关联的科目！')
         return false;
       }
+      this.isLoad =true;
       this.$axios.post('/teacher/relationTeacher',data)
           .then((res) => {
             this.$message.success('操作成功')
@@ -237,9 +239,11 @@ export default {
             this.examNameNo = [];
             this.getOrderList()
             this.dialogFormVisible = false
+            this.isLoad =false;
           })
           .catch(() => {
             this.dialogFormVisible = false
+            this.isLoad =false;
           })
 
     },

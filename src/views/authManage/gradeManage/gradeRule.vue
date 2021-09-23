@@ -467,7 +467,7 @@ export default {
       }
 
       this.$axios.post(url,data).then(res=>{
-        if(res){
+        if(res.code == 200){
             this.$message({
                 message: '提交成功',
                 type: 'success',

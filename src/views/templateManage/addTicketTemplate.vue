@@ -2,68 +2,119 @@
    <section class="form_border">
     <div class="header">
         准考证模板
+      <el-switch
+          style="margin-left: 20px"
+          v-model="bgValue"
+          active-text="正面"
+          inactive-text="背面">
+      </el-switch>
     </div>
      <el-row>
        <el-col :span="8">
          <!-- 模板信息 -->
          <div class="template">
            <!-- 基本信息 -->
-           <div class="basic-info">
-             <div class="display-center">
-               <div class="title">考试名称</div>
-               <el-select clearable  v-model="form.examNameNo" :disabled="$route.params.examId" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
-                 <el-option
-                     v-for="item in examNameOption"
-                     :key="item.id"
-                     :label="item.name"
-                     :value="item.id">
-                 </el-option>
-               </el-select>
+           <div>
+             <div class="basic-info">
+               <div class="display-center">
+                 <div class="title">考试名称</div>
+                 <el-select clearable  v-model="form.examNameNo" :disabled="isChead" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+                   <el-option
+                       v-for="item in examNameOption"
+                       :key="item.id"
+                       :label="item.name"
+                       :value="item.id">
+                   </el-option>
+                 </el-select>
+               </div>
+               <div class="display-center">
+                 <div class="title">考试标题</div>
+                 <el-input v-model="form.examTitle" @input="fontS" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题"  maxlength="35"
+                           show-word-limit></el-input>
+               </div>
+               <div class="display-center">
+                 <div class="title">主办单位</div>
+                 <el-input v-model="form.organizer" style="width:200px;margin-left:50px;"  placeholder="请输入主办单位" maxlength="20"
+                           show-word-limit></el-input>
+               </div>
+               <div class="display-center">
+                 <div class="title">承办单位</div>
+                 <el-input v-model="form.undertaker" style="width:200px;margin-left:50px;"  placeholder="请输入承办单位" maxlength="20"
+                           show-word-limit></el-input>
+               </div>
              </div>
-             <div class="display-center">
-               <div class="title">考试标题</div>
-               <el-input v-model="form.examTitle" @change="fontS" style="width:200px;margin-left:50px;"  placeholder="请输入考试标题"  maxlength="30"
-                         show-word-limit></el-input>
-             </div>
-             <!--               <div class="display-center">-->
-             <!--                    <div class="title">考生省份</div>-->
-             <!--                      <el-select clearable  v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">-->
-             <!--                        <el-option-->
-             <!--                            v-for="item in studentAreaOption"-->
-             <!--                            :key="item.provinceCode"-->
-             <!--                            :label="item.province"-->
-             <!--                            :value="item.provinceCode">-->
-             <!--                        </el-option>-->
-             <!--                    </el-select>-->
-             <!--               </div>-->
-             <div class="display-center">
-               <div class="title">主办单位</div>
-               <el-input v-model="form.organizer" style="width:200px;margin-left:50px;"  placeholder="请输入主办单位" maxlength="30"
-                         show-word-limit></el-input>
-             </div>
-             <div class="display-center">
-               <div class="title">承办单位</div>
-               <el-input v-model="form.undertaker" style="width:200px;margin-left:50px;"  placeholder="请输入承办单位" maxlength="30"
-                         show-word-limit></el-input>
-             </div>
+             <!--列表-->
+             <el-table
+                 style="width: 94%;margin: 0 3%"
+                 :data="examDetails.subjectList"
+                 highlight-current-row
+                 v-loading="listLoading"
+                 border
+                 :header-cell-style="{
+                background: '#08223c',
+                color: '#fff',
+                border: 'none',
+            }"
+             >
+               <el-table-column
+                   label="科目"
+                   header-align="center"
+                   align="center"
+                   prop="subjectName"
+               >
+               </el-table-column>
+               <el-table-column
+                   label="考试日期"
+                   header-align="center"
+                   align="center"
+                   prop="subjectDate"
+               >
+               </el-table-column>
+               <el-table-column
+                   label="考试开始时间"
+                   header-align="center"
+                   align="center"
+                   prop="subjectStarttime"
+               >
+               </el-table-column>
+               <el-table-column
+                   label="考试结束时间"
+                   header-align="center"
+                   align="center"
+                   prop="subjectEndtime"
+               >
+               </el-table-column>
+             </el-table>
+             <!-- 注意事项 -->
            </div>
-           <div class="title" style="padding-left: 50px">模板配置选项</div>
-           <div class="display-center" style="padding-top: 10px">
 
+           <!-- 保存 -->
+           <el-button
+               @click='getImage'
+               type="primary"
+               style="margin-left: 10px;margin-top: 20px"
+           >保存</el-button>
+         </div>
+       </el-col>
+       <el-col :span="16" :md="16" :xl="16" :lg="16">
+         <!-- 模板示例 -->
+         <el-col :span="8">
+           <div class="title" style="padding-left: 10px">模板配置选项</div>
+           <div class="display-center" style="padding-top: 10px">
              <div>
-               <el-row style="width:200px;text-align: left;padding-left: 30px">
+               <el-row style="width:200px;text-align: left;padding-left: 10px">
                  <el-checkbox v-model="form.subjectList.zbdw">主办单位</el-checkbox>
                </el-row>
-               <el-row style="width:200px;text-align: left;padding-left: 30px">
+               <el-row style="width:200px;text-align: left;padding-left: 10px">
                  <el-checkbox v-model="form.subjectList.cbdw">承办单位</el-checkbox>
                </el-row>
-               <el-row style="width:200px;text-align: left;padding-left: 30px">
+               <el-row style="width:200px;text-align: left;padding-left: 10px">
                  <el-checkbox v-model="form.subjectList.ksdz">考试地址</el-checkbox>
                </el-row>
-               <el-row style="width:200px;text-align: left;padding-left: 30px">
+               <el-row style="width:200px;text-align: left;padding-left: 10px">
                  <el-checkbox v-model="form.subjectList.kch">考场号</el-checkbox>
                </el-row>
-               <el-row style="width:200px;text-align: left;padding-left: 30px">
+               <el-row style="width:200px;text-align: left;padding-left: 10px">
                  <el-checkbox v-model="form.subjectList.zwh">座位号</el-checkbox>
                </el-row>
 
@@ -71,178 +122,157 @@
              </div>
            </div>
 
-           <!--列表-->
-           <el-table
-               style="width: 94%;margin: 0 3%"
-               :data="examDetails.subjectList"
-               highlight-current-row
-               v-loading="listLoading"
-               border
-               :header-cell-style="{
-                background: '#08223c',
-                color: '#fff',
-                border: 'none',
-            }"
-           >
-             <el-table-column
-                 label="科目"
-                 header-align="center"
-                 align="center"
-                 prop="subjectName"
-             >
-             </el-table-column>
-             <el-table-column
-                 label="考试日期"
-                 header-align="center"
-                 align="center"
-                 prop="subjectDate"
-             >
-             </el-table-column>
-             <el-table-column
-                 label="考试开始时间"
-                 header-align="center"
-                 align="center"
-                 prop="subjectStarttime"
-             >
-             </el-table-column>
-             <el-table-column
-                 label="考试结束时间"
-                 header-align="center"
-                 align="center"
-                 prop="subjectEndtime"
-             >
-             </el-table-column>
-           </el-table>
-           <!-- 注意事项 -->
-           <div class="title" style="padding-left: 18px;position: relative;top: 14px;">注意事项</div>
-           <div class="careful-matter">
-             <tinymce v-model="form.carefulMatter" :height="100"/>
-           </div>
-           <div class="title" style="padding-left: 18px;position: relative;top: 14px;">准考证背面</div>
-           <div class="careful-matter">
-             <tinymce v-model="form.carefulMatter2" :height="100" />
-           </div>
-           <!-- 保存 -->
-           <el-button
-               @click='getImage'
-               type="primary"
-               style="margin-left: 10px"
-           >保存</el-button
-           >
-           <!--            <div class="confirm">-->
-           <!--              <el-button type="primary" style="margin-top:30px" @click="examConfirm"> 保存</el-button>-->
-           <!--            </div>-->
-         </div>
-       </el-col>
-       <el-col :span="8" :md="16" :xl="8" :lg="16">
-         <!-- 模板示例 -->
-         <div class="template-example" >
-           <div class="bg" style="background: #f1f1f1;margin-left: 10px; padding: 30px 30px 80px;width: 499px;height:706px;border-radius: 2px" ref="ticketFile">
-             <div class="bob" id="bob" style="max-height: 666px;overflow: auto">
-               <div class="title" style="height: 172px;background: #4a4a98;text-align: center;color: #fff;margin-bottom: 20px">
-                 <div style="font-size: 70px;
-    font-weight: 700;
-    letter-spacing: 40px;
-    padding-left: 40px;">准考证</div>
-                 <div :style="fontSz" v-if="isShow" :class="{ isShow: !isShow }">{{form.examTitle}}</div>
-               </div>
-               <div class="template-example-dom" >
+           <div class="title" style="padding-left: 10px">上传正面图</div>
+           <el-upload
+               style="width: 96%;padding: 0 2%"
+               class="upload-demo"
+               action="#"
+               ref="upload"
+               :auto-upload="false"
+               drag
+               accept="image/jpeg,image/png,image/jpg"
+               :on-change="up_bg"
+               >
+             <i class="el-icon-upload"></i>
+             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+             <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，建议不超过1MB</div>
+           </el-upload>
 
-                 <div class="student-info">
-                   <div class="warp">
-                     <div class="name">
-                       <div class="left">姓名</div>
-                       <div class="right"></div>
-                     </div>
-                     <div class="zkz">
-                       <div class="left">准考证号</div>
-                       <div class="right"></div>
-                     </div>
-                     <div class="sfz">
-                       <div class="left">身份证号</div>
-                       <div class="right"></div>
-                     </div>
-                   </div>
-                   <div class="student-img">
-                     <div>照</div>
-                     <div>片</div>
-                   </div>
+           <div class="title" style="padding-left: 10px;margin-top: 30px">上传背面图</div>
+           <el-upload
+               style="width: 96%;padding: 0 2%"
+               class="upload-demo"
+               action="#"
+               ref="upload2"
+               :auto-upload="false"
+               drag
+               accept="image/jpeg,image/png,image/jpg"
+               :on-change="up_bg2"
+           >
+             <i class="el-icon-upload"></i>
+             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+             <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，建议不超过1MB</div>
+           </el-upload>
+         </el-col>
+         <el-col v-show="bgValue" :span="16">
+           <div class="template-example" >
+             <div class="bg" :style="{backgroundImage:'url('+bg_url+')'}" ref="ticketFile">
+               <div class="bob" id="bob" style="max-height: 666px;overflow: auto">
+                 <div class="title" style="height: 172px;text-align: center;color: #fff;margin-bottom: 20px">
+                   <div style="font-size: 70px;font-weight: 700;height: 126px;letter-spacing: 40px;padding-left: 40px;"></div>
+                   <div :style="fontSz" v-if="isShow" :class="{ isShow: !isShow }">{{form.examTitle}}</div>
                  </div>
-                 <div class="zbdw" v-if="form.subjectList.zbdw">
-                   <div class="left">主办单位</div>
-                   <div class="right" style="padding-left: 20px" v-show="isShow">{{form.organizer}}</div>
-                 </div>
-                 <div class="cbdw zbdw" v-if="form.subjectList.cbdw">
-                   <div class="left">承办单位</div>
-                   <div class="right" style="padding-left: 20px" v-show="isShow">{{form.undertaker}}</div>
-                 </div>
-                 <div class="room" >
-                   <div class="left">机构名称</div>
-                   <div class="right"></div>
-                 </div>
-                 <div class="room" v-if="form.subjectList.ksdz">
-                   <div class="left">考试地址</div>
-                   <div class="right"></div>
-                 </div>
-                 <div class="subject-warp">
-                   <div class="title1">
-                     <div class="line1" style="">考试科目</div>
-                     <div class="line2" style="width: 100px">考试时间</div>
-                     <div class="line3">分值</div>
-                     <div class="line4" v-if="form.subjectList.kch">考场号</div>
-                     <div class="line5" v-if="form.subjectList.zwh">座位号</div>
-                   </div>
-                   <div class="title1" v-for="item in examDetails.subjectList" :key="item.message">
-                     <div class="line1" style="height: 40px;line-height: 40px;" ><div v-show="isShow">{{item.subjectName}}</div></div>
-                     <div class="line2" style="height: 40px;font-size: 14px;padding-top: 4px;line-height: 16px;width: 100px">
-                       <div  v-show="isShow">
-                         {{item.subjectDate}}
-                         {{item.subjectStarttime}} - {{item.subjectEndtime}}
+                 <div class="template-example-dom" >
+
+                   <div class="student-info">
+                     <div class="warp">
+
+                       <el-row>
+                         <el-col :span="12">
+                           <div class="name">
+                             <div class="left">姓名</div>
+                             <div class="right"></div>
+                           </div>
+                         </el-col>
+                         <el-col :span="12">
+                           <div class="name" >
+                             <div class="left">性别</div>
+                             <div class="right"></div>
+                           </div>
+                         </el-col>
+                       </el-row>
+
+                       <div class="zkz">
+                         <div class="left">准考证号</div>
+                         <div class="right"></div>
+                       </div>
+                       <div class="sfz">
+                         <div class="left">身份证号</div>
+                         <div class="right"></div>
                        </div>
                      </div>
-                     <div class="line3" style="height: 40px"></div>
-                     <div class="line4" style="height: 40px"  v-if="form.subjectList.kch"></div>
-                     <div class="line5" v-if="form.subjectList.zwh" style="height: 40px;font-size: 14px;padding-top: 4px;line-height: 16px;">
+                     <div class="student-img">
+                       <div>照</div>
+                       <div>片</div>
+                     </div>
+                   </div>
+                   <div class="zbdw" v-if="form.subjectList.zbdw">
+                     <div class="left">主办单位</div>
+                     <div class="right" style="padding-left: 20px" v-show="isShow">{{form.organizer}}</div>
+                   </div>
+                   <div class="cbdw zbdw" v-if="form.subjectList.cbdw">
+                     <div class="left">承办单位</div>
+                     <div class="right" style="padding-left: 20px" v-show="isShow">{{form.undertaker}}</div>
+                   </div>
+
+<!--                   <div class="room" >-->
+<!--                     <div class="left">机构名称</div>-->
+<!--                     <div class="right"></div>-->
+<!--                   </div>-->
+                   <div class="room" v-if="form.subjectList.ksdz">
+                     <div class="left">考试地址</div>
+                     <div class="right"></div>
+                   </div>
+                   <div class="subject-warp">
+                     <div class="title1">
+                       <div class="line1" style="">考试科目</div>
+                       <div class="line2" style="width: 180px">考试时间</div>
+
+                       <div class="line4" v-if="form.subjectList.kch">考场号</div>
+                       <div class="line5" v-if="form.subjectList.zwh">座位号</div>
+                     </div>
+                     <div class="title1" v-for="item in examDetails.subjectList" :key="item.message">
+                       <div class="line1" style="height: 40px;line-height: 40px;" ><div v-show="isShow">{{item.subjectName}}</div></div>
+                       <div class="line2" style="height: 40px;font-size: 14px;padding-top: 4px;line-height: 16px;width: 180px">
+                         <div  v-show="isShow" style="position: relative;top: 8px">
+                           {{item.subjectDate}}
+                           {{item.subjectStarttime}} - {{item.subjectEndtime}}
+                         </div>
+                       </div>
+                       <div class="line4" style="height: 40px"  v-if="form.subjectList.kch"></div>
+                       <div class="line5" v-if="form.subjectList.zwh" style="height: 40px;font-size: 14px;padding-top: 4px;line-height: 16px;">
+
+                       </div>
 
                      </div>
-
                    </div>
+
+                 </div>
+                 <div v-html="form.carefulMatter" style="padding-top: 15px">
                  </div>
 
                </div>
-               <div v-if="isShow" v-html="form.carefulMatter.replace(/\n|\r\n/g, '<br>')" style="padding-top: 15px">
              </div>
 
+             <!-- <img class="real_pic" :src="imgUrl" /> -->
+           </div>
+         </el-col>
+         <el-col v-show="!bgValue" :span="16">
+           <div class="template-example" >
+             <div class="bg" :style="{backgroundImage:'url('+form.carefulMatter2+')'}" ref="ticketFile">
              </div>
            </div>
+         </el-col>
+       </el-col>
 
-           <!-- <img class="real_pic" :src="imgUrl" /> -->
-         </div>
-       </el-col>
-       <el-col :span="8" :md="16" :xl="8" :lg="16">
-         <div class="template-example" >
-           <div class="bg" style="background: #f1f1f1;margin-left: 10px; padding: 30px 30px 80px;width: 499px;height:706px;border-radius: 2px" ref="ticketFile">
-             <div class="bob" id="bob2" style="max-height: 650px;overflow-y: auto;overflow-x:hidden;">
-               <div v-html="form.carefulMatter2.replace(/\n|\r\n/g, '<br>')"></div>
-             </div>
-           </div>
-         </div>
-       </el-col>
      </el-row>
   </section>
 </template>
-
 <script>
 import elementResizeDetectorMaker from 'element-resize-detector'
 import Tinymce from "@/components/TinymceText/index";
 import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
-import html2canvas from "html2canvas";
+import VueFroala from 'vue-froala-wysiwyg';
+
+
+
 export default {
   components: { Tinymce },
   name: "AddTicketTemplate",
   data() {
     return {
+      bgValue:true,
       bh:"",
       zh:"",
        imgUrl: '',
@@ -256,6 +286,7 @@ export default {
         mobilePhone: "",
       },
       studentAreaOption: [],
+      isChead:false,
       examNameOption: [],
       form: {
         pageIndex: 1,
@@ -291,7 +322,8 @@ export default {
       examId:"",
       oddCode:"",
       oddPro:"",
-      fontSz:"font-size:24px;"
+      fontSz:"font-size:24px;",
+      bg_url:"https://topexam.oss-cn-hangzhou.aliyuncs.com/1438790718608093185.png"
     };
   },
 
@@ -300,18 +332,74 @@ export default {
     this.examId = this.$route.params.examId;
     if(this.examId != undefined){
       this.get_mb();
+      this.isChead = true;
     }else{
       this.getExamList()
       this.getList();
     }
+
+
+  },
+  mounted() {
+    let erd = elementResizeDetectorMaker();
+    let that = this;
+    erd.listenTo(document.getElementById("bob"), function(element) {
+      //执行操作
+      let h = element.scrollHeight;
+      that.zh = h;
+
+      if(h>=660){
+        that.$message({
+          message: '模板正面高度超出，请合理规划！',
+          type: 'warning',
+        })
+      }
+    });
+    erd.listenTo(document.getElementById("bob2"), function(element) {
+      //执行操作
+      let h = element.scrollHeight;
+      that.bh = h;
+
+      if(h>=650){
+        that.$message({
+          message: '模板背面高度超出，请合理规划！',
+          type: 'warning',
+        })
+      }
+    });
+
+  },
+  beforeCreate() {
+
   },
   methods: {
+
+    up_bg(file){
+      const formData = new FormData();
+      formData.append('file',file.raw)
+      this.$axios.post("/file/upload",formData).then((res)=>{
+        if(res.code == 200){
+          this.bg_url = res.result
+        }
+        this.$refs.upload.clearFiles()
+      })
+    },
+    up_bg2(file){
+      const formData = new FormData();
+      formData.append('file',file.raw)
+      this.$axios.post("/file/upload",formData).then((res)=>{
+        if(res.code == 200){
+          this.form.carefulMatter2 = res.result
+        }
+        this.$refs.upload2.clearFiles()
+      })
+    },
     fontS(){
-      var x = this.form.examTitle;
+      var x = this.form.examTitle.length;
       if(x < 14){
         this.fontSz = "font-size:24px;"
       }else {
-        this.fontSz = "font-size:16px;"
+        this.fontSz = "font-size:16px;line-height: 22px"
       }
 
 
@@ -325,12 +413,12 @@ export default {
             this.form.studentAreaCode =res.result.provinceCode;
             this.form.organizer =res.result.organizer;
             this.form.examTitle =res.result.examTitle;
-            this.form.carefulMatter =res.result.remark;
+            this.bg_url=res.result.remark;
             this.form.carefulMatter2 =res.result.content?res.result.content:"";
             this.oddCode = res.result.examId;
             this.oddPro = res.result.provinceCode;
             this.form.undertaker = res.result.undertaker
-
+            this.fontS()
             let dArr = res.result.configList?res.result.configList:[];
             let zdArr = {
               zbdw:"主办单位",
@@ -367,27 +455,7 @@ export default {
       return new File([u8arr], '截图.png', {type:mime});
     },
     getImage() {
-      // this.isShow = false;
-      // var that = this;
-      // setTimeout(function (){
-      //   html2canvas(that.$refs.ticketFile).then(canvas => {
-      //     // this.$message({
-      //     //     message: '图片已生成可以保存模版',
-      //     //     type: 'success',
-      //     //   })
-      //     let dataURL = canvas.toDataURL("image/png");
-      //     that.imgUrl = dataURL;
-      //
-      //     var a = that;
-      //     setTimeout(function (){
-      //       a.show()
-      //     },100)
-      //
-      //
-      //   });
-      // },10)
       this.examConfirm()
-
     } ,
 
     show(){
@@ -426,7 +494,7 @@ export default {
       var str = []
       for (var p in obj) {
         if (obj[p]) {
-          str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          str.push(p+ '=' + obj[p])
         }
       }
       return str.join('&')
@@ -462,11 +530,11 @@ export default {
         provinceCode: this.form.studentAreaCode,
         organizer: this.form.organizer,
         examTitle : this.form.examTitle,
-        remark: this.form.carefulMatter,
+        remark: this.bg_url,
         schoolId:"",
         undertaker:this.form.undertaker,
         configList:[],
-        content:this.form.carefulMatter2
+        content:this.form.carefulMatter2,
       }
 
       let zdArr = {
@@ -499,7 +567,7 @@ export default {
         this.$axios
             .post(url, data)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: '修改成功',
                   type: 'success',
@@ -576,45 +644,27 @@ export default {
         }
       })
     },
+
    currentChange() {
       //console.log('index' + index)
       this.getList();
     },
   },
-  mounted() {
-    let erd = elementResizeDetectorMaker();
-    let that = this;
-    erd.listenTo(document.getElementById("bob"), function(element) {
-        //执行操作
-      let h = element.scrollHeight;
-      that.zh = h;
-      console.log(that.zh);
-      if(h>=660){
-        that.$message({
-          message: '模板正面高度超出，请合理规划！',
-          type: 'warning',
-        })
-      }
-    });
-    erd.listenTo(document.getElementById("bob2"), function(element) {
-      //执行操作
-      let h = element.scrollHeight;
-      that.bh = h;
-      console.log(that.bh);
-      if(h>=650){
-        that.$message({
-          message: '模板背面高度超出，请合理规划！',
-          type: 'warning',
-        })
-      }
-    });
-  },
-  beforeCreate() {
 
-  },
 };
 </script>
 <style>
+.ck-editor__main{
+  height: 200px;
+  border: 1px solid #c4c4c4;
+  overflow: auto;
+}
+.ck-content{
+  min-height: 198px;
+}
+.ck.ck-editor__main>.ck-editor__editable{
+  border: none;
+}
 .tinymce-container{
   width: 94% !important;
   margin:15px 3%;
@@ -626,9 +676,19 @@ export default {
 .el-col-md-16{
   margin-top: 5px;
 }
+
+.upload-demo .el-upload ,.el-upload-dragger{
+  width: 100%;
+}
 </style>
 <style lang="scss" scoped>
 @import "./index.scss";
+
+
+.bg{
+  margin-left: 10px;padding: 30px 30px 80px;width: 499px;height:706px;border-radius: 2px;border: 1px solid #eaeaea;
+  background-size: 100%;
+}
 .isShow{
   opacity: 0;
 }
@@ -726,6 +786,7 @@ padding-left:200px;
       align-items: center;
       width: 20%;
       flex-direction: column;
+      border: 1px solid blue;
     }
   }
    .subject-warp{
@@ -744,7 +805,6 @@ padding-left:200px;
         .line2{
             text-align: center;
           width: 116px;
-          border-right: 1px blue solid;
             height: 40px;
              line-height: 40px;
          }

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <el-row class="toolbar" style="padding-bottom: 0px;height: 66px;padding-top: 15px" type="flex">
+    <el-row class="toolbar" style="padding-bottom: 0px;padding-top: 15px" type="flex">
       <el-col :span="24" style="float: right;">
         <el-form :inline="true" :model="selections" style="float: right;">
 
@@ -16,7 +16,7 @@
           </el-form-item>
 
           <el-form-item>
-            <el-select clearable  v-model="selections.address"  placeholder="请选择考试地址" >
+            <el-select clearable  v-model="selections.address"  placeholder="请选择考试地址" style="width: 160px">
               <el-option
                   v-for="item in addressList"
                   :key="item.examAddress"
@@ -68,6 +68,7 @@
               placeholder="生源省份"
               value-key="province"
               filterable
+              style="width: 160px"
             >
               <el-option
                 v-for="item in options"
@@ -86,6 +87,14 @@
             >
               查询
             </el-button>
+            <el-button
+                type="primary"
+                style="margin-left: 10px;"
+                class="meiyuan_btn"
+                @click="exportKc"
+            >
+              导出考场信息
+            </el-button>
             <!-- <el-button class="meiyuan_btn" v-on:click="reset('select')">
               重置
             </el-button> -->
@@ -103,14 +112,7 @@
         >
           考场分配
         </el-button>
-        <el-button
-            type="primary"
-            style="margin-left: 10px;"
-            class="meiyuan_btn"
-            @click="exportKc"
-        >
-          导出考场信息
-        </el-button>
+
       </el-col>
     </el-row>
     <!--列表-->
@@ -323,6 +325,7 @@ export default {
         schoolId: '',
         admissionTicketCode:"",//准考证号
         studioName:"",//机构名称
+        address:""
       },
       addressList:[],
       ruleForm: {
@@ -331,6 +334,7 @@ export default {
       },
       roomAssginVisible: false, //编辑界面是否显示
       editLoading: false,
+      daochu:{},
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [] },
     }
   },
@@ -348,6 +352,7 @@ export default {
     examNameChange(e){
       this.examId = ""
       this.selections.address = ""
+      this.addressList =[];
       this.selections.examName = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
@@ -422,23 +427,23 @@ export default {
       this.getExamRoomList('select')
     },
     exportKc(){
-      if(!this.examId){
-        this.$message.warning('请先选择考试名称！')
+      if(!this.daochu.examId){
+        this.$message.warning('请先根据考试名称查询！')
         return false;
       }
       this.listLoading = true
 
       let data = {
-        address:this.selections.address,
-        roomCode:this.selections.roomCode,
-        current: this.selections.current,
-        size: this.selections.size,
-        provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
-        examineeName: this.selections.examineeName,
-        examName: this.selections.examName,
-        studioName:this.selections.studioName,
-        admissionTicketCode:this.selections.admissionTicketCode,
-        examId:this.examId
+        address:this.daochu.address,
+        roomCode:this.daochu.roomCode,
+        current: this.daochu.current,
+        size: this.daochu.size,
+        provinceCode: this.daochu.provinceCode?this.daochu.provinceCode.provinceCode:'',
+        examineeName: this.daochu.examineeName,
+        examName: this.daochu.examName,
+        studioName:this.daochu.studioName,
+        admissionTicketCode:this.daochu.admissionTicketCode,
+        examId:this.daochu.examId
       }
       this.$axios.post('/examinee/examRoomExport',data).then((res)=>{
         if(res.code == 200){
@@ -462,19 +467,21 @@ export default {
         /\s|[\r\n]/gi,
         '',
       )
+      let data = {
+        address:this.selections.address,
+        roomCode:this.selections.roomCode,
+        current: this.selections.current,
+        size: this.selections.size,
+        provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
+        examineeName: this.selections.examineeName,
+        examName: this.selections.examName,
+        studioName:this.selections.studioName,
+        admissionTicketCode:this.selections.admissionTicketCode,
+        examId:this.examId
+      }
+      this.daochu = data;
       this.$axios
-        .post(this.API.studentsManage.examRoomList, {
-          address:this.selections.address,
-          roomCode:this.selections.roomCode,
-          current: this.selections.current,
-          size: this.selections.size,
-          provinceCode: this.selections.provinceCode?this.selections.provinceCode.provinceCode:'',
-          examineeName: this.selections.examineeName,
-          examName: this.selections.examName,
-          studioName:this.selections.studioName,
-          admissionTicketCode:this.selections.admissionTicketCode,
-          examId:this.examId
-        })
+        .post(this.API.studentsManage.examRoomList, data)
         .then((res) => {
           if (res.code == 200) {
             this.data = res.result
@@ -510,6 +517,9 @@ export default {
 </script>
 
 <style scoped>
+.el-form-item{
+  margin-bottom: 10px;
+}
 .el-button--small {
   padding: 1px 1px;
 }

@@ -1,13 +1,16 @@
 <template>
   <section class="form_border">
     <div class="header">
-      <el-col :span="6">
+      <el-col :span="10">
         <el-button class="meiyuan_btn" type="primary" size="medium" @click="addStudio"
         >新增机构信息</el-button
         >
+        <el-button class="meiyuan_btn" type="primary" size="medium" @click="addStudio2"
+        >批量导入机构</el-button
+        >
       </el-col>
 
-     <el-col :span="18" style="display: flex;justify-content: flex-end">
+     <el-col :span="14" style="display: flex;justify-content: flex-end">
        <el-input v-model="form.studentName" style="width:200px;margin-left:15px;"  placeholder="机构名称"
        ></el-input>
        <el-button class="association_btn" style="margin-left:50px; margin-bottom: 10px" type="primary" size="medium" @click="getList"
@@ -58,10 +61,17 @@
       >
       </el-table-column>
        <el-table-column
-        label="机构地区"
+        label="机构所属省份"
         header-align="center"
         align="center"
         prop="studioAreaName"
+      >
+      </el-table-column>
+      <el-table-column
+          label="机构所属市区"
+          header-align="center"
+          align="center"
+          prop="studioCityName"
       >
       </el-table-column>
        <el-table-column
@@ -84,6 +94,63 @@
         @cb="currentChange"
       />
     </el-col>
+    <!--批量导入-->
+    <el-dialog title="批量导入机构信息" :visible.sync="showCheck">
+      <el-row style="padding: 20px 0">
+        <el-col :span="12" style="padding-left: 20px;color: #409eff"><a href="https://topconfig.oss-cn-hangzhou.aliyuncs.com/topexam-studio1.xlsx">导入机构信息模板下载</a></el-col>
+      </el-row>
+      <el-form
+          label-width="120px"
+          :model="from"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          :rules="rules"
+          ref="inviteForm"
+      >
+        <el-form-item label="考试名称"  prop="examId" style="width: 400px;">
+          <el-select clearable
+                     style="width: 250px;"
+                     v-model="from.examId"
+                     placeholder="考试名称"
+                     @change="examChange"
+          >
+            <el-option
+                v-for="item in examList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+
+        <el-form-item label="文件上传" style="width: 400px;">
+          <el-upload
+              class="upload-demo"
+              ref="upload"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :file-list="fileList"
+              :limit="1"
+              accept=".xlsx,.xls,"
+              :on-change="handle"
+              :auto-upload="false"
+          >
+            <el-button slot="trigger" size="small" type="primary">
+              上传文件
+            </el-button>
+
+            <div slot="tip" class="el-upload__tip">上传机构信息excel文件</div>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+
+
+      <div slot="footer">
+        <el-button @click="showCheck = false">取 消</el-button>
+        <el-button type="primary" @click="submitCheck">确 定</el-button>
+      </div>
+    </el-dialog>
     <addRoomDialog
       :visible.sync="isAdd"
       :isAdd="isAddType"
@@ -97,19 +164,35 @@
 <script>
 import addRoomDialog from "./addRoomDialog";
 import { deteleStudio } from '@/api/studioManage.js'
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 export default {
   components: {
     addRoomDialog,
   },
   data() {
     return {
+      selectCheck:"",
+      showCheck:false,
       listLoading: false,
+      checkOptions:[],
       sels: [], //列表选中列
       search: {
         name: "",
         mobilePhone: "",
       },
-
+      gridData:[],
+      file: '',
+      fileList:[],
+      addressList:[],
+      from: {
+        examId: '', //考试id
+        address:'',
+      },
+      rules: {
+        examId: [{ required: true, message: '请输入', trigger: 'blur' }], //考试id
+        address: [{ required: true, message: '请输入', trigger: 'blur' }],
+      },
+      examList: [],
       form: {
         pageIndex: 1,
         pageSize: 10,
@@ -123,13 +206,83 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
+      examId:"",
     };
   },
   created() {
      this.getList();
+     this.getExamList()
   },
 
   methods: {
+    handle(file) {
+      this.file = file
+    },
+    addStudio2(){
+      this.showCheck = true;
+    },
+    submitCheck(){
+      if(!this.examId){
+        this.$message({
+          type: 'warning',
+          message: '请选择考试!'
+        });
+        return false;
+      }
+      this.commit()
+    },
+    commit(){
+      if (!this.file) {
+        this.$message({
+          message: '请选择上传的文件',
+          type: 'error',
+        })
+        return
+      }
+      this.$refs.inviteForm.validate((valid) => {
+        if (valid) {
+          let param = new FormData()
+          param.append('file', this.file.raw)
+          this.$axios
+              .post(
+                  `/studio/batchImport?examId=${this.from.examId}`,
+                  param,
+              )
+              .then((res) => {
+                if(res.code == 200){
+                  this.$message({
+                    message: res.result?res.result:"导入成功",
+                    type: 'success',
+                  })
+                  this.from = {
+                    examId: '', //考试id
+                    address:'',
+                  }
+                  this.getList()
+                }else if(res.code == 500){
+                  this.gridData = res.result;
+                  this.dialogTableVisible = true;
+                }
+                this.showCheck = false;
+
+
+              })
+              .catch((error) => {
+
+              })
+        } else {
+        }
+      })
+    },
+    examChange(value) {
+      this.examId = value;
+    },
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examList = res.result
+      })
+    },
     // 关联考试
     associationExam(){
       this.$router.push({ name: 'AssociationExam'})
@@ -216,7 +369,7 @@ export default {
       this.$axios
         .post(this.API.roomManage.update, params)
         .then((res) => {
-          if (res) {
+          if (res.code==200) {
             this.$message({
               type: "success",
               message: "操作成功!",

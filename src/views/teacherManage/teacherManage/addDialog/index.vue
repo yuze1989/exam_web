@@ -30,8 +30,7 @@
         <el-select clearable  v-model="from.role" placeholder="请选择" @change="changeRole">
           <el-option
             v-for="(item, index) in roleList"
-            :key="index"
-            value-key="roleId"
+            :key="item.id"
             :label="item.roleName"
             :value="item.id"
           ></el-option>
@@ -98,6 +97,8 @@ export default {
   },
   data() {
     return {
+      childFormData:{},
+      timer:"",
       roleList: [],
       options:[],
       roleTypeList:[
@@ -121,6 +122,7 @@ export default {
       },
     }
   },
+
   created() {
 
   },
@@ -129,6 +131,7 @@ export default {
       this.from.provinceList = payload
     },
     changeRole(payload) {
+      console.log(this.form);
       const role = this.roleList.filter((item)=>item.id == payload)
       this.from.roleId = payload
       this.from.role = role[0].roleName
@@ -137,10 +140,11 @@ export default {
       this.$emit('update:visible', false)
     },
     open() {
-      this.from = {}
       this.getRoleList()
       this.getProvinceList() 
       if (!this.isAdd) {
+        this.from = {}
+
         this.rules.password = [{ required: false, message: '请输入', trigger: 'blur' }],
         this.$axios
           .get(`/user/detail?id=${this.editItem.id}`)
@@ -161,7 +165,7 @@ export default {
             }
           })
       }else{
-        this.from={}
+
       }
     },
     getProvinceList() {
@@ -173,6 +177,9 @@ export default {
         .catch(() => {})
     },
     getRoleList() {
+      this.from.role=""
+      this.from.roleId=""
+      this.roleList = []
       // this.$axios
       //   .post(`${this.API.role.teacherRoles}`)
       //   .then((res) => {
@@ -183,9 +190,12 @@ export default {
       let data = {
         roleType:this.from.roleType
       }
-      this.$axios.post("/role/roleList",data).then((res)=>{
-              this.roleList = res.result.list
-      })
+      if(this.from.roleType){
+        this.$axios.post("/role/roleList",data).then((res)=>{
+          this.roleList = res.result.list
+        })
+      }
+
     },
     confirm() {
 

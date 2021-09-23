@@ -203,7 +203,7 @@ export default {
           this.$axios
             .post(this.API.roleManage.trainRoleAdd, params)
             .then((res) => {
-              if (res) {
+              if (res.code == 200) {
                 this.$message({
                   message: "新增角色成功",
                   type: "success",
@@ -228,11 +228,11 @@ export default {
           this.$axios
             .post(this.API.roleManage.trainRoleUpdate, params)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$axios
                   .post(this.API.roleManage.trainRoleUpdateMenu, params)
                   .then((res) => {
-                    if (res) {
+                    if (res.code==200) {
                       this.$message({
                         message: "修改角色成功",
                         type: "success",

@@ -56,8 +56,16 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="打乱顺序">
+        <el-switch
+            style="margin-top: 4px"
+            v-model="is_shuffle"
+            active-text="是"
+            inactive-text="否">
+        </el-switch>
+      </el-form-item>
 
-      <el-form-item label="文件上传" style="width: 400px;">
+      <el-form-item label="文件上传" style="width: 400px;text-align: left">
         <el-upload
             class="upload-demo"
             ref="upload"
@@ -130,6 +138,7 @@ export default {
       file: '',
       fileList:[],
       addressList:[],
+      is_shuffle:false,
       from: {
         examId: '', //考试id
         address:'',
@@ -209,7 +218,6 @@ export default {
     },
     // api
     commit() {
-
       if (!this.from.examId) {
         this.$message({
           message: '请先选择考试',
@@ -228,9 +236,14 @@ export default {
         if (valid) {
           let param = new FormData()
           param.append('examineeFile', this.file.raw)
+          let is_shuffle = 0
+          if(this.is_shuffle){
+            is_shuffle = 1;
+          }
+
           this.$axios
             .post(
-              `${this.API.studentsManage.examineeBatchImport}?examId=${this.from.examId}&address=${this.from.address}`,
+                `${this.API.studentsManage.examineeBatchImport}?examId=${this.from.examId}&address=${this.from.address}&is_shuffle=${is_shuffle}`,
               param,
             )
             .then((res) => {

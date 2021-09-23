@@ -79,7 +79,7 @@ export default {
             this.$axios
               .post(this.API.user.changePwd, params)
               .then((res) => {
-                if (res) {
+                if (res.code ==200) {
                   this.$message({
                     message: "修改成功",
                     type: "success",

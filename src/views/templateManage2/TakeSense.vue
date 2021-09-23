@@ -2,8 +2,14 @@
    <section class="form_border" style="position: relative">
      <el-button class="association_btn" style="position: absolute;top: 18px;left: 10px;" type="primary" size="medium" @click="add">新增脱敏</el-button>
     <div class="header" style="display: flex;justify-content: flex-end;padding: 10px;padding-top: 15px">
-        <el-input v-model="form.examName" style="width:200px;margin-left:50px;"  placeholder="考试名称"
-        ></el-input>
+      <el-select clearable  v-model="form.examName"  placeholder="请选择考试名称" @change="examNameChange" style="margin-right: 0px">
+        <el-option
+            v-for="item in examNameOption"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+        </el-option>
+      </el-select>
        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList">查询</el-button
       >
     </div>
@@ -116,7 +122,7 @@
 </template>
 
 <script>
-
+import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
 export default {
   name: "AssociationExam",
@@ -152,9 +158,27 @@ export default {
   created() {
       this.getRoomList()
      this.getList();
+      this.getExamList()
   },
 
   methods: {
+    // 查询考试列表
+    getExamList(){
+      apiExamList().then(res=>{
+        this.examNameOption = res.result
+      })
+    },
+    // 考试改变监听
+    examNameChange(e){
+      this.examId = ""
+      this.form.examName=""
+      this.examNameOption.map(item =>{
+        if(item.id == e){
+          this.form.examName = item.name
+          this.examId = item.id
+        }
+      })
+    },
     add(){
       this.$router.push({name:"templateManage4"})
     },

@@ -75,6 +75,8 @@
         <el-button type="primary" style="margin-left: 20px;height: 40px;" @click="onSubmit">
           查询
         </el-button>
+        <el-button type="primary" style="height: 40px;" @click="oneKey2">导出学生信息</el-button>
+
       </el-row>
       <el-row style="margin-top: 6px;margin-bottom: 0px;display:block;justify-content: flex-start">
         <!--      <el-button type="warning" @click="reset">重置</el-button>-->
@@ -82,7 +84,6 @@
         <el-button type="primary" @click="onImport">批量导入</el-button>
         <el-button type="primary" @click="checkMore">批量审核</el-button>
         <el-button type="primary" @click="oneKey">一键审核</el-button>
-        <el-button type="primary" @click="oneKey2">导出学生信息</el-button>
       </el-row>
     </div>
 
@@ -271,23 +272,27 @@
     <el-dialog
         title="批量审核学生信息"
         :visible.sync="dialogVisible" >
-      <p style="color: red;margin-top: 0;padding-top: 0">提示：对查询结果中，未审核状态下的学生信息，将全部被审核，审核之前请确认学生信息的准确性。</p>
-      <el-select clearable  style="width: 100%;" v-model="selectCheck2" placeholder="请选择">
-        <el-option
-            v-for="item in checkOptions"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-        ></el-option>
-      </el-select>
-      <br/>
-      <el-input
-          style="width: 100%;margin-top: 10px;"
-          type="textarea"
-          :rows="5"
-          placeholder="请输入内容"
-          v-model="remark2"
-      ></el-input>
+      <div v-loading="listLoading">
+        <p style="color: red;margin-top: 0;padding-top: 0">提示：对查询结果中，未审核状态下的学生信息，将全部被审核，审核之前请确认学生信息的准确性。</p>
+        <el-select clearable  style="width: 100%;" v-model="selectCheck2" placeholder="请选择">
+          <el-option
+              v-for="item in checkOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+          ></el-option>
+        </el-select>
+        <br/>
+        <el-input
+            style="width: 100%;margin-top: 10px;"
+            type="textarea"
+            :rows="5"
+            placeholder="请输入内容"
+            v-model="remark2"
+            maxlength="50"
+            show-word-limit
+        ></el-input>
+      </div>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="disTrue">确 定</el-button>
@@ -311,6 +316,8 @@
         :rows="5"
         placeholder="请输入内容"
         v-model="remark"
+        maxlength="50"
+        show-word-limit
       ></el-input>
       <div slot="footer" style="margin-top: 30px;">
         <el-button @click="showCheck = false">取 消</el-button>
@@ -377,7 +384,7 @@ export default {
         studioName: '', //: 机构名称
       },
       checkStatusList: [
-        { name: '全部审核状态', id: -1 },
+        { name: '全部审核状态', id: "" },
         { name: '待审核', id: 0 },
         { name: '审核通过', id: 1 },
         { name: '审核拒绝', id: 2 },
@@ -405,6 +412,7 @@ export default {
       enbaleItem: {},
       checkItem: {},
       isEdit: false,
+      daochu:{},
     }
   },
   created() {
@@ -535,6 +543,7 @@ export default {
         source: this.forms.source == -1 ? null : this.forms.source,
         examId:this.examId
       }
+      this.daochu = params;
       this.$axios
         .post(this.API.studentsManage.examineeList, params)
         .then((res) => {
@@ -557,25 +566,24 @@ export default {
       this.getOrderList()
     },
     oneKey2(){
-      if(!this.examId){
+      if(!this.daochu.examId){
         this.$message({
           type: 'warning',
-          message: '请先选择考试名称'
+          message: '请先根据考试名称查询'
         });
         return false;
       }
       this.listLoading =true;
       let data = {
-        "checkStatus": this.forms.checkStatus,
-        "examId": this.examId,
-        "examName": this.forms.examId,
-        "examineeName": this.forms.examineeName,
-        "payStatus": this.forms.payStatus,
+        "checkStatus": this.daochu.checkStatus,
+        "examId": this.daochu.examId,
+        "examName": this.daochu.examName,
+        "examineeName": this.daochu.examineeName,
+        "payStatus": this.daochu.payStatus,
         "provinceCode": "",
-        "remark": this.forms.remark2,
-        "source": this.forms.source,
-        "status": this.selectCheck2,
-        "studioName": this.forms.studioName,
+        "remark": this.daochu.remark2,
+        "source": this.daochu.source,
+        "studioName": this.daochu.studioName,
         schoolId:"",
       }
       this.$axios
@@ -599,20 +607,25 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.listLoading = true;
         let data = {
-          "checkStatus": this.forms.checkStatus,
-          "examId": this.examId,
-          "examName": this.forms.examId,
-          "examineeName": this.forms.examineeName,
-          "payStatus": this.forms.payStatus,
-          "provinceCode": "",
+          "checkStatus": this.daochu.checkStatus,
+          "examId": this.daochu.examId,
+          "examName": this.daochu.examName,
+          "examineeName": this.daochu.examineeName,
+          "payStatus": this.daochu.payStatus,
           "remark": this.forms.remark2,
-          "source": this.forms.source,
+          "source": this.daochu.source,
           "status": this.selectCheck2,
-          "studioName": this.forms.studioName,
+          "studioName": this.daochu.studioName,
+          "current": 0,
+          "provinceCode": "",
+          "schoolId": 0,
+          "size": 0,
         }
         this.$axios.post(`/examinee/examineeOneCheck`,data)
             .then((res) => {
+              this.listLoading = false;
               if (res.code == 200) {
                 this.$message.success('操作成功')
                 this.dialogVisible = false
@@ -633,10 +646,10 @@ export default {
 
     },
     oneKey(){
-      if(!this.examId){
+      if(!this.daochu.examId){
         this.$message({
           type: 'warning',
-          message: '请先选择考试名称'
+          message: '请先根据考试名称查询'
         });
         return false;
       }

@@ -204,7 +204,7 @@ export default {
       this.$axios
         .get(this.API.roleManage.trainRoleRemove + "/" + id)
         .then((res) => {
-          if (res) {
+          if (res.code==200) {
             this.$message({
               type: "success",
               message: "删除角色成功!",

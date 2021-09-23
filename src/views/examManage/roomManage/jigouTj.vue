@@ -9,7 +9,7 @@
             :value="item.id">
         </el-option>
       </el-select>
-        <el-input v-model="form.examNo" style="width:200px"  placeholder="考试编号"
+        <el-input v-model="form.examNo" style="width:200px"  placeholder="机构名称"
         ></el-input>
        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button
@@ -31,33 +31,67 @@
         label="考试编码"
         header-align="center"
         align="center"
-        prop="no"
+        prop="examCode"
       >
       </el-table-column>
       <el-table-column
         label="考试名称"
         header-align="center"
         align="center"
-        prop="name"
+        prop="examName"
+      >
+      </el-table-column>
+      <el-table-column
+          label="机构编号"
+          header-align="center"
+          align="center"
+          prop="studioCode"
+      >
+      </el-table-column>
+      <el-table-column
+          label="机构名称"
+          header-align="center"
+          align="center"
+          prop="studioName"
+      >
+      </el-table-column>
+      <el-table-column
+          label="机构所属省份"
+          header-align="center"
+          align="center"
+          prop="studioAreaName"
+      >
+      </el-table-column>
+      <el-table-column
+          label="机构所属市"
+          header-align="center"
+          align="center"
+          prop="studioCityName"
       >
       </el-table-column>
        <el-table-column
-        label="机构数量"
+        label="学生报名人数"
         header-align="center"
         align="center"
-        prop="studioNum"
+        prop="enrollNum"
       >
       </el-table-column>
-      
-       <el-table-column
-      fixed="right"
-      label="操作"
-      width="200">
-      <template slot-scope="scope">
-        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联机构</el-button>
-<!--        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>-->
-      </template>
-    </el-table-column>
+      <el-table-column
+          label="学生审核人数"
+          header-align="center"
+          align="center"
+          prop="checkNum"
+      >
+      </el-table-column>
+<!--       <el-table-column-->
+<!--      fixed="right"-->
+<!--      label="操作"-->
+<!--      width="200">-->
+<!--      <template slot-scope="scope">-->
+<!--        <el-button @click="relationStudio(scope.row)" type="text" size="small" >生源详情</el-button>-->
+<!--        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >考试汇总</el-button>-->
+<!--      </template>-->
+<!--    </el-table-column>-->
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -129,7 +163,7 @@ export default {
     };
   },
   created() {
-      this.getRoomList()
+      // this.getRoomList()
      this.getList();
     this.getExamList()
   },
@@ -172,12 +206,15 @@ export default {
       let params = {
         current : this.form.pageIndex ,
         size : this.form.pageSize ,
-        name : this.form.examName,
-        no:  this.form.examNo,
-        examId:this.examId,
+        "examId": this.examId,
+        "schoolId": "",
+        "studioAreaCode": "",
+        "studioCityCode": "",
+        "studioName": this.form.examNo
       };
-      examinationList(params).then((res) => {
-                 this.data.records = res.result.records;
+
+      this.$axios.post("/studio/studioStatistics",params).then((res) => {
+                 this.data.records = res.result.list;
                 this.data.current = res.result.current;
                 this.data.total = res.result.total;
                 (this.data.pageSize = res.result.pageSize), (this.data.pages = res.result.pages);

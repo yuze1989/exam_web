@@ -154,6 +154,15 @@ export const constantRoutes = [
                 },
             },
             {
+                path: "/daochuList",
+                name:'daochuList',
+                component: resolve => require(["@/views/examManage/roomManage/daochuList.vue"], resolve),
+                meta: {
+                    name: '导出列表',
+                    icon: 'classmate'
+                },
+            },
+            {
                 path: "/gradeManageAdd",
                 name:"gradeManageAdd",
                 component: resolve => require(["@/views/authManage/gradeManage/gradeRule.vue"], resolve),//() => import("@/views/authManage/userManage/index.vue"),
@@ -297,6 +306,7 @@ export const asyncRouter = [
                     icon: 'classmate'
                 }
             },
+
 
 
             // {
@@ -478,8 +488,8 @@ export const asyncRouter = [
             },
             {
                 path: "/jigouTj",
-                id: 115,
-                code: 10115,
+                id: 131,
+                code: 10131,
                 component: resolve => require(["@/views/examManage/roomManage/jigouTj.vue"], resolve),
                 meta: {
                     name: '机构统计',

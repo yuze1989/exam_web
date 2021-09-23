@@ -89,7 +89,7 @@ export default {
           this.$axios
             .post(`${this.API.role.delete}?id=${data.id}&username=${data.username}&password=${data.password}`, {})
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: "删除成功",
                   type: "success",

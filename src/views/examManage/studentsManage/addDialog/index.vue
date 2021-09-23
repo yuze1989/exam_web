@@ -390,7 +390,7 @@ export default {
       var str = []
       for (var p in obj) {
         if (obj[p]) {
-          str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          str.push(p + '=' + obj[p])
         }
       }
       return str.join('&')
@@ -423,11 +423,13 @@ export default {
             .post(url, param)
             .then((res) => {
               if (res) {
-                this.$message({
-                  message: '修改成功',
-                  type: 'success',
-                })
-                this.$emit('addSuccess')
+                if(res.code ==200){
+                  this.$message({
+                    message: '修改成功',
+                    type: 'success',
+                  })
+                  this.$emit('addSuccess')
+                }
               }
             })
             .catch(() => {})
@@ -438,8 +440,6 @@ export default {
     //  修改
     edit() {
       this.$refs.studentsForm.validate((valid) => {
-
-
         if (valid) {
           let data = {
             id: this.from.id,
@@ -454,6 +454,12 @@ export default {
             gender: this.from.gender, //:男，女，其他
             address:this.from.address,
           }
+
+          if(this.from.url == ""){
+            data.isDeleteUrl = 1;
+          }
+
+
           let str = this.transformRequest(data)
           let param = new FormData()
           if(this.file){
@@ -463,7 +469,7 @@ export default {
           this.$axios
             .post(url, param)
             .then((res) => {
-              if (res) {
+              if (res.code) {
                 this.$message({
                   message: '修改成功',
                   type: 'success',

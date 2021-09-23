@@ -303,6 +303,7 @@
             </el-table-column>
           </el-table>
         </div>
+        <div style="position: absolute;color: #ff1e23">提示：点击确定后，分配试卷会在系统后台自动分配，请过一段时间后再查询分配的结果</div>
 
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -579,6 +580,17 @@ export default {
       }
 
     },
+    isRepeat(arr) {
+      var hash = {};
+      for(var i in arr) {
+        if(hash[arr[i]]) {
+          return true;
+        }
+        // 不存在该元素，则赋值为true，可以赋任意值，相应的修改if判断条件即可
+        hash[arr[i]] = true;
+      }
+      return false;
+    },
     selkc(row, type) {
       if(this.noAssignedExaminationNum <0){
           this.$message({
@@ -586,6 +598,53 @@ export default {
             type: 'error'
           })
         return  false;
+      }
+
+      if(this.type[0]==0&&this.type[1] == 0){
+        let st = []
+        let ed = [];
+        this.tableData.forEach((item,index)=>{
+          if(item.start){
+            st.push(item.start)
+          }
+          if(item.end){
+            ed.push(item.end)
+          }
+        })
+        if(this.isRepeat(st)){
+          this.$message({
+            message: '起始考场值有重复，请检查！',
+            type: 'error'
+          })
+          return  false;
+        }
+
+        if(this.isRepeat(ed)){
+          this.$message({
+            message: '结束考场值有重复，请检查！',
+            type: 'error'
+          })
+          return  false;
+        }
+
+        let arr = this.roomList;
+
+        if(row.start && row.end){
+          for(let i = row.start ; i <= row.end; i++){
+            if(arr[i-1].disabled){
+              this.$message({
+                message: '当前选择考场有重复，请重新选择！',
+                type: 'error'
+              })
+              return  false
+              break
+
+            }
+          }
+        }
+
+
+
       }
 
 
@@ -748,14 +807,48 @@ export default {
         if(this.type[1] == 0){
           ddtype = 1;
           let is_no = false;
+          let st = []
+          let ed = [];
+          let all = [];
           this.tableData.forEach((item,index)=>{
             if(item.start && item.end){
               if(item.paper == 0){
                 is_no = true;
               }
+              for(let i = item.start ; i<=item.end/1;i++){
+                all.push(i);
+              }
+            }
+            if(item.start){
+              st.push(item.start)
+            }
+            if(item.end){
+              ed.push(item.end)
             }
 
           })
+          if(this.isRepeat(all)){
+            this.$message({
+              message: '选择考场区间有重复，请检查！',
+              type: 'error'
+            })
+            return  false;
+          }
+          if(this.isRepeat(st)){
+            this.$message({
+              message: '起始考场值有重复，请检查！',
+              type: 'error'
+            })
+            return  false;
+          }
+
+          if(this.isRepeat(ed)){
+            this.$message({
+              message: '结束考场值有重复，请检查！',
+              type: 'error'
+            })
+            return  false;
+          }
           if(is_no){
             this.$message.error('请确认可分配试卷数量不为0！')
             isF = false;
@@ -884,7 +977,7 @@ export default {
       if(isGo){
         this.$axios.post(url,data).then((res)=>{
           if(res.code == 200){
-            this.$message.success('操作成功')
+            this.$message.success('试卷已开始分配，请稍后查看')
             this.dialogFormVisible = false;
             this.fpjd = 1;
             this.course = "";

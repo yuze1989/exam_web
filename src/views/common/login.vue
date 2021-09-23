@@ -346,7 +346,7 @@ export default {
           this.$axios
             .post(this.API.newNetSchool.school.reg, regParams)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.logining = false
                 this.radio = 1
                 this.ruleForm2.account = ''

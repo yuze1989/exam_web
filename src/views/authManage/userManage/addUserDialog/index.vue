@@ -158,7 +158,7 @@ export default {
           this.$axios
             .post('/user/create', params)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: "新增用户成功",
                   type: "success",
@@ -187,7 +187,7 @@ export default {
       this.$axios
         .post('/user/update', params)
         .then((res) => {
-          if (res) {
+          if (res.code == 200) {
             this.$message({
               message: "修改用户成功",
               type: "success",

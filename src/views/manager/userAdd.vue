@@ -103,7 +103,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
            this.axios.post(this.stateUrl.userCreate,this.forms).then(res=>{
-             if(res){
+             if(res.code==200){
                 this.$message({
                 message: '添加成功',
                 type: 'success'

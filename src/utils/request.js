@@ -23,6 +23,33 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
+
+    console.log(config);
+    try{
+      // url处理
+      var temp1 = config.url.split('?');
+      var pram = temp1[1];
+      var xx = temp1[0];
+      var keyValue = pram.split('&');
+      var obj = {};
+      for (var i = 0; i<keyValue.length; i++){
+        var item = keyValue[i].split('=');
+        var key = item[0];
+        var value = item[1];
+        obj[key] = value;
+      }
+
+      let xxx= [];
+      for(let i in  obj){
+        xxx.push(i+'='+encodeURIComponent(obj[i]))
+      }
+      let str = xxx.join("&")
+      config.url = xx+'?'+str
+
+    }catch{}
+
+
+
     if (store.getters.token) {
       config.headers["Art-Token"] = getToken();
     }
@@ -85,6 +112,7 @@ service.interceptors.response.use(
     }
 
     if (res.code == 200) {
+      console.log(res);
       return Promise.resolve(res);
     } else if (res.code == 111 || res.code == 103) {
       router.push({ path: '/login' })
@@ -116,7 +144,7 @@ service.interceptors.response.use(
   error => {
 
     Message({
-      message: "访问异常，请联系管理员",
+      message: "网络开小差了",
       type: "error",
       duration: 5 * 1000
     });

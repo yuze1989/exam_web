@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; text-align: center;">
-    <el-form :model="formsData" :rules="rules" ref="ruleForm" style="">
+    <el-form :model="formsData" :rules="rules" ref="ruleForm" style="" v-loading="loading">
       <el-form-item>
         <el-select clearable
           v-model="forms.examId"
@@ -172,7 +172,6 @@
     color: #ff4242;">新增后需要点击确认，否则数据不会保存！</p>
         <el-button
           type="primary"
-          :loading="loading"
           @click="submitForm('ruleForm')"
           class="meiyuan_btn"
           style="width: 80%; margin-top: 10px;"
@@ -304,6 +303,7 @@ export default {
     },
     getExamCount() {},
     search(payload) {
+      this.init('1')
       let data = {
         examId: this.forms.examId,
         provinceCode: this.forms.provinceCode,
@@ -348,7 +348,8 @@ export default {
                 isEdit:true,
               })
             })
-            this.formsData = { examrooms: list }
+              this.formsData = { examrooms: list }
+
             // this.inpStudent()
           }
         })
@@ -532,7 +533,7 @@ export default {
       // this.forms.maxExamCode += n2
     },
     submitForm(formName) {
-      // this.loading = true
+
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let examrooms = []
@@ -579,7 +580,7 @@ export default {
             }
           }
 
-
+          this.loading = true
           this.$axios
               .post(this.API.studentsManage.examRoomDistribut, data)
               .then((res) => {

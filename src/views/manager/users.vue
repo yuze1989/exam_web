@@ -179,7 +179,7 @@ export default {
       this.transRow['provinces'] = row.province.split(',');
       this.transRow.enable = this.transRow.enable ? 0 : 1;
       this.axios.post(this.stateUrl.userInfoUpdate,this.transRow).then((res)=>{
-        if(res){
+        if(res.code == 200){
           this.$message({
             message: '操作成功',
             type: 'success'

@@ -301,7 +301,7 @@ export default {
       this.$axios
         .post(this.API.userManage.trainAdminEnableDisable + "/" + item.id)
         .then((res) => {
-          if (res) {
+          if (res.code==200) {
             this.$message({
               type: "success",
               message: "禁用用户成功!",
@@ -316,7 +316,7 @@ export default {
       this.$axios
         .post(this.API.userManage.trainAdminResetPassword + "/" + item.id)
         .then((res) => {
-          if (res) {
+          if (res.code==200) {
             this.$message({
               type: "success",
               message: "重置密码成功!",

@@ -1,8 +1,15 @@
 <template>
   <section class="form_border">
     <div class="header" style="height: 66px">
-        <el-col :span="4">      <el-button type="primary" @click="ticketGenerate" style="float: left">生成准考证号</el-button></el-col>
-        <el-col :span="20" style="display: flex;justify-content: flex-end">
+        <el-col :span="24" style="display: flex;justify-content: flex-end">
+          <el-select clearable  v-model="form.examName" style="width: 200px;"  placeholder="请选择考试名称" @change="examNameChange">
+            <el-option
+                v-for="item in examNameOption"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
           <el-select clearable
                      v-model="form.ticketStatus"
                      style="width: 200px; margin-left: 20px;"
@@ -27,19 +34,13 @@
               v-model="form.studioName"
               placeholder="机构名称"
           ></el-input>
-          <el-select clearable  v-model="form.examName" style="width: 200px;"  placeholder="请选择考试名称" @change="examNameChange">
-            <el-option
-                v-for="item in examNameOption"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-            </el-option>
-          </el-select>
+
 
 
           <el-button type="primary" style="margin-left: 20px;" @click="pageReset">
             查询
           </el-button>
+          <el-button type="primary" @click="ticketGenerate" style="float: left">生成准考证号</el-button>
         </el-col>
 
 
@@ -145,6 +146,7 @@ export default {
         { value: '0', label: '已生成' },
         { value: '1', label: '未生成' },
       ],
+      daochu:""
     }
   },
   created() {
@@ -170,12 +172,12 @@ export default {
       })
     },
     ticketGenerate() {
-      let data = {
-        ...this.form,
-        examId:this.examId
+      if(!this.daochu.examId){
+        Message.warning('请先根据考试名称查询')
+        return false
       }
       this.$axios
-        .post(this.API.studentsManage.ticketGenerate, data)
+        .post(this.API.studentsManage.ticketGenerate, this.daochu)
         .then((res) => {
           if (res.code == 200) {
             Message.success('准考证号生成成功')
@@ -212,6 +214,7 @@ export default {
         ...this.form,
         examId:this.examId
       }
+      this.daochu= params;
       this.$axios
         .post(this.API.studentsManage.ticketList, params)
         .then((res) => {

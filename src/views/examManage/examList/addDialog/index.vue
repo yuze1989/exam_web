@@ -374,10 +374,14 @@ export default {
       rows.splice(index, 1)
     },
     open() {
+      this.$nextTick(() => {
+        this.$refs.examForm.clearValidate()
+      })
       if (this.isAdd) {
         this.from = {}
         this.address = [{}]
         this.subject = [{}]
+
       } else {
         this.$axios
           .get(this.API.examinfo.detail + '?id=' + this.editItem.id)
@@ -610,7 +614,7 @@ export default {
               price: (this.from.price * 100).toFixed(0),
             })
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: '修改成功',
                   type: 'success',

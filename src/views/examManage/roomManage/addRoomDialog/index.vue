@@ -35,7 +35,7 @@
             :value="item.provinceCode">
           </el-option>
         </el-select>
-           <el-select clearable  v-model="from.studioCityName" placeholder="请选择市" @change="studioAreaChange2">
+           <el-select clearable  v-model="studioCityName" placeholder="请选择市" @change="studioAreaChange2">
              <el-option
                  v-for="item in studioAreaOption2"
                  :key="item.provinceCode"
@@ -81,8 +81,37 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      from: {
+        studioName: "",
+        studioAreaCode: "",
+        studioAreaName: "",
+        contactName: '',
+        contactMobile: "",
+        proviceCode:"",
+      },
+      studioCityCode:"",
+      studioCityName:"",
+      studioAreaOption2:[],
+      studioAreaOption: [],
+      rules: {
+        studioName: [{ required: true, message: "请输入机构名称", trigger: "blur" }],
+        studioAreaCode: [
+          { required: true, message: "请输入机构区域", trigger: "blur" },
+        ],
+        contactName : [
+          { required: true, message: "请输入机构联系人", trigger: "blur" },
+        ],
+        contactMobile  : [
+          {required: true, message: "请输入机构联系人手机号", trigger: "blur" },
+          {validator: this.$rules.phoneNumber, trigger: 'blur'}
+        ],
+      },
+    };
+  },
   created(){
-    this.getAllProvinces() 
+    this.getAllProvinces()
   },
   methods: {
     // 区域改变监听
@@ -97,11 +126,10 @@ export default {
     },
     // 区域改变监听
     studioAreaChange2(e){
-
       this.studioAreaOption2.map(item =>{
         if(item.provinceCode == e){
-          this.from.studioCityCode  = item.provinceCode
-          this.from.studioCityName  = item.province
+          this.$set(this,'studioCityCode',item.provinceCode)
+          this.$set(this,'studioCityName',item.province)
         }
       })
     },
@@ -113,7 +141,8 @@ export default {
     },
     // 获取市
     getAllProvinces2(){
-      this.from.studioCityName = "";
+      this.studioCityName = "";
+      this.studioCityCode = "";
       this.$axios.get('/examinfo/allCity?provinceCode='+this.from.proviceCode).then(res=>{
         this.studioAreaOption2 = res.result
       })
@@ -123,6 +152,11 @@ export default {
     },
     open() {
       //console.log(this.editItem)
+      if(this.$refs.ruleForm){
+        this.$refs.ruleForm.clearValidate()
+      }
+
+
       if (this.isAdd) {
         this.from = {
           studioName: "",
@@ -132,6 +166,7 @@ export default {
           contactMobile: "",
           id:''
         };
+        this.studioCityName = ""
       } else {
         this.from = {
           studioName: this.editItem.studioName,  // 机构名称
@@ -140,8 +175,9 @@ export default {
           studioAreaCode : this.editItem.studioAreaCode, // 机构区域编码
           contactName : this.editItem.contactName , //机构联系人姓名
           contactMobile :this.editItem.contactMobile , // 机构联系人手机号
-          id:this.editItem.id 
+          id:this.editItem.id
         };
+        this.studioCityName =this.editItem.studioCityName
       }
     },
     confirm() {
@@ -162,6 +198,7 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
 
+          this.from.studioCityName = this.studioCityName
         creatStudio(this.from).then((res) => {
               if (res) {
                 if(res.code == 200){
@@ -171,8 +208,6 @@ export default {
                   });
                   this.$emit("addSuccess");
                 }
-
-
               }
             })
             .catch(() => {});
@@ -183,9 +218,9 @@ export default {
      edit() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-
-        updateStudio(this.from).then((res) => {
-              if (res) {
+          this.from.studioCityName = this.studioCityName;
+          updateStudio(this.from).then((res) => {
+              if (res.code==200) {
                 this.$message({
                   message: "修改成功",
                   type: "success",
@@ -199,44 +234,12 @@ export default {
       });
     },
   },
-  data() {
-    return {
-      from: {
-        studioName: "",
-        studioAreaCode: "",
-        studioAreaName: "",
-        contactName: '',
-        contactMobile: "",
-        proviceCode:"",
-        studioCityCode:"",
-        studioCityName:""
-      },
-      studioAreaOption2:[],
-      studioAreaOption: [],
-      rules: {
-        studioName: [{ required: true, message: "请输入机构名称", trigger: "blur" }],
-         studioAreaCode: [
-          { required: true, message: "请输入机构区域", trigger: "blur" },
-        ],
-         contactName : [
-          { required: true, message: "请输入机构联系人", trigger: "blur" },
-        ],
-         contactMobile  : [
-          {required: true, message: "请输入机构联系人手机号", trigger: "blur" },
-          {validator: this.$rules.phoneNumber, trigger: 'blur'}
-        ],
-      },
-    };
-  },
+
 };
 </script>
 
 <style>
-.el-select{
-  width: 48%;
-  margin-right: 2%;
 
-}
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -263,4 +266,8 @@ export default {
 </style>
 <style lang="scss" scoped>
 @import "./addRoom.scss";
+.el-select{
+  width: 48%;
+  margin-right: 2%;
+}
 </style>

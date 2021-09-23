@@ -150,7 +150,7 @@ export default {
         if (valid) {
 
       this.axios.post(this.stateUrl.userInfoUpdate,params).then((res)=>{
-        if(res){
+        if(res.code == 200){
           this.$message({
             message: '操作成功',
             type: 'success'

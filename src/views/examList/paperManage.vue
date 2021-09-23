@@ -23,11 +23,14 @@
               <font v-if="item.name == '仲裁组'">
                 {{ item.name}} ({{ item.count || 0 }}) 份
               </font>
+                <font v-else-if="item.name == '全部'">
+                  {{ item.name }} ({{ item.count || 0 }}) 份
+                </font>
                 <font v-else-if="item.name == '未评级'">
                   {{ item.name }} ({{ item.count || 0 }}) 份
                 </font>
                 <font v-else-if="item.name != ''">
-                  <p style="margin:0">{{ item.name }} ({{ item.count || 0 }}) 份</p>
+                  <p style="margin:0;font-weight: 700;">{{ item.name }} ({{ item.count || 0 }}) 份</p>
                   <p style="margin:0">区间 {{item.min}} - {{item.max}}分</p>
                 </font>
             </el-tag>
@@ -57,6 +60,13 @@
             @click="jumpToMarkingAreaPage('first')"
             >快速评级</el-button
           >
+          <el-button
+              v-if="role==3"
+              style="margin-top: 10px"
+              type="primary"
+              @click="stopYj()"
+          >停止评级</el-button
+          >
         </el-col>
       </el-row>
     </div>
@@ -78,6 +88,7 @@
           <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;left: 0;z-index: 999;" v-if="paper.isArbitrate == 1">
 
           </el-badge>
+
           <div class="paper">
             <div  class="edit-level" v-if="role!=0">
               <span
@@ -91,7 +102,11 @@
                   :grade="paper.level"
                   :option="gradeList"
                   @grade="selecteUpdateGrade"
+                  style="width: 70px;position: relative;top: 1px"
               />
+              <el-badge :value="(paper.originalGrade)" class="his zcz" style="position: absolute;top: 1px;left: 68px;z-index: 999;">
+
+              </el-badge>
             </div>
             <el-image
                 :src="paper.url"
@@ -109,7 +124,7 @@
                   :class="`markInput${index}`"
                   v-model="paper.mark"
                   :min="0"
-                  :max="maxNum"
+                  :max="1000"
                   :minlength="1"
                   :maxlength="100"
                   type="number"
@@ -127,10 +142,12 @@
             <span>准考证号：{{ paper.permission || "--" }}</span>
           </div>
           <div class="rate-and-mark clearfix">
-            <div class="level">
+            <div class="level" style="position: relative">
               <span class="label">评级</span>
               <span class="val level-val">{{ paper.level || "--" }}</span>
+
             </div>
+
             <div class="mark">
               <span class="label">分数</span>
               <span
@@ -206,7 +223,8 @@
             v-if="paperList[editImgIndex].show"
             v-model="paperList[editImgIndex].mark"
             :min="0"
-            :max="maxNum"
+            v-fo
+            :max="1000"
             :minlength="1"
             :maxlength="100"
             type="number"
@@ -330,6 +348,28 @@ export default {
 
   },
   methods: {
+    stopYj(){
+      this.$confirm('请确认该科目下试卷是否已全部评级完成，一旦停止评级后将不能再评级！', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post("/exampaper/stopGrade?course="+this.$route.query.course+"&examId="+this.$route.query.examId).then((res)=>{
+          if(res.code == 200){
+            this.$message({
+              type: 'success',
+              message: '已停止评级!'
+            });
+          }
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
+    },
     currentChange(){
       this.getList()
     },
@@ -351,7 +391,7 @@ export default {
       this.$axios.post(url,data).then((response) => {
 
         const result = response.result || {};
-        this.totalItem = result.total;
+        this.totalItem = result.total/1;
           const list = [];
           const cachedList = [];
           result.list.forEach((item) => {
@@ -369,6 +409,7 @@ export default {
               mark: item.score,
               edit: false,
               isArbitrate:item.isArbitrate,
+              originalGrade:item.originalGrade
             });
 
           });
@@ -632,6 +673,8 @@ export default {
             this.queryPaperList();  //获取评级列表
             // this.queryDealedCount();
           }
+        }).catch((error)=>{
+          this.getList();
         });
       }else if(data.type == 2){
         let isX = true;
@@ -676,8 +719,10 @@ export default {
                 this.getList(2);
               }
               this.nextViewImg()
-            }
+            }else{
+              this.getList();
 
+            }
 
             // this.queryDealedCount();
           }else{
@@ -736,7 +781,11 @@ export default {
       let pr = document.querySelector(".markInput"+index);
       this.paperList[index].show = false;
       if (index < this.paperList.length - 1) {
-        this.currentIndex = index + 1;
+        if(this.paperScore===0){
+          this.currentIndex = index
+        }else{
+          this.currentIndex = index +1
+        }
       }
 
 
@@ -763,6 +812,7 @@ export default {
 </script>
 
 <style lang="scss">
+
 .hh{
   height: 50px;
 }
@@ -771,6 +821,27 @@ export default {
 }
 .zcz sup{
   border-radius: 3px;
+}
+.his sup{
+  background: #35ce96;
+  height: 30px;
+  line-height: 30px;
+  border: none;
+  width: 30px;
+  display: block !important;
+  border-radius: 0;
+}
+.his sup:after{
+  content: "";
+  width: 1px;
+  position: absolute;
+  height: 17px;
+  left: 2px;
+  top: 8px;
+  background: #fff;
+  transform: rotate(
+          10deg
+  );
 }
 .editImgDialog {
   .el-dialog {
@@ -930,17 +1001,18 @@ export default {
         .edit-level {
           position: absolute;
           top: -2px;
-          right: 0;
+          right: 26px;
           z-index: 1;
           .level {
             padding: 6px;
             line-height: 33px;
             cursor: pointer;
             color: #fff;
+            font-size: 14px;
             background-color: #35ce96;
             -webkit-border-radius: 0 10px 0;
             -moz-border-radius: 0 10px 0;
-            border-radius: 0 10px 0;
+            border-radius: 0 0 0 10px;
             outline: none;
           }
         }

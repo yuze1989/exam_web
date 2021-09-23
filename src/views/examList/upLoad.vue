@@ -150,34 +150,36 @@
         center
 
     >
-      <div slot="title">管理员验证</div>
-      <el-form
-          label-width="120px"
-          label-position="right"
-          class="demo-ruleForm"
-          center
-          ref="delForm"
-      >
-        <p style="    text-align: center;
+        <div slot="title">管理员验证</div>
+        <el-form
+            label-width="120px"
+            label-position="right"
+            class="demo-ruleForm"
+            center
+            ref="delForm"
+            v-loading="loading"
+        >
+          <p style="    text-align: center;
     color: red;
     font-size: 20px;
     padding: 0;
     margin: 0;
     margin-bottom: 15px;">停止阅卷之前，请确认试卷上传已完成！</p>
-        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
-          <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
-        </el-form-item>
+          <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+            <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
+          </el-form-item>
 
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
-        </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
+          </el-form-item>
 
 
-      </el-form>
+        </el-form>
 
-      <div slot="footer">
-        <el-button type="primary"   v-loading="loading" @click="confirm1">确认</el-button>
-      </div>
+        <div slot="footer">
+          <el-button type="primary"   @click="confirm1">确认</el-button>
+        </div>
+
     </el-dialog>
 
   </section>
@@ -271,16 +273,31 @@ export default {
     },
     //查询进度
     getGrade(){
-      this.$axios
-          .post('/exampaper/uploadProgress', {
-            examId: this.$route.query.examId,
-          })
-          .then((res) => {
-            this.gradeList = res.result
-          })
-          .catch(() => {
-            // this.listLoading = false
-          })
+      let that = this;
+        that.$axios
+            .post('/exampaper/uploadProgress', {
+              examId: that.$route.query.examId,
+            })
+            .then((res) => {
+              that.gradeList = res.result
+              setInterval(function (){
+                that.$axios
+                    .post('/exampaper/uploadProgress', {
+                      examId: that.$route.query.examId,
+                    })
+                    .then((res) => {
+                      that.gradeList = res.result
+                    })
+                    .catch(() => {
+                      // this.listLoading = false
+                    })
+              },5000)
+            })
+            .catch(() => {
+              // this.listLoading = false
+            })
+
+
     },
     // 新增
     add() {

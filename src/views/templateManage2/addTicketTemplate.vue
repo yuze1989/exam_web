@@ -19,17 +19,6 @@
               </el-option>
             </el-select>
           </div>
-<!--          <div class="display-center">-->
-<!--            <div class="title">生源省份</div>-->
-<!--            <el-select clearable  v-model="form.studentAreaName" style="width:200px;margin-left:50px;" placeholder="请选择考生省份" @change="studentChange">-->
-<!--              <el-option-->
-<!--                  v-for="item in studentAreaOption"-->
-<!--                  :key="item.provinceCode"-->
-<!--                  :label="item.province"-->
-<!--                  :value="item.provinceCode">-->
-<!--              </el-option>-->
-<!--            </el-select>-->
-<!--          </div>-->
           <div class="display-center">
             <div class="title">二维码名称</div>
             <el-input v-model="form.qrcodeName" style="width:200px;margin-left:34px;"  placeholder="请输入二维码名称"></el-input>
@@ -88,25 +77,27 @@
       </div>
       <!-- 模板示例 -->
       <div class="template-example" >
+
+
         <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
           <div  :class="class1" ref="ticketFile">
             <div class="title" @drop="drop" @dragover.prevent>
-              <div class="top" style="height: 117px;padding-top: 15px">
-                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
-                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.sfzhm">身份证号码：330591208808080808</div>
-                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
-                <div style="padding-left: 25px;font-size: 18px;width: 500px;padding:0px 0 0px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
+              <div class="top" style="padding-top: 20px">
+                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
+                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;"  v-show="form.subjectList.sfzhm">学生ID号：330591208808080808</div>
+                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
+                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
               </div>
 
-              <img src="@/assets/erweima.png" alt="" :class="class2" style="width: 220px;height: 220px;position: absolute;left: 30px;top: 160px">
+              <img src="@/assets/erweima.png" alt=""  style="width: 154px;height: 154px;float: left;margin-left: 10px">
 
-              <div :class="class2">
-                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;margin-top: 25px" v-show="form.subjectList.ksbh">考试编号：100101</div>
-                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.xm">姓名：张三</div>
-                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.km">科目：素描</div>
-                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.kc">考场：001</div>
-                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;" v-show="form.subjectList.xb">性别：男</div>
-                <div style="font-size: 18px;width: 500px;padding:0 0 6px 230px;"  v-show="form.subjectList.zwh">座位号：01</div>
+              <div class="right" style=";margin-top: 5px">
+                <div style="font-size: 12px;padding:0 0 2px 174px" v-show="form.subjectList.ksbh">考试编号：100101</div>
+                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.xm">姓名：张三</div>
+                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.km">科目：素描</div>
+                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.kc">考场：001</div>
+                <div style="font-size: 12px;padding:0 0 2px 174px;" v-show="form.subjectList.xb">性别：男</div>
+                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.zwh">座位号：01</div>
               </div>
             </div>
           </div>
@@ -144,7 +135,7 @@ export default {
       studentAreaOption: [],
       examNameOption: [],
       class1:"class0 template-example-dom",
-      class2:"right",
+      class2:"bottom",
       form: {
         pageIndex: 1,
         size: 10,
@@ -298,7 +289,7 @@ export default {
       var str = []
       for (var p in obj) {
         if (obj[p]) {
-          str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          str.push(p + '=' + obj[p])
         }
       }
       return str.join('&')
@@ -344,7 +335,7 @@ export default {
         this.$axios
             .post(url, data)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: '修改成功',
                   type: 'success',
@@ -359,7 +350,7 @@ export default {
         this.$axios
             .post(url, data)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: '添加成功',
                   type: 'success',
@@ -413,10 +404,10 @@ export default {
 
           if(item.id == 0){
             this.class1 = "class0 template-example-dom"
-            this.class2 = "right"
+            this.class2 = "bottom"
           }else{
             this.class1 = "class1 template-example-dom"
-            this.class2 = "bottom"
+            this.class2 = "right"
           }
 
 
@@ -447,18 +438,21 @@ export default {
 <style lang="scss" scoped>
 @import "./index.scss";
 .bottom{
-  position: absolute;
-  top: 400px;
-  left: -180px;
+  margin-top: 150px !important;
+}
+.bottom div{
+  padding-left: 25px!important;
+  width: 170px;
 }
 img.bottom{
   top: 180px !important;
 }
 .class0{
-  height: 400px !important;
+  height: 288px !important;
 }
 .class1{
-  height: 700px !important;
+  width: 504px !important;
+  height: 288px !important;
 }
 .header{
   display: flex;
@@ -478,12 +472,10 @@ img.bottom{
 .template-example-dom{
   background: #fff;
   border: 1px #c0c4cc solid;
-  width: 500px;
-  height: 400px;
+  width: 367px;
+  height: 288px;
   border-radius: 6px;
   .title{
-    display: flex;
-    align-items: center;
     flex-direction: column;
     color:#000;
     font-size: 30px;

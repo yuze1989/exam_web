@@ -232,7 +232,7 @@ export default {
         url = this.stateUrl.rulesCreate;
       }
       this.axios.post(url,params).then(res=>{
-        if(res){
+        if(res.code==200){
             this.$message({
                 message: '添加成功',
                 type: 'success',

@@ -360,7 +360,7 @@ export default {
       this.$axios
         .post(this.API.student.delete, params)
         .then((res) => {
-          if (res) {
+          if (res.code==200) {
             
             this.$message({
               type: "success",
@@ -375,7 +375,7 @@ export default {
       this.$axios
         .post(this.API.student.update, params)
         .then((res) => {
-          if (res) {
+          if (res.code==200) {
             
             this.$message({
               type: "success",

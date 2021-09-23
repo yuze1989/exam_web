@@ -175,7 +175,7 @@ export default {
           this.$axios
             .post(this.API.messageManage.insert, data)
             .then((res) => {
-              if (res) {
+              if (res.code==200) {
                 this.$message({
                   message: "新增成功",
                   type: "success",

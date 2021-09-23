@@ -179,7 +179,7 @@ export default {
       var str = []
       for (var p in obj) {
         if (obj[p]) {
-          str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+          str.push(p + '=' + obj[p])
         }
       }
       return str.join('&')
@@ -190,7 +190,7 @@ export default {
       this.$axios
           .get(url)
           .then((res) => {
-            if (res) {
+            if (res.code==200) {
               this.$message({
                 message: '导出成功',
                 type: 'success',
