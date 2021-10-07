@@ -131,7 +131,6 @@ export default {
       this.from.provinceList = payload
     },
     changeRole(payload) {
-      console.log(this.form);
       const role = this.roleList.filter((item)=>item.id == payload)
       this.from.roleId = payload
       this.from.role = role[0].roleName
@@ -140,7 +139,10 @@ export default {
       this.$emit('update:visible', false)
     },
     open() {
-      this.getRoleList()
+      this.$nextTick(() => {
+        this.$refs.teacherForm.clearValidate()
+      })
+      // this.getRoleList()
       this.getProvinceList() 
       if (!this.isAdd) {
         this.from = {}
@@ -165,7 +167,15 @@ export default {
             }
           })
       }else{
-
+        this.from={
+          loginCode: '',
+          password: '',
+          role: '',
+          roleId: '',
+          userName: '',
+          provinceList: [],
+          roleType:""
+        }
       }
     },
     getProvinceList() {
@@ -180,13 +190,6 @@ export default {
       this.from.role=""
       this.from.roleId=""
       this.roleList = []
-      // this.$axios
-      //   .post(`${this.API.role.teacherRoles}`)
-      //   .then((res) => {
-      //     if ((res.code = 200)) {
-      //       this.roleList = res.result
-      //     }
-      //   })
       let data = {
         roleType:this.from.roleType
       }

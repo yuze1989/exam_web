@@ -138,7 +138,7 @@ export default {
   data() {
     return {
       examName:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       examNameOption: [],
       list: [],
       checkIds: [],
@@ -184,6 +184,9 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -269,6 +272,9 @@ export default {
           this.forms.model.examStatus == -1
             ? null
             : this.forms.model.examStatus,
+      }
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
       }
       this.$axios
         .post('/teacher/examList?archiveStatus=0', params)

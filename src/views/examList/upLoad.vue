@@ -21,25 +21,38 @@
     padding-bottom: 10px;
     display: flex;
     justify-content: flex-end;">
-<!--                    <el-form-item>-->
-<!--                      <el-select clearable -->
-<!--                          v-model="forms.model.provinceCode"-->
-<!--                          placeholder="生源省份"-->
-<!--                          value-key="province"-->
-<!--                          clearable-->
-<!--                          filterable-->
-<!--                      >-->
-<!--                        <el-option-->
-<!--                            v-for="item in options"-->
-<!--                            :key="item.provinceCode"-->
-<!--                            :label="item.province"-->
-<!--                            :value="item"-->
-<!--                        ></el-option>-->
-<!--                      </el-select>-->
-<!--                    </el-form-item>-->
-<!--                    <el-form-item>-->
-<!--                      <el-input v-model.trim="forms.model.userName" placeholder="机构名称"/>-->
-<!--                    </el-form-item>-->
+            <el-form-item>
+              <el-select clearable  v-model="typeNo"  placeholder="请选择类型">
+                <el-option
+                    v-for="item in typeOption"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-select clearable  v-model="examNameNo"  placeholder="请选择考试科目" @change="examNameChange">
+                <el-option
+                    v-for="item in examNameOption"
+                    :key="item.subjectName"
+                    :label="item.subjectName"
+                    :value="item.subjectName">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-input
+                  v-model="jigouName"
+                  placeholder="请输入机构名称"
+              ></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-input
+                  v-model="name"
+                  placeholder="请输入姓名"
+              ></el-input>
+            </el-form-item>
             <el-form-item>
               <el-input
                   v-model="admissionTicketCode"
@@ -77,7 +90,7 @@
       ></el-table-column>
 
       <el-table-column
-        label="考试名称"
+        label="姓名"
         header-align="center"
         align="center"
         prop="name"
@@ -189,6 +202,12 @@
 export default {
   data() {
     return {
+      typeOption:[{id:"",name:"所有试卷"},{id:"not_uploaded",name:"未上传"},{id:"uploaded",name:"已上传"}],
+      typeNo:"",
+      jigouName:"",
+      name:"",
+      examNameOption:[],
+      examNameNo:"",
       list: [],
       checkIds: [],
       listLoading: false,
@@ -228,13 +247,25 @@ export default {
       },
       courseName:[],
       loading:false,
+      timer:"",
     }
   },
   created() {
     this.getOrderList()
     this.getGrade()
+    this.getSubject();
   },
   methods: {
+    getSubject(){
+      this.$axios.get("/examsubject/listByExamId?examId="+this.$route.query.examId).then(res=>{
+        if(res.code==200){
+          this.examNameOption = res.result;
+        }
+      })
+    },
+    examNameChange(){
+
+    },
     saveRule(){},
     confirm1(){
       if(this.admin_username == "" || this.admin_password == ""){
@@ -280,7 +311,7 @@ export default {
             })
             .then((res) => {
               that.gradeList = res.result
-              setInterval(function (){
+              that.timer = setInterval(function (){
                 that.$axios
                     .post('/exampaper/uploadProgress', {
                       examId: that.$route.query.examId,
@@ -368,7 +399,11 @@ export default {
         operStatus : 0,
         examId: this.$route.query.examId,
         examCode:this.$route.query.id,
-        admissionTicketCode:this.admissionTicketCode
+        admissionTicketCode:this.admissionTicketCode,
+        studioName:this.jigouName,
+        name:this.name,
+        uploadState:this.typeNo,
+        course:this.examNameNo
       }
       this.$axios
         .post('/exampaper/exampaperList', params)
@@ -409,6 +444,13 @@ export default {
 
       this.editItemData = item
       this.showDel = true
+    }
+  },
+  beforeDestroy(){
+    if(this.timer) { //如果定时器还在运行 或者直接关闭，不用判断
+      for (let i = 1; i < 100000; i++) {
+        clearInterval(i);
+      }
     }
   },
 }

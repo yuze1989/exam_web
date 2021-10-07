@@ -13,7 +13,7 @@
     <p style="color: red;margin-top: 0;padding-top: 0">提示：导入学生信息，正在后台导入，请稍后查看批量导入结果页面</p>
     <el-row style="padding: 20px 0">
       <el-col :span="12" style="text-align: right;padding-right: 20px;color: #409eff"><a @click="dr">查看批量导入结果</a></el-col>
-      <el-col :span="12" style="padding-left: 20px;color: #409eff"><a href="https://topconfig.oss-cn-hangzhou.aliyuncs.com/topexam-student.xlsx">导入学生信息模板下载</a></el-col>
+      <el-col :span="12" style="padding-left: 20px;color: #409eff"><a href="https://topconfig.oss-cn-hangzhou.aliyuncs.com/topexam-student2.xlsx">导入学生信息模板下载</a></el-col>
     </el-row>
 
     <el-form

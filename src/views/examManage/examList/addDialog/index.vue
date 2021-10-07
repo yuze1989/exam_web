@@ -163,7 +163,7 @@
             <el-button
               type="text"
               style="width: 50px;"
-              @click="delAddress(index)"
+              @click="delAddress(index,item.id)"
             >
               移除
             </el-button>
@@ -228,7 +228,7 @@
             <el-button
               type="text"
               style="width: 50px;"
-              @click="delSubject(index)"
+              @click="delSubject(index,item.id)"
             >
               移除
             </el-button>
@@ -241,6 +241,43 @@
       <el-button @click="close">取消</el-button>
       <el-button type="primary" @click="confirm">确定</el-button>
     </div>
+    <el-dialog
+        :visible.sync="dialogFormVisible"
+        width="50%"
+        center
+        :append-to-body="true"
+        :close-on-click-modal="false"
+    >
+      <div slot="title">管理员验证</div>
+      <el-form
+          label-width="120px"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          ref="delForm"
+      >
+        <p style="    text-align: center;
+    color: red;
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 15px;">{{msg}}</p>
+        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+          <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button type="primary"   @click="del">确认</el-button>
+      </div>
+
+    </el-dialog>
   </el-dialog>
 </template>
 
@@ -267,6 +304,9 @@ export default {
   },
   data() {
     return {
+      admin_username:"",
+      admin_password:"",
+      msg:"",
       provinceList: [],
       address: [
         {
@@ -342,6 +382,10 @@ export default {
           { required: true, message: '请选择结束日期', trigger: 'change' },
         ],
       },
+      dialogFormVisible:false,
+      xx_id:"",
+      xx_index:"",
+      is_type:"",
     }
   },
   created() {
@@ -541,17 +585,74 @@ export default {
     addAddress() {
       this.address.push({})
     },
-    delAddress(index) {
-      this.address.splice(index, 1)
+    del(){
+      if(!this.admin_username){
+        this.$message({
+          message: '请输入管理员账号！',
+          type: 'warning',
+        })
+        return false
+      }
+      if(!this.admin_password){
+        this.$message({
+          message: '请输入管理员密码！',
+          type: 'warning',
+        })
+        return false
+      }
+      if(this.is_type == 1){
+        this.$axios.post("/examinfo/deleteAddress?id="+this.xx_id+"&username="+this.admin_username+"&password="+this.admin_password).then((res)=>{
+          if(res.code == 200){
+            this.dialogFormVisible = false;
+            this.address.splice(this.xx_index, 1)
+            this.$message({
+              message: '删除成功！',
+              type: 'success',
+            })
+          }
+        })
+      }else if(this.is_type == 2){
+        this.$axios.post("/examinfo/deleteSubject?id="+this.xx_id+"&username="+this.admin_username+"&password="+this.admin_password).then((res)=>{
+          if(res.code == 200){
+            this.dialogFormVisible = false;
+            this.subject.splice(this.xx_index, 1)
+            this.$message({
+              message: '删除成功！',
+              type: 'success',
+            })
+          }
+        })
+      }
+
+    },
+    delAddress(index,id) {
+      if(id){
+        this.msg="是否确认删除该考试地址，请慎重！"
+        this.admin_password = "";
+        this.admin_username = "";
+        this.dialogFormVisible = true;
+        this.xx_id = id;
+        this.is_type = 1;
+      }else {
+        this.address.splice(index, 1)
+      }
     },
     addSubject() {
       this.subject.push({})
     },
-    delSubject(index) {
-      this.subject.splice(index, 1)
+    delSubject(index,id) {
+      if(id){
+        this.msg="是否确认删除该考试科目，请慎重！"
+        this.admin_password = "";
+        this.admin_username = "";
+        this.dialogFormVisible = true;
+        this.xx_id = id;
+        this.is_type = 2;
+      }else {
+        this.subject.splice(index, 1)
+      }
     },
     edit() {
-
       this.$refs.examForm.validate((valid) => {
         if (valid) {
           if(this.from.enrollEndTime < this.from.enrollStartTime){

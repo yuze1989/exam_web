@@ -45,8 +45,8 @@
             :value="item.provinceCode">
           </el-option>
         </el-select>
-      <el-input v-model="form.gender" style="width:120px;margin-left:15px;"  placeholder="性别"
-      ></el-input>
+<!--      <el-input v-model="form.gender" style="width:120px;margin-left:15px;"  placeholder="性别"-->
+<!--      ></el-input>-->
        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
         >查询</el-button
       >
@@ -101,6 +101,13 @@
         header-align="center"
         align="center"
         prop="name"
+      >
+      </el-table-column>
+      <el-table-column
+          label="性别"
+          header-align="center"
+          align="center"
+          prop="gender"
       >
       </el-table-column>
        <el-table-column
@@ -199,7 +206,7 @@ export default {
   data() {
     return {
       examName:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       examNameOption: [],
        listLoading: false,
       sels: [], //列表选中列
@@ -251,6 +258,9 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -347,6 +357,9 @@ export default {
         gender:this.form.gender,
       };
       this.daochu=params;
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       apiUnionExamList(params).then((res) => {
                  this.data.records = res.result.list;
                 this.data.current = res.result.current;

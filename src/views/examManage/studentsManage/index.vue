@@ -81,6 +81,7 @@
       <el-row style="margin-top: 6px;margin-bottom: 0px;display:block;justify-content: flex-start">
         <!--      <el-button type="warning" @click="reset">重置</el-button>-->
         <el-button type="primary" @click="add">新增学生信息</el-button>
+        <el-button type="primary" @click="onSc">批量上传照片</el-button>
         <el-button type="primary" @click="onImport">批量导入</el-button>
         <el-button type="primary" @click="checkMore">批量审核</el-button>
         <el-button type="primary" @click="oneKey">一键审核</el-button>
@@ -248,7 +249,6 @@
             修改
           </el-button>
           <el-button
-            v-if="scope.row.checkStatus == 0 && scope.row.payStatus == 2"
             type="text"
             size="small"
             @click="del(scope.row)"
@@ -268,12 +268,49 @@
         @cb="currentChange"
       />
     </el-col>
+    <el-dialog
+        title="批量上传学生图片"
+        :visible.sync="shenhe" >
+      <div v-loading="listLoading">
+        <el-select clearable  style="width: 100%;" v-model="selectCheck3" placeholder="请选择考试">
+          <el-option
+              v-for="item in examNameOption"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+          ></el-option>
+        </el-select>
+        <el-upload
+            style="margin-top: 20px"
+            class="upload-demo"
+            action="#"
+            ref="upload"
+            :auto-upload="false"
+            drag
+            accept="image/jpeg,image/png,image/jpg"
+            :on-change="up_bg"
+            show-file-list
+            multiple>
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过1M</div>
+        </el-upload>
+      </div>
+      <span slot="footer" class="dialog-footer">
+  </span>
+    </el-dialog>
 
     <el-dialog
         title="批量审核学生信息"
         :visible.sync="dialogVisible" >
       <div v-loading="listLoading">
-        <p style="color: red;margin-top: 0;padding-top: 0">提示：对查询结果中，未审核状态下的学生信息，将全部被审核，审核之前请确认学生信息的准确性。</p>
+        <p style="color: red;margin-top: 0;padding-top: 0">提示：对查询结果中，未审核状态下的学生信息，将全部被审核，审核之前请确认学生信息的准确性。本次操作审核数量为<span style="font-size: 20px;
+    margin-left: 15px;
+    background: #0070cc;
+    color: #fff;
+    padding: 4px 6px;
+    position: relative;
+    top: 3px;">{{wait_approved_count}}</span></p>
         <el-select clearable  style="width: 100%;" v-model="selectCheck2" placeholder="请选择">
           <el-option
               v-for="item in checkOptions"
@@ -300,7 +337,14 @@
     </el-dialog>
 
     <!--选择审核修改-->
-    <el-dialog title="审核学生信息" :visible.sync="showCheck" center>
+    <el-dialog title="审核学生信息" :visible.sync="showCheck">
+      <p style="color: red;margin-top: 0;padding-top: 0">提示：对勾选结果中，未审核状态下的学生信息，将全部被审核，审核之前请确认学生信息的准确性。本次操作审核数量为<span style="font-size: 20px;
+    margin-left: 15px;
+    background: #0070cc;
+    color: #fff;
+    padding: 4px 6px;
+    position: relative;
+    top: 3px;">{{gouxuan_count}}</span></p>
       <el-select clearable  style="width: 350px;" v-model="selectCheck" placeholder="请选择">
         <el-option
           v-for="item in checkOptions"
@@ -348,8 +392,9 @@ export default {
   },
   data() {
     return {
+      shenhe:false,
       examName:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       examNameOption: [],
       dialogVisible:false,
       //新增
@@ -405,6 +450,7 @@ export default {
         { name: '审核通过', id: 1 },
         { name: '审核拒绝', id: 2 },
       ],
+      selectCheck3:"",
       data: { pages: 0, size: 10, total: 0, records: [] },
       users: [],
       isEnableOrder: false,
@@ -413,6 +459,8 @@ export default {
       checkItem: {},
       isEdit: false,
       daochu:{},
+      wait_approved_count:0,
+      gouxuan_count:0,
     }
   },
   created() {
@@ -420,10 +468,32 @@ export default {
     this.getExamList()
   },
   methods: {
+    onSc(){
+      this.shenhe = true;
+    },
+
+    up_bg(file){
+      if(!this.selectCheck3){
+        this.$message.error('请先选择考试！')
+        return
+      }
+      const formData = new FormData();
+      formData.append('file',file.raw)
+      this.$axios.post("/examinee/batchUploadPhoto?examId="+this.selectCheck3,formData).then((res)=>{
+        if(res.code == 200){
+
+        }else{
+          this.$message.error(file.name+"上传失败："+res.message)
+        }
+      })
+    },
     // 查询考试列表
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -461,6 +531,7 @@ export default {
       this.isCheckMore = false
       this.checkIds = []
       this.$refs.multipleTable.clearSelection()
+      this.gouxuan_count = 1;
     },
     handleSelectionChange(val) {
       this.checkIds = val
@@ -470,6 +541,7 @@ export default {
         this.$message.error('请选择要审核的学生')
         return
       }
+      this.gouxuan_count = this.checkIds.length;
       this.checkId = ''
       this.showCheck = true
       this.remark = ''
@@ -544,6 +616,9 @@ export default {
         examId:this.examId
       }
       this.daochu = params;
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       this.$axios
         .post(this.API.studentsManage.examineeList, params)
         .then((res) => {
@@ -654,6 +729,11 @@ export default {
         return false;
       }
       this.dialogVisible = true;
+      this.$axios.post("/examinee/checkStateCount?examId="+this.examId).then(res=>{
+        if(res.code==200){
+          this.wait_approved_count = res.result.wait_approved_count;
+        }
+      })
     },
     //审核
     submitCheck() {

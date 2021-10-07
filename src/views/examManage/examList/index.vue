@@ -277,7 +277,7 @@ export default {
       list: [],
       listLoading: false,
       examNameNo:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       forms: {
         current: 1,
         pageSize: 10,
@@ -321,15 +321,18 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
     examNameChange(e){
       this.examId = ""
-      this.examName = ""
+      this.examNameNo = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
-          this.examName = item.name
+          this.examNameNo = item.name
           this.examId = item.id
         }
       })
@@ -405,11 +408,14 @@ export default {
         current: this.forms.current,
         size: this.forms.pageSize,
         examId: this.examId,
-        name:this.examName,
+        name:this.examNameNo,
         examStatus:
           this.forms.model.examStatus == -1
             ? null
             : this.forms.model.examStatus,
+      }
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
       }
       this.$axios
         .post(this.API.examinfo.list, params)
@@ -436,4 +442,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import './orderAccount.scss';
+.el-form-item{
+margin-bottom: 10px
+}
 </style>

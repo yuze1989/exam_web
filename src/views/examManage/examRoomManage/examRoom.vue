@@ -301,7 +301,7 @@ export default {
   data() {
     return {
       examName:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       examNameOption: [],
       options:[],
       from: {},
@@ -346,6 +346,9 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -480,6 +483,9 @@ export default {
         examId:this.examId
       }
       this.daochu = data;
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       this.$axios
         .post(this.API.studentsManage.examRoomList, data)
         .then((res) => {

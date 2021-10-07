@@ -41,7 +41,7 @@
             </div>
           </div>
           <h3>试卷分组数据</h3>
-          <div class="cards-statistics">
+          <div :class="class3">
             <div
                 v-loading="queryLoad"
                 class="card"
@@ -78,7 +78,7 @@
             </div>
             <div class="level-description" v-if="currentRuleLevel">
               <h3>{{ currentRuleLevel }}类卷</h3>
-              <p class="word-wrap" style="height: 160px; overflow: auto">
+              <p class="word-wrap" style="height: 114px; overflow: auto">
                 {{description}}
               </p>
             </div>
@@ -103,7 +103,7 @@
         </div>
       </div>
       <div class="right">
-        <div style="height: 34px;background: #fff;margin-bottom: 6px;border-radius: 4px">
+        <div style="height: 34px;background: #fff;margin-bottom: 6px;border-radius: 4px;position: relative">
           <span style="float: left;margin-left: 16px;font-size: 1.1em;font-weight: 700">阅卷视图</span>
           <el-switch
               style="float: left;margin-left: 16px;margin-top: 2px"
@@ -111,6 +111,8 @@
               active-text="竖版"
               inactive-text="横版">
           </el-switch>
+
+          <el-checkbox v-model="isZc" v-if="rule==0 || rule==3" @change="zcChange" style="position: absolute;right: 20px;top: 6px;">仲裁组</el-checkbox>
         </div>
         <div
             v-loading="listLoad"
@@ -132,15 +134,11 @@
               <span v-if="paperList[currentPosition].grade">类</span>
             </span>
             <span
-            >{{ paperList[currentPosition].score >= 0 ? paperList[currentPosition].score : "" }}<span v-if="paperList[currentPosition].score>=0">分</span>
+            >{{ paperList[currentPosition].score >= 0 ? paperList[currentPosition].score : "" }}<span v-if="paperList[currentPosition].score && paperList[currentPosition].score>=0">分</span>
             </span>
-            <span style="color: #dcdada;
-    width: 80px;
-    position: absolute;
-    left: 0;
-    top: 14px;
-    font-size: 12px;">{{paperList[currentPosition].originalGrade}}</span>
+            <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
           </span>
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 21%;z-index: 999;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
           <div class="previous-image box_img" @click="clickImg(-2)"  style="top: 100px!important;">
             <el-image
                 :class="hideClass()"
@@ -168,12 +166,10 @@
                 >类</span
                 ></span
               >
-              <span
-              >{{ paperList[currentPosition - 2].score >= 0 ? paperList[currentPosition - 2].score : "" }}<span v-if="paperList[currentPosition - 2].score>=0"
-                >分</span
-                ></span
-              >
+              <span>{{ paperList[currentPosition - 2].score >= 0 ? paperList[currentPosition - 2].score:""}}<span v-if="paperList[currentPosition  - 2].score && paperList[currentPosition - 2].score>=0">分</span></span>
+              <span v-if="paperList[currentPosition - 2].originalGrade">| {{ paperList[currentPosition - 2].originalGrade?paperList[currentPosition - 2].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition - 2] && paperList[currentPosition-2].isArbitrate==1"></el-badge>
           </div>
           <div class="previous-image box_img" @click="clickImg(-1)" style="bottom: 0px !important;">
             <el-image
@@ -203,12 +199,11 @@
                 ></span
               >
               <span
-              >{{ paperList[currentPosition -1].score >= 0 ? paperList[currentPosition -1].score : "" }}
-                <span v-if="paperList[currentPosition  - 1].score>=0"
-                >分</span
-                ></span
+              >{{ paperList[currentPosition -1].score >= 0 ? paperList[currentPosition -1].score : "" }}<span v-if="paperList[currentPosition  - 1].score && paperList[currentPosition  - 1].score>=0">分</span></span
               >
+              <span v-if="paperList[currentPosition - 1].originalGrade">| {{ paperList[currentPosition - 1].originalGrade?paperList[currentPosition - 1].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition - 1] && paperList[currentPosition-1].isArbitrate==1"></el-badge>
           </div>
           <vue-img-viewer
               ref="imgViewer"
@@ -224,6 +219,7 @@
               :allLength="allLength"
               :thisCurrent="thisCurrent"
           >
+
           </vue-img-viewer>
 
           <div class="next-image box_img" @click="clickImg(1)"  style="top: 100px;">
@@ -251,10 +247,11 @@
                 <span v-if="paperList[currentPosition + 1].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 1].score >= 0 ? paperList[currentPosition + 1].score : "" }}
-                <span v-if="paperList[currentPosition + 1].score>=0">分</span>
+              >{{ paperList[currentPosition + 1].score >= 0 ? paperList[currentPosition + 1].score : "" }}<span v-if="paperList[currentPosition + 1].score && paperList[currentPosition + 1].score>=0">分</span>
               </span>
+              <span v-if="paperList[currentPosition + 1].originalGrade">| {{ paperList[currentPosition + 1].originalGrade?paperList[currentPosition + 1].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(2)"  style="position: absolute;bottom: 0">
             <el-image
@@ -282,10 +279,11 @@
                 <span v-if="paperList[currentPosition + 2].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 2].score >= 0 ? paperList[currentPosition + 2].score : "" }}
-                <span v-if=" [currentPosition + 2].score>=0">分</span>
+              >{{ paperList[currentPosition + 2].score >= 0 ? paperList[currentPosition + 2].score : "" }}<span v-if="paperList[currentPosition + 2].score && paperList[currentPosition + 2].score>=0">分</span>
               </span>
+              <span v-if="paperList[currentPosition + 2].originalGrade">| {{ paperList[currentPosition + 2].originalGrade?paperList[currentPosition + 2].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
           </div>
         </div>
         <div
@@ -306,17 +304,13 @@
             <span
             >{{ paperList[currentPosition].grade }}
               <span v-if="paperList[currentPosition].grade">类</span>
-            </span>q
-            <span
-            >{{ paperList[currentPosition].score >= 0 ? paperList[currentPosition].score : "" }}<span v-if="paperList[currentPosition].score>=0">分</span>
             </span>
-            <span style="color: #dcdada;
-    width: 80px;
-    position: absolute;
-    left: 0;
-    top: 14px;
-    font-size: 12px;">{{paperList[currentPosition].originalGrade}}</span>
+            <span
+            >{{ paperList[currentPosition].score >= 0 ? paperList[currentPosition].score : "" }}<span v-if="paperList[currentPosition].score && paperList[currentPosition].score>=0">分</span>
+            </span>
+            <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
           </span>
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 30%;z-index: 999;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
           <vue-img-viewer
               ref="imgViewer"
               :container="'imgViewerContainer'"
@@ -343,7 +337,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -360,16 +354,16 @@
                 ></span
               >
               <span
-              >{{ paperList[currentPosition + 1].score >= 0 ? paperList[currentPosition + 1].score : "" }}<span v-if="paperList[currentPosition +1].grade>=0"
-                >分</span
-                ></span
+              >{{ paperList[currentPosition + 1].score >= 0 ? paperList[currentPosition + 1].score : "" }}<span v-if="paperList[currentPosition +1].score && paperList[currentPosition +1].score>=0">分</span></span
               >
+              <span v-if="paperList[currentPosition + 1].originalGrade">| {{ paperList[currentPosition + 1].originalGrade?paperList[currentPosition + 1].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
           </div>
           <div class="previous-image box_img" @click="clickImg(2)" style="top: calc(25% + 100px) !important;">
             <el-image
                 :style="imgStyle"
-                style="position: absolute;bottom: 0"
+                style="position: absolute;top: 0"
                 fit="cover"
                 :class="hideClass()"
                 :src="
@@ -377,7 +371,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -394,11 +388,12 @@
                 ></span
               >
               <span
-              >{{ paperList[currentPosition + 2].score >= 0 ? paperList[currentPosition + 2].score : "" }}<span v-if="paperList[currentPosition  +2].grade>=0"
-                >分</span
+              >{{ paperList[currentPosition + 2].score >= 0 ? paperList[currentPosition + 2].score : "" }}<span v-if="paperList[currentPosition  +2].score && paperList[currentPosition  +2].score>=0">分</span
                 ></span
               >
+              <span v-if="paperList[currentPosition + 2].originalGrade">| {{ paperList[currentPosition + 2].originalGrade?paperList[currentPosition + 2].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(3)"  style="top: calc(50% + 100px);">
             <el-image
@@ -410,7 +405,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -425,14 +420,15 @@
                 <span v-if="paperList[currentPosition +3].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 3].score >= 0 ? paperList[currentPosition + 3].score : "" }}
-                <span v-if="paperList[currentPosition +3].score>=0">分</span>
+              >{{ paperList[currentPosition + 3].score >= 0 ? paperList[currentPosition + 3].score : "" }}<span v-if="paperList[currentPosition +3].score && paperList[currentPosition +3].score>=0">分</span>
               </span>
+              <span v-if="paperList[currentPosition + 3].originalGrade">| {{ paperList[currentPosition + 3].originalGrade?paperList[currentPosition + 3].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 3] && paperList[currentPosition+3].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(4)"  style="position: absolute;top: calc(75% + 100px)">
             <el-image
-                style="position: absolute;bottom: 0"
+                style="position: absolute;top: 0"
                 fit="cover"
                 :style="imgStyle"
                 :class="hideClass()"
@@ -441,7 +437,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -456,10 +452,11 @@
                 <span v-if="paperList[currentPosition +4].grade">类</span>
               </span>
               <span
-              >{{ paperList[currentPosition + 4].score >= 0 ? paperList[currentPosition + 4].score : "" }}
-                <span v-if=" [currentPosition +4].score>=0">分</span>
+              >{{ paperList[currentPosition + 4].score >= 0 ? paperList[currentPosition + 4].score : "" }}<span v-if="paperList[currentPosition +4] && paperList[currentPosition +4].score>=0">分</span>
               </span>
+              <span v-if="paperList[currentPosition + 4].originalGrade">| {{ paperList[currentPosition + 4].originalGrade?paperList[currentPosition + 4].originalGrade : "" }}</span>
             </span>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 4] && paperList[currentPosition+4].isArbitrate==1"></el-badge>
           </div>
         </div>
 
@@ -617,6 +614,9 @@ export default {
       isAll:false,
       thisCurrent:0,
       rote:0,
+      lastP:"",
+      isZc:false,
+      class3:"cards-statistics",
     };
   },
   computed:{
@@ -633,6 +633,9 @@ export default {
     this.init();//初始化
   },
   methods: {
+    zcChange(){
+      this.init()
+    },
     init(){
       this.queryPaperList(); //获取评级
       this.renderMarkingRules(); //获取规则
@@ -652,82 +655,174 @@ export default {
         this.NoGrade=res.result.NoGrade;
         this.Grade=res.result.Grade;
 
-        //总数
-        this.allLength = res.result.NoGrade/1 + res.result.Grade/1;
-        //最大页
-        this.maxPage = Math.ceil(this.allLength/10)
+        if(this.isZc){
+          //只看仲裁
+          this.$axios.post("/exampaper/arbitrateCount",{
+            "course": this.$route.query.course,
+            "examId": this.$route.query.examId,
+            "size": 20,})
+              .then(res1=>{
+                //总数
+                this.allLength = res1.result.NoGrade/1 + res1.result.Grade/1;
+                //最大页
+                this.maxPage = Math.ceil(this.allLength/10)
 
-        let wz = 0;
+                let wz = 0;
 
-        //存在未评级
-        if(this.NoGrade > 0){
-          // 当前数
-          this.thisCurrent =this.Grade/1 +1;
+                //存在未评级
+                if(res1.result.NoGrade > 0){
+                  // 当前数
+                  this.thisCurrent =res1.result.Grade/1 +1;
 
-          //当前页
-          this.rPage = Math.ceil(this.thisCurrent/10);
+                  //当前页
+                  this.rPage = Math.ceil(this.thisCurrent/10);
 
-          //当前位置
-          wz = this.Grade%10;
+                  //当前位置
+                  wz = this.Grade%10;
+                }else{
+                  this.thisCurrent = 1;
+                  this.rPage = 1;
+                  wz = 0;
+                }
+
+                this.listLoad = true;
+                let url = '/exampaper/queryExamPaperSort';
+                let grade = "all";
+                if(this.isZc){
+                  grade = "仲裁组";
+                }
+
+                let data = {
+                  "course": this.$route.query.course,
+                  "examCode": this.$route.query.examNo,
+                  "examId":this.$route.query.examId,
+                  "grade": grade,
+                  paperScore:"",
+                  size:10,
+                  current:this.rPage,
+                  "examPaperId": "",
+                  "provinceCode": "",
+                  "schoolId": "",
+                  "score": "",
+                  "teacherId": ""
+                }
+
+                this.$axios.post(url,data).then(res=>{
+                  let list = res.result.list;
+                  let imgList = [];
+                  let imgList1 = [];
+                  list.forEach((item,index)=>{
+                    imgList.push(item.img)
+                    imgList1.push(item.imgas)
+                  })
+                  this.paperList = list;
+                  this.mList = list;
+                  this.imgList = imgList;
+                  this.imgList1 = imgList1;
+
+
+
+                  //定位图片
+                  this.currentPosition = wz/1;
+                  //定位初始
+                  this.startPosition = wz/1;
+
+                  if(wz >=6){
+                    this.rPage = this.rPage+1;
+                    this.getList(1)
+                  }
+                  if(wz <= 4){
+                    this.rPage = this.rPage-1;
+                    this.getList(-1)
+                  }
+
+                  this.listLoad = false;
+                })
+
+              })
+              .catch(err=>{
+                console.log(err)
+              })
+
+
         }else{
-          this.thisCurrent = 1;
-          this.rPage = 1;
-          wz = 0;
-        }
+          //总数
+          this.allLength = res.result.NoGrade/1 + res.result.Grade/1;
+          //最大页
+          this.maxPage = Math.ceil(this.allLength/10)
+
+          let wz = 0;
+
+          //存在未评级
+          if(this.NoGrade > 0){
+            // 当前数
+            this.thisCurrent =this.Grade/1 +1;
+
+            //当前页
+            this.rPage = Math.ceil(this.thisCurrent/10);
+
+            //当前位置
+            wz = this.Grade%10;
+          }else{
+            this.thisCurrent = 1;
+            this.rPage = 1;
+            wz = 0;
+          }
+
+          this.listLoad = true;
+          let url = '/exampaper/queryExamPaperSort';
+          let grade = "all";
+          if(this.isZc){
+            grade = "仲裁组";
+          }
+
+          let data = {
+            "course": this.$route.query.course,
+            "examCode": this.$route.query.examNo,
+            "examId":this.$route.query.examId,
+            "grade": grade,
+            paperScore:"",
+            size:10,
+            current:this.rPage,
+            "examPaperId": "",
+            "provinceCode": "",
+            "schoolId": "",
+            "score": "",
+            "teacherId": ""
+          }
+
+          this.$axios.post(url,data).then(res=>{
+            let list = res.result.list;
+            let imgList = [];
+            let imgList1 = [];
+            list.forEach((item,index)=>{
+              imgList.push(item.img)
+              imgList1.push(item.imgas)
+            })
+            this.paperList = list;
+            this.mList = list;
+            this.imgList = imgList;
+            this.imgList1 = imgList1;
 
 
 
-        this.listLoad = true;
-        let url = '/exampaper/queryExamPaperSort';
+            //定位图片
+            this.currentPosition = wz/1;
+            //定位初始
+            this.startPosition = wz/1;
 
-        let data = {
-          "course": this.$route.query.course,
-          "examCode": this.$route.query.examNo,
-          "examId":this.$route.query.examId,
-          "grade": "all",
-          paperScore:"",
-          size:10,
-          current:this.rPage,
-          "examPaperId": "",
-          "provinceCode": "",
-          "schoolId": "",
-          "score": "",
-          "teacherId": ""
-        }
+            if(wz >=6){
+              this.rPage = this.rPage+1;
+              this.getList(1)
+            }
+            if(wz <= 4){
+              this.rPage = this.rPage-1;
+              this.getList(-1)
+            }
 
-        this.$axios.post(url,data).then(res=>{
-          let list = res.result.list;
-          let imgList = [];
-          let imgList1 = [];
-          list.forEach((item,index)=>{
-            imgList.push(item.img)
-            imgList1.push(item.imgas)
+            this.listLoad = false;
           })
-          this.paperList = list;
-          this.mList = list;
-          this.imgList = imgList;
-          this.imgList1 = imgList1;
-
-
-          console.log(wz);
-          //定位图片
-          this.currentPosition = wz/1;
-          //定位初始
-          this.startPosition = wz/1;
-
-          if(wz >=7){
-            this.rPage = this.rPage+1;
-            this.getList(1)
-          }
-
-          if(wz == 0){
-            this.rPage = this.rPage-1;
-
-            this.getList(-1)
-          }
-
-          this.listLoad = false;
-        })
+        }
       })
     },
     hideClass(){
@@ -772,6 +867,10 @@ export default {
             this.NoScore=res.result.NoScore;
             this.NoGrade=res.result.NoGrade;
             this.Grade=res.result.Grade;
+        //总数
+        this.allLength = res.result.NoGrade/1 + res.result.Grade/1;
+        //最大页
+        this.maxPage = Math.ceil(this.allLength/10)
       })
     },
 
@@ -794,17 +893,34 @@ export default {
       },300)
     },
     getList(type){
+
       if(this.rPage <= 0){
         return false;
       }
+      if(this.rPage > this.maxPage){
+        return false;
+      }
+      if(type == 1 && (this.listLoad && this.markDlgVisible)){
+        return false
+      }
+      if(this.lPage == this.rPage && this.rPage != 1){
+        return false;
+      }
       this.listLoad = true;
+      this.lPage = this.rPage;
+
+      let grade = "all";
+      if(this.isZc){
+        grade = "仲裁组"
+      }
+
       let url = '/exampaper/queryExamPaperSort'
       let data = {
         "course": this.$route.query.course,
         "examCode": this.$route.query.examNo,
         "examId":this.$route.query.examId,
         size:10,
-        "grade": "all",
+        "grade": grade,
         paperScore:"",
         current:this.rPage,
         "examPaperId": "",
@@ -838,6 +954,7 @@ export default {
           this.imgList1 = [...bimgList1,...this.imgList1];
         }
         this.listLoad = false;
+        this.markDlgVisible = false;
 
       });
 
@@ -880,16 +997,19 @@ export default {
               name: "全部",
               count: res.result.countNum,
               active: true,
+              percentage:"",
             },
             {
               name: "未评级",
               count: res.result.notGradeCount,
               active: false,
+              percentage:"",
             },
             {
               name: "仲裁组",
               count:  res.result.arbitrationGradeCount,
               active: false,
+              percentage:"",
             },
           ];
 
@@ -897,7 +1017,8 @@ export default {
             name: "仲裁组",
             count:  res.result.arbitrationGradeCount,
             active: false,
-            all:this.unmarkedCount || 0
+            all:this.unmarkedCount || 0,
+            percentage:"",
           },];
           let rule = localStorage.getItem("role");
           for (let i = 0; i < resultList.length; i++) {
@@ -930,6 +1051,9 @@ export default {
             }
 
 
+          }
+          if(xxList.length > 9){
+              this.class3 = "cards-statistics1"
           }
           this.xxList = xxList;
           this.levelStatisticsList = list;
@@ -1000,6 +1124,7 @@ export default {
           let examplesList = [];
           let maxScore = 0;
           let tempGradeList = [];
+
           resultList.forEach((item,i)=>{
             if(item.grade){
               tempGradeList.push({
@@ -1074,7 +1199,15 @@ export default {
     },
     // 点击A,B,C,D级
     switchCurrentLevel(index) {
+      if(this.listLoad || this.markDlgVisible){
+        return false;
+      }
+      if(this.lastP == this.paperList[this.currentPosition].id){
+        return false;
+      }
       this.currentLevel = this.gradeList[index].name;
+      this.lastP = this.paperList[this.currentPosition].id;
+
       // localStorage.setItem("paperId", this.paperList[this.currentPosition].id);
       // this.updatePaper({
       //   paperId: this.paperList[this.currentPosition].id,
@@ -1087,28 +1220,43 @@ export default {
         grade:this.currentLevel,
         examId:this.$route.query.examId,
       }
+
+
       this.listLoad = true;
       this.$axios.post("/exampaper/updateGrade",data).then((res) => {
-        this.listLoad = false;
         if(res.code == 200){
           this.$message.success(`试卷评级更新成功！`);
-          this.markDlgVisible = false;
-          this.paperList[this.currentPosition].grade = this.currentLevel;
-          if (this.currentPosition < this.paperList.length - 1) {
-
-
-            if(this.thisCurrent >= this.allLength){
-              this.$message.warning(`已经是最后一张试卷了！`);
+          if(this.isZc){
+            this.init()
+          }else{
+            this.paperList[this.currentPosition].score = res.result.score;
+            this.paperList[this.currentPosition].grade = res.result.grade;
+            this.paperList[this.currentPosition].isArbitrate = res.result.isArbitrate;
+            this.paperList[this.currentPosition].originalGrade = res.result.originalGrade;
+            if (this.currentPosition < this.paperList.length - 1) {
+              if(this.thisCurrent >= this.allLength){
+                this.$message.warning(`已经是最后一张试卷了！`);
+              }
+              this.currentPosition += 1;
+              this.startPosition += 1;
+              this.thisCurrent += 1;
+              this.imgSwitchEnd(this.currentPosition)
             }
-            this.currentPosition += 1;
-            this.startPosition += 1;
-            this.thisCurrent += 1;
-            this.imgSwitchEnd(this.currentPosition)
+
+            this.queryPaperList() //分组数据更新
+            this.getJinDu()
           }
-          this.queryPaperList() //分组数据更新
-          this.getJinDu()
+
+
+
         }
-      });
+        this.listLoad = false;
+        this.markDlgVisible = false;
+      }).catch(error=>{
+        this.listLoad = false;
+        this.markDlgVisible = false;
+
+      })
     },
     currentEnd(currentIndex){
       this.thisCurrent=currentIndex;
@@ -1117,7 +1265,6 @@ export default {
       this.rote = rote;
     },
     imgSwitchEnd(currentImgIndex) {
-
       this.currentPosition = currentImgIndex;
       this.startPosition = currentImgIndex;
 
@@ -1125,14 +1272,14 @@ export default {
 
 
       //还有4张开始预加载下一页
-      if(this.currentPosition + 4 > this.imgList.length){
+      if(this.currentPosition + 5 > this.imgList.length){
         if(this.rPage >= this.maxPage){
           return false
         }
         this.rPage += 1
         this.getList(1)
       }
-      if(this.currentPosition - 4 < 0){
+      if(this.currentPosition - 5 < 0){
         if(this.rPage <= 1){
           return false
         }
@@ -1164,6 +1311,9 @@ export default {
       }
     },
     imgViewerEnter() {
+      if(!scroller){
+        return false
+      }
       const scroller = document.querySelector(".content-container");
       const scrollBarWidth = scroller.offsetWidth - scroller.clientWidth;
       const chromeBarWidth = 17;
@@ -1172,7 +1322,9 @@ export default {
       scroller.style.overflowY = "hidden";
     },
     imgViewerLeave() {
-
+      if(!scroller){
+        return false
+      }
       const scrollBarWidth =
           window.innerWidth - document.documentElement.offsetWidth;
       const scroller = document.querySelector(".content-container");
@@ -1203,25 +1355,29 @@ export default {
         this.$message.error(`请填写合适的分数！`);
         return false;
       }
-      this.$axios.post("/exampaper/createScore",data).then((res) => {
+      this.$axios.post("/exampaper/updateGrade",data).then((res) => {
         if(res.code == 200){
-            this.markDlgVisible = false;
-
-          this.paperList[this.currentPosition].grade = this.level;
-          this.paperList[this.currentPosition].score = this.mark;
-          if (this.currentPosition < this.paperList.length - 1) {
-            if(this.thisCurrent >= this.allLength){
-              this.$message.warning(`已经是最后一张试卷了！`);
+          this.$axios.post("/exampaper/updateScore",data).then((res)=>{
+            if(res.code == 200){
+              this.markDlgVisible = false;
+              this.paperList[this.currentPosition].score = res.result.score;
+              this.paperList[this.currentPosition].grade = res.result.grade;
+              this.paperList[this.currentPosition].isArbitrate = res.result.isArbitrate;
+              this.paperList[this.currentPosition].originalGrade = res.result.originalGrade;
+              if (this.currentPosition < this.paperList.length - 1) {
+                if(this.thisCurrent >= this.allLength){
+                  this.$message.warning(`已经是最后一张试卷了！`);
+                }
+                this.currentPosition += 1;
+                this.startPosition += 1;
+                this.thisCurrent += 1;
+                this.imgSwitchEnd(this.currentPosition)
+              }
+              this.queryPaperList() //分组数据更新
+              this.getJinDu()
+              this.$message.success(`试卷评分更新成功！`);
             }
-            this.currentPosition += 1;
-            this.startPosition += 1;
-            this.thisCurrent += 1;
-            this.imgSwitchEnd(this.currentPosition)
-          }
-          this.queryPaperList() //分组数据更新
-          this.getJinDu()
-          this.$message.success(`试卷评分更新成功！`);
-
+          })
         }
       });
 
@@ -1463,6 +1619,12 @@ export default {
   height: 25% !important;
   left: 70%!important;
 }
+.zcz .el-badge__content{
+  border-radius: 0;
+}
+#marking-area .cards-statistics1 .el-progress-bar{
+  margin-top: 2px;
+}
 </style>
 
 <style scoped lang="scss">
@@ -1607,10 +1769,34 @@ export default {
             }
           }
         }
+        .cards-statistics1 {
+          display: grid;
+          grid-template-rows: 1fr 1fr 1fr 1fr;
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+          overflow: auto;
+          height: 262px;
+
+          .card {
+            font-size: 14px;
+            color: #0e0e0e;
+            background-color: #f3f3f3;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            padding: 6px;
+            margin-bottom: 7px;
+            margin-right: 7px;
+            .el-progress-bar{
+              margin-top: 2px;
+            }
+            .primary {
+              color: #204bd6;
+            }
+          }
+        }
       }
 
       .left-bottom {
-        height: 337px;
         background-color: #fff;
         padding: 20px;
         box-sizing: border-box;
@@ -1674,13 +1860,14 @@ export default {
         margin-bottom: 10px;
         .image-header {
           position: absolute;
-          width: 80px;
+          width: 100px;
           height: 40px;
           line-height: 40px;
           text-align: center;
           left: 0;
           top: 0;
           color: #05d5f5;
+          font-size: 15px;
 
           background-color: rgba(0, 0, 0, 0.5);
           -webkit-border-radius: 10px 0 10px 0;
@@ -1719,9 +1906,10 @@ export default {
         .mark-level-container {
           display: inline-block;
           position: absolute;
-          width: 80px;
+          width: 86px;
           height: 40px;
           z-index: 99;
+          font-size: 13px;
           line-height: 40px;
           text-align: center;
           left: 50%;
@@ -1739,7 +1927,7 @@ export default {
     padding-right: 80px;
     box-sizing: border-box;
     width: 100%;
-    height: 115px;
+    min-height: 115px;
     display: flex;
     flex-direction: row;
     position: relative;

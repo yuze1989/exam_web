@@ -19,6 +19,9 @@ import myPagination from "@/components/pagination";
 import { bus } from './Bus'
 import { Tab, Tabs,CountDown,Button} from 'vant';
 import { validater } from '@/api/valid';
+// 使用 vue-meta
+import Meta from "vue-meta";
+Vue.use(Meta);
 
 Vue.use(ElementUI);
 
@@ -27,6 +30,12 @@ Vue.use(Tab);
 Vue.use(Tabs);
 Vue.use(CountDown);
 Vue.use(Button);
+
+
+//拖拽组件
+import VueDragResize from 'vue-drag-resize'
+Vue.component('vue-drag-resize', VueDragResize)
+
 
 
 Vue.component("myPagination", myPagination);

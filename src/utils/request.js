@@ -24,7 +24,6 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
 
-    console.log(config);
     try{
       // url处理
       var temp1 = config.url.split('?');
@@ -67,6 +66,9 @@ service.interceptors.request.use(
     }
     if(config.url.includes("import/list")){
       config.headers["content-type"] = "application/json";
+    }
+    if(config.url.includes("score_query")){
+      config.headers["content-type"] = "application/x-www-form-urlencoded";
     }
     
     // if (address[config.url]) {
@@ -112,7 +114,6 @@ service.interceptors.response.use(
     }
 
     if (res.code == 200) {
-      console.log(res);
       return Promise.resolve(res);
     } else if (res.code == 111 || res.code == 103) {
       router.push({ path: '/login' })

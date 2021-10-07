@@ -128,7 +128,8 @@ export default {
   name: "AssociationExam",
   data() {
     return {
-       listLoading: false,
+      listLoading: false,
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       sels: [], //列表选中列
       search: {
         name: "",
@@ -166,6 +167,9 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -203,8 +207,11 @@ export default {
         current : this.form.pageIndex ,
         size : this.form.pageSize ,
         examName  : this.form.examName,
-        examId :  this.form.examNo
+        examId :  this.examId
       };
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       this.$axios.post("/datahide/list",params).then((res) => {
                  this.data.records = res.result.list;
                 this.data.current = res.result.current;

@@ -52,6 +52,7 @@
               {{ item.name }}
             </el-tag>
            </div>
+            <el-checkbox style="position: absolute;right: 15px" v-model="isGd" @change="getList">分数从高到低</el-checkbox>
           </div>
         </el-col>
         <el-col :span="3" style="text-align: right">
@@ -86,7 +87,6 @@
             style="position: relative"
         >
           <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;left: 0;z-index: 999;" v-if="paper.isArbitrate == 1">
-
           </el-badge>
 
           <div class="paper">
@@ -108,14 +108,14 @@
 
               </el-badge>
             </div>
-            <el-image
-                :src="paper.url"
-                :alt="paper.name"
-                fit="cover"
-                @click="handleEditDialogImg(index)"
-                class="pointer"
-                style="height: 160px; width: 100%"
-            />
+            <div :class="initAspectRatio(paper.url)">
+              <el-image
+                  :src="paper.url"
+                  :alt="paper.name"
+                  fit="cover"
+                  @click="handleEditDialogImg(index)"
+              />
+            </div>
             <div  class="image-mark-text" v-if="role!=0">
               <el-input
                   :ref="`markInput${index}`"
@@ -174,7 +174,6 @@
     </div>
     <el-dialog
       :visible.sync="editImgDialogVisible"
-      width="560px"
       class="editImgDialog"
       center
       append-to-body
@@ -182,7 +181,7 @@
     >
       <div
         v-if="paperList.length && paperList[editImgIndex]"
-        style="display: block; "
+        style="display: block;"
       >
         <span class="close-button" @click="editImgDialogVisible = false"
           ><i class="el-icon-close"
@@ -190,7 +189,7 @@
         <div class="dialog-count">
           {{ editImgIndex + 1 }} / {{ paperList.length }}
         </div>
-        <el-image :src="paperList[editImgIndex].imgUrl" height="560px">
+        <el-image :src="paperList[editImgIndex].imgUrl" height="100%">
           <div slot="placeholder" class="img-loading">
             加载中<span class="dot">...</span>
           </div>
@@ -241,7 +240,6 @@
           />
           <div
             v-if="!paperList[editImgIndex].show"
-
             @click="showMarkArea(editImgIndex)"
           >
             <i
@@ -249,6 +247,15 @@
               style="font-size: 24px; color: #fff; vertical-align: middle"
             />
             点击进行打分
+          </div>
+        </div>
+        <div class="pfList">
+          <div class="box">
+            <div class="span"  v-for="(item,index) in scoreObj[paperList[editImgIndex].level]" >
+              <div class="btn" @click="markPaperAndToNext(paperList[editImgIndex].id,editImgIndex,$event,item)">
+                {{item}}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -290,6 +297,7 @@ export default {
   components: { SelecteGrade },
   data: () => {
     return {
+      isGd:true,
       levelList: [],
       gradeList: [],
       scoreList: [
@@ -319,12 +327,14 @@ export default {
       editImgIndex: 0,
       paperScore:"",
       grade:"all",
+      class1:"image-container",
       paperStopDialogVisible: false,
       data: { pages: 0, pageSize: 10, total: 0, records: [] },
       xxList:["all",0,"仲裁组"],
       ruleList:[],
       role:localStorage.getItem("role"),
       gradeIndex:0,
+      scoreObj:{},
     };
   },
   computed: {
@@ -348,6 +358,19 @@ export default {
 
   },
   methods: {
+    initAspectRatio(e){
+      //长宽自适应
+      let image = new Image()
+      image.src = e
+      let className = "";
+
+      if(image.width>image.height){
+        className =  "image-container"
+      }else{
+        className =  "image-container2"
+      }
+      return className
+    },
     stopYj(){
       this.$confirm('请确认该科目下试卷是否已全部评级完成，一旦停止评级后将不能再评级！', '提示', {
         confirmButtonText: '确定',
@@ -413,10 +436,31 @@ export default {
             });
 
           });
+
+          if(this.isGd){
+            list.sort(function(a,b){
+              return b.mark - a.mark
+            });
+          }
+
           this.paperList = list;
-          if(type == 2){
-            this.paperList[this.currentIndex].show = true;
+
+
+        if(type == 2){
+          if(!this.paperList[this.editImgIndex]){
+            this.editImgDialogVisible = false;
+          }
+
+          if(this.paperList[this.editImgIndex]){
+              this.paperList[this.editImgIndex].show = true;
+            }
             let classN = 'markInput'+this.currentIndex;
+          }
+          if(this.paperList.length == 0){
+            this.editImgDialogVisible = false;
+            if(this.paperList[this.currentIndex]){
+              this.paperList[this.currentIndex].show = false;
+            }
           }
 
       });
@@ -537,6 +581,11 @@ export default {
               min:that.ruleList[index].scoreStart,
               max:that.ruleList[index].scoreEnd,
             })
+            let arr = [];
+            for(let i = that.ruleList[index].scoreStart; i <= that.ruleList[index].scoreEnd; i++){
+              arr.push(i);
+            }
+            this.scoreObj[item.grade] = arr;
             tempGradeList.push({
               key: index,
               name: item.grade,
@@ -546,7 +595,6 @@ export default {
         })
         this.levelList = list;
         this.gradeList = tempGradeList;
-
         this.levelList.forEach((level, key) => {
           if (this.gradeIndex === key) {
             level.active = true;
@@ -718,7 +766,9 @@ export default {
               } else {
                 this.getList(2);
               }
-              this.nextViewImg()
+              if(this.paperScore!==0){
+                this.nextViewImg()
+              }
             }else{
               this.getList();
 
@@ -776,9 +826,10 @@ export default {
       //   null;
     },
     // 设置分数并跳转到下一张
-    markPaperAndToNext(paperId, index, $event) {
-      let a = index + 1;
-      let pr = document.querySelector(".markInput"+index);
+    markPaperAndToNext(paperId, index, $event,score) {
+      if(score || score == 0){
+        this.paperList[index].mark = score
+      }
       this.paperList[index].show = false;
       if (index < this.paperList.length - 1) {
         if(this.paperScore===0){
@@ -812,7 +863,87 @@ export default {
 </script>
 
 <style lang="scss">
+.paper-list-container .image-container2 img,.paper-list-container .image-container2 .el-image{
+  height: 100%;
+  width: auto;
+}
+.paper-list-container .image-container img,.image-container .el-image{
+  width: 100%;
+  height: auto;
+}
+.paper-list-container .image-container {
+  position: relative;
+  display: inline-block;
+  width:220px;
+  height: 162px;
+  .image{
+    width: 100%;
+    img{
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+.paper{
+  border: 1px solid #caccd4;
+}
+.id-number{
+  text-align: left !important;
+}
+.paper-list-container .image-container2 {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  height: 162px;
+  text-align: center;
+  .image{
+    height: 100%;
+    img{
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+.pfList{
+  position: absolute;
+  left: 100%;
+  top: 0;
+  height: 100%;
+  border-left: 1px solid #ccc;
+}
+.pfList .box{
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  height: 100%; /* 必须设置高度, 否则就垂直一列排完了 */
+  flex-wrap: wrap;
+  width: 80px;
 
+}
+
+.pfList .box .span{
+  width: 80px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  color: #000;
+  font-size: 40px;
+  cursor: pointer;
+  background: #fff;
+  padding: 4px;
+}
+.pfList .box .span .btn{
+  border: 1px solid #ccc;
+  height: 44px;
+  line-height: 44px;
+  font-size: 20px;
+  border-radius: 2px;
+  color: #409eff;
+}
+.pfList .box .span .btn:hover{
+  background: #409eff;
+  color: #fff;
+}
 .hh{
   height: 50px;
 }
@@ -839,9 +970,7 @@ export default {
   left: 2px;
   top: 8px;
   background: #fff;
-  transform: rotate(
-          10deg
-  );
+
 }
 .editImgDialog {
   .el-dialog {
@@ -916,8 +1045,6 @@ export default {
     .image-mark-text {
       background-color: rgba(0, 0, 0, 0.5);
       color: #fff;
-      height: 44px;
-      line-height: 44px;
       text-align: center;
       position: absolute;
       bottom: 0;
@@ -949,9 +1076,24 @@ export default {
     line-height: 14px;
     width: 30px;
   }
+
+}
+.editImgDialog .el-dialog--center{
+  margin-top: 4% !important;
+  height: 90%;
+}
+.editImgDialog .el-dialog--center .el-dialog__body,.editImgDialog .el-dialog--center .el-dialog__body>div{
+  height: 100%;
+}
+.editImgDialog .el-dialog--center .el-dialog__body .el-image{
+  height: 100%;
+}
+.editImgDialog .el-dialog--center .el-dialog__body .el-image .el-image__inner{
+ width: auto;
 }
 </style>
 <style scoped lang="scss">
+
 .label{
   display: flex;
 }
@@ -1005,15 +1147,17 @@ export default {
           z-index: 1;
           .level {
             padding: 6px;
-            line-height: 33px;
+            line-height: 20px;
             cursor: pointer;
             color: #fff;
-            font-size: 14px;
+            font-size: 12px;
+            width: 68px;
             background-color: #35ce96;
-            -webkit-border-radius: 0 10px 0;
-            -moz-border-radius: 0 10px 0;
             border-radius: 0 0 0 10px;
             outline: none;
+            height: 31px;
+            display: inline-block;
+            text-align: center;
           }
         }
 

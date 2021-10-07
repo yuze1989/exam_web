@@ -27,13 +27,18 @@
                    @abort="hideLoading"
                    @mousedown="handleImageMouseDown"
                    @wheel.stop="wheelScale"
+                   :preview-src-list="finallyImageList"
                    >
+                    <div slot="error" class="image-slot">
+                <img src="@/assets/no_img.png" alt="" style="width:100%">
+              </div>
                 </el-image>
 
             </span>
           </div>
         </div>
-        <div class="pos-tip"> <span @dblclick="chagedd">  {{ thisCurrent }} </span> / {{ allLength }}</div>
+
+        <div class="pos-tip"> <span @dblclick="chagedd">  {{allLength?thisCurrent:0 }} </span> / {{ allLength }}</div>
         <div
           class="arrow arrow-prev hover-icon"
           :class="{ disabled: currentPosition === 0 }"
@@ -146,10 +151,6 @@ export default {
       default: 0,
     },
     thisCurrent:{
-      type: Number,
-      default: 0,
-    },
-    startPosition2: {
       type: Number,
       default: 0,
     },
@@ -285,6 +286,7 @@ export default {
       this.currentPosition = val
     },
     thisCurrent: function (val, old) {
+
       this.thisCurrent = val
     },
     allLength: function (val, old) {
@@ -331,6 +333,8 @@ export default {
         this.initImgList()
       }
     }
+
+    console.log(this.startPosition);
   },
   methods: {
     rotateImg(value){
@@ -522,7 +526,6 @@ export default {
       let width = e.target.offsetWidth
       let height = e.target.offsetHeight
       this.aspectRatio = width / height
-
       //长宽自适应
       let src = this.finallyImageList[this.currentPosition]
       let img = new Image()
@@ -531,21 +534,22 @@ export default {
       if (img.naturalWidth) { // 现代浏览器
         nWidth = img.naturalWidth
         nHeight = img.naturalHeight
+        if(nWidth>nHeight){
+          this.class1 = "image-container"
+        }else{
+          this.class1 = "image-container2"
+        }
       } else { // IE6/7/8
         let image = new Image()
         image.src = src
         image.onload = function() {
-          callback(image.width, image.height)
+          if(image.width>image.height){
+            this.class1 = "image-container"
+          }else{
+            this.class1 = "image-container2"
+          }
         }
       }
-
-      if(nWidth>nHeight){
-        this.class1 = "image-container"
-      }else{
-        this.class1 = "image-container2"
-      }
-
-
     },
     handleImageLoad(e) {
       this.initAspectRatio(e)
@@ -554,6 +558,7 @@ export default {
     },
     // 更新position点
     updatePosition(next) {
+
       const _next = this.currentPosition + next
       const _thisC = this.thisCurrent + next
       if (_next >= this.finallyImageList.length) {
@@ -567,6 +572,7 @@ export default {
       this.$emit('positionUpdated', this.currentPosition)
       this.$emit('currentUpdated', this.thisCurrent)
       this.resetImage()
+
     },
     handleImageSourceChange() {
       // 等待 dom 渲染之后再取 complete 属性
@@ -680,6 +686,7 @@ export default {
     },
   },
   created() {
+    this.currentPosition = this.startPosition
     if (this.initialScale) {
       this.scale = this.initialScale
     }

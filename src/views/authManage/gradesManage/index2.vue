@@ -250,7 +250,7 @@ export default {
         score:"",//科目
         min:"",//科目
         max:"",//科目
-        examId:""//考试名称
+        examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):""//考试名称
       },
 
       dataList: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
@@ -259,7 +259,8 @@ export default {
       subjectName2: false,
       subjectName3: false,
       subjectName4: false,
-      arr:[]
+      arr:[],
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
     };
   },
   created() {
@@ -280,6 +281,9 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -290,7 +294,7 @@ export default {
       this.search.score = ""
       this.examNameOption.map(item =>{
         if(item.id == e){
-          this.form.examName = item.name
+          this.form.examNameNo = item.name
           this.examId = item.id
           this.getExamDetails()
         }
@@ -347,8 +351,6 @@ export default {
 
     getList() {
       let roleId = this.search.state == -1 ? null : this.search.state;
-      console.log(this.examId);
-      console.log(this.search.score);
       if(this.search.max || this.search.min ){
         if(!this.examId || !this.search.score){
 
@@ -372,6 +374,9 @@ export default {
         "subject": this.search.score,
         examId:this.examId
       };
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       this.$axios
           .post('/score/scoreList', params)
           .then((res) => {

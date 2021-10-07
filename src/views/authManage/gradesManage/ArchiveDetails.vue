@@ -2,16 +2,9 @@
   <section class="form_border">
     <div class="header">
       <el-form :inline="true" :model="search" class="demo-form-inline" @submit.native.prevent>
-        <!--          <el-form-item>-->
-        <!--            <el-select clearable  v-model="form.examNameNo"  placeholder="请选择考试名称" @change="examNameChange">-->
-        <!--              <el-option-->
-        <!--                  v-for="item in examNameOption"-->
-        <!--                  :key="item.id"-->
-        <!--                  :label="item.name"-->
-        <!--                  :value="item.id">-->
-        <!--              </el-option>-->
-        <!--            </el-select>-->
-        <!--          </el-form-item>-->
+        <el-form-item>
+          <el-button type="primary" @click="go">下载试卷</el-button>
+        </el-form-item>
         <el-form-item>
           <el-select clearable  v-model="search.score"  placeholder="查询分数条件"  style="margin-right: 5px">
             <el-option
@@ -77,6 +70,9 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit2">导出试卷</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -266,6 +262,7 @@ export default {
       arr:[],
       examNameOption:[],
       options:[],
+      daochu:"",
     };
   },
   created() {
@@ -276,6 +273,9 @@ export default {
   },
 
   methods: {
+    go(){
+      this.$router.push({path:"/daochuList",query:{type:'exam_paper'}})
+    },
     tip(value){
       if(!(this.examId && this.search.score)){
         if(value != ""){
@@ -328,6 +328,32 @@ export default {
     onSubmit() {
       this.getList();
     },
+    onSubmit2() {
+      if(!this.daochu){
+        this.$message.error('请先根据条件查询！');
+        return false
+      }
+      let params = {
+        current: this.daochu.current,
+        size: this.daochu.size,
+        "schoolId": "",
+        "admissionTicketCode": this.daochu.admissionTicketCode,
+        "examId": this.daochu.examId,
+        "examineeName": this.daochu.examineeName,
+        "provinceCode": "",
+        "scoreEnd": this.daochu.scoreEnd,
+        "scoreStart": this.daochu.scoreStart,
+        "studioId": "",
+        "studioName": this.daochu.studioName,
+        "subject": this.daochu.subject,
+      };
+      this.$axios
+          .post('/score/examPaperExport', params)
+          .then((res) => {
+            this.$message.success('已提交导出请求，请稍后到下载试卷查看！');
+          })
+          .catch(() => {});
+    },
     currentChange(){
       this.getList();
     },
@@ -367,13 +393,10 @@ export default {
       let params = {
         current: this.form.pageIndex,
         size: this.form.pageSize,
-        // "archiveStatus":this.search.archiveStatus,
-        // "examName":this.search.examName,
-        // "examType":this.search.examType,
         "schoolId": "",
         "admissionTicketCode": this.search.admissionTicketCode,
         "examId": this.$route.query.id,
-        "examineeName": "",
+        "examineeName": this.search.examineeName,
         "provinceCode": "",
         "scoreEnd": this.search.max,
         "scoreStart": this.search.min,
@@ -381,6 +404,7 @@ export default {
         "studioName": this.search.studioName,
         "subject": this.search.score,
       };
+      this.daochu = params;
       this.$axios
         .post('/score/hisFileDetailList', params)
         .then((res) => {

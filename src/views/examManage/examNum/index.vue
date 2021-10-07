@@ -130,7 +130,7 @@ export default {
     return {
       list: [],
       examName:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       examNameOption: [],
       form: {
         current: 1,
@@ -158,6 +158,9 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -215,6 +218,9 @@ export default {
         examId:this.examId
       }
       this.daochu= params;
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       this.$axios
         .post(this.API.studentsManage.ticketList, params)
         .then((res) => {

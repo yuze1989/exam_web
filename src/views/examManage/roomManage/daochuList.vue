@@ -69,12 +69,21 @@
           </template>
       </el-table-column>
       <el-table-column
+          label="导出文件名"
+          header-align="center"
+          align="center"
+          prop="filename"
+      >
+      </el-table-column>
+      <el-table-column
           label="下载地址"
           header-align="center"
           align="center"
       >
         <template slot-scope="scope">
-          <a style="color: #409EFF" target="_blank" v-if="scope.row.downloadUrl" :href="scope.row.downloadUrl">PDF下载</a>
+          <a style="color: #409EFF" target="_blank" v-if="scope.row.downloadUrl && $route.query.type=='ticket'" :href="scope.row.downloadUrl">准考证PDF下载</a>
+          <a style="color: #409EFF" target="_blank" v-if="scope.row.downloadUrl && $route.query.type=='qrcode'" :href="scope.row.downloadUrl">二维码PDF下载</a>
+          <a style="color: #409EFF" target="_blank" v-if="scope.row.downloadUrl && $route.query.type=='exam_paper'" :href="scope.row.downloadUrl">试卷ZIP压缩包下载</a>
         </template>
       </el-table-column>
         <el-table-column

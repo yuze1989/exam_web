@@ -111,7 +111,7 @@
         align="center"
       >
         <template slot-scope="scope">
-          <a :href="scope.row.failUrl" target="_blank" style="color:#409eff;" v-if="scope.row.failUrl != ''">excel下载地址</a>
+          <a :href="scope.row.failUrl" target="_blank" style="color:#409eff;" v-if="scope.row.failUrl != ''">excel错误信息下载</a>
         </template>
       </el-table-column>
       <el-table-column

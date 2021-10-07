@@ -38,34 +38,34 @@
             <div class="title">二维码字段</div>
             <div>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox disabled v-model="form.subjectList.zkzh">准考证号</el-checkbox>
+                <el-checkbox disabled v-model="form.subjectList.zkzh"  @change="change1">准考证号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.sfzhm">学生ID号</el-checkbox>
+                <el-checkbox v-model="form.subjectList.sfzhm" @change="change1">学生ID号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.ksdz">考试地址</el-checkbox>
+                <el-checkbox v-model="form.subjectList.ksdz" @change="change1">考试地址</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.ksbh">考试编号</el-checkbox>
+                <el-checkbox v-model="form.subjectList.ksbh" @change="change1">考试编号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.xm">姓名</el-checkbox>
+                <el-checkbox v-model="form.subjectList.xm" @change="change1">姓名</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.xb">性别</el-checkbox>
+                <el-checkbox v-model="form.subjectList.xb" @change="change1">性别</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox disabled v-model="form.subjectList.km">科目</el-checkbox>
+                <el-checkbox disabled v-model="form.subjectList.km" @change="change1">科目</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.kc">考场</el-checkbox>
+                <el-checkbox v-model="form.subjectList.kc" @change="change1">考场</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.zwh">座位号</el-checkbox>
+                <el-checkbox v-model="form.subjectList.zwh" @change="change1">座位号</el-checkbox>
               </el-row>
               <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.jgbh">机构编号</el-checkbox>
+                <el-checkbox v-model="form.subjectList.jgbh" @change="change1">机构编号</el-checkbox>
               </el-row>
 
             </div>
@@ -79,26 +79,22 @@
       <div class="template-example" >
 
 
-        <div class="bg" style="    background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
+        <div class="bg" style="background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
           <div  :class="class1" ref="ticketFile">
             <div class="title" @drop="drop" @dragover.prevent>
               <div class="top" style="padding-top: 20px">
-                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
-                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;"  v-show="form.subjectList.sfzhm">学生ID号：330591208808080808</div>
-                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
-                <div style="padding-left: 25px;font-size: 12px;padding:0px 0 0px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.sfzhm">学生ID号：330591208808080808</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px" v-show="form.subjectList.ksbh">考试编号：100101</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.xm">姓名：张三</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.km">科目：素描</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.kc">考场：001</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;" v-show="form.subjectList.xb">性别：男</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.zwh">座位号：01</div>
               </div>
-
-              <img src="@/assets/erweima.png" alt=""  style="width: 154px;height: 154px;float: left;margin-left: 10px">
-
-              <div class="right" style=";margin-top: 5px">
-                <div style="font-size: 12px;padding:0 0 2px 174px" v-show="form.subjectList.ksbh">考试编号：100101</div>
-                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.xm">姓名：张三</div>
-                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.km">科目：素描</div>
-                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.kc">考场：001</div>
-                <div style="font-size: 12px;padding:0 0 2px 174px;" v-show="form.subjectList.xb">性别：男</div>
-                <div style="font-size: 12px;padding:0 0 2px 174px;"  v-show="form.subjectList.zwh">座位号：01</div>
-              </div>
+              <img src="@/assets/erweima.png" alt=""  style="">
             </div>
           </div>
         </div>
@@ -129,12 +125,12 @@ export default {
         mobilePhone: "",
       },
       sizeTypeOption:[
-        {id:0,name:"5 x 4"},
-        {id:1,name:"5 x 7"},
+        {id:1,name:"5 x 3 比例"},
+        {id:0,name:"6.3 x 2.3 比例"},
       ],
       studentAreaOption: [],
       examNameOption: [],
-      class1:"class0 template-example-dom",
+      class1:"class1 template-example-dom",
       class2:"bottom",
       form: {
         pageIndex: 1,
@@ -147,7 +143,7 @@ export default {
         carefulMatter: '',
         examTitle: '',
         qrcodeName:"",
-        sizeType:"",
+        sizeType:1,
         sizeId:"",
         subjectList: {
           zkzh:true,
@@ -163,7 +159,7 @@ export default {
         },
       },
       isShow:true,
-
+      leg:0,
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
           {
 
@@ -186,6 +182,24 @@ export default {
   },
 
   methods: {
+    change1(){
+
+      let obj = this.form.subjectList
+      let leg = 0;
+      for(let i in obj){
+        if(obj[i]){
+          leg +=1;
+        }
+      }
+      this.leg = leg;
+      if(this.leg > 7){
+        this.$message({
+          message: '最多可展示7个字段，请合理分配！',
+          type: 'error',
+        })
+        return
+      }
+    },
     drop(event){
       var num,num2;
       this.droppedItem = event.dataTransfer.getData("item");
@@ -296,6 +310,13 @@ export default {
     },
     // 保存
     examConfirm(){
+      if(this.leg > 7){
+        this.$message({
+          message: '最多可展示7个字段，请合理分配！',
+          type: 'error',
+        })
+        return
+      }
       let data = {
         examId : this.form.examNameNo,
         province: this.form.studentAreaName,
@@ -448,11 +469,34 @@ img.bottom{
   top: 180px !important;
 }
 .class0{
-  height: 288px !important;
+  width: 630px !important;
+  height: 230px !important;
 }
 .class1{
-  width: 504px !important;
-  height: 288px !important;
+  width: 500px !important;
+  height: 300px !important;
+}
+.class1 img{
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+  width: 200px;
+  height: 199px;
+  margin: 0 !important;
+}
+.class0 .top{
+  margin-left: 230px;
+}
+.class0 .top>div{
+  font-size: 14px !important;
+}
+.class0 img{
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+  width: 200px;
+  height: 200px;
+  margin: 0 !important;
 }
 .header{
   display: flex;

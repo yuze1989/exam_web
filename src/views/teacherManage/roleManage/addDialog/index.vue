@@ -129,6 +129,9 @@ export default {
       this.resourceCheckedKey = [];
     },
     open() {
+      this.$nextTick(() => {
+        this.$refs.roleForm.clearValidate()
+      })
       if(this.isAdd == 1){
         this.$refs.tree.setCheckedKeys([]);
         this.resourceCheckedKey = [];

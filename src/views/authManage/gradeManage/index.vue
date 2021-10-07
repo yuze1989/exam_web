@@ -1,8 +1,8 @@
 <template>
   <section class="form_border">
-    <div class="header">
+    <div class="header" style="padding: 15px">
       <div class="from-wrap">
-        <el-form :inline="true" :model="search" class="demo-form-inline" style="display: flex;justify-content: flex-start;height: 70px;padding: 16px">
+        <el-form :inline="true" :model="search" class="demo-form-inline" style="">
           <el-button class="meiyuan_btn" type="primary" size="medium" @click="add">新建打分规则</el-button>
         </el-form>
       </div>

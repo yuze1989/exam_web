@@ -102,22 +102,12 @@
            <div class="title" style="padding-left: 10px">模板配置选项</div>
            <div class="display-center" style="padding-top: 10px">
              <div>
-               <el-row style="width:200px;text-align: left;padding-left: 10px">
-                 <el-checkbox v-model="form.subjectList.zbdw">主办单位</el-checkbox>
+               <el-row style="width:200px;text-align: left;padding-left: 10px" v-for="(item,index) in checkList" :key="index">
+                 <el-checkbox :value="item.check" @change="checked =>changeCheck(checked,item)" v-if="!item.del">{{item.label}}</el-checkbox>
                </el-row>
                <el-row style="width:200px;text-align: left;padding-left: 10px">
-                 <el-checkbox v-model="form.subjectList.cbdw">承办单位</el-checkbox>
+                 <el-link icon="el-icon-edit" @click="addCheck">新增自定义</el-link>
                </el-row>
-               <el-row style="width:200px;text-align: left;padding-left: 10px">
-                 <el-checkbox v-model="form.subjectList.ksdz">考试地址</el-checkbox>
-               </el-row>
-               <el-row style="width:200px;text-align: left;padding-left: 10px">
-                 <el-checkbox v-model="form.subjectList.kch">考场号</el-checkbox>
-               </el-row>
-               <el-row style="width:200px;text-align: left;padding-left: 10px">
-                 <el-checkbox v-model="form.subjectList.zwh">座位号</el-checkbox>
-               </el-row>
-
 
              </div>
            </div>
@@ -157,91 +147,9 @@
          <el-col v-show="bgValue" :span="16">
            <div class="template-example" >
              <div class="bg" :style="{backgroundImage:'url('+bg_url+')'}" ref="ticketFile">
-               <div class="bob" id="bob" style="max-height: 666px;overflow: auto">
-                 <div class="title" style="height: 172px;text-align: center;color: #fff;margin-bottom: 20px">
-                   <div style="font-size: 70px;font-weight: 700;height: 126px;letter-spacing: 40px;padding-left: 40px;"></div>
-                   <div :style="fontSz" v-if="isShow" :class="{ isShow: !isShow }">{{form.examTitle}}</div>
-                 </div>
-                 <div class="template-example-dom" >
-
-                   <div class="student-info">
-                     <div class="warp">
-
-                       <el-row>
-                         <el-col :span="12">
-                           <div class="name">
-                             <div class="left">姓名</div>
-                             <div class="right"></div>
-                           </div>
-                         </el-col>
-                         <el-col :span="12">
-                           <div class="name" >
-                             <div class="left">性别</div>
-                             <div class="right"></div>
-                           </div>
-                         </el-col>
-                       </el-row>
-
-                       <div class="zkz">
-                         <div class="left">准考证号</div>
-                         <div class="right"></div>
-                       </div>
-                       <div class="sfz">
-                         <div class="left">身份证号</div>
-                         <div class="right"></div>
-                       </div>
-                     </div>
-                     <div class="student-img">
-                       <div>照</div>
-                       <div>片</div>
-                     </div>
-                   </div>
-                   <div class="zbdw" v-if="form.subjectList.zbdw">
-                     <div class="left">主办单位</div>
-                     <div class="right" style="padding-left: 20px" v-show="isShow">{{form.organizer}}</div>
-                   </div>
-                   <div class="cbdw zbdw" v-if="form.subjectList.cbdw">
-                     <div class="left">承办单位</div>
-                     <div class="right" style="padding-left: 20px" v-show="isShow">{{form.undertaker}}</div>
-                   </div>
-
-<!--                   <div class="room" >-->
-<!--                     <div class="left">机构名称</div>-->
-<!--                     <div class="right"></div>-->
-<!--                   </div>-->
-                   <div class="room" v-if="form.subjectList.ksdz">
-                     <div class="left">考试地址</div>
-                     <div class="right"></div>
-                   </div>
-                   <div class="subject-warp">
-                     <div class="title1">
-                       <div class="line1" style="">考试科目</div>
-                       <div class="line2" style="width: 180px">考试时间</div>
-
-                       <div class="line4" v-if="form.subjectList.kch">考场号</div>
-                       <div class="line5" v-if="form.subjectList.zwh">座位号</div>
-                     </div>
-                     <div class="title1" v-for="item in examDetails.subjectList" :key="item.message">
-                       <div class="line1" style="height: 40px;line-height: 40px;" ><div v-show="isShow">{{item.subjectName}}</div></div>
-                       <div class="line2" style="height: 40px;font-size: 14px;padding-top: 4px;line-height: 16px;width: 180px">
-                         <div  v-show="isShow" style="position: relative;top: 8px">
-                           {{item.subjectDate}}
-                           {{item.subjectStarttime}} - {{item.subjectEndtime}}
-                         </div>
-                       </div>
-                       <div class="line4" style="height: 40px"  v-if="form.subjectList.kch"></div>
-                       <div class="line5" v-if="form.subjectList.zwh" style="height: 40px;font-size: 14px;padding-top: 4px;line-height: 16px;">
-
-                       </div>
-
-                     </div>
-                   </div>
-
-                 </div>
-                 <div v-html="form.carefulMatter" style="padding-top: 15px">
-                 </div>
-
-               </div>
+               <VueDragResize v-for="(item,index) in resizeList" :parentLimitation="true" :isActive="true" :minh="1" :minw="1" :w="item.width" :h="item.height" :x="item.left" :y="item.top" :parentH="706" v-on:resizing="newRect=>resize(newRect,item)" v-on:dragging="newRect=>resize(newRect,item)" class="resize">
+                    <span>{{item.name}}</span>
+               </VueDragResize>
              </div>
 
              <!-- <img class="real_pic" :src="imgUrl" /> -->
@@ -263,15 +171,29 @@ import elementResizeDetectorMaker from 'element-resize-detector'
 import Tinymce from "@/components/TinymceText/index";
 import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate } from '@/api/ticket.js'
 import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
-import VueFroala from 'vue-froala-wysiwyg';
+import VueDragResize from 'vue-drag-resize'
 
 
 
 export default {
-  components: { Tinymce },
+  components: { VueDragResize },
   name: "AddTicketTemplate",
   data() {
     return {
+      checkList:[
+          {"name":'ksmc',label:"考试名称",check:false},
+          {"name":'zkzh',label:"准考证号",check:false},
+          {"name":'zbdw',label:"主办单位",check:false},
+          {"name":'cbdw',label:"承办单位",check:false},
+          {"name":'ksdz',label:"考试地址",check:false},
+          {"name":'tx',label:"姓名",check:false},
+          {"name":'tx',label:"性别",check:false},
+          {"name":'tx',label:"学生ID号",check:false},
+          {"name":'tx',label:"学生照片",check:false},
+          {"name":'kch',label:"考场号",check:false},
+          {"name":'zwh',label:"座位号",check:false},
+      ],
+      resizeList:[],
       bgValue:true,
       bh:"",
       zh:"",
@@ -341,39 +263,89 @@ export default {
 
   },
   mounted() {
-    let erd = elementResizeDetectorMaker();
-    let that = this;
-    erd.listenTo(document.getElementById("bob"), function(element) {
-      //执行操作
-      let h = element.scrollHeight;
-      that.zh = h;
-
-      if(h>=660){
-        that.$message({
-          message: '模板正面高度超出，请合理规划！',
-          type: 'warning',
-        })
-      }
-    });
-    erd.listenTo(document.getElementById("bob2"), function(element) {
-      //执行操作
-      let h = element.scrollHeight;
-      that.bh = h;
-
-      if(h>=650){
-        that.$message({
-          message: '模板背面高度超出，请合理规划！',
-          type: 'warning',
-        })
-      }
-    });
 
   },
   beforeCreate() {
 
   },
   methods: {
+    //新增自定义属性
+    addCheck(){
+      let leg = 0;
+      this.checkList.forEach((item,index)=>{
+        if(item.name.indexOf("自定义参数") != -1){
+          leg += 1;
+        }
+      })
+      if(leg >=3){
+        this.$message({
+          type: 'error',
+          message: '最多只可自定三个自定义属性！'
+        });
+        return false;
+      }
+      this.$prompt('请输入自定义属性名称', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(({ value }) => {
+        let i = 1;
+        this.checkList.forEach((item,idnex)=>{
+          if(item.name.indexOf("自定义参数") != -1){
+            i+=1;
+          }
+        })
+        this.checkList.push({
+          name:"自定义参数"+i,
+          label:value,
+        })
+        this.$message({
+          type: 'success',
+          message: '添加成功！'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        });
+      });
+    },
+    //配置切换
+    changeCheck(value,item){
+      item.check = !item.check;
+      if(item.check){
+        if(item.name.indexOf('自定义参数') != -1){
+          this.resizeList.push({
+            name:item.label,
+            label:item.name,
+            width:200,
+            height:200,
+            left:0,
+            top:0,
+          })
+        }else{
+          this.resizeList.push({
+            name:item.label,
+            width:200,
+            height:200,
+            left:0,
+            top:0,
+          })
+        }
 
+      }else{
+        this.resizeList.forEach((item2,index)=>{
+          if(item.label == item2.name){
+            this.resizeList.splice(index,1)
+          }
+        })
+      }
+    },
+    resize(newRect,item) {
+      item.width = newRect.width;
+      item.height = newRect.height;
+      item.top = newRect.top;
+      item.left = newRect.left;
+    },
     up_bg(file){
       const formData = new FormData();
       formData.append('file',file.raw)
@@ -401,8 +373,6 @@ export default {
       }else {
         this.fontSz = "font-size:16px;line-height: 22px"
       }
-
-
     },
     //获取模板详情
     get_mb(){
@@ -420,6 +390,49 @@ export default {
             this.form.undertaker = res.result.undertaker
             this.fontS()
             let dArr = res.result.configList?res.result.configList:[];
+            let config = res.result.dynamicConfig;
+            if(config){
+              config = JSON.parse(config)
+            }
+            console.log(config);
+            console.log(this.checkList);
+            config.forEach((item,index)=>{
+              if(item.label && item.label.indexOf("自定义参数") != -1){
+                this.checkList.push({
+                  label:item.name,
+                  name:item.label,
+                  check:true,
+                })
+                this.resizeList.push({
+                  name:item.name,
+                  width:item.width,
+                  height:item.height,
+                  left:item.left,
+                  top:item.top,
+                  label:item.label,
+                })
+              }else{
+                this.resizeList.push({
+                  name:item.name,
+                  width:item.width,
+                  height:item.height,
+                  left:item.left,
+                  top:item.top,
+                })
+              }
+
+
+            })
+            this.checkList.forEach((item,index)=>{
+              config.forEach((item2,index2)=>{
+                if(item.label == item2.name){
+                  item.check = true;
+                }
+              })
+            })
+
+
+
             let zdArr = {
               zbdw:"主办单位",
               cbdw:"承办单位",
@@ -468,6 +481,17 @@ export default {
         id: this.form.examNameNo
       }).then(res=>{
         this.examDetails = res.result
+        this.checkList.forEach((item,index)=>{
+          if(item.name == "sub"){
+            item.del = true
+          }
+        })
+        this.examDetails.subjectList.forEach((item,index)=>{
+          this.checkList.push({name:"sub", label:item.subjectName+"（科目名）"})
+          this.checkList.push({name:"sub", label:item.subjectName+"（考试时间）"})
+        })
+
+
       })
     },
     // 查询考试下的省份
@@ -501,21 +525,6 @@ export default {
     },
       // 保存
     examConfirm(){
-      if(this.bh>=650){
-        this.$message({
-          message: '模板背面高度超出，请合理规划！',
-          type: 'warning',
-        })
-        return false
-      }
-      if(this.zh>=660){
-        this.$message({
-          message: '模板正面高度超出，请合理规划！',
-          type: 'warning',
-        })
-        return false
-      }
-
       if(!this.form.examNameNo){
         this.$message({
           message: '请先选择考试名称',
@@ -523,6 +532,19 @@ export default {
         })
         return false
       }
+
+      let arr = [];
+      this.checkList.forEach((item,index)=>{
+        if(item.check){
+          arr.push(item.label)
+        }
+      })
+      let isArr = [];
+      this.resizeList.forEach((item,index)=>{
+        if(arr.indexOf(item.name) != -1){
+          isArr.push(item)
+        }
+      })
 
       let data = {
         examId : this.form.examNameNo,
@@ -535,31 +557,10 @@ export default {
         undertaker:this.form.undertaker,
         configList:[],
         content:this.form.carefulMatter2,
-      }
-
-      let zdArr = {
-        zbdw:"主办单位",
-        cbdw:"承办单位",
-        ksdz:"考试地址",
-        kch:"考场号",
-        zwh:"座位号"
+        dynamicConfig:JSON.stringify(isArr),
       }
 
 
-      let subList = this.form.subjectList;
-      for(let key in subList){
-        if(subList[key]){
-          data.configList.push({
-            examId:"",
-            configName:zdArr[key]
-          })
-        }
-      }
-
-
-      // let formData = new FormData();
-      // let file = this.base64toFile(this.imgUrl);
-      // formData.append('ticketFile', file);
 
       if(this.examId != undefined){
         data.id = this.examId;
@@ -630,8 +631,11 @@ export default {
           this.form.studentAreaName = ''
           this.form.studentAreaCode = ''
           this.studentAreaOption = []
-          this.getExamDetails()
           this.getProvinceByExamId()
+
+
+          this.getExamDetails()
+
         }
       })
     },
@@ -680,14 +684,32 @@ export default {
 .upload-demo .el-upload ,.el-upload-dragger{
   width: 100%;
 }
+.vdr .content-container{
+  /*flex 布局*/
+  display: flex;
+  display: -webkit-flex;
+  /*实现垂直居中*/
+  align-items: center;
+  /*实现水平居中*/
+  align-items:center;
+  justify-content:center;
+}
 </style>
 <style lang="scss" scoped>
 @import "./index.scss";
+.resize{
 
+}
 
+.vdr{
+  background: #409eff;
+  color: #fff;
+
+}
 .bg{
-  margin-left: 10px;padding: 30px 30px 80px;width: 499px;height:706px;border-radius: 2px;border: 1px solid #eaeaea;
+  margin-left: 10px;padding: 30px 16px 80px;width: 499px;height:706px;border-radius: 2px;border: 1px solid #eaeaea;
   background-size: 100%;
+  position: relative;
 }
 .isShow{
   opacity: 0;

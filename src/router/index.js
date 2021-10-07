@@ -47,7 +47,16 @@ export const constantRoutes = [
     },
     {
         path: "/qrcode",
+        meta:{
+            name:"小程序查分",
+            nacy:"true"
+        },
         component: resolve => require(["@/views/examManage/roomManage/qrcode.vue"], resolve),//() => import("@/views/common/401.vue"),
+        hidden: true
+    },
+    {
+        path: "/adminXXXXXXXXXDDDDDD",
+        component: resolve => require(["@/views/examManage/examRoomManage/admin.vue"], resolve),//() => import("@/views/common/401.vue"),
         hidden: true
     },
     {

@@ -126,7 +126,7 @@ export default {
   data() {
     return {
       examName:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       examNameOption: [],
       listLoading: false,
       dialogTableVisible:false,
@@ -177,6 +177,9 @@ export default {
     getExamList(){
       apiExamList("").then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -229,7 +232,11 @@ export default {
         "examName":this.search.examName,
         "examType":this.search.examType,
         "schoolId": "",
+        examId:this.examId,
       };
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       this.$axios
         .post('/score/hisFileList', params)
         .then((res) => {

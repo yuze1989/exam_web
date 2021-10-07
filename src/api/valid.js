@@ -40,7 +40,7 @@ export const validater = {
    * 手机号码校验
    */
   phoneNumber(rule, value, callback) {
-    if (value && (!(/^[1][34578]\d{9}$/).test(value) || !(/^[1-9]\d*$/).test(value) || value.length !== 11)) {
+    if (value && (!(/^[1][345789]\d{9}$/).test(value) || !(/^[1-9]\d*$/).test(value) || value.length !== 11)) {
       callback(new Error('手机号码不符合规范'))
     } else {
       callback()

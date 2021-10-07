@@ -99,7 +99,7 @@ export default {
   data() {
     return {
       examName:"",
-      examId:"",
+      examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
       examNameOption: [],
        listLoading: false,
       sels: [], //列表选中列
@@ -139,6 +139,9 @@ export default {
     getExamList(){
       apiExamList().then(res=>{
         this.examNameOption = res.result
+        if(sessionStorage.getItem('examId')){
+          this.examNameChange(sessionStorage.getItem('examId'))
+        }
       })
     },
     // 考试改变监听
@@ -176,6 +179,9 @@ export default {
         no:  this.form.examNo,
         examId:this.examId,
       };
+      if(this.examId){
+        sessionStorage.setItem("examId",this.examId)
+      }
       examinationList(params).then((res) => {
                  this.data.records = res.result.records;
                 this.data.current = res.result.current;

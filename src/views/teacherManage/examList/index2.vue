@@ -341,7 +341,7 @@ export default {
       this.listLoading = true
       let params = {
         current: this.forms.current,
-        pageSize: this.forms.pageSize,
+        size: this.forms.pageSize,
         examId:this.$route.query.examId,
         teacherName:this.teacherName
       }
