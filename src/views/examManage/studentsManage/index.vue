@@ -81,9 +81,10 @@
       <el-row style="margin-top: 6px;margin-bottom: 0px;display:block;justify-content: flex-start">
         <!--      <el-button type="warning" @click="reset">重置</el-button>-->
         <el-button type="primary" @click="add">新增学生信息</el-button>
-        <el-button type="primary" @click="onSc">批量上传照片</el-button>
+<!--        <el-button type="primary" @click="onSc">批量上传照片</el-button>-->
         <el-button type="primary" @click="onImport">批量导入</el-button>
         <el-button type="primary" @click="checkMore">批量审核</el-button>
+<!--        <el-button type="primary" @click="oneDel">一键删除</el-button>-->
         <el-button type="primary" @click="oneKey">一键审核</el-button>
       </el-row>
     </div>
@@ -269,7 +270,9 @@
       />
     </el-col>
     <el-dialog
+        class="upIMG"
         title="批量上传学生图片"
+        :close-on-click-modal="false"
         :visible.sync="shenhe" >
       <div v-loading="listLoading">
         <el-select clearable  style="width: 100%;" v-model="selectCheck3" placeholder="请选择考试">
@@ -296,8 +299,10 @@
           <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过1M</div>
         </el-upload>
       </div>
-      <span slot="footer" class="dialog-footer">
-  </span>
+      <div slot="footer"  class="dialog-footer">
+        <el-button @click="shenhe = false">取 消</el-button>
+        <el-button type="primary" @click="beginSC">上传</el-button>
+      </div>
     </el-dialog>
 
     <el-dialog
@@ -368,7 +373,44 @@
         <el-button type="primary" @click="submitCheck">确 定</el-button>
       </div>
     </el-dialog>
+<!--    一键删除-->
+    <el-dialog
+        :visible.sync="delDialog"
+        width="50%"
 
+    >
+      <div slot="title">管理员验证</div>
+      <el-form
+          label-width="120px"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          ref="delForm"
+          v-loading="loading"
+      >
+        <p style="color: red;padding-left: 40px">此次操作将删除<span style="    font-size: 20px;
+    margin:0 15px;
+    background: rgb(0, 112, 204);
+    color: rgb(255, 255, 255);
+    padding: 4px 6px;
+    position: relative;
+    top: 3px;">{{forms.total}}</span>名学生，请谨慎操作!</p>
+        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+          <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button type="primary"   @click="confirm1">确认</el-button>
+      </div>
+
+    </el-dialog>
     <addDialog
       :visible.sync="isAdd"
       :isAdd="isAddType"
@@ -392,6 +434,9 @@ export default {
   },
   data() {
     return {
+      delDialog:false,
+      admin_username:"",
+      admin_password:"",
       shenhe:false,
       examName:"",
       examId:sessionStorage.getItem("examId")?sessionStorage.getItem("examId"):"",
@@ -414,6 +459,7 @@ export default {
       isCheckMore: false,
       //列表
       list: [],
+      loading:false,
       listLoading: false,
       selectRoomIds: [],
       forms: {
@@ -461,6 +507,7 @@ export default {
       daochu:{},
       wait_approved_count:0,
       gouxuan_count:0,
+      formatList:"",
     }
   },
   created() {
@@ -468,18 +515,43 @@ export default {
     this.getExamList()
   },
   methods: {
+    //一键删除
+    oneDel(){
+      this.admin_username="";
+      this.admin_password="";
+      this.delDialog = true;
+    },
+    confirm1(){
+      if(!this.daochu.examId){
+        this.$message.error('请先选择考试并查询！')
+        return
+      }
+      let data = this.daochu;
+      data.username = this.admin_username;
+      data.password = this.admin_password;
+      this.$axios.post('/examinee/batchDelete',data).then(res=>{
+        if(res.code == 200){
+          this.delDialog = false;
+          this.$message.success('删除成功！');
+          this.getOrderList();
+        }
+      })
+    },
+    // 批量上传图片
     onSc(){
       this.shenhe = true;
+      this.formatList = new FormData();
     },
-
     up_bg(file){
+      this.formatList.append('file',file.raw)
+
+    },
+    beginSC(){
       if(!this.selectCheck3){
         this.$message.error('请先选择考试！')
         return
       }
-      const formData = new FormData();
-      formData.append('file',file.raw)
-      this.$axios.post("/examinee/batchUploadPhoto?examId="+this.selectCheck3,formData).then((res)=>{
+      this.$axios.post("/examinee/batchUploadPhoto?examId="+this.selectCheck3,this.formatList).then((res)=>{
         if(res.code == 200){
 
         }else{
@@ -735,6 +807,7 @@ export default {
         }
       })
     },
+
     //审核
     submitCheck() {
       this.$confirm('审核通过后信息不能修改，是否确定?', '提示', {
@@ -810,6 +883,13 @@ export default {
   },
 }
 </script>
+<style>
+.upIMG .el-upload-list{
+  max-height: 300px;
+  overflow: auto;
+}
+</style>
 <style lang="scss" scoped>
 @import './orderAccount.scss';
+
 </style>

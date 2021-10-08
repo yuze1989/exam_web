@@ -454,9 +454,8 @@ export default {
             gender: this.from.gender, //:男，女，其他
             address:this.from.address,
           }
-
           if(this.from.url == ""){
-            data.isDeleteUrl = 1;
+            data.isDeleteUrl = 0;
           }
 
 

@@ -208,6 +208,7 @@
           <vue-img-viewer
               ref="imgViewer"
               :container="'imgViewerContainer'"
+              :paper-list = 'paperList'
               :image-urls="imgList1"
               :image-urls1="imgList1"
               :visible="visible"
@@ -314,6 +315,7 @@
           <vue-img-viewer
               ref="imgViewer"
               :container="'imgViewerContainer'"
+              :paper-list = 'paperList'
               :image-urls="imgList1"
               :image-urls1="imgList1"
               :visible="visible"
@@ -617,6 +619,7 @@ export default {
       lastP:"",
       isZc:false,
       class3:"cards-statistics",
+      isNew:true,
     };
   },
   computed:{
@@ -1199,12 +1202,15 @@ export default {
     },
     // 点击A,B,C,D级
     switchCurrentLevel(index) {
-      if(this.listLoad || this.markDlgVisible){
+      if(this.listLoad || this.markDlgVisible){.0
+
         return false;
       }
-      if(this.lastP == this.paperList[this.currentPosition].id){
+
+      if(!this.isNew && this.thisCurrent!=this.allLength){
         return false;
       }
+      this.isNew = false;
       this.currentLevel = this.gradeList[index].name;
       this.lastP = this.paperList[this.currentPosition].id;
 
@@ -1270,6 +1276,7 @@ export default {
 
       this.rPage = Math.ceil(this.thisCurrent/10)
 
+      this.isNew = true;
 
       //还有4张开始预加载下一页
       if(this.currentPosition + 5 > this.imgList.length){

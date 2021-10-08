@@ -132,6 +132,11 @@ export default {
       type: Array,
       default: () => [],
     },
+    // 试卷列表
+    paperList: {
+      type: Array,
+      default: () => [],
+    },
     imageUrls1: {
       type: Array,
       default: () => [],
@@ -229,7 +234,6 @@ export default {
     }
   },
   computed: {
-
     isSlotMode() {
       return !!this.$slots.default
     },
@@ -283,10 +287,11 @@ export default {
     },
     slotModeVisible: 'handleVisible',
     startPosition: function (val, old) {
+      this.rote = 0
       this.currentPosition = val
     },
     thisCurrent: function (val, old) {
-
+      this.rote = 0
       this.thisCurrent = val
     },
     allLength: function (val, old) {
@@ -334,12 +339,13 @@ export default {
       }
     }
 
-    console.log(this.startPosition);
   },
   methods: {
     rotateImg(value){
       this.rote = this.rote + value/1;
-      this.$emit('roteImg', this.rote)
+      return false
+      this.$axios.post("/exampaper/updateExamPaperRotate?paperId=")
+      // this.$emit('roteImg', this.rote)
     },
     change(e){
       this.chanNum = e.data;
@@ -493,6 +499,7 @@ export default {
       }
     },
     resetImage() {
+      this.rote = 0
       this.scale = this.initialScale || 1
       this.position = {
         left: 0,
