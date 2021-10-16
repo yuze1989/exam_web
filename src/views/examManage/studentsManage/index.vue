@@ -81,10 +81,10 @@
       <el-row style="margin-top: 6px;margin-bottom: 0px;display:block;justify-content: flex-start">
         <!--      <el-button type="warning" @click="reset">重置</el-button>-->
         <el-button type="primary" @click="add">新增学生信息</el-button>
-<!--        <el-button type="primary" @click="onSc">批量上传照片</el-button>-->
+        <el-button type="primary" @click="onSc">批量上传照片</el-button>
         <el-button type="primary" @click="onImport">批量导入</el-button>
         <el-button type="primary" @click="checkMore">批量审核</el-button>
-<!--        <el-button type="primary" @click="oneDel">一键删除</el-button>-->
+        <el-button type="primary" @click="oneDel">一键删除</el-button>
         <el-button type="primary" @click="oneKey">一键审核</el-button>
       </el-row>
     </div>
@@ -274,7 +274,7 @@
         title="批量上传学生图片"
         :close-on-click-modal="false"
         :visible.sync="shenhe" >
-      <div v-loading="listLoading">
+      <div v-loading="listLoading" style="max-height: 700px;overflow: auto">
         <el-select clearable  style="width: 100%;" v-model="selectCheck3" placeholder="请选择考试">
           <el-option
               v-for="item in examNameOption"
@@ -293,11 +293,15 @@
             accept="image/jpeg,image/png,image/jpg"
             :on-change="up_bg"
             show-file-list
+            :file-list="imgList"
             multiple>
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过1M</div>
         </el-upload>
+        <div class="errorList" v-if="errorList.length > 0">
+          <p v-for="(item,index) in errorList" style="margin:0">{{item}}</p>
+        </div>
       </div>
       <div slot="footer"  class="dialog-footer">
         <el-button @click="shenhe = false">取 消</el-button>
@@ -434,6 +438,8 @@ export default {
   },
   data() {
     return {
+      errorList:[],
+      imgList:[],
       delDialog:false,
       admin_username:"",
       admin_password:"",
@@ -529,9 +535,12 @@ export default {
       let data = this.daochu;
       data.username = this.admin_username;
       data.password = this.admin_password;
+      this.loading = true;
       this.$axios.post('/examinee/batchDelete',data).then(res=>{
+        this.loading = false;
         if(res.code == 200){
           this.delDialog = false;
+
           this.$message.success('删除成功！');
           this.getOrderList();
         }
@@ -541,19 +550,35 @@ export default {
     onSc(){
       this.shenhe = true;
       this.formatList = new FormData();
+      this.imgList = [];
     },
-    up_bg(file){
+    up_bg(file,filelist){
+      this.imgList = filelist;
       this.formatList.append('file',file.raw)
-
     },
     beginSC(){
       if(!this.selectCheck3){
         this.$message.error('请先选择考试！')
         return
       }
-      this.$axios.post("/examinee/batchUploadPhoto?examId="+this.selectCheck3,this.formatList).then((res)=>{
-        if(res.code == 200){
+      if(this.imgList.length > 10000){
+        this.$message.error('做多可一次性上传10000张头像，请重新选择图片！')
+        return
+      }
+      console.log(this.imgList);
+      return;
+      this.listLoading = true;
 
+      this.$axios.post("/examinee/batchUploadPhoto?examId="+this.selectCheck3,this.formatList).then((res)=>{
+        this.listLoading = false;
+        if(res.code == 200){
+          if(res.result.length == 0){
+            this.shenhe = false;
+            this.getOrderList();
+          }else{
+            this.$refs.upload.clearFiles();
+            this.errorList = res.result;
+          }
         }else{
           this.$message.error(file.name+"上传失败："+res.message)
         }

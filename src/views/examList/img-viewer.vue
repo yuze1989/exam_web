@@ -14,12 +14,16 @@
           </slot>
           <!-- draggable: false 禁止 chrome 拖拽图片 -->
           <div class="image-box">
+            <div class="teacher" v-if="paperList[currentPosition].paperTeachers.length > 0">
+              <h3 style="text-align: center;color: rgb(222 222 222);margin: 10px">评级记录</h3>
+              <p v-for="(item,index) in paperList[currentPosition].paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
+            </div>
             <span :class="class1" :style="imgStyle">
                <el-image
                    v-show="!loading"
                    ref="image"
                    :class="hideClass()"
-                   :src="finallyImageList[currentPosition]"
+                   :src="allLength==0?'':finallyImageList[currentPosition]"
                    :alt="`图片${currentPosition + 1}`"
                    draggable="false"
                    @load="handleImageLoad"
@@ -27,10 +31,9 @@
                    @abort="hideLoading"
                    @mousedown="handleImageMouseDown"
                    @wheel.stop="wheelScale"
-                   :preview-src-list="finallyImageList"
                    >
                     <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img src="@/assets/no_img2.svg" alt="" style="width:100%">
               </div>
                 </el-image>
 
@@ -38,7 +41,7 @@
           </div>
         </div>
 
-        <div class="pos-tip"> <span @dblclick="chagedd">  {{allLength?thisCurrent:0 }} </span> / {{ allLength }}</div>
+        <div class="pos-tip" @click="stopd"> <span @dblclick="chagedd">  {{allLength?thisCurrent:0 }} </span> / {{ allLength }}</div>
         <div
           class="arrow arrow-prev hover-icon"
           :class="{ disabled: currentPosition === 0 }"
@@ -287,11 +290,11 @@ export default {
     },
     slotModeVisible: 'handleVisible',
     startPosition: function (val, old) {
-      this.rote = 0
+      // this.rote = this.paperList[this.currentPosition].rotate
       this.currentPosition = val
     },
     thisCurrent: function (val, old) {
-      this.rote = 0
+      // this.rote = this.paperList[this.currentPosition].rotate
       this.thisCurrent = val
     },
     allLength: function (val, old) {
@@ -325,6 +328,7 @@ export default {
   },
   // 插槽子元素变化时，重新初始化
   updated() {
+    // this.rote = this.paperList[this.currentPosition].rotate
     if (this.isSlotMode) {
       let newImgList = this.queryImgList()
       let equal = false
@@ -341,10 +345,24 @@ export default {
 
   },
   methods: {
+    stopd(){
+      window.event? window.event.cancelBubble = true : e.stopPropagation();
+    },
     rotateImg(value){
-      this.rote = this.rote + value/1;
-      return false
-      this.$axios.post("/exampaper/updateExamPaperRotate?paperId=")
+      window.event? window.event.cancelBubble = true : e.stopPropagation();
+
+      // let id = this.paperList[this.currentPosition].id;
+      // let rote = this.paperList[this.currentPosition].rotate/1 + value/1;
+      let rote = this.rote/1 + value/1;
+      this.rote = rote;
+      return
+      this.$axios.post("/exampaper/updateExamPaperRotate?paperId="+id+"&rotate="+rote).then(res=>{
+        if(res.code == 200){
+          this.paperList[this.currentPosition].rotate = rote;
+          this.rote = rote;
+        }
+
+      })
       // this.$emit('roteImg', this.rote)
     },
     change(e){
@@ -352,7 +370,7 @@ export default {
       this.$forceUpdate()
     },
     chagedd(){
-      return false
+      return
       this.$prompt('请输入目标位置', '跳转', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -486,6 +504,7 @@ export default {
         img.style.cursor = 'zoom-in'
         this.urlList.push(img.src)
       })
+
     },
     handleImgWrapperClick(e) {
       if (e.target.tagName === 'IMG') {
@@ -549,11 +568,12 @@ export default {
       } else { // IE6/7/8
         let image = new Image()
         image.src = src
+        let that = this;
         image.onload = function() {
           if(image.width>image.height){
-            this.class1 = "image-container"
+            that.class1 = "image-container"
           }else{
-            this.class1 = "image-container2"
+            that.class1 = "image-container2"
           }
         }
       }
@@ -565,6 +585,7 @@ export default {
     },
     // 更新position点
     updatePosition(next) {
+      window.event? window.event.cancelBubble = true : e.stopPropagation();
 
       const _next = this.currentPosition + next
       const _thisC = this.thisCurrent + next
@@ -622,10 +643,14 @@ export default {
       }
     },
     increaseScale() {
+      window.event? window.event.cancelBubble = true : e.stopPropagation();
+
       !this.loading &&
         this.zoom((scale) => (scale + this.innerScaleStep).toFixed(2)) // 处理精度丢失
     },
     decreaseScale() {
+      window.event? window.event.cancelBubble = true : e.stopPropagation();
+
       !this.loading &&
         this.zoom((scale) => (scale - this.innerScaleStep).toFixed(2)) // 处理精度丢失
     },
@@ -701,6 +726,22 @@ export default {
 }
 </script>
 <style>
+.teacher{
+  position: absolute;
+  left: 0;
+  bottom: 80px;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  border-radius:0 4px 4px 0;
+}
+.teacher p{
+  margin: 0;
+  text-align: center;
+  border-top: 1px solid #797979;
+  padding: 6px 0;
+  color: #d6d5d5;
+  font-size: 16px;
+}
 .r_left{
   width: 24px;
   height: 24px;

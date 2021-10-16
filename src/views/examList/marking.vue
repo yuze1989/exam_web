@@ -1,15 +1,22 @@
 <template>
-  <div class="marking-area" id="marking-area">
+  <div id="marking-area"  :class="sf">
     <div class="bottom">
+      <div class="left2">
+        <el-button class="back" type="text" style="font-weight: 700" @click="sfC">
+          展开
+        </el-button>
+        <div style="padding: 11px;
+    color: #606266">评级数据</div>
+      </div>
       <div class="left">
         <div class="left-top">
           <h3>
-            <el-button class="back" type="text" @click="back">
-              <span class="el-icon-back"></span>
-              返回
-            </el-button>
             您的打分进度
+            <el-button style="height: 33px;font-weight: 700" class="back" type="text" @click="sfC">
+              隐藏
+            </el-button>
           </h3>
+
           <div v-loading="jinDuLoad">
             <div class="cards">
               <div class="card no">
@@ -43,7 +50,6 @@
           <h3>试卷分组数据</h3>
           <div :class="class3">
             <div
-                v-loading="queryLoad"
                 class="card"
                 v-for="level in xxList"
                 :key="level.name"
@@ -112,7 +118,8 @@
               inactive-text="横版">
           </el-switch>
 
-          <el-checkbox v-model="isZc" v-if="rule==0 || rule==3" @change="zcChange" style="position: absolute;right: 20px;top: 6px;">仲裁组</el-checkbox>
+          <el-checkbox v-model="isZc" v-if="rule==0 || rule==3" @change="zcChange(1)" style="position: absolute;right: 90px;top: 6px;">仲裁组</el-checkbox>
+          <el-checkbox v-model="showT" v-if="rule==0 || rule==3" @change="zcChange(2)" style="position: absolute;right: 20px;top: 6px;">评级记录</el-checkbox>
         </div>
         <div
             v-loading="listLoad"
@@ -138,11 +145,11 @@
             </span>
             <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
           </span>
-          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 21%;z-index: 999;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 21%;z-index: 2;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
           <div class="previous-image box_img" @click="clickImg(-2)"  style="top: 100px!important;">
             <el-image
                 :class="hideClass()"
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition - 2]?paperList[currentPosition - 2].rotate:0)+'deg)'}"
                 :preview-src-list="imgList"
                 fit="cover"
                 :src="
@@ -150,7 +157,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img src="@/assets/no_img2.svg" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -169,12 +176,12 @@
               <span>{{ paperList[currentPosition - 2].score >= 0 ? paperList[currentPosition - 2].score:""}}<span v-if="paperList[currentPosition  - 2].score && paperList[currentPosition - 2].score>=0">分</span></span>
               <span v-if="paperList[currentPosition - 2].originalGrade">| {{ paperList[currentPosition - 2].originalGrade?paperList[currentPosition - 2].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition - 2] && paperList[currentPosition-2].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition - 2] && paperList[currentPosition-2].isArbitrate==1"></el-badge>
           </div>
           <div class="previous-image box_img" @click="clickImg(-1)" style="bottom: 0px !important;">
             <el-image
                 style="position: absolute;bottom: 0"
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition - 1]?paperList[currentPosition - 1].rotate:0)+'deg)'}"
                 :class="hideClass()"
                 fit="cover"
                 :src="
@@ -182,7 +189,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img src="@/assets/no_img2.svg" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -203,37 +210,39 @@
               >
               <span v-if="paperList[currentPosition - 1].originalGrade">| {{ paperList[currentPosition - 1].originalGrade?paperList[currentPosition - 1].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition - 1] && paperList[currentPosition-1].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition - 1] && paperList[currentPosition-1].isArbitrate==1"></el-badge>
           </div>
-          <vue-img-viewer
-              ref="imgViewer"
-              :container="'imgViewerContainer'"
-              :paper-list = 'paperList'
-              :image-urls="imgList1"
-              :image-urls1="imgList1"
-              :visible="visible"
-              :initial-scale="1"
-              @positionUpdated="imgSwitchEnd"
-              @roteImg="roteImg"
-              @currentUpdated="currentEnd"
-              :start-position="startPosition"
-              :allLength="allLength"
-              :thisCurrent="thisCurrent"
-          >
+          <div @click="yl_click">
+            <vue-img-viewer
+                ref="imgViewer"
+                :container="'imgViewerContainer'"
+                :paper-list = 'paperList'
+                :image-urls="imgList1"
+                :image-urls1="imgList1"
+                :visible="visible"
+                :initial-scale="1"
+                @positionUpdated="imgSwitchEnd"
+                @roteImg="roteImg"
+                @currentUpdated="currentEnd"
+                :start-position="startPosition"
+                :allLength="allLength"
+                :thisCurrent="thisCurrent"
+            >
+            </vue-img-viewer>
+          </div>
 
-          </vue-img-viewer>
 
           <div class="next-image box_img" @click="clickImg(1)"  style="top: 100px;">
             <el-image
                 :class="hideClass()"
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition +1]?paperList[currentPosition +1].rotate:0)+'deg)'}"
                 fit="cover"
                 :src="
                 imgList[currentPosition  + 1] ? imgList[currentPosition + 1] : ''
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img src="@/assets/no_img2.svg" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -252,20 +261,20 @@
               </span>
               <span v-if="paperList[currentPosition + 1].originalGrade">| {{ paperList[currentPosition + 1].originalGrade?paperList[currentPosition + 1].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(2)"  style="position: absolute;bottom: 0">
             <el-image
                 style="position: absolute;bottom: 0"
                 fit="cover"
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition +2]?paperList[currentPosition +2].rotate:0)+'deg)'}"
                 :class="hideClass()"
                 :src="
                 imgList[currentPosition + 2] ? imgList[currentPosition + 2] : ''
               "
             >
               <div slot="error" class="image-slot">
-                <img src="@/assets/no_img.png" alt="" style="width:100%">
+                <img src="@/assets/no_img2.svg" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -284,7 +293,7 @@
               </span>
               <span v-if="paperList[currentPosition + 2].originalGrade">| {{ paperList[currentPosition + 2].originalGrade?paperList[currentPosition + 2].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
           </div>
         </div>
         <div
@@ -311,26 +320,29 @@
             </span>
             <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
           </span>
-          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 30%;z-index: 999;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
-          <vue-img-viewer
-              ref="imgViewer"
-              :container="'imgViewerContainer'"
-              :paper-list = 'paperList'
-              :image-urls="imgList1"
-              :image-urls1="imgList1"
-              :visible="visible"
-              :initial-scale="1"
-              @positionUpdated="imgSwitchEnd"
-              @roteImg="roteImg"
-              @currentUpdated="currentEnd"
-              :start-position="startPosition"
-              :allLength="allLength"
-              :thisCurrent="thisCurrent"
-          >
-          </vue-img-viewer>
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 30%;z-index: 2;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
+          <div @click="yl_click">
+            <vue-img-viewer
+                ref="imgViewer"
+                :container="'imgViewerContainer'"
+                :paper-list = 'paperList'
+                :image-urls="imgList1"
+                :image-urls1="imgList1"
+                :visible="visible"
+                :initial-scale="1"
+                @positionUpdated="imgSwitchEnd"
+                @roteImg="roteImg"
+                @currentUpdated="currentEnd"
+                :start-position="startPosition"
+                :allLength="allLength"
+                :thisCurrent="thisCurrent"
+            >
+            </vue-img-viewer>
+          </div>
+
           <div class="previous-image box_img" @click="clickImg(1)"  style="top: 100px!important;">
             <el-image
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition +1]?paperList[currentPosition +1].rotate:0)+'deg)'}"
                 :preview-src-list="imgList"
                 fit="cover"
                 :class="hideClass()"
@@ -339,7 +351,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.svg')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -360,11 +372,11 @@
               >
               <span v-if="paperList[currentPosition + 1].originalGrade">| {{ paperList[currentPosition + 1].originalGrade?paperList[currentPosition + 1].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
           </div>
           <div class="previous-image box_img" @click="clickImg(2)" style="top: calc(25% + 100px) !important;">
             <el-image
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition +2]?paperList[currentPosition +2].rotate:0)+'deg)'}"
                 style="position: absolute;top: 0"
                 fit="cover"
                 :class="hideClass()"
@@ -373,7 +385,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.svg')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -395,11 +407,11 @@
               >
               <span v-if="paperList[currentPosition + 2].originalGrade">| {{ paperList[currentPosition + 2].originalGrade?paperList[currentPosition + 2].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(3)"  style="top: calc(50% + 100px);">
             <el-image
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition +3]?paperList[currentPosition +3].rotate:0)+'deg)'}"
                 fit="cover"
                 :class="hideClass()"
                 :src="
@@ -407,7 +419,7 @@
               "
             >
               <div slot="error" class="image-slot">
-                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.svg')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -426,20 +438,20 @@
               </span>
               <span v-if="paperList[currentPosition + 3].originalGrade">| {{ paperList[currentPosition + 3].originalGrade?paperList[currentPosition + 3].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 3] && paperList[currentPosition+3].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 3] && paperList[currentPosition+3].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(4)"  style="position: absolute;top: calc(75% + 100px)">
             <el-image
                 style="position: absolute;top: 0"
                 fit="cover"
-                :style="imgStyle"
+                :style="{'transform':'rotate('+(paperList[currentPosition +4]?paperList[currentPosition +4].rotate:0)+'deg)'}"
                 :class="hideClass()"
                 :src="
                 imgList[currentPosition +4] ? imgList[currentPosition +4] : ''
               "
             >
               <div slot="error" class="image-slot">
-                <img :src="require('@/assets/no_img2.png')" alt="" style="width:100%">
+                <img :src="require('@/assets/no_img2.svg')" alt="" style="width:100%">
               </div>
             </el-image>
             <span
@@ -458,7 +470,7 @@
               </span>
               <span v-if="paperList[currentPosition + 4].originalGrade">| {{ paperList[currentPosition + 4].originalGrade?paperList[currentPosition + 4].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 4] && paperList[currentPosition+4].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 4] && paperList[currentPosition+4].isArbitrate==1"></el-badge>
           </div>
         </div>
 
@@ -469,10 +481,12 @@
                 v-for="(level, index) in levelList"
                 :key="level.name"
                 @click="switchCurrentLevel(index)"
-            >{{ level.name }}
+            >
+              <p style="margin: 0">{{ level.name}}</p>
+              <p style="margin: 0;position: relative;top: 4px">{{level.min}} - {{level.max}}</p>
             </el-button>
           </div>
-          <el-button class="mark-btn" @click="showMarkDialog" :disabled="rule==0">评分</el-button>
+<!--          <el-button class="mark-btn" @click="showMarkDialog" :disabled="rule==0">评分</el-button>-->
         </div>
       </div>
       <el-dialog
@@ -536,6 +550,47 @@
         <el-image :src="targetUrl" fit="cover" :class="[rotate?'go':'aa']" @click="startR"></el-image>
       </div>
     </el-dialog>
+
+<!--    图片预览-->
+    <div tabindex="-1" class="el-image-viewer__wrapper tpyl" v-if="yl_show" style="z-index: 2000;">
+      <div class="el-image-viewer__mask"></div>
+      <span class="el-image-viewer__btn el-image-viewer__close" @click="yl_show=false"><i class="el-icon-close"></i></span>
+      <span class="el-image-viewer__btn el-image-viewer__prev" @click="c_page(-1)"><i class="el-icon-arrow-left"></i></span>
+      <span class="el-image-viewer__btn el-image-viewer__next" @click="c_page(1)"><i class="el-icon-arrow-right"></i></span>
+      <div class="el-image-viewer__btn el-image-viewer__actions">
+        <div class="el-image-viewer__actions__inner">
+          <i class="el-icon-zoom-out" style="cursor: pointer" @click="m_c_scale(-0.1)"></i>
+          <i class="el-icon-zoom-in" style="cursor: pointer" @click="m_c_scale(0.1)"></i>
+          <i class="el-image-viewer__actions__divider"></i>
+<!--          <i class="el-icon-full-screen"></i>-->
+          <i class="el-image-viewer__actions__divider"></i>
+          <i class="el-icon-refresh-left" style="cursor: pointer" @click="m_c_rotate(-90)"></i>
+          <i class="el-icon-refresh-right" style="cursor: pointer" @click="m_c_rotate(90)"></i>
+        </div>
+      </div>
+      <div class="teacher" style="background: #fff" v-if="paperList[currentPosition].paperTeachers.length > 0">
+        <h3 style="text-align: center;color: #303133;margin: 10px">评级记录</h3>
+        <p style="color: #303133" v-for="(item,index) in paperList[currentPosition].paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
+      </div>
+      <div class="el-image-viewer__canvas">
+          <img :src="paperList[currentPosition].imgas"  class="el-image-viewer__img" :style="m_style">
+      </div>
+    </div>
+    <div tabindex="-1" class="right_btn"  v-if="yl_show" v-loading="listLoad">
+      <div class="right-btns">
+        <p><img src="@/assets/bg_logo1.svg" style="width: 100%" alt=""></p>
+        <el-button
+            :disabled="rule==0"
+            v-for="(level, index) in levelList"
+            :key="level.name"
+            @click="switchCurrentLevel(index)"
+        >
+          <p style="margin: 0;position: relative;top: -1px;text-align: left;line-height: 20px;"><span style="font-size: 20px;position: relative;
+    top: 2px;
+    left: -4px;">{{ level.name}}</span> / {{level.min}} - {{level.max}}</p>
+        </el-button>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -557,6 +612,11 @@ export default {
   },
   data: () => {
     return {
+      m_style:'transform: scale(1) rotate(0deg)',
+      m_scale:1,
+      m_rotate:0,
+      yl_show:false,
+      sf:"normal marking-area",
       maxNum:100,
       minNum:0,
       value1:true,
@@ -620,14 +680,19 @@ export default {
       isZc:false,
       class3:"cards-statistics",
       isNew:true,
+      showT:false,
+      jl_page:1,
     };
   },
   computed:{
-    imgStyle() {
+    imgStyle(rotate) {
       return {
         transform: `rotate(${this.rote}deg)`,
       }
     },
+  },
+  mounted() {
+    // this.$refs['el-image-viewer__wrapper']
   },
   created() {
     this.account = sessionStorage.getItem("user")
@@ -636,7 +701,53 @@ export default {
     this.init();//初始化
   },
   methods: {
-    zcChange(){
+    c_page(value){
+        if(this.thisCurrent<=1 && value ==-1) {
+         return
+        }
+        if(this.thisCurrent >= this.allLength && value ==1){
+          this.$message.warning(`已经是最后一张试卷了！`);
+          return
+        }
+        this.currentPosition += value;
+        this.startPosition += value;
+        this.thisCurrent += value;
+        this.m_rotate = 0;
+        this.m_scale = 1;
+        this.m_c_scale(0)
+        this.imgSwitchEnd(this.currentPosition)
+
+    },
+    m_c_scale(value){
+      this.m_scale = this.m_scale/1 + value/1;
+      this.m_style = 'transform: scale('+this.m_scale+') rotate('+this.m_rotate+'deg)'
+    },
+    m_c_rotate(value){
+      this.m_rotate = this.m_rotate/1 + value/1;
+      this.m_style = 'transform: scale('+this.m_scale+') rotate('+this.m_rotate+'deg)'
+    },
+    yl_click(){
+      this.m_rotate = 0;
+      this.m_scale = 1;
+      this.m_c_scale(0)
+      this.yl_show = true;
+    },
+    sfC(){
+      if(this.sf == "normal marking-area"){
+        this.sf = "sx marking-area"
+      }else{
+        this.sf = "normal marking-area"
+      }
+    },
+    zcChange(type){
+      if(!this.isZc && type==1){
+      }else{
+        this.jl_page = this.thisCurrent;
+      }
+      if(type == 2){
+        this.jl_page = this.thisCurrent;
+      }
+
       this.init()
     },
     init(){
@@ -682,10 +793,23 @@ export default {
 
                   //当前位置
                   wz = this.Grade%10;
+                  // if(this.jl_page > 1){
+                  //   this.rPage = Math.ceil(this.jl_page/10);
+                  //   wz = this.jl_page%10-1;
+                  // }
                 }else{
                   this.thisCurrent = 1;
                   this.rPage = 1;
                   wz = 0;
+                  if(this.jl_page > 1){
+                    this.rPage = Math.ceil(this.jl_page/10);
+                    // wz = this.jl_page%10-1;
+                    // if(wz == -1){
+                    //   this.rPage = Math.ceil((this.jl_page+1)/10);
+                    // }else{
+                    //   this.rPage = Math.ceil(this.jl_page/10);
+                    // }
+                  }
                 }
 
                 this.listLoad = true;
@@ -708,6 +832,9 @@ export default {
                   "schoolId": "",
                   "score": "",
                   "teacherId": ""
+                }
+                if(this.showT){
+                  data.showTeacherGrade = 1;
                 }
 
                 this.$axios.post(url,data).then(res=>{
@@ -749,6 +876,7 @@ export default {
 
 
         }else{
+
           //总数
           this.allLength = res.result.NoGrade/1 + res.result.Grade/1;
           //最大页
@@ -763,15 +891,25 @@ export default {
 
             //当前页
             this.rPage = Math.ceil(this.thisCurrent/10);
-
             //当前位置
             wz = this.Grade%10;
+            if(this.jl_page > 1){
+              this.rPage = Math.ceil(this.jl_page/10);
+              wz = this.jl_page%10-1;
+            }
           }else{
-            this.thisCurrent = 1;
+            this.thisCurrent = this.jl_page;
             this.rPage = 1;
             wz = 0;
+            if(this.jl_page > 1){
+              wz = this.jl_page%10-1;
+              if(wz == -1){
+                this.rPage = Math.ceil((this.jl_page+1)/10);
+              }else{
+                this.rPage = Math.ceil(this.jl_page/10);
+              }
+            }
           }
-
           this.listLoad = true;
           let url = '/exampaper/queryExamPaperSort';
           let grade = "all";
@@ -793,6 +931,9 @@ export default {
             "score": "",
             "teacherId": ""
           }
+          if(this.showT){
+            data.showTeacherGrade = 1;
+          }
 
           this.$axios.post(url,data).then(res=>{
             let list = res.result.list;
@@ -808,12 +949,11 @@ export default {
             this.imgList1 = imgList1;
 
 
-
+            console.log(wz);
             //定位图片
             this.currentPosition = wz/1;
             //定位初始
             this.startPosition = wz/1;
-
             if(wz >=6){
               this.rPage = this.rPage+1;
               this.getList(1)
@@ -882,6 +1022,15 @@ export default {
     },
     // 图片点击
     clickImg(val){
+      if(this.thisCurrent + val > this.allLength || this.thisCurrent + val <= 0){
+        return  false
+      }
+      this.$refs.imgViewer.resetImage()
+      this.currentPosition += val;
+      this.startPosition += val;
+      this.thisCurrent += val;
+      this.imgSwitchEnd(this.currentPosition)
+      return false
       if(this.clickTimer){
         window.clearTimeout(this.clickTimer);
         this.clickTimer = null;
@@ -893,10 +1042,9 @@ export default {
         }
         that.currentPosition +=val
         that.startPosition += val;
-      },300)
+      },100)
     },
     getList(type){
-
       if(this.rPage <= 0){
         return false;
       }
@@ -906,7 +1054,7 @@ export default {
       if(type == 1 && (this.listLoad && this.markDlgVisible)){
         return false
       }
-      if(this.lPage == this.rPage && this.rPage != 1){
+      if(this.lPage == this.rPage && this.rPage != 1 && this.jl_page <= 1){
         return false;
       }
       this.listLoad = true;
@@ -931,6 +1079,9 @@ export default {
         "schoolId": "",
         "score": "",
         "teacherId": ""
+      }
+      if(this.showT){
+        data.showTeacherGrade = 1;
       }
 
       this.$axios.post(url,data).then((res) => {
@@ -1134,6 +1285,8 @@ export default {
                 key: i,
                 name: item.grade,
                 percentage:item.percentage,
+                min:item.scoreStart,
+                max:item.scoreEnd
               })
             }
           })
@@ -1206,10 +1359,12 @@ export default {
 
         return false;
       }
-
-      if(!this.isNew && this.thisCurrent!=this.allLength){
-        return false;
+      if(!this.isZc){
+        if(!this.isNew && this.thisCurrent!=this.allLength){
+          return false;
+        }
       }
+
       this.isNew = false;
       this.currentLevel = this.gradeList[index].name;
       this.lastP = this.paperList[this.currentPosition].id;
@@ -1225,9 +1380,12 @@ export default {
         "examPaperId": this.paperList[this.currentPosition].id,
         grade:this.currentLevel,
         examId:this.$route.query.examId,
+        teacherName:localStorage.getItem("user_name")
       }
 
-
+      if(this.showT){
+        data.showTeacherGrade = 1;
+      }
       this.listLoad = true;
       this.$axios.post("/exampaper/updateGrade",data).then((res) => {
         if(res.code == 200){
@@ -1235,6 +1393,7 @@ export default {
           if(this.isZc){
             this.init()
           }else{
+            this.paperList[this.currentPosition].paperTeachers = res.result.paperTeachers;
             this.paperList[this.currentPosition].score = res.result.score;
             this.paperList[this.currentPosition].grade = res.result.grade;
             this.paperList[this.currentPosition].isArbitrate = res.result.isArbitrate;
@@ -1357,6 +1516,7 @@ export default {
         score:this.mark,
         "examId": this.$route.query.examId,
         "course": this.$route.query.course,
+        teacherName:localStorage.getItem("user_name")
       }
       if(this.mark > this.maxNum || this.mark < this.minNum){
         this.$message.error(`请填写合适的分数！`);
@@ -1428,6 +1588,61 @@ export default {
 </script>
 
 <style lang="scss">
+.tpyl .teacher{
+  bottom: 0;
+  width: 210px;
+  right: 2px;
+  left: auto;
+}
+.tpyl .el-image-viewer__mask{
+  opacity: .9;
+}
+.tpyl .el-image-viewer__img{
+  margin-left: 0px; margin-top: 0px; height: 100%; max-width: 100%;
+}
+.right_btn .right-btns{
+  padding: 0 10px;
+  padding-top: 10px;
+}
+.right_btn .right-btns button{
+  margin-bottom: 10px;
+  width: 100%;
+  margin-left: 0;
+}
+.right_btn .right-btns button:hover{
+  background: #204bd6;
+  color: #fff;
+}
+.right_btn{
+  z-index: 2000;
+  background: rgb(255, 255, 255);
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 10%;
+  height: 100%;
+}
+.tpyl{
+  width: 90%;
+}
+.normal .left2{
+  display: none;
+}
+.sx .left2 button{
+  width: 40px;
+  margin-left: 0;
+}
+.sx .right{
+  flex: 1 !important;
+}
+.sx .left2{
+  width: 40px;
+  background: #fff;
+  margin-right: 10px;
+}
+.sx .left{
+  display: none;
+}
 .hidebox:before{
   content: "";
   position: absolute;
@@ -1690,8 +1905,8 @@ export default {
       .left-top {
         background-color: #fff;
         margin-bottom: 10px;
-        height: 570px;
-        padding: 20px;
+        height: 550px;
+        padding:10px 20px;
         box-sizing: border-box;
         h3 {
           .back {
@@ -1805,7 +2020,7 @@ export default {
 
       .left-bottom {
         background-color: #fff;
-        padding: 20px;
+        padding: 7px 20px;
         box-sizing: border-box;
         display: flex;
         flex-direction: row;
@@ -1934,7 +2149,7 @@ export default {
     padding-right: 80px;
     box-sizing: border-box;
     width: 100%;
-    min-height: 115px;
+    min-height: 80px;
     display: flex;
     flex-direction: row;
     position: relative;

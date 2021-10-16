@@ -667,7 +667,7 @@ export default {
             })
             return
           }
-          if(this.from.examStartTime < this.from.enrollEndTime||this.from.examStartTime == this.from.enrollEndTime){
+          if(this.from.examStartTime.split(" ")[0] < this.from.enrollEndTime.split(" ")[0]){
             this.$message({
               message: '考试时间应大于报名时间',
             })

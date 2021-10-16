@@ -52,7 +52,8 @@
               {{ item.name }}
             </el-tag>
            </div>
-            <el-checkbox style="position: absolute;right: 15px" v-model="isGd" @change="getList">分数从高到低</el-checkbox>
+            <el-checkbox style="position: absolute;right: 0" v-model="isGd" @change="getList">分数从高到低</el-checkbox>
+            <el-checkbox v-model="showT" v-if="role==0 || role==3" @change="getList" style="position: absolute;right: 170px;">评级记录</el-checkbox>
           </div>
         </el-col>
         <el-col :span="3" style="text-align: right">
@@ -90,6 +91,10 @@
           </el-badge>
 
           <div class="paper">
+            <div class="teacher3" v-if="paper.paperTeachers.length > 0">
+              <h3 style="text-align: center;color: rgb(222 222 222);font-size: 14px;padding: 4px;margin: 0">评级记录</h3>
+              <p v-for="(item,index) in paper.paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
+            </div>
             <div  class="edit-level" v-if="role!=0">
               <span
                   v-if="!paper.edit"
@@ -108,8 +113,10 @@
 
               </el-badge>
             </div>
-            <div :class="initAspectRatio(paper.url)">
+            <div>
               <el-image
+                  :class="paper.className"
+                  :style="{'transform':'rotate('+(paper?paper.rotate:0)+'deg)'}"
                   :src="paper.url"
                   :alt="paper.name"
                   fit="cover"
@@ -183,13 +190,18 @@
         v-if="paperList.length && paperList[editImgIndex]"
         style="display: block;"
       >
+        <div class="teacher2" v-if="paperList[editImgIndex].paperTeachers.length > 0">
+          <h3 style="text-align: center;color: rgb(222 222 222);font-size: 28px;padding: 14px;margin: 0">评级记录</h3>
+          <p v-for="(item,index) in paperList[editImgIndex].paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
+        </div>
         <span class="close-button" @click="editImgDialogVisible = false"
           ><i class="el-icon-close"
+              style="color: #fff"
         /></span>
         <div class="dialog-count">
           {{ editImgIndex + 1 }} / {{ paperList.length }}
         </div>
-        <el-image :src="paperList[editImgIndex].imgUrl" height="100%">
+        <el-image :src="paperList[editImgIndex].imgUrl" :class="paperList[editImgIndex].className" :style="m_style" @load="change1">
           <div slot="placeholder" class="img-loading">
             加载中<span class="dot">...</span>
           </div>
@@ -216,6 +228,33 @@
             :option="gradeList"
             @grade="selecteUpdateGrade"
           />
+        </div>
+        <div class="operate-area xxxx">
+          <slot name="operate">
+            <SvgIcon
+                class="icon hover-icon"
+                name="actionicon"
+                @click="increaseScale(0.2)"
+                style="font-size: 24px;cursor: pointer"
+            />
+            <SvgIcon
+                class="icon hover-icon"
+                name="suoxiao"
+                @click="increaseScale(-0.2)"
+                style="font-size: 24px;cursor: pointer"
+            />
+            <div class="divide" />
+            <!--            <SvgIcon-->
+            <!--              class="icon hover-icon"-->
+            <!--              name="zhongzhi"-->
+            <!--              @click="onResetClick"-->
+            <!--            />-->
+            <span class="r_left" @click="m_c_rotate(-90)">
+            </span>
+            <span class="r_right" @click="m_c_rotate(90)">
+            </span>
+          </slot>
+          <slot name="extraOperate"></slot>
         </div>
         <div class="image-mark-text" v-if="role!=0">
           <el-input
@@ -291,12 +330,20 @@ import {
   getReviewStatus,
   getRulesdetail,
 } from "@/api/paper";
-
+import Snippet from './Snippet'
+import SvgIcon from './SvgIcon'
+import {ALERT} from "../../utils/utils";
 export default {
   name: "paperManage",
-  components: { SelecteGrade },
+  components: {
+    SelecteGrade ,
+    Snippet,
+    SvgIcon
+  },
   data: () => {
     return {
+      m_style:'transform: scale(1) rotate(0deg)',
+      showT:false,
       isGd:true,
       levelList: [],
       gradeList: [],
@@ -335,6 +382,9 @@ export default {
       role:localStorage.getItem("role"),
       gradeIndex:0,
       scoreObj:{},
+      innerScaleStep:1,
+      scale:1,
+      m_rotate:0,
     };
   },
   computed: {
@@ -358,18 +408,19 @@ export default {
 
   },
   methods: {
-    initAspectRatio(e){
-      //长宽自适应
-      let image = new Image()
-      image.src = e
-      let className = "";
-
-      if(image.width>image.height){
-        className =  "image-container"
-      }else{
-        className =  "image-container2"
-      }
-      return className
+    change1(){
+      this.scale = 1;
+      this.m_rotate = 0;
+      this.increaseScale(0)
+    },
+    increaseScale(value){
+      this.scale = this.scale/1 + value/1;
+      this.scale = this.scale.toFixed(2)/1
+      this.m_style = 'transform: scale('+this.scale+') rotate('+this.m_rotate+'deg)'
+    },
+    m_c_rotate(value){
+      this.m_rotate = this.m_rotate/1 + value/1;
+      this.m_style = 'transform: scale('+this.scale+') rotate('+this.m_rotate+'deg)'
     },
     stopYj(){
       this.$confirm('请确认该科目下试卷是否已全部评级完成，一旦停止评级后将不能再评级！', '提示', {
@@ -409,6 +460,9 @@ export default {
         "size": this.listQuery.size,
         "teacherId": ""
       }
+      if(this.showT){
+        data.showTeacherGrade = 1;
+      }
       // todo 待完善
       let url = '/exampaper/examCorrectPaperListAll'
       this.$axios.post(url,data).then((response) => {
@@ -420,48 +474,61 @@ export default {
           result.list.forEach((item) => {
             const imgName = item.img.substr(item.img.lastIndexOf("/") + 1);
             // const imgUrl = "http://192.168.1.11/" + imgName;
-            const imgUrl = item.imgas;
-            list.push({
-              id: item.id,
-              name: item.admissionTicketCode,
-              url: item.img,
-              imgUrl: imgUrl,
-              permission: item.admissionTicketCode,
-              level: item.grade,
-              show: false,
-              mark: item.score,
-              edit: false,
-              isArbitrate:item.isArbitrate,
-              originalGrade:item.originalGrade
-            });
-
+            let image = new Image()
+            let className = "";
+            image.src = item.imgas;
+            let that = this;
+            image.onload = function (){
+              if(image.width>image.height){
+                className = "image-container"
+              }else{
+                className = "image-container2"
+              }
+              list.push({
+                id: item.id,
+                name: item.admissionTicketCode,
+                url: item.img,
+                imgUrl: item.imgas,
+                permission: item.admissionTicketCode,
+                level: item.grade,
+                show: false,
+                mark: item.score,
+                edit: false,
+                isArbitrate:item.isArbitrate,
+                originalGrade:item.originalGrade,
+                paperTeachers:item.paperTeachers,
+                rotate:item.rotate,
+                className:className
+              });
+            }
           });
 
-          if(this.isGd){
+        if(this.isGd){
+          setTimeout(function (){
             list.sort(function(a,b){
               return b.mark - a.mark
             });
-          }
+          },100)
 
-          this.paperList = list;
+        }
 
-
+        this.paperList = list;
         if(type == 2){
           if(!this.paperList[this.editImgIndex]){
             this.editImgDialogVisible = false;
           }
 
           if(this.paperList[this.editImgIndex]){
-              this.paperList[this.editImgIndex].show = true;
-            }
-            let classN = 'markInput'+this.currentIndex;
+            this.paperList[this.editImgIndex].show = true;
           }
-          if(this.paperList.length == 0){
-            this.editImgDialogVisible = false;
-            if(this.paperList[this.currentIndex]){
-              this.paperList[this.currentIndex].show = false;
-            }
+          let classN = 'markInput'+this.currentIndex;
+        }
+        if(this.paperList.length == 0){
+          this.editImgDialogVisible = false;
+          if(this.paperList[this.currentIndex]){
+            this.paperList[this.currentIndex].show = false;
           }
+        }
 
       });
     },
@@ -706,7 +773,9 @@ export default {
           examPaperId:data.paperId,
           grade:data.grade,
           examId:this.$route.query.examId,
+          teacherName:localStorage.getItem("user_name")
         }
+
         this.$axios.post("/exampaper/updateGrade",params).then((res) => {
           if (res) {
             if(res.code == 200){
@@ -750,6 +819,7 @@ export default {
           examPaperId:data.paperId,
           grade:data.grade,
           score:data.score,
+          teacherName:localStorage.getItem("user_name")
         }
 
         if(!data.grade){
@@ -863,6 +933,117 @@ export default {
 </script>
 
 <style lang="scss">
+.editImgDialog .el-dialog{
+  background: rgba(0,0,0,.8)
+}
+.editImgDialog .el-dialog{
+  width: 70%;
+}
+.editImgDialog .el-dialog__body i{
+  color: #f2f6fc !important;
+}
+.editImgDialog .el-dialog__body{
+  overflow: hidden;
+}
+.xxxx{
+  position: absolute;
+  bottom: 27px;
+  width: 100%;
+  background: rgba(0,0,0,.5);
+  left: 0;
+  display: flex;
+  justify-content: center;
+  height: 46px;
+  align-items: center;
+}
+.xxxx .icon + .icon{
+  margin-left: 24px;
+}
+.r_left {
+   width: 24px;
+   height: 24px;
+   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAjxJREFUSEu1lDFok0EUx//vMpghIARMuHcJEgldopNIKw6OUsVFmgrq4KDi1E0Xwdat6KDgUhDUwUHIIOgkVCkOKohUEQTN6Je7j2qIgoFEwvfkK01I0zT5rHy3He+9/+/uf/ceIeZFUfQ9zzuslJoCMAHgO4DlZDL5MZ1O/xpXvy2gWq3uSqVSFRE5CWAVwAqAr0TEInIcwEEAvohUjDFz24HWAc65ea31jW6StfYsgEdE9CCRSMxlMpnfwwSstSFkEcDeRqOxv1Qq/RnM6wFEpMTMs57nlZVSZSK6pbV+N86CMG6tvQzgpoicM8Y87a/pBywAqITBEBRFuD/HObdHRNaYeZPtg4CwprITwIbV50XkOjPv68KHAf4LYq1dFZH7xpi7oVAPMMyS/oePaplz7pCIXGXmcg8QtThqnrX2OTMfiw3gnHvc6XSW8vn8SqROjnryvj5aIiIXWhwLoFarLSql3mutK7EArLX3iOi21vpzXIBPzHwglkf2PC+nlHrLzLlYANbaawAKzHxhC8A591JEFpj51b/+nI2hdwbAKWae2TQquhvP8yaI6IUxJr9DgAwddgNTcT4IgmkROZHL5epRQL7vTwVB8CaRSBzJZrOvt4zrQRHf9ydF5A6AJ81m82GxWFwbBqrX6/l2uz1DRLOtVmu6UCj8HMwb+U2ttRcBXALQEpEPSqkfoYCITAI4CuCbiDwzxlzZ7qaR+sD3/dNBEGgi2h0KBUGwTERfmHkdOGpFAowTGRX/CxJQ+xka2WV0AAAAAElFTkSuQmCC) no-repeat;
+   display: inline-block;
+   position: relative;
+   left: 16px;
+   cursor: pointer;
+ }
+.r_right {
+  width: 24px;
+  height: 24px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAlNJREFUSEu1lT9oFEEUxr+3yf0RDjU5DffezXVWNipqJYiIoIhYKAdWgmARm1RB1EYtTBH/FBYq2ohYeW2COUihlUoqxUNIoiDrzkIOLt2Z4jIjE+7CmVtvb4VMt7zv+34zb3ZmCNs8aJD8RqOxa21t7QCAUwD2Alg0xnxUSn2I8/cFBEHwmIjKAAoA5q218wC+eZ6nrLWHAFwA8GR9fX2qVCr9joJFAmq1WnpkZOQrgJ/GmEml1Ocos+/7O1Kp1FVjzC0iesDMDzu6MAxvM/PdHkAQBOeJ6DWA6yLyLK4Frr6ysrKv1WpNGWMqSqmK1voNEdUiAVprS0RjzFwfJLxb44Lb32UiutMD0Fo/IqIvzPwyabjTtwFuz9ADCMPwirV2QkTc5iUe3eGRAK11hYimmXkhabrb0CjPXy3SWldF5HTS8Dj9xl/k+/6J4eHhcWa+FGdIWt8AuCVaa1lExpMGxOk7gLIx5nCxWLwRZ0ha7wD2A3AtmkgaEKffPMla6zkRORNnSFrvBvzIZDLH8/n8r6Qh/fSbgDAMr1lrR0Xk3rYA2kd91vO8p4VCYeZ/IGEYngUwycwnO/6e29RddiIy0EO0dRJa67ox5phSarEf4AiABSI6x8yzg6xkdXV1d7PZnPM87627Hro9kTNdWlramcvlqtbamUwm8yqfz/tRoOXl5bFsNntxaGjocqvVulkqld5t1cU9mfeJyF0fowDeE9EnF2CM2UNEBwFkAbwQkef/WulAvfZ9v5hOp48aY9zDD2vtdwB1EanGtXAgQFxIv/ofVZjkGZowNL0AAAAASUVORK5CYII=) no-repeat;
+  display: inline-block;
+  position: relative;
+  left: 34px;
+  cursor: pointer;
+}
+.xxxx .divide{
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background-color: #d8d8d8;
+  border-radius: 1px;
+  margin: 0 24px;
+  opacity: 0.5;
+  top: 3px;
+  position: relative;
+}
+.teacher3{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  border-radius: 0 4px 4px 0;
+  transform: scale(0.7);
+  transform-origin: left bottom;
+}
+.teacher3 p{
+  margin: 0;
+  text-align: center;
+  border-top: 1px solid #797979;
+  color: #d6d5d5;
+  font-size: 12px;
+}
+.teacher2{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  border-radius:0 4px 4px 0;
+  font-size: 22px;
+}
+.teacher2 p{
+  margin: 0;
+  text-align: center;
+  border-top: 1px solid #797979;
+  padding: 6px 0;
+  color: #d6d5d5;
+}
+.editImgDialog{
+  width: 100%;
+  height: 100%;
+}
+.editImgDialog .image-container{
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  height: 100% !important;
+}
+.editImgDialog .image-container3{
+  display: flex !important;
+  align-items: center!important
+}
+.editImgDialog .image-container img{
+  width: 100% !important;
+  height: auto !important;
+}
+.editImgDialog .image-container3 img{
+  width: 100%!important;
+  height: auto!important;
+}
 .paper-list-container .image-container2 img,.paper-list-container .image-container2 .el-image{
   height: 100%;
   width: auto;
@@ -871,7 +1052,7 @@ export default {
   width: 100%;
   height: auto;
 }
-.paper-list-container .image-container {
+.paper-list-container .image-container{
   position: relative;
   display: inline-block;
   width:220px;
@@ -1079,8 +1260,8 @@ export default {
 
 }
 .editImgDialog .el-dialog--center{
-  margin-top: 4% !important;
-  height: 90%;
+  margin-top: 0 !important;
+  height: 100%;
 }
 .editImgDialog .el-dialog--center .el-dialog__body,.editImgDialog .el-dialog--center .el-dialog__body>div{
   height: 100%;

@@ -504,7 +504,17 @@ export const asyncRouter = [
                     name: '机构统计',
                     icon: 'classmate'
                 },
-            }
+            },
+            {
+                path: "/jigouTj2",
+                id: 132,
+                code: 10132,
+                component: resolve => require(["@/views/examManage/roomManage/jigouTj2.vue"], resolve),
+                meta: {
+                    name: '机构成绩统计',
+                    icon: 'classmate'
+                },
+            },
         ]
     },
     {
@@ -756,6 +766,7 @@ export const asyncRouter = [
 			        icon: 'classmate'
 			    },
 			},
+
         ]
     },
     // {
