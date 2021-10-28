@@ -84,6 +84,7 @@
       width="200">
       <template slot-scope="scope">
         <el-button @click="bindEidt(scope.row)" type="text" size="small" >编辑</el-button>
+        <el-button @click="delC(scope.row)" type="text" size="small" >删除</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -264,8 +265,30 @@ export default {
    currentChange() {
       this.getList();
     },
+    delC(row) {
+      this.$confirm('此操作将删除该准考证模板, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post("/ticket/ticketDelete?id="+row.id).then(res=>{
+          if(res.code == 200){
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.getList();
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
   },
-  mounted() {},
+
   beforeCreate() {},
 };
 </script>

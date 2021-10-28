@@ -80,7 +80,7 @@
       width="200">
       <template slot-scope="scope">
         <el-button @click="editItemAction(scope.row)" type="text" size="small" >编辑</el-button>
-        <el-button  size="small" @click="handleDetele(scope.row)" type="text"  >删除</el-button>
+        <el-button  size="small" @click="oneDel(scope.row)" type="text"  >删除</el-button>
       </template>
     </el-table-column>
     </el-table>
@@ -151,6 +151,38 @@
         <el-button type="primary" @click="submitCheck">确 定</el-button>
       </div>
     </el-dialog>
+    <!--    删除-->
+    <el-dialog
+        :visible.sync="delDialog"
+        width="50%"
+
+    >
+      <div slot="title">管理员验证</div>
+      <el-form
+          label-width="120px"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          ref="delForm"
+          v-loading="loading"
+      >
+        <p style="color: red;padding-left: 40px">此次操作将删除该机构，并删除该机构下所有学生数据，请谨慎操作!</p>
+        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+          <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button type="primary"   @click="confirm1">确认</el-button>
+      </div>
+
+    </el-dialog>
     <addRoomDialog
       :visible.sync="isAdd"
       :isAdd="isAddType"
@@ -171,6 +203,9 @@ export default {
   },
   data() {
     return {
+      delDialog:false,
+      admin_username:"",
+      admin_password:"",
       selectCheck:"",
       showCheck:false,
       listLoading: false,
@@ -207,6 +242,7 @@ export default {
       isAddType: 1, //1新增  0编辑
       editItemData: {},
       examId:"",
+      jg_id:"",
     };
   },
   created() {
@@ -215,6 +251,24 @@ export default {
   },
 
   methods: {
+    //一键删除
+    oneDel(item){
+      this.admin_username="";
+      this.admin_password="";
+      this.delDialog = true;
+      this.jg_id = item.id;
+    },
+    confirm1(){
+      this.loading = true;
+      this.$axios.post('/studio/delete?id='+this.jg_id+'&username='+this.admin_username+"&password="+this.admin_password).then(res=>{
+        this.loading = false;
+        if(res.code == 200){
+          this.delDialog = false;
+          this.$message.success('删除成功！');
+          this.getList();
+        }
+      })
+    },
     handle(file) {
       this.file = file
     },

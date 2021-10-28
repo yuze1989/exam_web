@@ -23,6 +23,7 @@
       <el-form-item >
         <el-button style="width:80%" @click="handleAdd">+ 新增考场配置</el-button>
       </el-form-item>
+
       <el-form-item  prop="submit"  >
         <el-button type="primary"  @click="submitForm('ruleForm')" class="meiyuan_btn" style="width:80%;margin-top: 10px">确认</el-button>
         <!-- <el-button @click="resetForm('ruleForm')">重置</el-button> -->
@@ -52,6 +53,7 @@
    
     data() {
       return {
+        is_shuffle:true,
         provinceList:provinceCodeList,
         forms: {
           province:'',

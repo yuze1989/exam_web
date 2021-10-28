@@ -64,7 +64,7 @@
                   v-if="level.name!='仲裁组'"
                   text-inside
                   :stroke-width="20"
-                  :percentage="level.percentage"
+                  :percentage="level.percentage || 0"
               ></el-progress>
             </div>
           </div>
@@ -145,7 +145,7 @@
             </span>
             <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
           </span>
-          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 21%;z-index: 2;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 21%;z-index: 999;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
           <div class="previous-image box_img" @click="clickImg(-2)"  style="top: 100px!important;">
             <el-image
                 :class="hideClass()"
@@ -176,7 +176,7 @@
               <span>{{ paperList[currentPosition - 2].score >= 0 ? paperList[currentPosition - 2].score:""}}<span v-if="paperList[currentPosition  - 2].score && paperList[currentPosition - 2].score>=0">分</span></span>
               <span v-if="paperList[currentPosition - 2].originalGrade">| {{ paperList[currentPosition - 2].originalGrade?paperList[currentPosition - 2].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition - 2] && paperList[currentPosition-2].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition - 2] && paperList[currentPosition-2].isArbitrate==1"></el-badge>
           </div>
           <div class="previous-image box_img" @click="clickImg(-1)" style="bottom: 0px !important;">
             <el-image
@@ -210,9 +210,9 @@
               >
               <span v-if="paperList[currentPosition - 1].originalGrade">| {{ paperList[currentPosition - 1].originalGrade?paperList[currentPosition - 1].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition - 1] && paperList[currentPosition-1].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition - 1] && paperList[currentPosition-1].isArbitrate==1"></el-badge>
           </div>
-          <div @click="yl_click">
+          <div @mousedown="downC($event)" @mouseup="downU($event)">
             <vue-img-viewer
                 ref="imgViewer"
                 :container="'imgViewerContainer'"
@@ -261,7 +261,7 @@
               </span>
               <span v-if="paperList[currentPosition + 1].originalGrade">| {{ paperList[currentPosition + 1].originalGrade?paperList[currentPosition + 1].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(2)"  style="position: absolute;bottom: 0">
             <el-image
@@ -293,7 +293,7 @@
               </span>
               <span v-if="paperList[currentPosition + 2].originalGrade">| {{ paperList[currentPosition + 2].originalGrade?paperList[currentPosition + 2].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
           </div>
         </div>
         <div
@@ -320,8 +320,8 @@
             </span>
             <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
           </span>
-          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 30%;z-index: 2;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
-          <div @click="yl_click">
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 30%;z-index: 999;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
+          <div @mousedown="downC($event)" @mouseup="downU($event)">
             <vue-img-viewer
                 ref="imgViewer"
                 :container="'imgViewerContainer'"
@@ -372,7 +372,7 @@
               >
               <span v-if="paperList[currentPosition + 1].originalGrade">| {{ paperList[currentPosition + 1].originalGrade?paperList[currentPosition + 1].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 1] && paperList[currentPosition+1].isArbitrate==1"></el-badge>
           </div>
           <div class="previous-image box_img" @click="clickImg(2)" style="top: calc(25% + 100px) !important;">
             <el-image
@@ -407,7 +407,7 @@
               >
               <span v-if="paperList[currentPosition + 2].originalGrade">| {{ paperList[currentPosition + 2].originalGrade?paperList[currentPosition + 2].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 2] && paperList[currentPosition+2].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(3)"  style="top: calc(50% + 100px);">
             <el-image
@@ -438,7 +438,7 @@
               </span>
               <span v-if="paperList[currentPosition + 3].originalGrade">| {{ paperList[currentPosition + 3].originalGrade?paperList[currentPosition + 3].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 3] && paperList[currentPosition+3].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 3] && paperList[currentPosition+3].isArbitrate==1"></el-badge>
           </div>
           <div class="next-image box_img" @click="clickImg(4)"  style="position: absolute;top: calc(75% + 100px)">
             <el-image
@@ -470,7 +470,7 @@
               </span>
               <span v-if="paperList[currentPosition + 4].originalGrade">| {{ paperList[currentPosition + 4].originalGrade?paperList[currentPosition + 4].originalGrade : "" }}</span>
             </span>
-            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 2;" v-if="paperList[currentPosition + 4] && paperList[currentPosition+4].isArbitrate==1"></el-badge>
+            <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition + 4] && paperList[currentPosition+4].isArbitrate==1"></el-badge>
           </div>
         </div>
 
@@ -553,11 +553,28 @@
 
 <!--    图片预览-->
     <div tabindex="-1" class="el-image-viewer__wrapper tpyl" v-if="yl_show" style="z-index: 2000;">
+      <div class="pos-tip" v-if="isHide != 1"> <span>  {{allLength?thisCurrent:0 }} </span> / {{ allLength }}</div>
       <div class="el-image-viewer__mask"></div>
-      <span class="el-image-viewer__btn el-image-viewer__close" @click="yl_show=false"><i class="el-icon-close"></i></span>
+      <span
+          v-if="
+              paperList[currentPosition] && paperList[currentPosition].grade
+            "
+          class="image-header"
+      >
+            <span
+            >{{ paperList[currentPosition].grade }}
+              <span v-if="paperList[currentPosition].grade">类</span>
+            </span>
+            <span
+            >{{ paperList[currentPosition].score >= 0 ? paperList[currentPosition].score : "" }}<span v-if="paperList[currentPosition].score && paperList[currentPosition].score>=0">分</span>
+            </span>
+            <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
+          </span>
+      <el-badge value="仲裁" class="zcz zcz02" style="position: absolute;top: 0; z-index: 998;right: 0px;" v-if="paperList[currentPosition].isArbitrate == 1"></el-badge>
+      <span class="el-image-viewer__btn el-image-viewer__close" style="z-index: 999" @click="yl_show=false"><i class="el-icon-close"></i></span>
       <span class="el-image-viewer__btn el-image-viewer__prev" @click="c_page(-1)"><i class="el-icon-arrow-left"></i></span>
       <span class="el-image-viewer__btn el-image-viewer__next" @click="c_page(1)"><i class="el-icon-arrow-right"></i></span>
-      <div class="el-image-viewer__btn el-image-viewer__actions">
+      <div class="el-image-viewer__btn el-image-viewer__actions" style="z-index: 9">
         <div class="el-image-viewer__actions__inner">
           <i class="el-icon-zoom-out" style="cursor: pointer" @click="m_c_scale(-0.1)"></i>
           <i class="el-icon-zoom-in" style="cursor: pointer" @click="m_c_scale(0.1)"></i>
@@ -572,8 +589,12 @@
         <h3 style="text-align: center;color: #303133;margin: 10px">评级记录</h3>
         <p style="color: #303133" v-for="(item,index) in paperList[currentPosition].paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
       </div>
-      <div class="el-image-viewer__canvas">
-          <img :src="paperList[currentPosition].imgas"  class="el-image-viewer__img" :style="m_style">
+      <div class="el-image-viewer__canvas" >
+        <el-image :src="paperList[currentPosition].imgas" :class="className" :style="m_style" @load="change1" @mousedown="handleImageMouseDown" draggable="false" @wheel.stop="wheelScale">
+          <div slot="placeholder" class="img-loading">
+            加载中<span class="dot">...</span>
+          </div>
+        </el-image>
       </div>
     </div>
     <div tabindex="-1" class="right_btn"  v-if="yl_show" v-loading="listLoad">
@@ -583,7 +604,7 @@
             :disabled="rule==0"
             v-for="(level, index) in levelList"
             :key="level.name"
-            @click="switchCurrentLevel(index)"
+            @click="switchCurrentLevel(index,2)"
         >
           <p style="margin: 0;position: relative;top: -1px;text-align: left;line-height: 20px;"><span style="font-size: 20px;position: relative;
     top: 2px;
@@ -656,6 +677,8 @@ export default {
       paperStopDialogVisible: false,
       targetUrl:'', // 放大的图片
       clickTimer:null,
+      width:30,
+      height:10,
       rotate:false,
       Score:0,
       NoScore:0,
@@ -682,6 +705,24 @@ export default {
       isNew:true,
       showT:false,
       jl_page:1,
+      className:"",
+      hideName:"",
+      bj:1,
+      X:0,
+      Y:0,
+      x1:0,
+      y1:0,
+      position: {
+        left: 0,
+        top: 0,
+      },
+      isEditN:false,
+      editNum:"",
+      mouse: {
+        x: 0,
+        y: 0,
+      },
+      isHide:0,
     };
   },
   computed:{
@@ -690,18 +731,138 @@ export default {
         transform: `rotate(${this.rote}deg)`,
       }
     },
+    scaleTipStyle() {
+      let { left, top } = this.position
+      return `transform: translate3d(calc(-50% + ${left}px), calc(-50% + ${top}px), 0)`
+    },
   },
   mounted() {
     // this.$refs['el-image-viewer__wrapper']
+
   },
   created() {
     this.account = sessionStorage.getItem("user")
         ? JSON.parse(sessionStorage.getItem("user")).account
         : "";
     this.init();//初始化
+
+
   },
   methods: {
+    // 滚轮缩放
+    wheelScale(e) {
+      let evt = window.event;
+      evt.stopPropagation();
+      evt.preventDefault();
+      const RATIO = 700 // 实际缩放与缩放偏移量的系数
+      let computedScale = this.m_scale - e.deltaY / RATIO
+      this.m_scale = computedScale
+      if(computedScale <= 0.1){
+        return false;
+      }
+      if(computedScale >= 3){
+        return false;
+      }
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.m_scale}) rotate(${this.m_rotate}deg)`
+    },
+    // 图片拽拉
+    handleImageMouseDown(e) {
+      this.mouse = {
+        x: e.clientX,
+        y: e.clientY,
+      }
+      window.addEventListener('mousemove', this.handleImageMouseMove)
+      window.addEventListener('mouseup', this.handleImageMouseUp)
+    },
+    handleImageMouseMove(e) {
+      // 移动event的坐标
+      let { clientX, clientY } = e
+      // 鼠标按下时记录的坐标
+      let { x, y } = this.mouse
+      // 偏移后的位置
+      let deltaX = clientX - x + this.position.left
+      let deltaY = clientY - y + this.position.top
+      this.mouse = {
+        x: clientX,
+        y: clientY,
+      }
+      this.position = {
+        left: deltaX,
+        top: deltaY,
+      }
+
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.m_scale}) rotate(${this.m_rotate}deg)`
+
+
+    },
+    handleImageMouseUp(e) {
+      window.removeEventListener('mousemove', this.handleImageMouseMove)
+      window.removeEventListener('mouseup', this.handleImageMouseUp)
+    },
+    //清除样式
+    clearHide(){
+      var sty=document.createElement('style');
+      sty.innerText=`
+          .hidebox:before{opacity:0}
+        `;
+      document.body.appendChild(sty);
+    },
+    //显示样式
+    showHide(){
+      var sty=document.createElement('style');
+      sty.innerText=`
+          .hidebox:before{opacity:1}
+        `;
+      document.body.appendChild(sty);
+    },
+    change1(){
+      this.position.left = 0;
+      this.position.top = 0;
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.m_scale}) rotate(${this.m_rotate}deg)`
+      const kjW = document.getElementsByClassName('tpyl')[0].offsetWidth; //网页可见区域宽度
+      const kjH = document.getElementsByClassName('tpyl')[0].offsetHeight; //网页可见区域高度
+      this.bj = kjW/kjH;
+      //大图自适应
+      let url = this.paperList[this.currentPosition].imgas;
+      let image = new Image()
+      image.src = url;
+      let that = this;
+      image.onload = function (){
+        that.showHide()
+        if(image.width>image.height){
+          if(image.width/image.height > this.bj){
+            if(that.hideSite == -1){
+              that.className = "image-container"
+            }else{
+              that.className = "image-container hidebox hide"+that.hideSite
+            }
+          }else{
+            if(that.hideSite == -1){
+              that.className = "image-container2"
+            }else{
+              that.className = "image-container2 hidebox hide"+that.hideSite
+            }
+          }
+        }else{
+          if(image.width/image.height < this.bj){
+            if(that.hideSite == -1){
+              that.className = "image-container"
+            }else{
+              that.className = "image-container hidebox hide"+that.hideSite
+            }
+          }else{
+            if(that.hideSite == -1){
+              that.className = "image-container2"
+            }else{
+              that.className = "image-container2 hidebox hide"+that.hideSite
+            }
+          }
+        }
+      }
+
+    },
     c_page(value){
+      this.clearHide()
         if(this.thisCurrent<=1 && value ==-1) {
          return
         }
@@ -720,17 +881,33 @@ export default {
     },
     m_c_scale(value){
       this.m_scale = this.m_scale/1 + value/1;
-      this.m_style = 'transform: scale('+this.m_scale+') rotate('+this.m_rotate+'deg)'
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.m_scale}) rotate(${this.m_rotate}deg)`
     },
     m_c_rotate(value){
       this.m_rotate = this.m_rotate/1 + value/1;
-      this.m_style = 'transform: scale('+this.m_scale+') rotate('+this.m_rotate+'deg)'
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.m_scale}) rotate(${this.m_rotate}deg)`
     },
     yl_click(){
       this.m_rotate = 0;
       this.m_scale = 1;
       this.m_c_scale(0)
       this.yl_show = true;
+    },
+    downC(e){
+      this.x = e.clientX;
+      this.y = e.clientY;
+    },
+    downU(e){
+      this.x1 = e.clientX;
+      this.y1 = e.clientY;
+      if(Math.abs(this.x1 - this.x) > 10 || Math.abs(this.y1 - this.y) > 10){
+
+      }else{
+        if(e.target.className == "el-image__inner"){
+          this.yl_click()
+        }
+      }
+
     },
     sfC(){
       if(this.sf == "normal marking-area"){
@@ -792,7 +969,7 @@ export default {
                   this.rPage = Math.ceil(this.thisCurrent/10);
 
                   //当前位置
-                  wz = this.Grade%10;
+                  // wz = this.Grade%10;
                   // if(this.jl_page > 1){
                   //   this.rPage = Math.ceil(this.jl_page/10);
                   //   wz = this.jl_page%10-1;
@@ -801,15 +978,15 @@ export default {
                   this.thisCurrent = 1;
                   this.rPage = 1;
                   wz = 0;
-                  if(this.jl_page > 1){
-                    this.rPage = Math.ceil(this.jl_page/10);
-                    // wz = this.jl_page%10-1;
-                    // if(wz == -1){
-                    //   this.rPage = Math.ceil((this.jl_page+1)/10);
-                    // }else{
-                    //   this.rPage = Math.ceil(this.jl_page/10);
-                    // }
-                  }
+                  // if(this.jl_page > 1){
+                  //   this.rPage = Math.ceil(this.jl_page/10);
+                  //   wz = this.jl_page%10-1;
+                  //   if(wz == -1){
+                  //     this.rPage = Math.ceil((this.jl_page+1)/10);
+                  //   }else{
+                  //     this.rPage = Math.ceil(this.jl_page/10);
+                  //   }
+                  // }
                 }
 
                 this.listLoad = true;
@@ -894,6 +1071,7 @@ export default {
             //当前位置
             wz = this.Grade%10;
             if(this.jl_page > 1){
+              this.thisCurrent = this.jl_page;
               this.rPage = Math.ceil(this.jl_page/10);
               wz = this.jl_page%10-1;
             }
@@ -949,7 +1127,6 @@ export default {
             this.imgList1 = imgList1;
 
 
-            console.log(wz);
             //定位图片
             this.currentPosition = wz/1;
             //定位初始
@@ -1151,19 +1328,19 @@ export default {
               name: "全部",
               count: res.result.countNum,
               active: true,
-              percentage:"",
+              percentage:0,
             },
             {
               name: "未评级",
               count: res.result.notGradeCount,
               active: false,
-              percentage:"",
+              percentage:0,
             },
             {
               name: "仲裁组",
               count:  res.result.arbitrationGradeCount,
               active: false,
-              percentage:"",
+              percentage:0,
             },
           ];
 
@@ -1172,14 +1349,14 @@ export default {
             count:  res.result.arbitrationGradeCount,
             active: false,
             all:this.unmarkedCount || 0,
-            percentage:"",
+            percentage:0,
           },];
           let rule = localStorage.getItem("role");
           for (let i = 0; i < resultList.length; i++) {
             let progress;
             let all;
 
-            all = (this.unmarkedCount || 0)*((this.descriptionLevelList[i].percentage/100 ) || 0)
+            all = (this.unmarkedCount || 0)*(((this.descriptionLevelList[i]?this.descriptionLevelList[i].percentage:0)/100 ) || 0)
             all = Math.ceil(all)
             progress = Math.round(
                 ((resultList[i].count || 0) / (all/1 || 0) * 100)
@@ -1278,13 +1455,28 @@ export default {
           let examplesList = [];
           let maxScore = 0;
           let tempGradeList = [];
-
+          if(res.result.list[0].maskWidth){
+            this.width = res.result.list[0].maskWidth;
+            var sty=document.createElement('style');
+            sty.innerText=`
+          .hidebox:before{width:${this.width/1}%}
+        `;
+            document.body.appendChild(sty);
+          }
+          if(res.result.list[0].maskHeight){
+            this.height = res.result.list[0].maskHeight;
+            var sty=document.createElement('style');
+            sty.innerText=`
+          .hidebox:before{height:${this.height/1}%}
+        `;
+            document.body.appendChild(sty);
+          }
           resultList.forEach((item,i)=>{
             if(item.grade){
               tempGradeList.push({
                 key: i,
                 name: item.grade,
-                percentage:item.percentage,
+                percentage:item.percentage || 0,
                 min:item.scoreStart,
                 max:item.scoreEnd
               })
@@ -1315,12 +1507,23 @@ export default {
 
           this.descriptionLevelList[0].active = true;
           this.levelDescription.demoUrl =this.descriptionLevelList[0].imgUrl
+          this.isHide = res.result.list[0].isHide;
+          if(this.isHide == 1){
+            this.sf = "sx marking-area"
+          }
           // this.levelDescription.description = this.descriptionLevelList[0].imgUrlDesc;
           this.currentRuleLevel = this.descriptionLevelList[0].grade;
           this.description = this.descriptionLevelList[0].imgUrlDesc;
           this.hideSite = this.descriptionLevelList[0].hideSite;
           sessionStorage.setItem("hideSite",this.hideSite);
-
+          let hideImg = res.result.list[0].maskUrl;
+          if(hideImg != null){
+            var sty=document.createElement('style');
+            sty.innerText=`
+          .hidebox:before{background-image:url(\'${hideImg}\')}
+        `;
+            document.body.appendChild(sty);
+          }
 
 
 
@@ -1354,7 +1557,7 @@ export default {
       });
     },
     // 点击A,B,C,D级
-    switchCurrentLevel(index) {
+    switchCurrentLevel(index,type) {
       if(this.listLoad || this.markDlgVisible){.0
 
         return false;
@@ -1387,6 +1590,9 @@ export default {
         data.showTeacherGrade = 1;
       }
       this.listLoad = true;
+      if(type == 2){
+        this.clearHide()
+      }
       this.$axios.post("/exampaper/updateGrade",data).then((res) => {
         if(res.code == 200){
           this.$message.success(`试卷评级更新成功！`);
@@ -1588,14 +1794,54 @@ export default {
 </script>
 
 <style lang="scss">
+.zcz02 sup{
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 15px;
+}
+.image-header{
+  position: absolute;
+  width: 150px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  left: 50%;
+  bottom: 0;
+  margin-left: -75px;
+  color: #fff;
+  font-size: 22px;
+  background-color: #ec2d56;
+  border-radius: 10px 0 10px 0;
+  z-index: 8;
+}
+.tpyl .pos-tip{
+  position: absolute;
+  z-index: 99;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  height: 80px;
+  line-height: 80px;
+}
+.tpyl .image-container2{
+  height: 100%;
+}
+.tpyl .image-container{
+  width: 100%;
+}
+.tpyl .el-image{
+  border-radius: 0 !important;
+}
 .tpyl .teacher{
   bottom: 0;
   width: 210px;
   right: 2px;
   left: auto;
 }
+
 .tpyl .el-image-viewer__mask{
-  opacity: .9;
+  opacity: .7;
 }
 .tpyl .el-image-viewer__img{
   margin-left: 0px; margin-top: 0px; height: 100%; max-width: 100%;
@@ -1610,11 +1856,11 @@ export default {
   margin-left: 0;
 }
 .right_btn .right-btns button:hover{
-  background: #204bd6;
+  background: #557dff;
   color: #fff;
 }
 .right_btn{
-  z-index: 2000;
+  z-index: 999000;
   background: rgb(255, 255, 255);
   position: fixed;
   right: 0;
@@ -1738,7 +1984,7 @@ export default {
   margin-top: 10px;
 
   .progress-bar {
-    background-color: #204bd6;
+    background-color: #557dff;
   }
 }
 
@@ -1749,7 +1995,7 @@ export default {
 
   .el-progress-bar__inner {
     max-width: 100% !important;
-    background-color: #204bd6;
+    background-color: #557dff;
   }
 
   .el-progress-bar__outer {
@@ -1854,7 +2100,7 @@ export default {
 .marking-area {
   .primary-submit {
     width: 100%;
-    background-color: #204bd6;
+    background-color: #557dff;
     color: #fff;
   }
 
@@ -1987,7 +2233,7 @@ export default {
             margin-right: 7px;
 
             .primary {
-              color: #204bd6;
+              color: #557dff;
             }
           }
         }
@@ -2012,7 +2258,7 @@ export default {
               margin-top: 2px;
             }
             .primary {
-              color: #204bd6;
+              color: #557dff;
             }
           }
         }
@@ -2046,7 +2292,7 @@ export default {
               margin: 0 10px 10px 0;
 
               &.active {
-                background-color: #204bd6;
+                background-color: #557dff;
                 color: #fff;
               }
             }
@@ -2168,12 +2414,12 @@ export default {
         width: 50px;
         box-sizing: content-box;
         &.active {
-          background-color: #204bd6;
+          background-color: #557dff;
           color: #fff;
         }
       }
       button:hover{
-        background-color: #204bd6;
+        background-color: #557dff;
         color: #fff;
       }
     }
@@ -2181,7 +2427,7 @@ export default {
     .mark-btn {
       position: absolute;
       right: 10px;
-      background-color: #204bd6;
+      background-color: #557dff;
       color: #fff;
     }
   }

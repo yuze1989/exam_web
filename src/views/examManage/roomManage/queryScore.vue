@@ -15,10 +15,10 @@
         <el-button class="btn" type="primary" @click="getList">查询</el-button>
         <div class="tips">说明：请输入正确的准考证号和姓名进行查询，忘记请联系相关老师</div>
         <p style="text-align: center;margin-bottom: 0"><img style="width: 170px" :src="require('@/assets/bg_logo1.svg')" alt=""></p>
-        <p style="font-size: 12px;
-    margin: 0;
-    text-align: center;
-    color: #2c3aff;">全国版</p>
+<!--        <p style="font-size: 12px;-->
+<!--    margin: 0;-->
+<!--    text-align: center;-->
+<!--    color: #2c3aff;">全国版</p>-->
       </div>
     </div>
     <div class="page2" v-if="!page1">
@@ -48,7 +48,7 @@
         </el-table>
 
         <div class="tips" style="padding-left: 0;padding: 0.5rem 0;">说明：对成绩有疑问请联系相关老师</div>
-        <p style="color: red;font-size: 22px">此数据为系统测试开发用数据，考试分数尚未公布</p>
+<!--        <p style="color: red;font-size: 22px">此数据为系统测试开发用数据，考试分数尚未公布</p>-->
       </div>
     </div>
   </div>
@@ -99,7 +99,7 @@ export default {
 
       this.load = true;
       this.$axios
-          .post('/score_query/score_query?name='+this.input2+'&admission_ticket_code='+this.input1, )
+          .post('/score_query/score_query_v2?name='+this.input2+'&admission_ticket_code='+this.input1, )
           .then((res) => {
             if(res.code == 200){
               this.load = false;

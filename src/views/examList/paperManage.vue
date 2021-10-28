@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="aloading">
     <div class="top-container clearfix">
       <el-row
         :gutter="24"
@@ -9,7 +9,7 @@
           <div class="common-mb">科目：{{ $route.query.course}}</div>
           <div class="common-mb label">
             <span class="title">评级：</span>
-            <div class="tags">
+            <div class="tags tagList">
               <el-tag
               v-for="(item, index) in levelList"
               :key="item.name"
@@ -18,27 +18,39 @@
               size="medium"
               :class="item.min>=0?'common-mr pointer hh':'common-mr pointer'"
               :style="item.name == '仲裁组'?{background:'#f35f62',color:'#fff'}:''"
+              @contextmenu.prevent.native="openMenu($event,item)"
             >
 
+
               <font v-if="item.name == '仲裁组'">
-                {{ item.name}} ({{ item.count || 0 }}) 份
+                {{ item.name}} <span style="font-size:19px;position: relative;top: 1px ">{{ item.count || 0 }}</span>
               </font>
                 <font v-else-if="item.name == '全部'">
-                  {{ item.name }} ({{ item.count || 0 }}) 份
+                  {{ item.name }} <span style="font-size:19px; position: relative;top: 1px">{{ item.count || 0 }}</span>
                 </font>
                 <font v-else-if="item.name == '未评级'">
-                  {{ item.name }} ({{ item.count || 0 }}) 份
+                  {{ item.name }} <span style="font-size:19px; position: relative;top: 1px">{{ item.count || 0 }}</span>
                 </font>
-                <font v-else-if="item.name != ''">
-                  <p style="margin:0;font-weight: 700;">{{ item.name }} ({{ item.count || 0 }}) 份</p>
-                  <p style="margin:0">区间 {{item.min}} - {{item.max}}分</p>
-                </font>
+                  <font v-else="item.name">
+                    <p style="margin:0;font-weight: 700;">{{ item.name }} <span style="font-size: 19px">{{ item.count || 0 }}</span></p>
+                    <div class="qj">
+                      <div>{{item.min}}</div>
+                      <div style="height: 20%;line-height: 5px">-</div>
+                      <div>{{item.max}}</div>
+                    </div>
+                    <el-progress
+                        text-inside
+                        :stroke-width="20"
+                        :percentage="item.all || 0"
+                    ></el-progress>
+                  </font>
+
             </el-tag>
 
             </div>
 
           </div>
-          <div class="common-mb label">
+          <div class="common-mb label" style="margin-top: 10px">
             <span class="title"> 打分：</span>
            <div class="tags">
              <el-tag
@@ -54,6 +66,8 @@
            </div>
             <el-checkbox style="position: absolute;right: 0" v-model="isGd" @change="getList">分数从高到低</el-checkbox>
             <el-checkbox v-model="showT" v-if="role==0 || role==3" @change="getList" style="position: absolute;right: 170px;">评级记录</el-checkbox>
+            <el-checkbox v-model="showP" v-if="role!=0 && role!=3" @change="changeP" style="position: absolute;right: 170px;">批量调整评级</el-checkbox>
+            <el-checkbox v-model="showP" v-if="role==0 || role==3" @change="changeP" style="position: absolute;right: 300px;">批量调整评级</el-checkbox>
           </div>
         </el-col>
         <el-col :span="3" style="text-align: right">
@@ -63,10 +77,10 @@
             >快速评级</el-button
           >
           <el-button
-              v-if="role==3"
+              v-if="role==3 || role == 0"
               style="margin-top: 10px"
               type="primary"
-              @click="stopYj()"
+              @click="stopPj"
           >停止评级</el-button
           >
         </el-col>
@@ -87,15 +101,16 @@
             class="paper-container"
             style="position: relative"
         >
-          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;left: 0;z-index: 999;" v-if="paper.isArbitrate == 1">
+          <el-checkbox class="checkP" v-model="paper.checked" v-if="showP"></el-checkbox>
+          <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;left: 0;z-index: 998;" v-if="paper.isArbitrate == 1">
           </el-badge>
 
           <div class="paper">
-            <div class="teacher3" v-if="paper.paperTeachers.length > 0">
+            <div class="teacher3" v-if="paper.paperTeachers && paper.paperTeachers.length > 0">
               <h3 style="text-align: center;color: rgb(222 222 222);font-size: 14px;padding: 4px;margin: 0">评级记录</h3>
               <p v-for="(item,index) in paper.paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
             </div>
-            <div  class="edit-level" v-if="role!=0">
+            <div  class="edit-level" v-if="role!=0 &&((showP && paper.checked) || !showP)">
               <span
                   v-if="!paper.edit"
                   @click="handleSelectLevel(paper.id, index)"
@@ -104,19 +119,19 @@
               >
               <selecte-grade
                   v-else
-                  :grade="paper.level"
+                  :grade="paper.level || ''"
                   :option="gradeList"
-                  @grade="selecteUpdateGrade"
+                  @grade="selecteUpdateGrade2"
                   style="width: 70px;position: relative;top: 1px"
               />
-              <el-badge :value="(paper.originalGrade)" class="his zcz" style="position: absolute;top: 1px;left: 68px;z-index: 999;">
+              <el-badge :value="(paper.originalGrade)" class="his zcz" style="position: absolute;top: 1px;left: 68px;z-index: 998;">
 
               </el-badge>
             </div>
-            <div>
+            <div style="text-align: center;">
               <el-image
-                  :class="paper.className"
-                  :style="{'transform':'rotate('+(paper?paper.rotate:0)+'deg)'}"
+                  :class="'image-container2 hidebox hide'+hideSite"
+                  style="width: fit-content"
                   :src="paper.url"
                   :alt="paper.name"
                   fit="cover"
@@ -159,9 +174,9 @@
               <span class="label">分数</span>
               <span
                   class="val mark-val"
-                  :class="{ good: parseInt(paper.mark) >= 0 }"
+                  :class="{ good: paper.mark >= 0 }"
               >
-                {{ parseInt(paper.mark) >= 0 ? paper.mark : "--" }}</span
+                {{ paper.mark >= 0 ? paper.mark : "--" }}</span
               >
             </div>
           </div>
@@ -185,117 +200,119 @@
       center
       append-to-body
       :close-on-click-modal="false"
+      v-if="(listQuery.current - 1) * listQuery.size + editImgIndex + 1 <= allCount"
     >
-      <div
-        v-if="paperList.length && paperList[editImgIndex]"
-        style="display: block;"
-      >
-        <div class="teacher2" v-if="paperList[editImgIndex].paperTeachers.length > 0">
-          <h3 style="text-align: center;color: rgb(222 222 222);font-size: 28px;padding: 14px;margin: 0">评级记录</h3>
-          <p v-for="(item,index) in paperList[editImgIndex].paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
-        </div>
-        <span class="close-button" @click="editImgDialogVisible = false"
+      <div class="box">
+        <div
+            class="left"
+            v-if="paperList.length && paperList[editImgIndex]"
+            style="    display: flex;
+    justify-content: center;
+    align-items: center;"
+        >
+          <el-badge value="仲裁" class="zcz zcz02" style="position: absolute;top: 0; z-index: 998;left: 0px;" v-if="paperList[editImgIndex].isArbitrate == 1"></el-badge>
+          <div class="pos-tip" v-if="isHide != 1"> <span>  {{totalItem?(listQuery.current - 1) * listQuery.size + editImgIndex +1 :0 }} </span> / {{ totalItem }}</div>
+          <div class="teacher2" v-if="paperList[editImgIndex].paperTeachers.length > 0">
+            <h3 style="text-align: center;color: rgb(222 222 222);font-size: 28px;padding: 14px;margin: 0">评级记录</h3>
+            <p v-for="(item,index) in paperList[editImgIndex].paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
+          </div>
+          <span class="close-button" @click="editImgDialogVisible = false"
           ><i class="el-icon-close"
               style="color: #fff"
-        /></span>
-        <div class="dialog-count">
-          {{ editImgIndex + 1 }} / {{ paperList.length }}
-        </div>
-        <el-image :src="paperList[editImgIndex].imgUrl" :class="paperList[editImgIndex].className" :style="m_style" @load="change1">
-          <div slot="placeholder" class="img-loading">
-            加载中<span class="dot">...</span>
-          </div>
-        </el-image>
-        <span class="pre-img" @click="preViewImg" v-if="editImgIndex"
+          /></span>
+          <el-image ref="bimg_box" :src="paperList[editImgIndex].imgUrl" :class="className" :style="m_style" @load="change1" @mousedown="handleImageMouseDown" draggable="false" @wheel.stop="wheelScale">
+            <div slot="placeholder" class="img-loading">
+              加载中<span class="dot">...</span>
+            </div>
+          </el-image>
+          <span class="pre-img" @click="preViewImg"
+                v-if="(listQuery.current - 1) * listQuery.size + editImgIndex >= 1"
           ><i class="el-icon-arrow-left"
-        /></span>
-        <span
-          class="next-img"
-          @click="nextViewImg"
-          v-if="paperList.length - 1 !== editImgIndex"
-          ><i class="el-icon-arrow-right"
-        /></span>
-        <div class="edit-level" v-if="role!=0">
+          /></span>
           <span
-            v-if="!paperList[editImgIndex].edit"
-            @click="handleSelectLevel(paperList[editImgIndex].id, editImgIndex)"
-            class="level"
-            >修改评级</span
-          >
-          <selecte-grade
-            v-else
-            :grade="paperList[editImgIndex].grade"
-            :option="gradeList"
-            @grade="selecteUpdateGrade"
-          />
-        </div>
-        <div class="operate-area xxxx">
-          <slot name="operate">
-            <SvgIcon
-                class="icon hover-icon"
-                name="actionicon"
-                @click="increaseScale(0.2)"
-                style="font-size: 24px;cursor: pointer"
-            />
-            <SvgIcon
-                class="icon hover-icon"
-                name="suoxiao"
-                @click="increaseScale(-0.2)"
-                style="font-size: 24px;cursor: pointer"
-            />
-            <div class="divide" />
-            <!--            <SvgIcon-->
-            <!--              class="icon hover-icon"-->
-            <!--              name="zhongzhi"-->
-            <!--              @click="onResetClick"-->
-            <!--            />-->
-            <span class="r_left" @click="m_c_rotate(-90)">
+              class="next-img"
+              @click="nextViewImg"
+              v-if="(listQuery.current - 1) * listQuery.size + editImgIndex + 1 < allCount"
+          ><i class="el-icon-arrow-right"
+          /></span>
+          <div class="edit-level">
+            <div v-for="(item,index) in gradeList" >
+              <el-button :class="((paperList[editImgIndex]?paperList[editImgIndex].level:'') || '')==item.name?'level active':'level'" type="primary"  @click="selecteUpdateGrade(item.name)">{{item.name}}</el-button>
+            </div>
+          </div>
+          <div class="operate-area xxxx">
+            <slot name="operate">
+              <SvgIcon
+                  class="icon hover-icon"
+                  name="actionicon"
+                  @click="increaseScale(0.2)"
+                  style="font-size: 24px;cursor: pointer"
+              />
+              <SvgIcon
+                  class="icon hover-icon"
+                  name="suoxiao"
+                  @click="increaseScale(-0.2)"
+                  style="font-size: 24px;cursor: pointer"
+              />
+              <div class="divide" />
+              <span class="r_left" @click="m_c_rotate(-90)">
             </span>
-            <span class="r_right" @click="m_c_rotate(90)">
+              <span class="r_right" @click="m_c_rotate(90)">
             </span>
-          </slot>
-          <slot name="extraOperate"></slot>
-        </div>
-        <div class="image-mark-text" v-if="role!=0">
-          <el-input
-            v-if="paperList[editImgIndex].show"
-            v-model="paperList[editImgIndex].mark"
-            :min="0"
-            v-fo
-            :max="1000"
-            :minlength="1"
-            :maxlength="100"
-            type="number"
-            @input="
-              handleVerifyScore(paperList[editImgIndex].mark, editImgIndex)
+            </slot>
+            <slot name="extraOperate"></slot>
+          </div>
+          <div class="image-mark-text" >
+            <el-input
+                v-if="paperList[editImgIndex].show"
+                v-model="paperList[editImgIndex].mark"
+                :min="0"
+                v-fo
+                :max="1000"
+                :minlength="1"
+                :maxlength="100"
+                type="number"
+                @input="
+              handleVerifyScore(paperList[editImgIndex].mark || '', editImgIndex)
             "
-            @keyup.native.enter="
+                @keyup.native.enter="
               markPaperAndToNext(
                 paperList[editImgIndex].id,
                 editImgIndex,
                 $event
               )
             "
-          />
-          <div
-            v-if="!paperList[editImgIndex].show"
-            @click="showMarkArea(editImgIndex)"
-          >
-            <i
-              class="el-icon-edit-outline"
-              style="font-size: 24px; color: #fff; vertical-align: middle"
             />
-            点击进行打分
+            <div
+                v-if="!paperList[editImgIndex].show"
+                @click="showMarkArea(editImgIndex)"
+            >
+              <i
+                  class="el-icon-edit-outline"
+                  style="font-size: 24px; color: #fff; vertical-align: middle"
+              />
+              点击进行打分
+            </div>
           </div>
         </div>
-        <div class="pfList">
-          <div class="box">
-            <div class="span"  v-for="(item,index) in scoreObj[paperList[editImgIndex].level]" >
-              <div class="btn" @click="markPaperAndToNext(paperList[editImgIndex].id,editImgIndex,$event,item)">
-                {{item}}
+        <div class="right">
+          <div class="pfList">
+            <div class="box">
+              <div class="span"  v-for="(item,index) in (scoreObj[(paperList[editImgIndex]?paperList[editImgIndex].level:'')] || [])" >
+                <div class="btn"  @click="markPaperAndToNext(paperList[editImgIndex].id,editImgIndex,$event,item)">
+                  {{item}}
+                </div>
               </div>
             </div>
           </div>
+          <div style="    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #409eff;
+    color: #fff;    height: 34px;
+    line-height: 34px;
+    padding-left: 15px;
+    font-size: 16px;">当前分数：{{ (paperList[editImgIndex]?paperList[editImgIndex].mark:"")}}</div>
         </div>
       </div>
     </el-dialog>
@@ -315,24 +332,86 @@
         >
       </span>
     </el-dialog>
+    <el-dialog
+        :visible.sync="dialogFormVisible"
+        width="50%"
+        center
+    >
+      <div slot="title">管理员验证</div>
+      <el-form
+          label-width="120px"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          ref="delForm"
+      >
+        <p style="    text-align: center;
+    color: red;
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 15px;">请确认该科目下试卷已经全部评级完成，一旦停止评级后将不能再进行评级，请谨慎操作！</p>
+        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+          <el-input v-model="admin_username" placeholder="请输入管理员账号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="admin_password" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button type="primary"   @click="stopYj">确认</el-button>
+      </div>
+
+    </el-dialog>
+    <el-dialog
+        :visible.sync="dialogFormVisible2"
+        width="50%"
+        center
+    >
+      <div slot="title">管理员验证</div>
+      <el-form
+          label-width="120px"
+          label-position="right"
+          class="demo-ruleForm"
+          center
+          ref="delForm"
+      >
+        <p style="    text-align: center;
+    color: red;
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 15px;">该场考试已经停止评级，请谨慎操作！</p>
+        <el-form-item label="管理员账号" prop="username" style="margin-bottom: 15px">
+          <el-input v-model="admin_username2" placeholder="请输入管理员账号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="admin_password2" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button type="primary"   @click="stopYj2">确认</el-button>
+      </div>
+
+    </el-dialog>
+<!--    全选弹出-->
+    <div v-if="(role!=0) && tck" class="tck" :style="{position: 'fixed',left:xxP.x+'px',top:xxP.y+'px'}">
+      <div v-for="(item,index) in gradeList" @click="changePJ(item)">调整评级为 / {{item.name}}</div>
+    </div>
   </div>
 </template>
 <script>
-// import paginations from "@/components/Paginations";
-// import { ossThumbnailSuffix } from "@/utils/ossUtils";
 import SelecteGrade from "@/views/examList/selectGrade";
-
-import {
-  getPaperQueryList,
-  getPaperAgg,
-  getPaperGrade,
-  getPaperUpdate,
-  getReviewStatus,
-  getRulesdetail,
-} from "@/api/paper";
 import Snippet from './Snippet'
 import SvgIcon from './SvgIcon'
-import {ALERT} from "../../utils/utils";
 export default {
   name: "paperManage",
   components: {
@@ -342,11 +421,21 @@ export default {
   },
   data: () => {
     return {
+      width:30,
+      height:10,
+      aloading:false,
+      tck:false,
+      dialogFormVisible:false,
+      admin_password:"",
+      admin_password2:"",
+      admin_username:"",
+      admin_username2:"",
       m_style:'transform: scale(1) rotate(0deg)',
       showT:false,
       isGd:true,
       levelList: [],
       gradeList: [],
+      showP:false,
       scoreList: [
         { key: "", name: "全部", total: 0, active: true },
         { key: 0, name: "未打分", total: 0, active: false },
@@ -385,6 +474,31 @@ export default {
       innerScaleStep:1,
       scale:1,
       m_rotate:0,
+      className:"",
+      hideSite:"",
+      hideName:"",
+      hideImg:"",
+      position: {
+        left: 0,
+        top: 0,
+      },
+      isEditN:false,
+      editNum:"",
+      mouse: {
+        x: 0,
+        y: 0,
+      },
+      xxP:{
+        x:0,
+        y:0,
+        name:"",
+      },
+      allCount:0,
+      isHide:0,
+      unmarkedCount:0,
+      isStop:0,
+      dialogFormVisible2:false,
+      params:{},
     };
   },
   computed: {
@@ -400,15 +514,222 @@ export default {
   },
   created() {
     this.account = localStorage.getItem("user_name")
-
     this.getList();  //获取试卷列表
     // this.queryDealedCount();    // 获取已评分/未评分
     this.getRulesdetail();  //获取打分规则
-
-
   },
   methods: {
+    changePJ(item){
+      this.$confirm(`此操作将把${this.xxP.name}评级下所有试卷调整为${item.name}评级，请谨慎操作！`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.aloading  = true;
+        let data = {
+          "course": this.$route.query.course,
+          "current": 1,
+          "examCode": this.$route.query.examNo,
+          "examId": this.$route.query.examId,
+          "grade": this.xxP.name,
+          paperScore:"",
+          "provinceCode": "",
+          "schoolId": "",
+          "size": 100000,
+          "teacherId": ""
+        };
+        this.$axios.post('/exampaper/examCorrectPaperListAll',data).then(res=>{
+          if(res.code == 200){
+            if(res.result.list.length == 0){
+              this.$message({
+                type: 'warning',
+                message: '没有可以修改的试卷!'
+              });
+              this.aloading  = false;
+            }else{
+              let arr = [];
+              res.result.list.forEach((item,index)=>{
+                arr.push(item.id);
+              })
+              let obj = {
+                examPaperIds:arr,
+                examId:this.$route.query.examId,
+                course: this.$route.query.course,
+                grade:item.name,
+                teacherName:localStorage.getItem("user_name")
+              }
+              this.$axios.post('/exampaper/batchUpdateGrade',obj).then(res=>{
+                if(res.code == 200){
+                  if(arr.length == res.result.length){
+                    if(res.result[0].indexOf('停止阅卷')){
+                      this.$message({
+                        type: 'error',
+                        message: '该场考试已经停止阅卷！'
+                      });
+                    }
+                    if(res.result[0].indexOf('停止评级')){
+                      this.$message({
+                        type: 'error',
+                        message: '该场考试已经停止评级！'
+                      });
+                    }
+                  }else{
+                    this.$message({
+                      type: 'success',
+                      message: '批量修改成功!'
+                    });
+                    this.getList();
+                    this.queryPaperList()
+                  }
+                }
+                this.aloading  = false;
+              })
+
+            }
+          }
+        }).catch(errorM=>{
+          this.aloading  = false;
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消修改'
+        });
+      });
+    },
+    hideR(){
+      this.tck = false;
+    },
+    // 右键显示
+    openMenu(e,item){
+      if(item.name == "全部" || item.name == "仲裁组" || item.name == "未评级"){
+        return false
+      }
+      e.preventDefault();
+      this.tck = true;
+      this.xxP.x  = e.clientX;
+      this.xxP.y  = e.clientY;
+      this.xxP.name = item.level;
+    },
+    stopPj(){
+      this.dialogFormVisible = true;
+      this.admin_password = "";
+      this.admin_username = "";
+    },
+    changeP(){
+      if(this.showP){
+        this.paperList.forEach((item,index)=>{
+          item.checked = true;
+        })
+      }
+    },
+    // 滚轮缩放
+    wheelScale(e) {
+      let evt = window.event;
+      evt.stopPropagation();
+      evt.preventDefault();
+      const RATIO = 700 // 实际缩放与缩放偏移量的系数
+      let computedScale = this.scale - e.deltaY / RATIO
+      if(computedScale <= 0.1){
+        return false;
+      }
+      if(computedScale >= 3){
+        return false;
+      }
+      this.scale = computedScale
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.scale}) rotate(${this.m_rotate}deg)`
+    },
+    // 图片拽拉
+    handleImageMouseDown(e) {
+      this.mouse = {
+        x: e.clientX,
+        y: e.clientY,
+      }
+      window.addEventListener('mousemove', this.handleImageMouseMove)
+      window.addEventListener('mouseup', this.handleImageMouseUp)
+    },
+    handleImageMouseMove(e) {
+      // 移动event的坐标
+      let { clientX, clientY } = e
+      // 鼠标按下时记录的坐标
+      let { x, y } = this.mouse
+      // 偏移后的位置
+      let deltaX = clientX - x + this.position.left
+      let deltaY = clientY - y + this.position.top
+      this.mouse = {
+        x: clientX,
+        y: clientY,
+      }
+      this.position = {
+        left: deltaX,
+        top: deltaY,
+      }
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.scale}) rotate(${this.m_rotate}deg)`
+    },
+    handleImageMouseUp(e) {
+      window.removeEventListener('mousemove', this.handleImageMouseMove)
+      window.removeEventListener('mouseup', this.handleImageMouseUp)
+    },
     change1(){
+      this.clearHide();
+      this.position.left = 0;
+      this.position.top = 0;
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.scale}) rotate(${this.m_rotate}deg)`
+      const kjW = document.getElementsByClassName('left')[0].offsetWidth - 80; //网页可见区域宽度
+      const kjH = document.getElementsByClassName('left')[0].offsetHeight; //网页可见区域高度
+      this.bj = kjW/kjH;
+
+
+      //大图自适应
+      let url = this.paperList[this.editImgIndex].imgUrl;
+      let image = new Image()
+      image.src = url;
+      let that = this;
+      image.onload = function (){
+        if(image.width>image.height){
+          if(image.width/image.height > this.bj){
+            if(that.hideSite == -1){
+              that.className = "image-container"
+            }else{
+              that.className = "image-container hidebox hide"+that.hideSite
+            }
+          }else{
+            if(that.hideSite == -1){
+              that.className = "image-container2"
+            }else{
+              that.className = "image-container2 hidebox hide"+that.hideSite
+            }
+          }
+          // if(that.hideSite == -1){
+          //   that.className = "image-container"
+          // }else{
+          //   that.className = "image-container hidebox hide"+that.hideSite
+          // }
+
+        }else{
+          if(image.width/image.height < this.bj){
+            if(that.hideSite == -1){
+              that.className = "image-container"
+            }else{
+              that.className = "image-container hidebox hide"+that.hideSite
+            }
+          }else{
+            if(that.hideSite == -1){
+              that.className = "image-container2"
+            }else{
+              that.className = "image-container2 hidebox hide"+that.hideSite
+            }
+          }
+          // if(that.hideSite == -1){
+          //   that.className = "image-container2"
+          // }else{
+          //   that.className = "image-container2 hidebox hide"+that.hideSite
+          // }
+        }
+
+      }
+
+      //旋转初始化
       this.scale = 1;
       this.m_rotate = 0;
       this.increaseScale(0)
@@ -416,32 +737,54 @@ export default {
     increaseScale(value){
       this.scale = this.scale/1 + value/1;
       this.scale = this.scale.toFixed(2)/1
-      this.m_style = 'transform: scale('+this.scale+') rotate('+this.m_rotate+'deg)'
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.scale}) rotate(${this.m_rotate}deg)`
     },
     m_c_rotate(value){
       this.m_rotate = this.m_rotate/1 + value/1;
-      this.m_style = 'transform: scale('+this.scale+') rotate('+this.m_rotate+'deg)'
+      this.m_style = `transform:translate3d(${this.position.left}px, ${this.position.top}px, 0) scale(${this.scale}) rotate(${this.m_rotate}deg)`
     },
     stopYj(){
-      this.$confirm('请确认该科目下试卷是否已全部评级完成，一旦停止评级后将不能再评级！', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios.post("/exampaper/stopGrade?course="+this.$route.query.course+"&examId="+this.$route.query.examId).then((res)=>{
-          if(res.code == 200){
-            this.$message({
-              type: 'success',
-              message: '已停止评级!'
-            });
-          }
-        })
-
-      }).catch(() => {
+      if(!this.admin_password || !this.admin_password){
         this.$message({
-          type: 'info',
-          message: '已取消'
+          type: 'warning',
+          message: '请输入完整的账号和密码!'
         });
+        return false;
+      }
+      this.$axios.post("/exampaper/stopGrade?course="+this.$route.query.course+"&examId="+this.$route.query.examId+"&username="+this.admin_username+"&password="+this.admin_password).then((res)=>{
+        if(res.code == 200){
+          this.dialogFormVisible = false;
+          this.$message({
+            type: 'success',
+            message: '已停止评级!'
+          });
+        }
+      })
+    },
+    stopYj2(){
+      if(!this.admin_username2 || !this.admin_password2){
+        this.$message({
+          type: 'warning',
+          message: '请输入完整的账号和密码!'
+        });
+        return false;
+      }
+      let params = this.params;
+      params.username = this.admin_username2;
+      params.password = this.admin_password2;
+      this.$axios.post("/exampaper/updateGrade",params).then((res) => {
+        if (res) {
+          if(res.code == 200){
+            this.dialogFormVisible2 = false;
+            this.$message.success(`试卷评级更新成功！`);
+            this.getList();
+            this.queryPaperList();  //获取评级列表
+
+          }
+          // this.queryDealedCount();
+        }
+      }).catch((error)=>{
+        this.getList();
       });
     },
     currentChange(){
@@ -463,55 +806,46 @@ export default {
       if(this.showT){
         data.showTeacherGrade = 1;
       }
+      if(type != 4){
+        this.showP = false;
+      }
       // todo 待完善
       let url = '/exampaper/examCorrectPaperListAll'
       this.$axios.post(url,data).then((response) => {
-
         const result = response.result || {};
         this.totalItem = result.total/1;
           const list = [];
           const cachedList = [];
-          result.list.forEach((item) => {
+        this.isStop = result.isStopGrade;
+        result.list.forEach((item) => {
             const imgName = item.img.substr(item.img.lastIndexOf("/") + 1);
-            // const imgUrl = "http://192.168.1.11/" + imgName;
-            let image = new Image()
-            let className = "";
-            image.src = item.imgas;
-            let that = this;
-            image.onload = function (){
-              if(image.width>image.height){
-                className = "image-container"
-              }else{
-                className = "image-container2"
-              }
-              list.push({
-                id: item.id,
-                name: item.admissionTicketCode,
-                url: item.img,
-                imgUrl: item.imgas,
-                permission: item.admissionTicketCode,
-                level: item.grade,
-                show: false,
-                mark: item.score,
-                edit: false,
-                isArbitrate:item.isArbitrate,
-                originalGrade:item.originalGrade,
-                paperTeachers:item.paperTeachers,
-                rotate:item.rotate,
-                className:className
-              });
-            }
+
+            list.push({
+              id: item.id || '',
+              name: item.admissionTicketCode || '',
+              url: item.img || '',
+              imgUrl: item.imgas?item.imgas:"",
+              permission: item.admissionTicketCode,
+              level: item.grade || '',
+              show: false,
+              mark: item.score,
+              edit: false,
+              isArbitrate:item.isArbitrate,
+              originalGrade:item.originalGrade,
+              paperTeachers:item.paperTeachers,
+              rotate:item.rotate || '',
+              // className:className
+              checked:true,
+            });
           });
 
         if(this.isGd){
-          setTimeout(function (){
-            list.sort(function(a,b){
-              return b.mark - a.mark
-            });
-          },100)
+          list.sort(function(a,b){
+            return b.mark - a.mark
+          });
 
         }
-
+        this.allCount = result.total || 0;
         this.paperList = list;
         if(type == 2){
           if(!this.paperList[this.editImgIndex]){
@@ -537,9 +871,41 @@ export default {
       if (payload) {
         this.updatePaper({
           grade: payload,
-          paperId: this.editId,
+          paperId:this.paperList[this.editImgIndex].id,
           type: 0,
         });
+      }
+    },
+    selecteUpdateGrade2(payload) {
+      console.log(payload);
+      if (payload) {
+        //批量修改
+        if(this.showP){
+          let length = 0 ;
+          this.paperList.forEach((item,index)=>{
+            if(item.checked){
+              length += 1;
+              this.updatePaper({
+                grade: payload,
+                paperId:item.id,
+                type: 0,
+              },2);
+            }
+          })
+          if(length == 0){
+            this.$message.error("批量模式下请至少选中一张要修改的试卷！")
+            return;
+          }
+
+          return
+        }else{
+          this.updatePaper({
+            grade: payload,
+            paperId:this.editId,
+            type: 0,
+          });
+        }
+
       }
     },
     // 修改评级
@@ -558,6 +924,7 @@ export default {
     handleScore(value, index) {
       this.listQuery.score = value;
       this.paperScore = value;
+      this.listQuery.current = 1;
       this.scoreList.map((item, key) => {
         item.active = false;
         if (index === key) {
@@ -571,23 +938,56 @@ export default {
     handleEditDialogImg(index) {
       this.editImgIndex = index;
       this.editImgDialogVisible = true;
+      this.clearHide()
+    },
+    //清除样式
+    clearHide(){
+      let str = this.className;
+      str = str.replace('hidebox','');
+      this.className = str;
     },
     // 上一个图片
     preViewImg() {
+      if(!this.editImgIndex && this.listQuery.current == 1){
+        this.$message.warning("已经是第一张试卷了！")
+        return;
+      }
+      this.clearHide();
+      if(!this.editImgIndex){
+        this.listQuery.current-=1;
+        this.paperList = [];
+        this.getList();
+        this.editImgIndex = this.listQuery.size -1;
+        return
+      }
       if (!this.editImgIndex) return;
       const length = this.paperList.length - 1;
       const index = this.editImgIndex - 1;
       if (index < length) {
         this.editImgIndex = index;
       }
+
     },
     // 下一个图片
     nextViewImg() {
+      if((this.listQuery.current - 1) * this.listQuery.size + this.editImgIndex + 1 >= this.allCount){
+        return
+      }
+      this.clearHide();
+      if(this.paperList.length - 1 == this.editImgIndex){
+        this.listQuery.current+=1;
+        this.getList();
+        this.editImgIndex = 0;
+        return
+      }
+
+
       const length = this.paperList.length - 1;
       const index = this.editImgIndex + 1;
       if (index <= length) {
         this.editImgIndex = index;
       }
+
     },
     // 获取打分规则
     getRulesdetail() {
@@ -601,7 +1001,38 @@ export default {
         if(res.result.list[0].score){
           this.maxScore = res.result.list[0].score;
         }
+        if(res.result.list[0].isHide){
+          this.isHide = res.result.list[0].isHide;
+        }
+        if(res.result.list[0].maskWidth){
+          this.width = res.result.list[0].maskWidth;
+          var sty=document.createElement('style');
+          sty.innerText=`
+          .hidebox:before{width:${this.width/1}%}
+        `;
+          document.body.appendChild(sty);
+        }
+        if(res.result.list[0].maskHeight){
+          this.height = res.result.list[0].maskHeight;
+          var sty=document.createElement('style');
+          sty.innerText=`
+          .hidebox:before{height:${this.height/1}%}
+        `;
+          document.body.appendChild(sty);
+        }
         this.queryPaperList();  //获取评级列表
+        this.hideSite = res.result.list[0].hideSite;
+        this.hideImg = res.result.list[0].maskUrl;
+        if(this.hideImg != null){
+          var sty=document.createElement('style');
+          sty.innerText=`
+          .hidebox:before{background-image:url(\'${this.hideImg}\')}
+        `;
+          document.body.appendChild(sty);
+        }
+
+
+        this.hideClass();
       })
     },
     // 获取评级列表
@@ -617,7 +1048,7 @@ export default {
         "schoolId": "",
         "size": 10,
       }).then((res)=>{
-
+        this.unmarkedCount = res.result.countNum;
 
         let tempGradeList = [];
         let list = [
@@ -641,12 +1072,21 @@ export default {
         res.result.gradeNameCount.forEach((item,index)=>{
           this.xxList.push(item.grade)
           if(item.grade != ""){
+            let all;
+            let progress;
+            all = (that.unmarkedCount || 0)*(((that.ruleList[index]?that.ruleList[index].percentage:0)/100 ) || 0)
+            all = Math.ceil(all)
+            progress = Math.round(
+                ((item.count || 0) / (all/1 || 0) * 100)
+            );
             list.push({
               name: item.grade+"类",
               count: item.count,
               active: false,
               min:that.ruleList[index].scoreStart,
               max:that.ruleList[index].scoreEnd,
+              level:item.grade,
+              all:progress,
             })
             let arr = [];
             for(let i = that.ruleList[index].scoreStart; i <= that.ruleList[index].scoreEnd; i++){
@@ -762,7 +1202,7 @@ export default {
     //   });
     // },
     // 设置分数
-    updatePaper(data) {
+    updatePaper(data,type) {
       // type:0评级，1 分数，2:评分下一张
       let flagType = 0;
 
@@ -775,24 +1215,37 @@ export default {
           examId:this.$route.query.examId,
           teacherName:localStorage.getItem("user_name")
         }
+        if(this.isStop == 1 && this.role == 3){
+          this.dialogFormVisible2 = true;
+          this.admin_username2 = "";
+          this.admin_password2 = "";
+          this.params = params;
+        }else{
+          this.$axios.post("/exampaper/updateGrade",params).then((res) => {
+            if (res) {
+              if(res.code == 200){
+                if(type != 2){
+                  this.$message.success(`试卷评级更新成功！`);
+                }
+              }
+              if(type == 2){
+                type = 4
+              }
 
-        this.$axios.post("/exampaper/updateGrade",params).then((res) => {
-          if (res) {
-            if(res.code == 200){
-              this.$message.success(`试卷评级更新成功！`);
+              if (flagType) {
+                this.getList(type);
+              } else {
+                this.getList(type);
+              }
+              this.queryPaperList();  //获取评级列表
+              // this.queryDealedCount();
             }
+          }).catch((error)=>{
+            this.getList();
+          });
+        }
 
-            if (flagType) {
-              this.getList();
-            } else {
-              this.getList();
-            }
-            this.queryPaperList();  //获取评级列表
-            // this.queryDealedCount();
-          }
-        }).catch((error)=>{
-          this.getList();
-        });
+
       }else if(data.type == 2){
         let isX = true;
         let min = "";
@@ -859,6 +1312,7 @@ export default {
       this.gradeIndex = index;
       this.grade = this.xxList[index];
       this.listQuery.grade = value;
+      this.listQuery.current = 1;
       this.levelList.forEach((level, key) => {
         if (index === key) {
           level.active = true;
@@ -910,7 +1364,7 @@ export default {
       }
 
 
-      this.updatePaper({ paperId, score: this.paperList[index].mark,grade: this.paperList[index].level, type: 2 });
+      this.updatePaper({ paperId, score: this.paperList[index].mark,grade: (this.paperList[index]?this.paperList[index].level:"") || '', type: 2 });
     },
     // 跳转到评分页面
     jumpToMarkingAreaPage(start) {
@@ -928,16 +1382,147 @@ export default {
         query: urlParams,
       });
     },
+    //遮盖区域
+    hideClass(){
+      let hideSite = this.hideSite;
+      this.hideName = 'hide'+hideSite;
+    },
   },
+  mounted() {
+    window.addEventListener("click", this.hideR);
+  },
+  beforeDestroy() {  // 实例销毁之前对点击事件进行解绑
+    window.removeEventListener('click', this.hideR);
+  }
 };
 </script>
 
 <style lang="scss">
-.editImgDialog .el-dialog{
-  background: rgba(0,0,0,.8)
+.zcz02 sup {
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 15px;
+}
+.tagList .el-tag{
+  border-color: #409eff !important;
+}
+.left .pos-tip{
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  z-index: 99;
+  top: 20px;
+  font-size: 20px;
+}
+.tck{
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  z-index: 998;
+}
+.tck>div{
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 40px;
+  border-bottom: 1px solid #e4e7ed;
+  font-size: 14px;
+  color: #606266;
+  cursor: pointer;
+}
+.tck>div:hover{
+  background: #409EFF;
+  color: #fff;
+}
+.tck>div:last-child{
+  border-bottom: none;
+}
+.checkP{
+  position: absolute;
+  top: -4px;
+  z-index: 999;
+  left: 0;
+  width: 20px;
+  height: 20px;
+}
+.checkP .el-checkbox__input, .checkP .el-checkbox__inner{
+  width: 100%;
+  height: 100%;
+}
+.checkP .el-checkbox__inner::after{
+  height: 12px;
+  left: 7px;
+}
+.hidebox:before{
+  content: "";
+  position: absolute;
+  height: 11.2%;
+  width: 29.2%;
+  background: #fff;
+  z-index: 7;
+  background-image: url(../../assets/zgt.png);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.hidebox.hide0:before{
+  top: 0;
+  left: 0;
+}
+.hidebox.hide1:before{
+  top: 0;
+  right: 0;
+}
+.hidebox.hide2:before{
+  left: 0;
+  bottom: 0;
+}
+.hidebox.hide3:before{
+  right: 0;
+  bottom: 0;
+}
+.hidebox.hide4:before{
+  top: 0;
+  left: 50%;
+  margin-left: -14.6%;
+}
+.hidebox.hide5:before{
+  left: 0;
+  top: 50%;
+  margin-top: -5.6%;
+
+}
+.hidebox.hide6:before{
+  left: 0;
+  right: 50%;
+  margin-top: -5.6%;
+}
+.hidebox.hide7:before{
+  bottom: 0;
+  left: 50%;
+  margin-left: -14.6%;
+}
+.box .left{
+  width: 80%;
+  position: relative;
+  height: 100%;
+  padding-right:80px;
+}
+.box .right{
+  width: 20%;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 0;
+  background: #fff;
 }
 .editImgDialog .el-dialog{
-  width: 70%;
+  background: rgba(0,0,0,.6)
+}
+.editImgDialog .el-dialog{
+  width: 100%;
 }
 .editImgDialog .el-dialog__body i{
   color: #f2f6fc !important;
@@ -948,7 +1533,7 @@ export default {
 .xxxx{
   position: absolute;
   bottom: 27px;
-  width: 100%;
+  width: calc(100% - 80px);
   background: rgba(0,0,0,.5);
   left: 0;
   display: flex;
@@ -1030,7 +1615,7 @@ export default {
   display: flex !important;
   justify-content: center;
   align-items: center;
-  height: 100% !important;
+  height: fit-content !important;
 }
 .editImgDialog .image-container3{
   display: flex !important;
@@ -1074,7 +1659,7 @@ export default {
 .paper-list-container .image-container2 {
   position: relative;
   display: inline-block;
-  width: 220px;
+  width: fit-content;
   height: 162px;
   text-align: center;
   .image{
@@ -1087,9 +1672,9 @@ export default {
 }
 .pfList{
   position: absolute;
-  left: 100%;
+  left: 0;
   top: 0;
-  height: 100%;
+  height: calc(100% - 22px);
   border-left: 1px solid #ccc;
 }
 .pfList .box{
@@ -1126,10 +1711,52 @@ export default {
   color: #fff;
 }
 .hh{
-  height: 50px;
+  height: 44px;
+  position: relative;
+  min-width: 100px;
+  text-align: center;
+  padding-right: 30px;
+}
+.hh .qj{
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: calc(100%);
+  width: 22px;
+  color: #409EFF;
+  border-left: 1px solid;
+}
+.hh .qj>div{
+  height: 40%;
+  line-height: 17px;
+}
+.hh .el-progress{
+  position: absolute;
+  bottom: 0;
+  width: calc(100% - 22px);
+  left: 0;
+}
+.el-tag--dark .qj{
+  color: #fff;
+}
+.el-tag--dark .el-progress-bar{
+  border-top:1px solid #e8f1f9
+}
+.hh .el-progress-bar__outer{
+  border-radius: 0;
+  height: 14px !important;
+  background: #9bcafb !important;
+}
+.hh .el-progress-bar__inner{
+  border-radius: 0;
+  max-width: 100% !important;
+  height: 14px;
+  background: #409EFF;
 }
 .hh p{
-  height: 20px;
+  height: 28px;
+  line-height: 28px;
+  font-size: 14px;
 }
 .zcz sup{
   border-radius: 3px;
@@ -1189,7 +1816,7 @@ export default {
     .close-button {
       position: absolute;
       top: 10px;
-      left: 10px;
+      right: 90px;
       cursor: pointer;
       z-index: 3000;
     }
@@ -1203,24 +1830,33 @@ export default {
       cursor: pointer;
       position: absolute;
       top: 45%;
-      right: 15px;
+      right: 95px;
     }
     .edit-level {
       position: absolute;
       top: 0;
       right: 0;
       z-index: 1;
-      height: 28px;
+      height: 100%;
+      width: 80px;
+      padding: 10px;
+      background: rgba(255,255,255,.2);
       .level {
-        padding: 10px;
-        line-height: 33px;
-        cursor: pointer;
+        width: 60px;
+        text-align: center;
+        margin: 0;
+        margin-bottom: 10px;
+        background: #fff;
+        color: #409EFF;
+        font-size: 18px;
+      }
+      .level:hover{
+        background: #409EFF;
         color: #fff;
-        background-color: #35ce96;
-        -webkit-border-radius: 0 10px 0;
-        -moz-border-radius: 0 10px 0;
-        border-radius: 0 10px 0;
-        outline: none;
+      }
+      .level.active{
+        background: #409EFF;
+        color: #fff;
       }
     }
     .image-mark-text {
@@ -1232,6 +1868,7 @@ export default {
       left: 0;
       right: 0;
       cursor: pointer;
+      width: calc(100% - 80px);
     }
     .el-image {
       vertical-align: middle;
@@ -1268,6 +1905,7 @@ export default {
 }
 .editImgDialog .el-dialog--center .el-dialog__body .el-image{
   height: 100%;
+  width: fit-content;
 }
 .editImgDialog .el-dialog--center .el-dialog__body .el-image .el-image__inner{
  width: auto;
@@ -1289,6 +1927,7 @@ export default {
 .tags{
   display: flex;
   flex-wrap:wrap;
+  align-items: center;
 }
 .paper-list-container {
   background-color: #fff;
@@ -1325,7 +1964,7 @@ export default {
           position: absolute;
           top: -2px;
           right: 26px;
-          z-index: 1;
+          z-index: 9;
           .level {
             padding: 6px;
             line-height: 20px;

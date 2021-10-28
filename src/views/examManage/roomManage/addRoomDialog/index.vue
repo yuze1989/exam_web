@@ -7,6 +7,7 @@
     @open="open"
     width="30%"
     center
+    v-loading="isLoading"
   >
     <div slot="title">{{!isAdd ? '编辑' : '新增'}}机构信息</div>
     <el-form
@@ -108,6 +109,7 @@ export default {
           {validator: this.$rules.phoneNumber, trigger: 'blur'}
         ],
       },
+      isLoading:false,
     };
   },
   created(){
@@ -199,8 +201,13 @@ export default {
         if (valid) {
 
           this.from.studioCityName = this.studioCityName
+          if(this.isLoading){
+            return
+          }
+          this.isLoading = true;
         creatStudio(this.from).then((res) => {
               if (res) {
+                this.isLoading = false;
                 if(res.code == 200){
                   this.$message({
                     message: "新增成功",
@@ -210,7 +217,9 @@ export default {
                 }
               }
             })
-            .catch(() => {});
+            .catch(() => {
+              this.isLoading = false;
+            });
         } else {
         }
       });
@@ -219,7 +228,12 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.from.studioCityName = this.studioCityName;
+          if(this.isLoading){
+            return
+          }
+          this.isLoading = true;
           updateStudio(this.from).then((res) => {
+            this.isLoading = false;
               if (res.code==200) {
                 this.$message({
                   message: "修改成功",
@@ -228,7 +242,9 @@ export default {
                 this.$emit("addSuccess");
               }
             })
-            .catch(() => {});
+            .catch(() => {
+              this.isLoading = false;
+            });
         } else {
         }
       });

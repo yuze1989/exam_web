@@ -145,6 +145,14 @@
               @change="inpStudent('Count',idx)"
             ></el-input>
           </el-form-item>
+<!--          <el-button-->
+<!--              v-if="examroom.isEdit"-->
+<!--              type="text"-->
+<!--              @click.native="toAdd(examroom)"-->
+<!--              style="position: relative;padding: 0; height: 40px;left: 15px;"-->
+<!--          >-->
+<!--            +加容量-->
+<!--          </el-button>-->
         </div>
         <div style="width: 100px;">
           <el-button
@@ -163,6 +171,16 @@
           + 新增考场配置
         </el-button>
       </el-form-item>
+      <div style="width: 80%;margin: 0 auto;">
+        <el-form-item label="打乱顺序" style="margin-bottom: 0">
+          <el-switch
+              style="margin-top: 4px"
+              v-model="is_shuffle"
+              active-text="是"
+              inactive-text="否">
+          </el-switch>
+        </el-form-item>
+      </div>
       <el-form-item>
         <p
             v-if="is_show"
@@ -191,6 +209,7 @@ export default {
   components: { SelectProvince },
   data() {
     return {
+      is_shuffle:true,
       Allocated: 'forms.maxExamCode',
       provinceList: [],
       formsData: {
@@ -238,6 +257,26 @@ export default {
     this.is_show = false;
   },
   methods: {
+    toAdd(e){
+      this.$prompt('请输入需要添加的容量！添加后不可减少，请谨慎操作！', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputType:"number",
+          inputPattern: /^(?!(0[0-9]{0,}$))[0-9]{1,}[.]{0,}[0-9]{0,}$/,
+          inputErrorMessage: '只能输入大于0的整数'
+        }).then(({ value }) => {
+          this.$axios.post("/examinee/examRoomNumberAdd?id="+e.id+"&count="+value+"&before_number="+e.Count).then(res=>{
+            if(res.code==200){
+              this.search();
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入'
+          });
+        });
+    },
     getExamList() {
       this.$axios
         .post(this.API.studentsManage.examlist, {})
@@ -346,6 +385,7 @@ export default {
                 en: item.numberEnd,
                 st: item.numberStart,
                 isEdit:true,
+                id:item.id
               })
             })
               this.formsData = { examrooms: list }
@@ -568,7 +608,8 @@ export default {
               examId: this.forms.examId,
               provinceCode: this.forms.provinceCode,
               isLastDistribut:this.isLastDistribut,
-              address:this.forms.address
+              address:this.forms.address,
+              is_shuffle:this.is_shuffle?1:0
             }
           }else{
             data = {
@@ -576,7 +617,8 @@ export default {
               examId: this.forms.examId,
               provinceCode: this.forms.provinceCode,
               isLastDistribut:this.isLastDistribut,
-              address:this.forms.address
+              address:this.forms.address,
+              is_shuffle:this.is_shuffle?1:0
             }
           }
 

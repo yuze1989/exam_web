@@ -118,11 +118,16 @@
       ></el-table-column>
 
       <el-table-column
-          label="考场"
+          label="考场--座位"
           header-align="center"
           align="center"
-          prop="examinationRoomCode"
-      ></el-table-column>
+      >
+        <template slot-scope="scope">
+          <div style="width: 100%">
+            {{scope.row.address}}--{{scope.row.examinationRoomCode}}--{{scope.row.examinationRoomSeat}}
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column
           label="省份"
           header-align="center"

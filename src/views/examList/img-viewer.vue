@@ -14,7 +14,7 @@
           </slot>
           <!-- draggable: false 禁止 chrome 拖拽图片 -->
           <div class="image-box">
-            <div class="teacher" v-if="paperList[currentPosition].paperTeachers.length > 0">
+            <div class="teacher" v-if="paperList[currentPosition] && paperList[currentPosition].paperTeachers.length > 0">
               <h3 style="text-align: center;color: rgb(222 222 222);margin: 10px">评级记录</h3>
               <p v-for="(item,index) in paperList[currentPosition].paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
             </div>
@@ -41,7 +41,7 @@
           </div>
         </div>
 
-        <div class="pos-tip" @click="stopd"> <span @dblclick="chagedd">  {{allLength?thisCurrent:0 }} </span> / {{ allLength }}</div>
+        <div class="pos-tip" @click="stopd" v-if="this.$parent.isHide != 1"> <span @dblclick="chagedd">  {{allLength?thisCurrent:0 }} </span> / {{ allLength }}</div>
         <div
           class="arrow arrow-prev hover-icon"
           :class="{ disabled: currentPosition === 0 }"
@@ -56,7 +56,7 @@
         >
           <SvgIcon class="icon" name="xiayizhang" style="width:2em;height: 2em;" />
         </div>
-        <div class="operate-area">
+        <div class="operate-area" @click.stop="stopE($event)">
           <slot name="operate">
             <SvgIcon
               class="icon hover-icon"
@@ -317,6 +317,7 @@ export default {
     },
   },
   mounted() {
+
     if (this.isSlotMode) {
       this.imgList = this.queryImgList()
       this.initImgList()
@@ -345,6 +346,10 @@ export default {
 
   },
   methods: {
+    stopE(e){
+      console.log(e);
+      window.event? window.event.cancelBubble = true : e.stopPropagation();
+    },
     stopd(){
       window.event? window.event.cancelBubble = true : e.stopPropagation();
     },
@@ -644,7 +649,6 @@ export default {
     },
     increaseScale() {
       window.event? window.event.cancelBubble = true : e.stopPropagation();
-
       !this.loading &&
         this.zoom((scale) => (scale + this.innerScaleStep).toFixed(2)) // 处理精度丢失
     },

@@ -17,19 +17,6 @@
           </el-select>
         </el-col>
       </el-row>
-<!--      <el-row class="w200 mt-20">-->
-<!--        <el-col :span="8" class="title18"><span>请选择</span>区域:</el-col>-->
-<!--        <el-col :span="12">-->
-<!--          <el-select clearable  v-model="form.studentAreaName" style="width:200px;" placeholder="请选择区域" @change="studentChange">-->
-<!--            <el-option-->
-<!--                v-for="item in studentAreaOption"-->
-<!--                :key="item.provinceCode"-->
-<!--                :label="item.province"-->
-<!--                :value="item.provinceCode">-->
-<!--            </el-option>-->
-<!--          </el-select>-->
-<!--        </el-col>-->
-<!--      </el-row>-->
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18" ><span>打分</span>算法:</el-col>
         <el-col :span="12" >
@@ -41,12 +28,31 @@
           </el-tooltip>
         </el-col>
       </el-row>
+
       <el-row class="w200 mt-20">
         <el-col :span="8" class="title18"><span>二维码隐藏</span>区域:</el-col>
         <el-col :span="12">
           <el-select clearable  v-model="form.hideSite" placeholder="请选择二维码隐藏区域" size="medium" @change="seletChage">
             <el-option v-for="item in hideSiteList" :key="item.id" :value="item.id" :label="item.name">
             </el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <el-row class="mt-20" style="width: 600px" v-if="form.hideSite != -1">
+        <el-col :span="5" class="title18"><span>隐藏区域</span>大小:</el-col>
+        <el-col :span="6" style="margin-left: 8px">
+          <el-input placeholder="请输入宽" type="number" v-model="form.rule.width"></el-input>
+        </el-col>
+        <el-col :span="6"  style="margin-left: 8px;position: relative">
+          <el-input placeholder="请输入高" type="number" v-model="form.rule.height"></el-input>
+          <p style="position: absolute;left: 170px;top: -11px;width: 600px;">提示：宽高数值皆为所占试卷的百分比。填写0时不显示遮盖图。</p>
+        </el-col>
+      </el-row>
+      <el-row class="w200 mt-20">
+        <el-col :span="8" class="title18"><span>隐藏试卷</span>数据:</el-col>
+        <el-col :span="12">
+          <el-select clearable  v-model="form.isHide" placeholder="请选择" size="medium" @change="seletChage">
+            <el-option v-for="item in isHideList" :key="item.id" :value="item.id" :label="item.name"></el-option>
           </el-select>
         </el-col>
       </el-row>
@@ -110,7 +116,7 @@
       <div class="ruleGroup">
         <div class="ruleCard mt-20" v-for="(exam, idx) in form.examples" :key="idx">
           <div class="ruleHead">
-            <span>{{exam.grade}}</span>
+            <el-input v-model="exam.grade" placeholder="评级" style="width: 80px;"></el-input>
             <span>:请添加评分描述</span>
           </div>
           <div class="ruleBody">
@@ -156,10 +162,20 @@
           </div>
            <el-image :src="form.rule.picUrl" v-if="form.rule.picUrl" style="width: 100%; height: 100%"></el-image>
         </div>
-        <!-- <div @click="upToOss()" style="margin-top: 20px" v-show="false">
-          <el-button>上传图片</el-button>
-        </div> -->
+      </div>
 
+      <el-row class="ruleHead mt-20" style="position: relative;top: 20px">
+        <span class="circle"></span>
+        <span class="titleStyle">设置试卷信息遮盖图</span>
+      </el-row>
+      <div class="sample" style="position: relative;left: 40px;top: 10px">
+        <div class="uploadCtn" @click="upToOss3()">
+          <div class="uploadIcon">
+            +
+            <span class="uploadDes" v-show="!form.rule.maskUrl">上传图片</span>
+          </div>
+          <el-image :src="form.rule.maskUrl" v-if="form.rule.maskUrl" style="width: 100%; height: 100%"></el-image>
+        </div>
       </div>
       <div style="width:100%;margin-top:50px;padding-bottom: 50px">
         <el-button type="primary" class="meiyuan_btn" @click="saveRule" style="float: left">保存</el-button>
@@ -183,6 +199,10 @@ export default {
       one:false,
       result:"",
       provinceList: provinceCodeList,
+      isHideList:[
+        {id:0,name:"显示"},
+        {id:1,name:"隐藏"},
+      ],
       scoreRulers: [
         { value: '', text: '色彩', used: true },
         { value: '', text: '素描', used: true },
@@ -224,6 +244,10 @@ export default {
           score: '',
           gradeRule:"",
           hideSite:"",
+          maskUrl:"",
+          isHide:0,
+          width:30,
+          height:10,
         },
         examples: [],
         studentAreaName: "",
@@ -328,10 +352,12 @@ export default {
         fromDate.append("file",file)
         this.$axios.post('/file/upload',fromDate).then(res=>{
           if(res){
-            if(this.isOne){
+            if(this.isOne == 2){
               this.form.rule.picUrl = res.result;
-            }else{
+            }else if(this.isOne == 1){
               this.tempExam.imgUrl = res.result;
+            }else if(this.isOne == 3){
+              this.form.rule.maskUrl = res.result;
             }
             this.$refs.fileup.value = ""
 
@@ -341,12 +367,16 @@ export default {
 
     },
     upToOss(exam) {
-      this.isOne = false;
+      this.isOne = 1;
       this.tempExam = exam
       this.$refs.fileup.click()
     },
     upToOss2() {
-      this.isOne = true;
+      this.isOne = 2;
+      this.$refs.fileup.click()
+    },
+    upToOss3() {
+      this.isOne = 3;
       this.$refs.fileup.click()
     },
     //评分阶梯
@@ -421,13 +451,13 @@ export default {
         n1 += item.percentage/1;
         n += (+item.percentage)
       }
-      if (n != 100) {
-        this.$message({
-          message: '阶梯占比总和需要等于100%,当前为'+n+'%',
-          type: 'warning'
-        })
-        return false
-      }
+      // if (n != 100) {
+      //   this.$message({
+      //     message: '阶梯占比总和需要等于100%,当前为'+n+'%',
+      //     type: 'warning'
+      //   })
+      //   return false
+      // }
       this.scoreRulers.forEach(item => {
         if (item.text == params.rule.course) {
           this.form.rule.score = item.value
@@ -456,7 +486,11 @@ export default {
         "provinceCode": params.studentAreaCode,
         "score": params.rule.score,
         "takePic": params.rule.takePic,
-        ruleSort:params.ruleSort
+        ruleSort:params.ruleSort,
+        maskUrl:params.rule.maskUrl,
+        isHide:params.isHide,
+        maskWidth:params.rule.width,
+        maskHeight:params.rule.height
       }
 
       if (this.id) {
@@ -499,7 +533,11 @@ export default {
         this.form.rule.gradeLevel = res.result.gradeLevel;
         this.form.rule.takePic =res.result.takePic;
         this.form.rule.picUrl =res.result.picUrl;
+        this.form.rule.maskUrl =res.result.maskUrl;
         this.form.ruleSort = res.result.ruleSort;
+        this.form.isHide = res.result.isHide;
+        this.form.rule.width = res.result.maskWidth;
+        this.form.rule.height = res.result.maskHeight;
         res.result.exampleList.forEach((item,index)=>{
           this.form.examples.push({ grade: item.grade, provinceCode: res.result.provinceCode,scoreStart:item.scoreStart,scoreEnd:item.scoreEnd, course: res.result.course, percentage: item.percentage, imgUrl: item.imgUrl, imgUrlDesc: item.imgUrlDesc })
         })
@@ -578,6 +616,7 @@ export default {
       width: 100%;
       height: 195px;
       display: flex;
+      margin-top: 5px;
       .ruleTextArea {
         width: 294px;
         height: 100%;

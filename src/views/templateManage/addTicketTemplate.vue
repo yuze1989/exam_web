@@ -103,7 +103,9 @@
            <div class="display-center" style="padding-top: 10px">
              <div>
                <el-row style="width:200px;text-align: left;padding-left: 10px" v-for="(item,index) in checkList" :key="index">
-                 <el-checkbox :value="item.check" @change="checked =>changeCheck(checked,item)" v-if="!item.del">{{item.label}}</el-checkbox>
+                 <el-checkbox :value="item.check" @change="checked =>changeCheck(checked,item)">{{item.label}}</el-checkbox>
+                 <span class="copy" @click="copyC(item,index)" v-if="!item.isDel"><img src="@/assets/copy.svg" alt=""></span>
+                 <span class="copy" @click="delD(item,index)" v-if="item.isDel"><img src="@/assets/del.svg" alt=""></span>
                </el-row>
                <el-row style="width:200px;text-align: left;padding-left: 10px">
                  <el-link icon="el-icon-edit" @click="addCheck">新增自定义</el-link>
@@ -245,7 +247,8 @@ export default {
       oddCode:"",
       oddPro:"",
       fontSz:"font-size:24px;",
-      bg_url:"https://topexam.oss-cn-hangzhou.aliyuncs.com/1438790718608093185.png"
+      bg_url:"https://topexam.oss-cn-hangzhou.aliyuncs.com/1438790718608093185.png",
+      configList:[],
     };
   },
 
@@ -269,6 +272,30 @@ export default {
 
   },
   methods: {
+    copyC(item,index){
+      let obj = {
+        check: false,
+        isDel: true,
+        label: item.label,
+        name:item.name
+      };
+      this.checkList.splice(++index,0,obj);
+    },
+    delD(item,index){
+      let is = true;
+      console.log(item);
+      this.resizeList.forEach((item2,index)=>{
+        if(is){
+          if(item.label == item2.name){
+            if(is){
+              is = false;
+              this.resizeList.splice(index,1)
+            }
+          }
+        }
+      })
+      this.checkList.splice(index,1);
+    },
     //新增自定义属性
     addCheck(){
       let leg = 0;
@@ -314,6 +341,27 @@ export default {
       item.check = !item.check;
       if(item.check){
         if(item.name.indexOf('自定义参数') != -1){
+          if(item.isDel){
+            this.resizeList.push({
+              name:item.label,
+              label:item.name,
+              width:200,
+              height:200,
+              left:0,
+              top:0,
+              isDel: true
+            })
+          }else{
+            this.resizeList.push({
+              name:item.label,
+              label:item.name,
+              width:200,
+              height:200,
+              left:0,
+              top:0,
+            })
+          }
+        }else if(item.isDel){
           this.resizeList.push({
             name:item.label,
             label:item.name,
@@ -321,6 +369,7 @@ export default {
             height:200,
             left:0,
             top:0,
+            isDel: true,
           })
         }else{
           this.resizeList.push({
@@ -331,11 +380,16 @@ export default {
             top:0,
           })
         }
-
       }else{
+        let is = true;
         this.resizeList.forEach((item2,index)=>{
-          if(item.label == item2.name){
-            this.resizeList.splice(index,1)
+          if(is){
+            if(item.label == item2.name){
+              if(is){
+                is = false;
+                this.resizeList.splice(index,1)
+              }
+            }
           }
         })
       }
@@ -394,14 +448,11 @@ export default {
             if(config){
               config = JSON.parse(config)
             }
+            this.checkList = JSON.parse(res.result.nameConfig)
 
+            this.configList = config;
             config.forEach((item,index)=>{
-              if(item.label && item.label.indexOf("自定义参数") != -1){
-                this.checkList.push({
-                  label:item.name,
-                  name:item.label,
-                  check:true,
-                })
+              if(item.label && item.isDel){
                 this.resizeList.push({
                   name:item.name,
                   width:item.width,
@@ -410,7 +461,16 @@ export default {
                   top:item.top,
                   label:item.label,
                 })
-              }else{
+              }else if(item.label && item.label.indexOf("自定义参数") != -1){
+                this.resizeList.push({
+                  name:item.name,
+                  width:item.width,
+                  height:item.height,
+                  left:item.left,
+                  top:item.top,
+                  label:item.label,
+                })
+              } else{
                 this.resizeList.push({
                   name:item.name,
                   width:item.width,
@@ -419,37 +479,9 @@ export default {
                   top:item.top,
                 })
               }
-
-
             })
-            this.checkList.forEach((item,index)=>{
-              config.forEach((item2,index2)=>{
-                if(item.label == item2.name){
-                  item.check = true;
-                }
-              })
-            })
-
-
-
-            let zdArr = {
-              zbdw:"主办单位",
-              cbdw:"承办单位",
-              ksdz:"考试地址",
-              kch:"考场号",
-              zwh:"座位号"
-            }
-            for(let i = 0 ; i < dArr.length; i++){
-              for(let a in zdArr){
-                if(dArr[i].configName == zdArr[a]){
-                  this.form.subjectList[a] = true
-                }
-              }
-            }
-
 
             this.getExamList()
-            this.getList();
           })
           .catch(() => {});
     },
@@ -485,12 +517,12 @@ export default {
             item.del = true
           }
         })
-        this.examDetails.subjectList.forEach((item,index)=>{
-          this.checkList.push({name:"sub", label:item.subjectName+"（科目名）"})
-          this.checkList.push({name:"sub", label:item.subjectName+"（考试时间）"})
-        })
-
-
+        if(!this.oddCode){
+          this.examDetails.subjectList.forEach((item,index)=>{
+            this.checkList.push({name:"sub", label:item.subjectName+"（科目名）"})
+            this.checkList.push({name:"sub", label:item.subjectName+"（考试时间）"})
+          })
+        }
       })
     },
     // 查询考试下的省份
@@ -555,6 +587,7 @@ export default {
         schoolId:"",
         undertaker:this.form.undertaker,
         configList:[],
+        nameConfig:JSON.stringify(this.checkList),
         content:this.form.carefulMatter2,
         dynamicConfig:JSON.stringify(isArr),
       }
@@ -631,8 +664,6 @@ export default {
           this.form.studentAreaCode = ''
           this.studentAreaOption = []
           this.getProvinceByExamId()
-
-
           this.getExamDetails()
 
         }
@@ -657,6 +688,12 @@ export default {
 };
 </script>
 <style>
+.copy{
+  position: relative;
+  top: 3px;
+  left: 4px;
+  cursor: pointer;
+}
 .ck-editor__main{
   height: 200px;
   border: 1px solid #c4c4c4;

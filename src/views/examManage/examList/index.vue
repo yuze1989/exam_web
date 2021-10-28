@@ -163,6 +163,15 @@
               <span>删除</span>
             </el-button>
 
+            <el-button
+                v-if="scope.row.queryUrl"
+                type="text"
+                size="small"
+                @click="openLink(scope.row.queryUrl)"
+            >
+              <span>查询链接</span>
+            </el-button>
+
             <!-- POST /examinfo/union 联合考试操作(状态:1、同意;2、拒绝;3、禁用) -->
             <!-- <el-button
               type="text"
@@ -317,6 +326,14 @@ export default {
     this.getExamList()
   },
   methods: {
+    openLink(url){
+      this.$alert(`<p style="width: 600px">${url}</p>`, '查分链接', {
+        showConfirmButton:false,
+        center:true,
+        dangerouslyUseHTMLString: true,
+        customClass:'winClass',
+      });
+    },
     // 查询考试列表
     getExamList(){
       apiExamList().then(res=>{
@@ -440,6 +457,11 @@ export default {
   },
 }
 </script>
+<style>
+.winClass{
+  width: 700px;
+}
+</style>
 <style lang="scss" scoped>
 @import './orderAccount.scss';
 .el-form-item{

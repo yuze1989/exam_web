@@ -89,6 +89,43 @@
         ></el-date-picker>
       </el-form-item>
 
+      <el-form-item label="是否开放查询" prop="examType">
+        <el-select clearable
+                   style="width: 250px;"
+                   v-model="from.queryEnable"
+                   placeholder="考生是否可以查询分数"
+                   value-key="value"
+        >
+          <el-option
+              v-for="item in studyList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="查询开始时间" prop="studyStartTime" v-if="from.queryEnable==1">
+        <el-date-picker
+            type="date"
+            placeholder="选择日期"
+            v-model="from.queryStartTime"
+            style="width: 250px;"
+            value-format="yyyy-MM-dd"
+            :disabled="false"
+            :clearable="false"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="查询结束时间" prop="studyEndTime" v-if="from.queryEnable==1">
+        <el-date-picker
+            type="date"
+            placeholder="选择日期"
+            v-model="from.queryEndTime"
+            style="width: 250px;"
+            value-format="yyyy-MM-dd"
+            :disabled="false"
+            :clearable="false"
+        ></el-date-picker>
+      </el-form-item>
       <el-form-item label="考试报名费" prop="price">
         <el-input
           v-model="from.price"
@@ -349,7 +386,20 @@ export default {
         enrollStartTime: '', // 报名开始时间 ,
         examEndTime: '', // 考试结束时间 ,
         examStartTime: '', // 考试开始时间 ,
+        queryEnable:"",//是否可查询
+        queryStartTime:"",
+        queryEndTime:"",
       },
+      studyList:[
+        {
+          value: false,
+          label: '不可查询',
+        },
+        {
+          value: true,
+          label: '可查询',
+        },
+      ],
       examTypeStatus: [
         {
           value: '0',
@@ -382,6 +432,7 @@ export default {
           { required: true, message: '请选择结束日期', trigger: 'change' },
         ],
       },
+
       dialogFormVisible:false,
       xx_id:"",
       xx_index:"",
@@ -441,6 +492,10 @@ export default {
               enrollStartTime: result.enrollStartTime, // 报名开始时间 ,
               examEndTime: result.examEndTime, // 考试结束时间 ,
               examStartTime: result.examStartTime, // 考试开始时间 ,
+              queryEnable:result.queryEnable,
+              queryEndTime:result.queryEndTime,
+              queryStartTime:result.queryStartTime,
+
             }
             this.address = result.addressList ? result.addressList : [{}]
             this.subject = result.subjectList ? result.subjectList : [{}]
@@ -483,6 +538,20 @@ export default {
               message: '考试时间应大于报名时间',
             })
             return
+          }
+          if(this.from.queryEnable ){
+            if(!this.from.queryStartTime || !this.from.queryEndTime){
+              this.$message({
+                message: '请先选择查询开始时间与查询结束时间！',
+              })
+              return
+            }
+            if(this.from.queryStartTime < this.from.queryEndTime){
+              this.$message({
+                message: '查询结束时间应大于开始时间',
+              })
+              return
+            }
           }
           // 地址校验
           if(this.address.length<0){
@@ -705,6 +774,21 @@ export default {
               message: '请限制考试说明字数在1100字内',
             })
             return
+          }
+          if(this.from.queryEnable ){
+            if(!this.from.queryStartTime || !this.from.queryEndTime){
+              this.$message({
+                message: '请先选择查询开始时间与查询结束时间！',
+              })
+              return
+            }
+            console.log(this.from.queryStartTime,this.from.queryEndTime);
+            if(this.from.queryStartTime.split(" ")[0] < this.from.queryEndTime.split(" ")[0]){
+              this.$message({
+                message: '查询结束时间应大于开始时间',
+              })
+              return
+            }
           }
 
           this.$axios

@@ -55,6 +55,15 @@ export const constantRoutes = [
         hidden: true
     },
     {
+        path: "/query_score",
+        meta:{
+            name:"小程序查分",
+            nacy:"true"
+        },
+        component: resolve => require(["@/views/examManage/roomManage/queryScore.vue"], resolve),//() => import("@/views/common/401.vue"),
+        hidden: true
+    },
+    {
         path: "/adminXXXXXXXXXDDDDDD",
         component: resolve => require(["@/views/examManage/examRoomManage/admin.vue"], resolve),//() => import("@/views/common/401.vue"),
         hidden: true
