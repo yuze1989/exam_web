@@ -70,6 +70,9 @@ service.interceptors.request.use(
     if(config.url.includes("score_query")){
       config.headers["content-type"] = "application/x-www-form-urlencoded";
     }
+    if(config.url.includes("score_query_v2")){
+      config.headers["content-type"] = "application/x-www-form-urlencoded";
+    }
     
     // if (address[config.url]) {
     //   config.url = address[config.url] + config.url;

@@ -10,7 +10,7 @@ import {
 NProgress.configure({
   showSpinner: false
 });
-if(window.location.href.indexOf("/qrcode") != -1){
+if(window.location.href.indexOf("/qrcode") != -1 || window.location.href.indexOf("/query_score") != -1){
 
 }else{
   const whiteList = ["/login"];

@@ -1976,6 +1976,7 @@ export default {
 }
 .marking-area .bottom .right .right-top .image-header{
   left: 21% !important;
+  margin-left: 0!important;
 }
 .progress {
   height: 20px;
