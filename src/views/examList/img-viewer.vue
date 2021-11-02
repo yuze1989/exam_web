@@ -35,8 +35,7 @@
                     <div slot="error" class="image-slot">
                 <img src="@/assets/no_img2.svg" alt="" style="width:100%">
               </div>
-                </el-image>
-
+               </el-image>
             </span>
           </div>
         </div>

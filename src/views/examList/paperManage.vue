@@ -1869,6 +1869,7 @@ export default {
       right: 0;
       cursor: pointer;
       width: calc(100% - 80px);
+
     }
     .el-image {
       vertical-align: middle;
@@ -1992,6 +1993,7 @@ export default {
           left: 0;
           right: 0;
           cursor: pointer;
+          z-index: 8;
         }
         .el-image {
           vertical-align: middle;

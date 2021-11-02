@@ -16,6 +16,7 @@
               隐藏
             </el-button>
           </h3>
+
           <div v-loading="jinDuLoad">
             <div class="cards">
               <div class="card no">
@@ -95,7 +96,7 @@
                   style="width: 190px; height: 200px"
                   fit="cover"
                   :src="levelDescription.demoUrl"
-                  :preview-src-list="[levelDescription.demoUrl]">
+                  @click="expandImg(levelDescription.demoUrl)"
               >
                 <div slot="placeholder" class="image-slot">请选择评级</div>
                 <div slot="error" class="image-slot">
@@ -211,7 +212,7 @@
             </span>
             <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 0%;z-index: 999;" v-if="paperList[currentPosition - 1] && paperList[currentPosition-1].isArbitrate==1"></el-badge>
           </div>
-          <div @mousedown="downC($event)" @mouseup="downU($event)" v-if="!yl_show">
+          <div @mousedown="downC($event)" @mouseup="downU($event)">
             <vue-img-viewer
                 ref="imgViewer"
                 :container="'imgViewerContainer'"
@@ -320,7 +321,7 @@
             <span v-if="paperList[currentPosition].originalGrade">| {{ paperList[currentPosition].originalGrade?paperList[currentPosition].originalGrade : "" }}</span>
           </span>
           <el-badge value="仲裁" class="zcz" style="position: absolute;top: 0;right: 30%;z-index: 999;" v-if="paperList[currentPosition] && paperList[currentPosition].isArbitrate==1"></el-badge>
-          <div @mousedown="downC($event)" @mouseup="downU($event)" v-if="!yl_show">
+          <div @mousedown="downC($event)" @mouseup="downU($event)">
             <vue-img-viewer
                 ref="imgViewer"
                 :container="'imgViewerContainer'"
@@ -594,6 +595,9 @@
             加载中<span class="dot">...</span>
           </div>
         </el-image>
+        <img style="height: 1px;opacity: 0" :src="paperList[currentPosition+1].imgas" alt="">
+        <img style="height: 1px;opacity: 0"  :src="paperList[currentPosition+2].imgas" alt="">
+        <img style="height: 1px;opacity: 0"  :src="paperList[currentPosition+3].imgas" alt="">
       </div>
     </div>
     <div tabindex="-1" class="right_btn"  v-if="yl_show" v-loading="listLoad">
@@ -833,18 +837,6 @@ export default {
       let that = this;
       image.onload = function (){
         that.showHide()
-        try {
-          let img=new Image();
-          img.src=that.paperList[that.currentPosition+1].imgas;
-          let img2=new Image();
-          img2.src=that.paperList[that.currentPosition+2].imgas;
-          let img3=new Image();
-          img3.src=that.paperList[that.currentPosition+3].imgas;
-        }catch{
-
-        }
-
-
         if(image.width>image.height){
           if(image.width/image.height > this.bj){
             if(that.hideSite == -1){
@@ -878,14 +870,14 @@ export default {
 
     },
     c_page(value){
-      if(this.thisCurrent<=1 && value ==-1) {
+      this.clearHide()
+        if(this.thisCurrent<=1 && value ==-1) {
          return
         }
         if(this.thisCurrent >= this.allLength && value ==1){
           this.$message.warning(`已经是最后一张试卷了！`);
           return
         }
-        this.clearHide()
         this.currentPosition += value;
         this.startPosition += value;
         this.thisCurrent += value;
@@ -908,7 +900,6 @@ export default {
       this.m_scale = 1;
       this.m_c_scale(0)
       this.yl_show = true;
-      this.clearHide()
     },
     downC(e){
       this.x = e.clientX;
@@ -1564,6 +1555,7 @@ export default {
         this.levelDescription.demoUrl =
             //currentDes.imgUrl + ossThumbnailSuffix(190, 200);
             currentDes.imgUrl;
+
       }
 
     },
@@ -1605,6 +1597,9 @@ export default {
         data.showTeacherGrade = 1;
       }
       this.listLoad = true;
+      if(type == 2){
+        this.clearHide()
+      }
       this.$axios.post("/exampaper/updateGrade",data).then((res) => {
         if(res.code == 200){
           this.$message.success(`试卷评级更新成功！`);
@@ -1620,16 +1615,15 @@ export default {
               if(this.thisCurrent >= this.allLength){
                 this.$message.warning(`已经是最后一张试卷了！`);
               }
-              if(type == 2){
-                this.clearHide()
-              }
               this.currentPosition += 1;
               this.startPosition += 1;
               this.thisCurrent += 1;
               this.imgSwitchEnd(this.currentPosition)
             }
-            this.queryPaperList() //分组数据更新
-            this.getJinDu()
+            if(type != 2){
+              this.queryPaperList() //分组数据更新
+              this.getJinDu()
+            }
           }
 
 
