@@ -53,6 +53,14 @@
         <el-input v-model="from.contactMobile" type="number" placeholder="请输入手机号码"
         ></el-input>
       </el-form-item>
+	  <el-form-item label="线上查分" prop="queryEnable">
+		<el-switch
+		style="height: 40px;"
+		  v-model="from.queryEnable"
+		  active-text="允许"
+		  inactive-text="不允许">
+		</el-switch>
+	  </el-form-item>
     </el-form>
 
     <div slot="footer">
@@ -91,6 +99,7 @@ export default {
         contactName: '',
         contactMobile: "",
         proviceCode:"",
+		queryEnable:true,
       },
       studioCityCode:"",
       studioCityName:"",
@@ -166,7 +175,8 @@ export default {
           studioAreaCode: "",
           contactName : "",
           contactMobile: "",
-          id:''
+          id:'',
+		  queryEnable : true,
         };
         this.studioCityName = ""
       } else {
@@ -177,7 +187,8 @@ export default {
           studioAreaCode : this.editItem.studioAreaCode, // 机构区域编码
           contactName : this.editItem.contactName , //机构联系人姓名
           contactMobile :this.editItem.contactMobile , // 机构联系人手机号
-          id:this.editItem.id
+          id:this.editItem.id,
+		  queryEnable:this.editItem.queryEnable
         };
         this.studioCityName =this.editItem.studioCityName
       }

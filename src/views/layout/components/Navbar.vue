@@ -13,38 +13,11 @@
     <div class="right-menu">
       <div class="titleContain">
         <span class="titleName" style="cursor: default;padding-right: 20px"
-          >欢迎登录，{{user.name}}
+          >欢迎登录，{{user.name}}，余额：{{ money }} <el-button type="primary" size="mini" plain style="margin-left: 15px" @click="open">充值</el-button>
         </span>
-
-<!--        <span class="titleTip" style="cursor: default">考试管理系统 </span>-->
       </div>
-<!--      <el-dropdown-->
-<!--        class="avatar-container right-menu-item hover-effect"-->
-<!--        trigger="click"-->
-<!--      >-->
-<!--        <div class="avatar-wrapper">-->
-<!--          <img-->
-<!--            :src="getLogo()"-->
-<!--            class="user-avatar"-->
-<!--          />-->
-<!--        </div>-->
-<!--        <el-dropdown-menu slot="dropdown">-->
-<!--          &lt;!&ndash; <router-link to="/profile/index">-->
-<!--            <el-dropdown-item icon="el-icon-setting">账户设置</el-dropdown-item>-->
-<!--          </router-link> &ndash;&gt;-->
-
-<!--          &lt;!&ndash; <el-dropdown-item icon="el-icon-setting">-->
-<!--            <span @click="pushProfile">账户设置</span>-->
-<!--          </el-dropdown-item>-->
-<!--          <el-dropdown-item icon="el-icon-setting">-->
-<!--            <span @click="changePwd">修改密码</span>-->
-<!--          </el-dropdown-item> &ndash;&gt;-->
-<!--          <el-dropdown-item icon="el-icon-circle-close" divided>-->
-<!--            <span @click="logout">退出登录</span>-->
-<!--          </el-dropdown-item>-->
-<!--        </el-dropdown-menu>-->
-<!--      </el-dropdown>-->
     </div>
+
   </div>
 </template>
 
@@ -72,6 +45,8 @@ export default {
         imgs: localStorage.getItem("user_logo")?"../../../assets/school/tx.png":localStorage.getItem("user_logo"),
         loginCode: "",
       },
+      money:0,
+      dialogFormVisible:false,
     };
   },
   computed: {
@@ -79,7 +54,6 @@ export default {
   },
   created() {
     this.$bus.$on("upDateUserInfo", (params) => {
-      console.log("navibar upDateUserInfo");
       this.user.name = localStorage.getItem("user_school");
       if (localStorage.getItem("user_avatar") !== "null") {
         this.user.imgs = localStorage.getItem("user_avatar");
@@ -91,14 +65,26 @@ export default {
     if (localStorage.getItem("user_avatar") !== "null") {
       this.user.imgs = localStorage.getItem("user_avatar");
     }
+    this.get_money()
   },
   methods: {
+    get_money(){
+      this.$axios.post('/exam_school_recharge/getBalance').then(res=>{
+        this.money = res.result;
+      })
+    },
+    open(){
+      this.$parent.open()
+    },
     getLogo(){
       let img = localStorage.getItem("user_logo")?require("../../../assets/school/tx.png"):localStorage.getItem("user_logo")
       return img;
     },
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
+	  if(location.href.indexOf("marking") != -1){
+		  sessionStorage.setItem("aaa",Math.random())
+	  }
     },
     pushProfile() {
       //console.log("aaaaaa");

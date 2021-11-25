@@ -39,13 +39,24 @@
               :value="item.provinceCode">
           </el-option>
         </el-select>
+      <el-input v-model="form.params1" style="width:120px;margin-left:15px;"  placeholder="自定义参数1"
+      ></el-input>
+      <el-input v-model="form.params2" style="width:120px;margin-left:15px;"  placeholder="自定义参数2"
+      ></el-input>
+      <el-input v-model="form.params3" style="width:120px;margin-left:15px;"  placeholder="自定义参数3"
+      ></el-input>
+      <el-select clearable  v-model="form.studio" style="width:160px;margin-left:15px;" placeholder="排序方式">
+        <el-option
+            v-for="item in studentAreaCode2"
+            :key="item.id"
+            :label="item.label"
+            :value="item.id">
+        </el-option>
+      </el-select>
 <!--      <el-input v-model="form.gender" style="width:120px;margin-left:15px;"  placeholder="性别"-->
 <!--      ></el-input>-->
-        <el-button class="association_btn" style="margin-left:50px;" type="primary" size="medium" @click="getList"
-        >查询</el-button
-        >
-        <el-button class="association_btn" type="primary" size="medium" @click="exportTicket">生成准考证</el-button
-        >
+      <el-button class="association_btn" type="primary" style="float: right" size="medium" @click="exportTicket">生成准考证</el-button>
+      <el-button class="association_btn" style="float: right;margin-right:15px;"  type="primary" size="medium" @click="getList">查询</el-button>
 
 
     </div>
@@ -139,24 +150,6 @@
         prop="examinationRoomCode"
       >
       </el-table-column>
-       <!-- <el-table-column
-        label="二维码"
-        header-align="center"
-        align="center"
-      >
-         <template slot-scope="scope">
-            <img :src="scope.row.url" style="width:100px;height:100px" />
-          </template>
-      </el-table-column> -->
-       <!-- <el-table-column
-      fixed="right"
-      label="操作"
-      width="200">
-      <template slot-scope="scope">
-        <el-button @click="relationStudio(scope.row)" type="text" size="small" >关联机构</el-button>
-        <el-button  size="small" @click="statisticsInfo(scope.row)" type="text" >统计信息</el-button>
-      </template>
-    </el-table-column> -->
     </el-table>
     <!--工具条-->
     <el-col :span="24" class="toolbar">
@@ -210,7 +203,7 @@ export default {
         name: "",
         mobilePhone: "",
       },
-      studentAreaOption: [],
+      studentAreaOption:[],
       dialogTableVisible:false,
       selectRoomIds: [],
       roomOptions: [],
@@ -225,9 +218,13 @@ export default {
         admissionTicketCode:"",
         studioName:"",
         address:"",
-        gender:""
+        gender:"",
+        studio:'',
+        params1:"",
+        params2:"",
+        params3:"",
       },
-
+      studentAreaCode2:[{id:'param',label:"按自定义参数排序"},{id:'studio',label:"按机构排序"},{id:"",label:"按考场排序"}],
       data: { pageIndex: 1, pages: 0, pageSize: 10, total: 0, records: [
         {
          
@@ -291,6 +288,7 @@ export default {
          });
          return false
        }
+       this.daochu.orderBy = this.form.studio;
        this.$axios
            .post('/ticket/ticketExport', this.daochu)
            .then((res) => {
@@ -335,6 +333,9 @@ export default {
         examId:this.examId,
         address:this.form.address,
         gender:this.form.gender,
+        param1:this.form.params1,
+        param2:this.form.params2,
+        param3:this.form.params3,
       };
       this.daochu = params;
       if(this.examId){

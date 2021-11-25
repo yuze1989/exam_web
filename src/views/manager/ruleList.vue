@@ -32,7 +32,7 @@
     </el-col>
   </section>
 </template>
-
+1
 <script>
 import provinceCodeList from "../../utils/provinceCode";
 import myPagination from '@/components/pagination';

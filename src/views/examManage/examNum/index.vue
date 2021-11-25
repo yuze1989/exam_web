@@ -27,28 +27,17 @@
               style="width: 200px;margin-left: 20px;"
               v-model="form.examineeName"
               placeholder="姓名"
-
           ></el-input>
           <el-input
               style="width: 200px; margin-right: 20px;margin-bottom: 5px;margin-left: 20px;"
               v-model="form.studioName"
               placeholder="机构名称"
           ></el-input>
-
-
-
           <el-button type="primary" style="margin-left: 20px;" @click="pageReset">
             查询
           </el-button>
           <el-button type="primary" @click="ticketGenerate" style="float: left">生成准考证号</el-button>
         </el-col>
-
-
-
-
-
-
-
 <!--      <el-button type="warning" @click="reset">重置</el-button>-->
 
     </div>
@@ -179,19 +168,46 @@ export default {
         Message.warning('请先根据考试名称查询')
         return false
       }
+
       this.$axios
-        .post(this.API.studentsManage.ticketGenerate, this.daochu)
-        .then((res) => {
-          if (res.code == 200) {
-            Message.success('准考证号生成成功')
-            this.form.current = 1
-            this.pageReset()
-          }
-          this.listLoading = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
+          .post('/examinee/ticketGenerateCalc', this.daochu)
+          .then((res) => {
+            if (res.code == 200) {
+              if(res.result.balance/1 < res.result.totalPrice/1){
+                Message.error('账户余额不足，请充值！')
+              }else{
+                this.$confirm('本次操作将支付 '+res.result.totalPrice+' 元,请确认?', '提示', {
+                  confirmButtonText: '确认支付',
+                  cancelButtonText: '取消支付',
+                  type: 'warning'
+                }).then(() => {
+                  this.$axios
+                      .post(this.API.studentsManage.ticketGenerate, this.daochu)
+                      .then((res) => {
+                        if (res.code == 200) {
+                          Message.success('准考证号生成成功！')
+                          this.form.current = 1
+                          this.getList()
+                          this.$parent.get_money()
+                        }
+                        this.listLoading = false
+                      })
+                      .catch(() => {
+                        this.listLoading = false
+                      })
+                }).catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已取消支付'
+                  });
+                });
+              }
+            }
+            this.listLoading = false
+          })
+          .catch(() => {
+            this.listLoading = false
+          })
     },
     pageReset() {
       this.form.current = 1

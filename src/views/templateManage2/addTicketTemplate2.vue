@@ -37,37 +37,11 @@
           <div class="display-center">
             <div class="title">二维码字段</div>
             <div>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox disabled v-model="form.subjectList.zkzh"  @change="change1">准考证号</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.sfzhm" @change="change1">学生ID号</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.ksdz" @change="change1">考试地址</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.ksbh" @change="change1">考试编号</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.xm" @change="change1">姓名</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.xb" @change="change1">性别</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox disabled v-model="form.subjectList.km" @change="change1">科目</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.kc" @change="change1">考场</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.zwh" @change="change1">座位号</el-checkbox>
-              </el-row>
-              <el-row style="width:200px;text-align: left;padding-left: 30px">
-                <el-checkbox v-model="form.subjectList.jgbh" @change="change1">机构编号</el-checkbox>
-              </el-row>
-
+              <el-checkbox-group v-model="checkList" @change="checkChange">
+                <div v-for="(item, index) in resizeList" :key="index" style="width:200px;text-align: left;padding-left: 30px">
+                  <el-checkbox :label="item.name" :disabled="item.disabled"></el-checkbox>
+                </div>
+              </el-checkbox-group>
             </div>
           </div>
         </div>
@@ -83,18 +57,13 @@
           <div  :class="class1" ref="ticketFile">
             <div class="title" @drop="drop" @dragover.prevent>
               <div class="top" style="padding-top: 20px">
-                <div style="font-size: 19px;padding:0 0 2px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.sfzhm">学生ID号：330591208808080808</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px" v-show="form.subjectList.ksbh">考试编号：100101</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.xm">姓名：张三</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.km">科目：素描</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.kc">考场：001</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;" v-show="form.subjectList.xb">性别：男</div>
-                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.zwh">座位号：01</div>
+                <vue-drag-resize v-for="(item, index) in resizeList" v-if="item.checked" :key="index" :w="item.width" :x="item.left" :h="item.size" :y="item.top" :minw="100" :minh="10" @activated="activated(item)" @resizing="resizing($event, item)" @dragging="resizing($event, item)">
+                  <div :style="{ fontSize: item.size + 'px' }" style="line-height: 1">{{ item.desc }}</div>
+                </vue-drag-resize>
               </div>
-              <img src="@/assets/erweima.png" alt=""  style="">
+              <vue-drag-resize :w="resizeImg.width" :x="resizeImg.left" :h="resizeImg.height" :y="resizeImg.top" :minw="100" :minh="100" @resizing="resizeImg = $event" @dragging="resizeImg = $event">
+                <img src="@/assets/erweima.png" alt=""  style="">
+              </vue-drag-resize>
             </div>
           </div>
         </div>
@@ -109,9 +78,11 @@
 <script>
 import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate,apiGetSubjectList} from '@/api/ticket.js'
 import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
+import VueDragResize from 'vue-drag-resize'
 import html2canvas from "html2canvas";
 export default {
   name: "AddTicketTemplate",
+  components: { VueDragResize },
   data() {
     return {
       imgUrl: '',
@@ -168,7 +139,35 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
-      examId:""
+      examId:"",
+      resizeList: [{
+        name: '科目', desc: '科目：素描', width: 150, size: 20, left: 25, top: 10, checked: true, disabled: true
+      }, {
+        name: '准考证号', desc: '准考证：E0000000001', width: 300, size: 20, left: 25, top: 40, checked: true, disabled: true
+      }, {
+        name: '考场', desc: '考场：001', width: 100, size: 20, left: 25, top: 60, checked: false, disabled: false
+      }, {
+        name: '考试编号', desc: '考试编号：100101', width: 200, size: 20, left: 25, top: 80, checked: false, disabled: false
+      }, {
+        name: '考试地址', desc: '考试地址：杭州市滨江区', width: 300, size: 20, left: 25, top: 100, checked: false, disabled: false
+      }, {
+        name: '学生ID号', desc: '学生ID号：330591208808080808', width: 400, size: 20, left: 25, top: 120, checked: false, disabled: false
+      }, {
+        name: '性别', desc: '性别：男', width: 100, size: 20, left: 25, top: 140, checked: false, disabled: false
+      }, {
+        name: '姓名', desc: '姓名：张三', width: 100, size: 20, left: 25, top: 160, checked: false, disabled: false
+      }, {
+        name: '座位号', desc: '座位号：01', width: 150, size: 20, left: 25, top: 180, checked: false, disabled: false
+      }, {
+        name: '机构编号', desc: '机构编号：A_0001', width: 200, size: 20, left: 25, top: 200, checked: false, disabled: false
+      }],
+      checkList: ['科目', '准考证号'],
+      resizeImg: {
+        left: 280,
+        top: 80,
+        width: 200,
+        height: 200
+      }
     };
   },
   created() {
@@ -182,6 +181,30 @@ export default {
   },
 
   methods: {
+    checkChange(e) {
+      if (e.length > 7) {
+        this.$message.error('最多可展示7个字段，请合理分配！')
+        this.checkList.pop()
+        return
+      }
+      
+      this.syncChecked()
+    },
+    syncChecked() {
+      this.resizeList.forEach(item => {
+        item.checked = this.checkList.includes(item.name)
+      })
+    },
+    activated(item) {
+      this.activeItem = item
+    },
+    resizing(e, item) {
+      item.width = e.width
+      item.size = e.height
+      item.left = e.left
+      item.top = e.top
+      this.activeItem = item
+    },
     change1(){
 
       let obj = this.form.subjectList
@@ -230,7 +253,7 @@ export default {
             this.form.studentAreaName =res.result.province;
             this.form.studentAreaCode =res.result.provinceCode;
             this.form.qrcodeName =res.result.qrcodeName;
-            this.sizeTypeChange(res.result.sizeType)
+            // this.sizeTypeChange(res.result.sizeType)
 
             let dArr = res.result.subjectList;
             let zdArr = {
@@ -245,6 +268,10 @@ export default {
               zwh:"座位号",
               jgbh:"机构编号",
             }
+
+            this.checkList = dArr.map(item => item.subjectName)
+            this.syncChecked()
+
             for(let i = 0 ; i < dArr.length; i++){
               for(let a in zdArr){
                 if(dArr[i].subjectName == zdArr[a]){
@@ -310,6 +337,9 @@ export default {
     },
     // 保存
     examConfirm(){
+      console.log(this.resizeList.filter(item => item.checked))
+      console.log(this.resizeImg)
+
       if(this.leg > 7){
         this.$message({
           message: '最多可展示7个字段，请合理分配！',
@@ -477,12 +507,8 @@ img.bottom{
   height: 300px !important;
 }
 .class1 img{
-  position: absolute;
-  right: 40px;
-  bottom: 40px;
-  width: 200px;
-  height: 199px;
-  margin: 0 !important;
+  width: 100%;
+  height: 100%;
 }
 .class0 .top{
   margin-left: 230px;
@@ -493,7 +519,7 @@ img.bottom{
 .class0 img{
   position: absolute;
   left: 30px;
-  bottom: 30px;
+  top: 0;
   width: 200px;
   height: 200px;
   margin: 0 !important;
@@ -523,6 +549,7 @@ img.bottom{
     flex-direction: column;
     color:#000;
     font-size: 30px;
+    position: relative;
   }
   .zbdw,.room{
     display: flex;

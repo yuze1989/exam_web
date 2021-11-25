@@ -110,7 +110,7 @@
               <h3 style="text-align: center;color: rgb(222 222 222);font-size: 14px;padding: 4px;margin: 0">评级记录</h3>
               <p v-for="(item,index) in paper.paperTeachers">{{item.username}}:{{item.originalGrade}}</p>
             </div>
-            <div  class="edit-level" v-if="role!=0 &&((showP && paper.checked) || !showP)">
+            <div  class="edit-level" v-if="role!=0 &&((showP && paper.checked) || !showP)" :style="{right:paper.originalGrade?'26px':0}">
               <span
                   v-if="!paper.edit"
                   @click="handleSelectLevel(paper.id, index)"
@@ -124,7 +124,7 @@
                   @grade="selecteUpdateGrade2"
                   style="width: 70px;position: relative;top: 1px"
               />
-              <el-badge :value="(paper.originalGrade)" class="his zcz" style="position: absolute;top: 1px;left: 68px;z-index: 998;">
+              <el-badge :value="(paper.originalGrade)" v-if="paper.originalGrade" class="his zcz" style="position: absolute;top: 1px;left: 68px;z-index: 998;">
 
               </el-badge>
             </div>
@@ -200,6 +200,7 @@
       center
       append-to-body
       :close-on-click-modal="false"
+      v-loading="shuaxin"
       v-if="(listQuery.current - 1) * listQuery.size + editImgIndex + 1 <= allCount"
     >
       <div class="box">
@@ -406,6 +407,10 @@
     <div v-if="(role!=0) && tck" class="tck" :style="{position: 'fixed',left:xxP.x+'px',top:xxP.y+'px'}">
       <div v-for="(item,index) in gradeList" @click="changePJ(item)">调整评级为 / {{item.name}}</div>
     </div>
+<!--    右键取消全选-->
+    <div v-if="(role!=0) && tck2" class="tck" :style="{position: 'fixed',left:xxP.x+'px',top:xxP.y+'px'}">
+      <div @click="changePJ2()">取消全选</div>
+    </div>
   </div>
 </template>
 <script>
@@ -421,10 +426,12 @@ export default {
   },
   data: () => {
     return {
+      shuaxin:false,
       width:30,
       height:10,
       aloading:false,
       tck:false,
+      tck2:false,
       dialogFormVisible:false,
       admin_password:"",
       admin_password2:"",
@@ -519,6 +526,14 @@ export default {
     this.getRulesdetail();  //获取打分规则
   },
   methods: {
+    changePJ2(){
+      if(!this.showP){
+        return false
+      }
+      this.paperList.forEach((item,index)=>{
+        item.checked = false;
+      })
+    },
     changePJ(item){
       this.$confirm(`此操作将把${this.xxP.name}评级下所有试卷调整为${item.name}评级，请谨慎操作！`, '提示', {
         confirmButtonText: '确定',
@@ -599,6 +614,7 @@ export default {
     },
     hideR(){
       this.tck = false;
+      this.tck2 = false;
     },
     // 右键显示
     openMenu(e,item){
@@ -610,6 +626,16 @@ export default {
       this.xxP.x  = e.clientX;
       this.xxP.y  = e.clientY;
       this.xxP.name = item.level;
+    },
+    // 右键显示2
+    openMenu2(e){
+      e.preventDefault();
+      if(!this.showP){
+        return false
+      }
+      this.tck2 = true;
+      this.xxP.x  = e.clientX;
+      this.xxP.y  = e.clientY;
     },
     stopPj(){
       this.dialogFormVisible = true;
@@ -809,6 +835,8 @@ export default {
       if(type != 4){
         this.showP = false;
       }
+      this.shuaxin = true;
+      this.paperList = [];
       // todo 待完善
       let url = '/exampaper/examCorrectPaperListAll'
       this.$axios.post(url,data).then((response) => {
@@ -843,10 +871,10 @@ export default {
           list.sort(function(a,b){
             return b.mark - a.mark
           });
-
         }
         this.allCount = result.total || 0;
         this.paperList = list;
+        this.shuaxin = false;
         if(type == 2){
           if(!this.paperList[this.editImgIndex]){
             this.editImgDialogVisible = false;
@@ -877,7 +905,6 @@ export default {
       }
     },
     selecteUpdateGrade2(payload) {
-      console.log(payload);
       if (payload) {
         //批量修改
         if(this.showP){
@@ -889,14 +916,13 @@ export default {
                 grade: payload,
                 paperId:item.id,
                 type: 0,
-              },2);
+              },2,index);
             }
           })
           if(length == 0){
             this.$message.error("批量模式下请至少选中一张要修改的试卷！")
             return;
           }
-
           return
         }else{
           this.updatePaper({
@@ -1202,7 +1228,7 @@ export default {
     //   });
     // },
     // 设置分数
-    updatePaper(data,type) {
+    updatePaper(data,type,leg) {
       // type:0评级，1 分数，2:评分下一张
       let flagType = 0;
 
@@ -1232,12 +1258,26 @@ export default {
                 type = 4
               }
 
-              if (flagType) {
-                this.getList(type);
-              } else {
-                this.getList(type);
+              if(type == 4){
+                if(leg >= this.paperList.length -1){
+                  if (flagType) {
+                    this.getList(type);
+                  } else {
+                    this.getList(type);
+                  }
+                  this.queryPaperList();  //获取评级列表
+                }
+              }else{
+                if (flagType) {
+                  this.getList(type);
+                } else {
+                  this.getList(type);
+                }
+                if(!this.editImgDialogVisible){
+                  this.queryPaperList();  //获取评级列表
+                }
               }
-              this.queryPaperList();  //获取评级列表
+
               // this.queryDealedCount();
             }
           }).catch((error)=>{
@@ -1389,6 +1429,10 @@ export default {
     },
   },
   mounted() {
+    if (location.href.indexOf("#reloaded") == -1) {
+      location.href = location.href + "#reloaded";
+      location.reload();
+    }
     window.addEventListener("click", this.hideR);
   },
   beforeDestroy() {  // 实例销毁之前对点击事件进行解绑
@@ -1398,6 +1442,9 @@ export default {
 </script>
 
 <style lang="scss">
+.app-main{
+  min-height: calc(100vh - 50px) !important;
+}
 .zcz02 sup {
   font-size: 20px;
   height: 30px;
@@ -1420,7 +1467,7 @@ export default {
   background: #fff;
   border-radius: 4px;
   border: 1px solid #ccc;
-  z-index: 998;
+  z-index: 1000;
 }
 .tck>div{
   width: 200px;

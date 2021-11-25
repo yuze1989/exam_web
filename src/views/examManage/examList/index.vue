@@ -327,7 +327,8 @@ export default {
   },
   methods: {
     openLink(url){
-      this.$alert(`<p style="width: 600px">${url}</p>`, '查分链接', {
+      this.$alert(`<p style="width: 600px;    word-wrap: break-word;
+    word-break: break-all;">${url}</p>`, '查分链接', {
         showConfirmButton:false,
         center:true,
         dangerouslyUseHTMLString: true,

@@ -283,7 +283,6 @@ export default {
     },
     delD(item,index){
       let is = true;
-      console.log(item);
       this.resizeList.forEach((item2,index)=>{
         if(is){
           if(item.label == item2.name){

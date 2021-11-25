@@ -74,6 +74,15 @@
           prop="studioCityName"
       >
       </el-table-column>
+	  <el-table-column
+	      label="是否允许线上查分"
+	      header-align="center"
+	      align="center"
+	  >
+	  <template slot-scope="scope">
+		  {{scope.row.queryEnable?'允许':'不允许'}}
+	  </template>
+	  </el-table-column>
        <el-table-column
       fixed="right"
       label="操作"

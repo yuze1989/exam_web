@@ -62,7 +62,7 @@ export default {
       input1:"",
       input2:"",
       load:false,
-      page1:true,
+      page1:false,
       name:"",
       tableData:[],
     }

@@ -122,7 +122,7 @@ export default {
 
       // 跳转到考卷列表页 需要传递份和科目两个参数
       this.$router.push({
-        path: '/paperManage',
+        path: '/marking',
         query: this.query
       });
     },
