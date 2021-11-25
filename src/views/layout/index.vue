@@ -123,6 +123,7 @@ export default {
       this.$axios.post("/exam_school_recharge/rechargeOrderCreate?total_fee="+this.money).then((res)=>{
         let id = res.result.id;
         this.$axios.post("/exam_school_recharge/rechargeOrderPay?payType=weixin&orderId="+id).then((res)=>{
+          document.querySelectorAll("#qrCode2")[0].innerHTML = ""
           new QRCode(this.$refs.qrCodeDiv, {
             text: res.result.codeUrl,
             width: 300,
