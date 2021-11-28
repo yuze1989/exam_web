@@ -104,14 +104,14 @@
           ></el-option>
         </el-select>
       </el-form-item>
-	  <el-form-item label="查分条件" prop="queryCoundition" v-if="from.queryEnable==1">
+	  <el-form-item label="查分条件" prop="queryCoundition" v-if="from.queryEnable">
 		  <el-checkbox-group v-model="queryCondition">
 			  <el-checkbox label="姓名" disabled value="true"></el-checkbox>
 			  <el-checkbox label="准考证" ></el-checkbox>
 			  <el-checkbox label="身份证" ></el-checkbox>
 		  </el-checkbox-group>
 	  </el-form-item>
-	  <el-form-item label="显示内容" prop="showList" v-if="from.queryEnable==1">
+	  <el-form-item label="显示内容" prop="showList" v-if="from.queryEnable">
 	  		  <el-checkbox-group v-model="showList">
 	  			  <el-checkbox label="总分"></el-checkbox>
 	  			  <el-checkbox label="总排名" ></el-checkbox>
@@ -122,7 +122,7 @@
 	  			  <el-checkbox label="试卷" ></el-checkbox>
 	  		  </el-checkbox-group>
 	  </el-form-item>
-      <el-form-item label="查询开始时间" prop="studyStartTime" v-if="from.queryEnable==1">
+      <el-form-item label="查询开始时间" prop="studyStartTime" v-if="from.queryEnable">
         <el-date-picker
             type="date"
             placeholder="选择日期"
@@ -133,7 +133,7 @@
             :clearable="false"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="查询结束时间" prop="studyEndTime" v-if="from.queryEnable==1">
+      <el-form-item label="查询结束时间" prop="studyEndTime" v-if="from.queryEnable">
         <el-date-picker
             type="date"
             placeholder="选择日期"
@@ -405,7 +405,7 @@ export default {
         enrollStartTime: '', // 报名开始时间 ,
         examEndTime: '', // 考试结束时间 ,
         examStartTime: '', // 考试开始时间 ,
-        queryEnable:"",//是否可查询
+        queryEnable:'',//是否可查询
         queryStartTime:"",
         queryEndTime:"",
       },
@@ -525,7 +525,6 @@ export default {
             }
 			if(result.queryParams){
 				let queryParams = JSON.parse(result.queryParams);
-				console.log(queryParams)
 				if(queryParams.queryCondition.includes("admission_ticket_code")){
 					this.queryCondition.push("准考证")
 				}
@@ -575,8 +574,8 @@ export default {
 
     // api
 
-    add() {
 
+    add() {
       this.$refs.examForm.validate((valid) => {
         if (valid) {
           // 时间校验
@@ -598,6 +597,7 @@ export default {
             })
             return
           }
+
           // if(this.from.queryEnable ){
           //   if(!this.from.queryStartTime || !this.from.queryEndTime){
           //     this.$message({
@@ -686,30 +686,35 @@ export default {
             })
             return
           }
-		  if(this.queryCondition.length==1 && this.form.queryEnable == 1){
-			  this.$message({
-			    message: '查分条件请至少选择两种！',
-			  })
-			  return
-		  }
-		  let atr = ['name'];
-		  if(this.queryCondition.includes('准考证')){
-			atr.push('admission_ticket_code')
-		  }
-		  if(this.queryCondition.includes('身份证')){
-		  	atr.push('identification')
-		  }
-		  let queryParams = {
-			  queryCondition:atr,
-			  showTotalScore:this.showList.includes("总分"),
-			  showTotalRankInProvince:this.showList.includes("总排名"),
-			  showTotalRankInStudio:this.showList.includes("机构内排名"),
-			  showScore:this.showList.includes("各科成绩"),
-			  showRankInStudio:this.showList.includes("科目机构排名"),
-			  showRankInProvince:this.showList.includes("科目总排名"),
-			  showPaper:this.showList.includes("试卷"),
-			  
-		  }
+          let queryParams = {};
+
+          if(this.queryCondition.length==1 && this.from.queryEnable){
+            this.$message({
+              message: '查分条件请至少选择两种！',
+            })
+            return
+          }
+          let atr = ['name'];
+          if(this.queryCondition.includes('准考证')){
+            atr.push('admission_ticket_code')
+          }
+          if(this.queryCondition.includes('身份证')){
+            atr.push('identification')
+          }
+          queryParams = {
+            queryCondition:atr,
+            showTotalScore:this.showList.includes("总分"),
+            showTotalRankInProvince:this.showList.includes("总排名"),
+            showTotalRankInStudio:this.showList.includes("机构内排名"),
+            showScore:this.showList.includes("各科成绩"),
+            showRankInStudio:this.showList.includes("科目机构排名"),
+            showRankInProvince:this.showList.includes("科目总排名"),
+            showPaper:this.showList.includes("试卷"),
+
+          }
+
+
+
 		 
 
           let data = {
@@ -875,8 +880,7 @@ export default {
           //     return
           //   }
           // }
-
-		  if(this.queryCondition.length==1  && this.form.queryEnable == 1){
+          if(this.queryCondition.length==1  && this.form.queryEnable){
 			  this.$message({
 			    message: '查分条件请至少选择两种！',
 			  })
