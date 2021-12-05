@@ -154,7 +154,7 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item label="考试说明" prop="remark">
+      <el-form-item label="考试简介" prop="remark">
         <tinymce v-if="visible" v-model="from.remark" :height="100" />
         <!-- <el-input
           maxlength="680"
@@ -164,7 +164,32 @@
           v-model="from.remark"
         ></el-input> -->
       </el-form-item>
+      <el-form-item label="上传图片" prop="remark" class="xxx">
+        <div class="rulePic">
+          <el-image :src="imgUrl" v-if="imgUrl" class="ruleImage"></el-image>
+          <input id="fileup" type="file" v-show="false" @change="uploadchanged" ref="fileup" />
 
+          <div class="ruleImageNo" @click="upToOss()">
+            <p class="addIcon" v-show="!imgUrl">+</p>
+            <p class="addDes" v-show="!imgUrl">上传Logo或海报</p>
+          </div>
+        </div>
+      </el-form-item>
+      <el-form-item label="app报名">
+        <el-switch
+            style="margin-top: 4px"
+            v-model="baoming"
+            active-text="启用"
+            inactive-text="不用">
+        </el-switch>
+        <div>
+          <el-checkbox-group v-model="queryCondition2" v-if="baoming">
+            <el-checkbox label="启用人脸识别"></el-checkbox>
+            <el-checkbox label="启用录制视频" ></el-checkbox>
+            <el-checkbox label="启用邮寄纸质试卷" ></el-checkbox>
+          </el-checkbox-group>
+        </div>
+      </el-form-item>
       <div>
         <el-button
           type="primary"
@@ -279,16 +304,54 @@
               value-format="HH:mm"
               v-model="item.subjectEndtime"
             ></el-time-picker>
+            <el-form-item prop="submit">
+              <el-button
+                  type="text"
+                  style="width: 50px;"
+                  @click="delSubject(index,item.id)"
+              >
+                移除
+              </el-button>
+            </el-form-item>
           </el-form-item>
-          <el-form-item prop="submit">
-            <el-button
-              type="text"
-              style="width: 50px;"
-              @click="delSubject(index,item.id)"
-            >
-              移除
-            </el-button>
-          </el-form-item>
+          <div v-if="baoming">
+            <el-form-item>
+              <el-time-picker
+                  style="width: 160px;"
+                  format="HH:mm"
+                  value-format="HH:mm"
+                  placeholder="上传开始时间"
+                  v-model="item.uploadPaperStarttime"
+              ></el-time-picker>
+              <el-time-picker
+                  style="width: 160px;"
+                  placeholder="上传结束时间"
+                  format="HH:mm"
+                  value-format="HH:mm"
+                  v-model="item.uploadPaperEndtime"
+              ></el-time-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-input v-model="item.seenQuestionBeforeMinute" type="number" :min="0" placeholder="考试前XX分钟查看考题"></el-input>
+            </el-form-item>
+
+            <div>
+              <el-form-item>
+                考试内容
+              </el-form-item>
+              <el-form-item>
+                <tinymce v-model="item.questionContent" :height="100" />
+              </el-form-item>
+            </div>
+            <div>
+              <el-form-item>
+                考试规则
+              </el-form-item>
+              <el-form-item>
+                <tinymce v-model="item.questionRule" :height="100" />
+              </el-form-item>
+            </div>
+          </div>
         </el-form>
       </div>
     </el-form>
@@ -336,7 +399,6 @@
     </el-dialog>
   </el-dialog>
 </template>
-
 <script>
 import Tinymce from "@/components/TinymceText/index";
 export default {
@@ -360,9 +422,11 @@ export default {
   },
   data() {
     return {
+      baoming:false,
       admin_username:"",
       admin_password:"",
       msg:"",
+      imgUrl:"",
       provinceList: [],
       address: [
         {
@@ -392,8 +456,14 @@ export default {
         sort: '', //: 排序 ,
         subjectDate: '', //: 科目日期 ,
         subjectEndtime: '00:00:00', //: 科目结束时间 ,
+        uploadPaperEndtime: '00:00:00', //: 科目结束时间 ,
         subjectName: '', //: 科目名称 ,
         subjectStarttime: '00:00:00', //: 科目开始时间
+        uploadPaperStarttime: '00:00:00', //: 科目开始时间
+        seenQuestionBeforeMinute:0,
+        isStop:true,
+        questionContent:'',
+        questionRule:"",
       },
       from: {
         id: '', //id
@@ -457,6 +527,8 @@ export default {
       xx_index:"",
       is_type:"",
 	  queryCondition:['姓名'],
+	  queryCondition2:['启用人脸识别','启用录制视频','启用邮寄纸质试卷'],
+
 	  showRankInProvince:true,
 	  showRankInStudio:true,
 	  showScore:true,
@@ -472,6 +544,23 @@ export default {
   mounted() {
   },
   methods: {
+    uploadchanged() {
+      let file = this.$refs.fileup.files[0]
+      if(file !=undefined){
+        var fromDate = new FormData();
+        fromDate.append("file",file)
+        this.$axios.post('/file/upload',fromDate).then(res=>{
+          if(res){
+            this.$refs.fileup.value = ""
+            this.imgUrl = res.result;
+          }
+        }).catch(()=>{})
+      }
+
+    },
+    upToOss() {
+      this.$refs.fileup.click()
+    },
     dataChange(item,index){
 
       this.provinceList.map(j =>{
@@ -531,6 +620,9 @@ export default {
 				if(queryParams.queryCondition.includes("identification")){
 					this.queryCondition.push("身份证")
 				}
+        if(queryParams.queryCondition.includes("identification")){
+          this.queryCondition.push("身份证")
+        }
 				if(queryParams.showPaper){
 					this.showList.push("试卷")
 				}
@@ -714,15 +806,24 @@ export default {
           }
 
 
-
+          console.log(this.subject);
+          this.subject.forEach((item,index)=>{
+            item.uploadPaperStarttime="";
+            item.uploadPaperEndtime = "";
+          })
 		 
 
           let data = {
             ...this.from,
             addressList: this.address,
             subjectList: this.subject,
-			queryParams:JSON.stringify(queryParams),
+			      queryParams:JSON.stringify(queryParams),
             price: (this.from.price * 100).toFixed(0),
+            url:this.imgUrl,
+            isAppEnroll:this.baoming,
+            isFaceDetect:this.queryCondition2.includes("启用人脸识别"),
+            isRecordVideo:this.queryCondition2.includes("启用录制视频"),
+            isNeedExpress:this.queryCondition2.includes("启用邮寄纸质试卷"),
           }
           this.$axios
             .post(this.API.examinfo.create, data)
@@ -880,7 +981,7 @@ export default {
           //     return
           //   }
           // }
-          if(this.queryCondition.length==1  && this.form.queryEnable){
+          if(this.queryCondition.length==1  && this.from.queryEnable){
 			  this.$message({
 			    message: '查分条件请至少选择两种！',
 			  })
@@ -904,6 +1005,7 @@ export default {
 			  showPaper:this.showList.includes("试卷"),
 			  
 		  }
+          console.log(this.from);
           this.$axios
             .post(this.API.examinfo.update, {
               ...this.from,
@@ -911,6 +1013,11 @@ export default {
               subjectList: this.subject,
 			  queryParams:JSON.stringify(queryParams),
               price: (this.from.price * 100).toFixed(0),
+              url:this.imgUrl,
+              isAppEnroll:this.baoming,
+              isFaceDetect:this.queryCondition2.includes("启用人脸识别"),
+              isRecordVideo:this.queryCondition2.includes("启用录制视频"),
+              isNeedExpress:this.queryCondition2.includes("启用邮寄纸质试卷"),
             })
             .then((res) => {
               if (res.code==200) {
@@ -959,6 +1066,40 @@ export default {
 }
 h3 {
   color: #808080;
+}
+.xxx .rulePic {
+  border: 1px solid #d4d5de;
+  border-radius: 10px;
+  background: #f5f7fa;
+  width: 190px;
+  min-height: 190px;
+  position: relative;
+  cursor: pointer;
+}
+.xxx .rulePic .ruleImageNo .addIcon {
+  font-size: 40px;
+  margin-bottom: 0;
+  margin-top: 60px;
+  text-align: center;
+}
+.xxx .rulePic  .addDes {
+  margin-top: 0;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 20px;
+}
+.xxx .rulePic .ruleImageNo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 6;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 50px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
 }
 </style>
 <style lang="scss" scoped>

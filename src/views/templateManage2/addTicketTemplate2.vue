@@ -10,7 +10,7 @@
         <div class="basic-info">
           <div class="display-center">
             <div class="title">考试名称</div>
-            <el-select clearable  v-model="form.examNameNo" :disabled="isAddType==0" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
+            <el-select clearable  v-model="form.examNameNo" :disabled="this.$route.params.examId" style="width:200px;margin-left:50px;" placeholder="请选择考试名称" @change="examNameChange">
               <el-option
                   v-for="item in examNameOption"
                   :key="item.id"
@@ -25,15 +25,49 @@
           </div>
           <div class="display-center">
             <div class="title">二维码大小</div>
-            <el-input v-model="form.k" style="width:70px;margin-left:34px;"  placeholder="宽"></el-input>mm
-            <el-input v-model="form.g" style="width:70px;margin-left:34px;"  placeholder="高"></el-input>mm
+            <el-select clearable  v-model="form.sizeType" style="width:200px;margin-left:34px;" placeholder="请选择二维码大小" @change="sizeTypeChange">
+              <el-option
+                  v-for="item in sizeTypeOption"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+              </el-option>
+            </el-select>
           </div>
           <div class="display-center">
             <div class="title">二维码字段</div>
             <div>
-              <el-row style="width:200px;text-align: left;padding-left: 30px" v-for="(item,index) in changeList">
-                <el-checkbox :disabled="item.name=='准考证号' || item.name=='科目'" v-model="item.active"  @change="change1(item)">{{ item.name }}</el-checkbox>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox disabled v-model="form.subjectList.zkzh"  @change="change1">准考证号</el-checkbox>
               </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.sfzhm" @change="change1">学生ID号</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.ksdz" @change="change1">考试地址</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.ksbh" @change="change1">考试编号</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.xm" @change="change1">姓名</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.xb" @change="change1">性别</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox disabled v-model="form.subjectList.km" @change="change1">科目</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.kc" @change="change1">考场</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.zwh" @change="change1">座位号</el-checkbox>
+              </el-row>
+              <el-row style="width:200px;text-align: left;padding-left: 30px">
+                <el-checkbox v-model="form.subjectList.jgbh" @change="change1">机构编号</el-checkbox>
+              </el-row>
+
             </div>
           </div>
         </div>
@@ -43,29 +77,30 @@
       </div>
       <!-- 模板示例 -->
       <div class="template-example" >
-        <div class="bg cxx" style="background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
-          <div  :class="class1" ref="ticketFile" :style="{background: '#f4f9fe',position: 'absolute',width:form.k*10+'px',height:form.g*10+'px'}">
-            <div class="title" >
-                <div>
-                  <VueDragResize v-for="(item,index) in resizeList" :class="{xz:item==chageItem}" :parentLimitation="true" :isActive="true" :minh="1" :minw="1" :w="item.width" :h="item.height" :x="item.left" :y="item.top" :parentW="form.k*10" :parentH="form.g*10" v-on:resizing="newRect=>resize(newRect,item)" v-on:dragging="newRect=>resize(newRect,item)" class="resize" style="display: flex">
-                    <sapn v-if="item.text !='url'" :style="{fontSize:item.fontSize+'px'}">{{item.text}}</sapn>
-                    <span v-if="item.text =='url'" style="width: 100%;height: 100%">
-                       <img src="@/assets/erweima.png" alt=""  style="">
-                    </span>
-                  </VueDragResize>
-                </div>
-            </div>
-            <div v-if="chageItem && chageItem.name!='二维码'" style="    position: absolute;
-    width: 100%;
-    bottom: -100px;">
-              <span class="demonstration">字体大小</span>
-              <el-slider  v-model="font_size" :min="12" :max="50" @input="sizeC"></el-slider>
+
+
+        <div class="bg" style="background: #fff;margin-left: 100px; padding: 20px;position:absolute;">
+          <div  :class="class1" ref="ticketFile">
+            <div class="title" @drop="drop" @dragover.prevent>
+              <div class="top" style="padding-top: 20px">
+                <div style="font-size: 19px;padding:0 0 2px 25px;" draggable="true" @dragstart="dragstart(item.label,$event)" @dragend="dragend" v-show="form.subjectList.zkzh">准考证：E0000000001</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.sfzhm">学生ID号：330591208808080808</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.ksdz">考试地址：杭州市滨江区</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.jgbh">机构编号：A_0001</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px" v-show="form.subjectList.ksbh">考试编号：100101</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.xm">姓名：张三</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.km">科目：素描</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.kc">考场：001</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;" v-show="form.subjectList.xb">性别：男</div>
+                <div style="font-size: 19px;padding:0 0 2px 25px;"  v-show="form.subjectList.zwh">座位号：01</div>
+              </div>
+              <img src="@/assets/erweima.png" alt=""  style="">
             </div>
           </div>
         </div>
 
+        <!-- <img class="real_pic" :src="imgUrl" /> -->
       </div>
-
 
     </div>
   </section>
@@ -75,30 +110,10 @@
 import { apiExamList,apiGetProvinceByExamId,apiGetExamDetails,apiTicketCreate,apiGetSubjectList} from '@/api/ticket.js'
 import { examinationList,apiRelationStudio } from '@/api/studioManage.js'
 import html2canvas from "html2canvas";
-import VueDragResize from 'vue-drag-resize'
 export default {
-  components: { VueDragResize },
   name: "AddTicketTemplate",
   data() {
     return {
-      font_size:14,
-      xxW:500,
-      xxh:300,
-      changeList:[
-        {active:true,disabled:true,name:'准考证号',id:"zkzh",text:"准考证：E0000000001",w:190,h:50},
-        {active:false,disabled:false,name:'学生ID号',id:"sfzhm",text:'学生ID号：330591208808080808',w:230,h: 60},
-        {active:false,disabled:false,name:'考试地址',id:"ksdz",text:"考试地址：杭州市滨江区",w:168,h:39},
-        {active:false,disabled:false,name:'考试编号',id:"ksbh",text:"考试编号：100101",w:140,h:30},
-        {active:false,disabled:false,name:'姓名',id:"xm",text:"姓名：张三",w:120,h:30},
-        {active:false,disabled:false,name:'性别',id:"xb",text:"性别：男",w:120,h:30},
-        {active:true,disabled:true,name:'科目',id:"km",text:"科目：素描",w:140,h:30},
-        {active:false,disabled:false,name:'考场',id:"kc",text:"考场：001",w:120,h:30},
-        {active:false,disabled:false,name:'座位号',id:"zwh",text:"座位号：01",w:120,h:30},
-        {active:false,disabled:false,name:'机构编号',id:"jgbh",text:"机构编号：A_0001",w:150,h:30},
-      ],
-      resizeList:[
-
-      ],
       imgUrl: '',
       listLoading: false,
       sels: [], //列表选中列
@@ -129,8 +144,6 @@ export default {
         examTitle: '',
         qrcodeName:"",
         sizeType:1,
-        k:50,
-        g:30,
         sizeId:"",
         subjectList: {
           zkzh:true,
@@ -155,8 +168,7 @@ export default {
       isAdd: false,
       isAddType: 1, //1新增  0编辑
       editItemData: {},
-      examId:"",
-      chageItem:"",
+      examId:""
     };
   },
   created() {
@@ -165,73 +177,28 @@ export default {
     //接收参数
     this.examId = this.$route.params.examId;
     if(this.examId != undefined){
-      this.isAddType = 0;
       this.get_mb();
-    }else{
-      this.resizeList = [
-        {
-          name:"准考证号",
-          text:"准考证：E0000000001",
-          label:"zkzh",
-          width:190,
-          height:50,
-          left:0,
-          top:0,
-          fontSize:14,},
-        {
-          name:"科目",
-          text:"科目：素描",
-          label:"km",
-          width:140,
-          height:30,
-          left:0,
-          top:60,
-          fontSize:14,},
-        {
-          name:"二维码",
-          text:"url",
-          label:"ewm",
-          width:200,
-          height:200,
-          left:240,
-          top:60,
-          fontSize:14,},
-      ]
     }
   },
 
   methods: {
-    sizeC(){
-      this.chageItem.fontSize = this.font_size;
-    },
-    change1(item){
-      if(item.active){
-        this.resizeList.push({
-          name:item.name,
-          text:item.text,
-          label:item.id,
-          width:item.w,
-          height:item.h,
-          left:0,
-          top:0,
-          fontSize:14,
-        })
-      }else{
+    change1(){
 
-        this.resizeList.forEach((a,index)=>{
-          if(a.label == item.id){
-            this.resizeList.splice(index,1)
-          }
-        })
+      let obj = this.form.subjectList
+      let leg = 0;
+      for(let i in obj){
+        if(obj[i]){
+          leg +=1;
+        }
       }
-    },
-    resize(newRect,item) {
-      this.chageItem = item;
-      this.font_size = item.fontSize;
-      item.width = newRect.width;
-      item.height = newRect.height;
-      item.top = newRect.top;
-      item.left = newRect.left;
+      this.leg = leg;
+      if(this.leg > 7){
+        this.$message({
+          message: '最多可展示7个字段，请合理分配！',
+          type: 'error',
+        })
+        return
+      }
     },
     drop(event){
       var num,num2;
@@ -266,26 +233,25 @@ export default {
             this.sizeTypeChange(res.result.sizeType)
 
             let dArr = res.result.subjectList;
-            let data = JSON.parse(res.result.dynamicConfig);
-            data.forEach((item,index)=>{
-              if(item.name=="size"){
-                this.form.k = item.width;
-                this.form.g = item.height;
-                data.splice(index,1)
-              }
-            })
-            this.resizeList= {};
-            this.resizeList = data;
-            console.log(this.resizeList);
-
-            this.changeList.forEach((item,index)=>{
-              this.resizeList.forEach((a,b)=>{
-                if(item.id == a.label){
-                  item.active = true;
+            let zdArr = {
+              kc:"考场",
+              km:"科目",
+              ksbh:"考试编号",
+              ksdz:"考试地址",
+              sfzhm:"学生ID号",
+              xb:"性别",
+              xm:"姓名",
+              zkzh:"准考证号",
+              zwh:"座位号",
+              jgbh:"机构编号",
+            }
+            for(let i = 0 ; i < dArr.length; i++){
+              for(let a in zdArr){
+                if(dArr[i].subjectName == zdArr[a]){
+                  this.form.subjectList[a] = true
                 }
-              })
-            })
-
+              }
+            }
           })
           .catch(() => {});
     },
@@ -342,29 +308,47 @@ export default {
       }
       return str.join('&')
     },
-
     // 保存
     examConfirm(){
-      let isArr = [];
-      this.resizeList.forEach((item,index)=>{
-          isArr.push(item)
-      })
-      let size = {
-        name:'size',
-        width:this.form.k,
-        height:this.form.g,
+      if(this.leg > 7){
+        this.$message({
+          message: '最多可展示7个字段，请合理分配！',
+          type: 'error',
+        })
+        return
       }
-      isArr.push(size);
       let data = {
         examId : this.form.examNameNo,
         province: this.form.studentAreaName,
         provinceCode: this.form.studentAreaCode,
         qrcodeName : this.form.qrcodeName ,
         subjectList:[],
-        sizeType:this.form.sizeId,
-        dynamicConfig:JSON.stringify(isArr)
+        sizeType:this.form.sizeId
       }
 
+      let zdArr = {
+        kc:"考场",
+        km:"科目",
+        ksbh:"考试编号",
+        ksdz:"考试地址",
+        sfzhm:"学生ID号",
+        xb:"性别",
+        xm:"姓名",
+        zkzh:"准考证号",
+        zwh:"座位号",
+        jgbh:"机构编号",
+      }
+
+
+      let subList = this.form.subjectList;
+      for(let key in subList){
+        if(subList[key]){
+          data.subjectList.push({
+            qrcode_id:"",
+            subjectName:zdArr[key]
+          })
+        }
+      }
 
       if(this.examId != undefined){
         data.id = this.examId;
@@ -442,13 +426,9 @@ export default {
           if(item.id == 0){
             this.class1 = "class0 template-example-dom"
             this.class2 = "bottom"
-            this.xxW = 630;
-            this.xxh = 230;
           }else{
             this.class1 = "class1 template-example-dom"
             this.class2 = "right"
-            this.xxW = 500;
-            this.xxh = 300;
           }
 
 
@@ -475,19 +455,8 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.cxx .content-container{
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-}
-.xz .vdr-stick{
-  background: #409eff;
-}
-</style>
-<style lang="scss" scoped>
 
+<style lang="scss" scoped>
 @import "./index.scss";
 .bottom{
   margin-top: 150px !important;
@@ -500,14 +469,20 @@ img.bottom{
   top: 180px !important;
 }
 .class0{
-
+  width: 630px !important;
+  height: 230px !important;
 }
 .class1{
-
+  width: 500px !important;
+  height: 300px !important;
 }
 .class1 img{
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+  width: 200px;
+  height: 199px;
+  margin: 0 !important;
 }
 .class0 .top{
   margin-left: 230px;
@@ -516,8 +491,12 @@ img.bottom{
   font-size: 14px !important;
 }
 .class0 img{
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+  width: 200px;
+  height: 200px;
+  margin: 0 !important;
 }
 .header{
   display: flex;

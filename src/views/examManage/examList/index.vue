@@ -172,6 +172,14 @@
               <span>查询链接</span>
             </el-button>
 
+            <el-button
+                type="text"
+                size="small"
+                @click="cancel(scope.row)"
+            >
+              <span>取消考试</span>
+            </el-button>
+
             <!-- POST /examinfo/union 联合考试操作(状态:1、同意;2、拒绝;3、禁用) -->
             <!-- <el-button
               type="text"
@@ -326,6 +334,7 @@ export default {
     this.getExamList()
   },
   methods: {
+
     openLink(url){
       this.$alert(`<p style="width: 600px;    word-wrap: break-word;
     word-break: break-all;">${url}</p>`, '查分链接', {
@@ -454,6 +463,24 @@ export default {
     del(item){
       this.editItemData = item
       this.showDel = true
+    },
+    //取消
+    cancel(item){
+      this.$confirm('此操作将取消该场考试, 是否确认?', '提示', {
+        confirmButtonText: '确认取消',
+        cancelButtonText: '不取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post("/examinfo/cancelExam?examId="+item.id).then(res=>{
+          console.log(res);
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+
+      });
     }
   },
 }
