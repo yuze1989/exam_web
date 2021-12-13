@@ -169,7 +169,7 @@
                 @size-change="getList(4)"
                 @current-change="getList(4)"
                 :current-page.sync="page"
-                :page-sizes = "[200]"
+                :page-sizes = "[40]"
                 :page-size="size"
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="totalItem">
@@ -564,7 +564,7 @@ export default {
       zcNumber:0,
       xzH:'auto',
       size:100,
-      hang:100,
+      hang:20,
       lie:2,
       paperL:[],
       gxNum:0,
@@ -1211,6 +1211,9 @@ export default {
     },
     //双击全屏
     yl_click(a,index,item){
+      this.m_rotate = 0;
+      this.m_scale = 1;
+      this.m_c_scale(0)
       clearTimeout(this.time);  //清除
       this.currentPosition = item.wz;
       this.thisCurrent =item.wz+1+((this.page-1) * this.size);

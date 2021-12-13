@@ -254,6 +254,38 @@
       :visible.sync="showUnion"
       :editItem="editItemData"
       @addSuccess="addSuccess" />
+
+    <el-dialog
+        title="取消考试原因"
+        :visible.sync="cacelExam"
+        width="30%">
+      <el-form>
+        <el-form-item label="主办方客服联系方式">
+          <el-input v-model="kf_phone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="是否展示联系方式">
+          <br>
+          <el-switch
+              v-model="kf_btn"
+              active-color="#13ce66"
+              inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="取消考试原因">
+          <el-input
+              type="textarea"
+              :rows="4"
+              placeholder="请输入取消考试原因"
+              v-model="kf_reason">
+          </el-input>
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cacelExam = false">不取消考试</el-button>
+        <el-button type="primary" @click="cancelB">确定取消考试</el-button>
+      </span>
+    </el-dialog>
   </section>
 </template>
 <!--
@@ -291,6 +323,10 @@ export default {
   },
   data() {
     return {
+      cacelExam:false,
+      kf_phone:"",
+      kf_btn:true,
+      kf_reason:"",
       list: [],
       listLoading: false,
       examNameNo:"",
@@ -326,6 +362,7 @@ export default {
         name: '',
         id: 0,
       },
+      cacelItem:"",
     }
   },
 
@@ -466,21 +503,19 @@ export default {
     },
     //取消
     cancel(item){
-      this.$confirm('此操作将取消该场考试, 是否确认?', '提示', {
-        confirmButtonText: '确认取消',
-        cancelButtonText: '不取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios.post("/examinfo/cancelExam?examId="+item.id).then(res=>{
-          console.log(res);
-        })
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
-      }).catch(() => {
-
-      });
+      this.kf_btn = true;
+      this.kf_phone = "";
+      this.kf_reason = "";
+      this.cacelExam = true;
+      this.cacelItem = item;
+    },
+    cancelB(){
+      this.$axios.post('/examinfo/cancelExam?examId='+this.cacelItem.id+"&isShowMobilePhone="+this.kf_btn+"&mobilePhone="+this.kf_phone+"&errorReason="+this.kf_reason).then(res=>{
+        if(res.code == 200){
+          this.cacelExam = false;
+          this.$message.success("考试已取消")
+        }
+      })
     }
   },
 }

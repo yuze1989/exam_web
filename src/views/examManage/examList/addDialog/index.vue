@@ -155,7 +155,13 @@
       </el-form-item>
 
       <el-form-item label="考试简介" prop="remark">
-        <tinymce v-if="visible" v-model="from.remark" :height="100" />
+        <el-input
+            v-if="visible"
+            type="textarea"
+            :rows="5"
+            placeholder="请输入内容"
+            v-model="from.remark">
+        </el-input>
         <!-- <el-input
           maxlength="680"
           type="textarea"
@@ -168,7 +174,6 @@
         <div class="rulePic">
           <el-image :src="imgUrl" v-if="imgUrl" class="ruleImage"></el-image>
           <input id="fileup" type="file" v-show="false" @change="uploadchanged" ref="fileup" />
-
           <div class="ruleImageNo" @click="upToOss()">
             <p class="addIcon" v-show="!imgUrl">+</p>
             <p class="addDes" v-show="!imgUrl">上传Logo或海报</p>
@@ -184,7 +189,6 @@
         </el-switch>
         <div>
           <el-checkbox-group v-model="queryCondition2" v-if="baoming">
-            <el-checkbox label="启用人脸识别"></el-checkbox>
             <el-checkbox label="启用录制视频" ></el-checkbox>
             <el-checkbox label="启用邮寄纸质试卷" ></el-checkbox>
           </el-checkbox-group>
@@ -291,14 +295,14 @@
           </el-form-item>
           <el-form-item>
             <el-time-picker
-              style="width: 120px;"
+              style="width: 180px;margin-right:10px"
               format="HH:mm"
               value-format="HH:mm"
               placeholder="起始时间"
               v-model="item.subjectStarttime"
             ></el-time-picker>
             <el-time-picker
-              style="width: 120px;"
+              style="width: 180px;"
               placeholder="结束时间"
               format="HH:mm"
               value-format="HH:mm"
@@ -315,40 +319,105 @@
             </el-form-item>
           </el-form-item>
           <div v-if="baoming">
+            <div>
+              <el-form-item>
+                考前多久查看考题（分钟）
+              </el-form-item>
+              <el-form-item>
+                <el-form-item >
+                  <el-input v-model="item.seenQuestionBeforeMinute" type="number" :max="30" placeholder="不早于考前30分钟"></el-input>
+                </el-form-item>
+              </el-form-item>
+            </div>
+
             <el-form-item>
-              <el-time-picker
-                  style="width: 160px;"
-                  format="HH:mm"
-                  value-format="HH:mm"
-                  placeholder="上传开始时间"
-                  v-model="item.uploadPaperStarttime"
-              ></el-time-picker>
-              <el-time-picker
-                  style="width: 160px;"
-                  placeholder="上传结束时间"
-                  format="HH:mm"
-                  value-format="HH:mm"
-                  v-model="item.uploadPaperEndtime"
-              ></el-time-picker>
-            </el-form-item>
-            <el-form-item>
-              <el-input v-model="item.seenQuestionBeforeMinute" type="number" :min="0" placeholder="考试前XX分钟查看考题"></el-input>
+              <el-form-item>
+                上传试卷开始和结束时间
+              </el-form-item>
+              <el-form-item>
+                <el-input v-model="item.uploadPaperStarttimeAfterMinute" type="number" placeholder="不早于考后30分钟" style="width: 160px" :max="30" :min="0"></el-input>
+              </el-form-item>
+              <el-form-item>
+                至
+              </el-form-item>
+              <el-form-item>
+                <el-input v-model="item.uploadPaperEndtimeAfterMinute" type="number" placeholder="不超当晚24点" style="width: 160px" :max="720" :min="0"></el-input>
+              </el-form-item>
             </el-form-item>
 
             <div>
               <el-form-item>
-                考试内容
+                <el-checkbox v-model="item.isFaceDetect" style="margin-right: 45px">启用人脸识别</el-checkbox>
               </el-form-item>
               <el-form-item>
-                <tinymce v-model="item.questionContent" :height="100" />
+                <el-input v-model="item.faceDetectBeforeMinute" type="number" placeholder="不早于考前45分钟" style="width: 160px" :max="45" :min="0"></el-input>
+              </el-form-item>
+              <el-form-item>
+                至
+              </el-form-item>
+              <el-form-item>
+                <el-input v-model="item.faceDetectAfterMinute" type="number" placeholder="不晚于考后30分钟" style="width: 160px" :max="30" :min="0"></el-input>
               </el-form-item>
             </div>
             <div>
               <el-form-item>
-                考试规则
+                考试题目
               </el-form-item>
               <el-form-item>
-                <tinymce v-model="item.questionRule" :height="100" />
+                <el-input
+                    type="textarea"
+                    style="width: 450px"
+                    :rows="4"
+                    placeholder="请输入考试题目"
+                    maxlength="30"
+                    show-word-limit
+                    v-model="item.questionContent">
+                </el-input>
+              </el-form-item>
+            </div>
+            <div>
+              <el-form-item>
+                考试要求
+              </el-form-item>
+              <el-form-item>
+                <el-input
+                    type="textarea"
+                    style="width: 450px"
+                    :rows="4"
+                    placeholder="请输入考试要求"
+                    maxlength="500"
+                    show-word-limit
+                    v-model="item.questionRule">
+                </el-input>
+              </el-form-item>
+            </div>
+            <div>
+              <el-form-item>
+                备注
+              </el-form-item>
+              <el-form-item>
+                <el-input
+                    type="textarea"
+                    style="width: 280px"
+                    :rows="4"
+                    placeholder="请输入考试邀请信息"
+                    maxlength="500"
+                    show-word-limit
+                    v-model="item.questionRemark">
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                上传考试图片
+              </el-form-item>
+              <el-form-item class="xxx">
+                <div class="rulePic">
+                  <el-image :src="item.questionUrl" v-if="item.questionUrl" class="ruleImage"></el-image>
+                  <input  type="file" v-show="false" @change="uploadchanged2(item, index)" :class="'ref'+index" />
+                  <div class="ruleImageNo" @click="upToOss2(item, index)">
+                    <p class="addIcon" v-show="!item.questionUrl">+</p>
+                    <p class="addDes" v-show="!item.questionUrl">只支持.jpg文件</p>
+                  </div>
+                </div>
               </el-form-item>
             </div>
           </div>
@@ -527,8 +596,7 @@ export default {
       xx_index:"",
       is_type:"",
 	  queryCondition:['姓名'],
-	  queryCondition2:['启用人脸识别','启用录制视频','启用邮寄纸质试卷'],
-
+	  queryCondition2:['启用录制视频','启用邮寄纸质试卷'],
 	  showRankInProvince:true,
 	  showRankInStudio:true,
 	  showScore:true,
@@ -545,21 +613,41 @@ export default {
   },
   methods: {
     uploadchanged() {
-      let file = this.$refs.fileup.files[0]
-      if(file !=undefined){
-        var fromDate = new FormData();
-        fromDate.append("file",file)
-        this.$axios.post('/file/upload',fromDate).then(res=>{
-          if(res){
-            this.$refs.fileup.value = ""
-            this.imgUrl = res.result;
-          }
-        }).catch(()=>{})
-      }
-
+      console.log('1')
+        let file = this.$refs.fileup.files[0]
+        if(file !=undefined){
+          var fromDate = new FormData();
+          fromDate.append("file",file)
+          this.$axios.post('/file/upload',fromDate).then(res=>{
+            if(res){
+              this.$refs.fileup.value = ""
+              this.imgUrl = res.result;
+            }
+          }).catch(()=>{})
+        }
     },
-    upToOss() {
+    uploadchanged2(item, index) {
+      console.log('2')
+        let xx = 'ref'+index;
+      let file = document.querySelectorAll("." + xx)[0].files[0]
+        if(file !=undefined){
+          var fromDate = new FormData();
+          fromDate.append("file",file)
+          this.$axios.post('/file/upload',fromDate).then(res=>{
+            if(res){
+              item.questionUrl = res.result;
+              this.$forceUpdate()
+            }
+          }).catch(()=>{})
+        }
+    },
+    upToOss(item) {
       this.$refs.fileup.click()
+    },
+    upToOss2(item, index) {
+      console.error('item:', JSON.parse(JSON.stringify(item)), item, index)
+        let xx = 'ref'+index;
+      document.querySelectorAll("." + xx)[0].click()
     },
     dataChange(item,index){
 
@@ -592,7 +680,9 @@ export default {
         this.from = {}
         this.address = [{}]
         this.subject = [{}]
-
+        this.imgUrl = "";//图片
+        this.baoming = false;
+        this.queryCondition2 = ['启用人脸识别','启用录制视频','启用邮寄纸质试卷'];
       } else {
         this.$axios
           .get(this.API.examinfo.detail + '?id=' + this.editItem.id)
@@ -612,6 +702,7 @@ export default {
               queryEndTime:result.queryEndTime,
               queryStartTime:result.queryStartTime,
             }
+            this.queryCondition2 = []
 			if(result.queryParams){
 				let queryParams = JSON.parse(result.queryParams);
 				if(queryParams.queryCondition.includes("admission_ticket_code")){
@@ -644,6 +735,17 @@ export default {
 				if(queryParams.showRankInProvince){
 					this.showList.push("科目总排名")
 				}
+        this.imgUrl = result.url;//图片
+        this.baoming = result.isAppEnroll;
+        if(result.isNeedExpress){
+          this.queryCondition2.push("启用邮寄纸质试卷")
+        }
+        if(result.isRecordVideo){
+          this.queryCondition2.push("启用录制视频")
+        }
+        if(result.isFaceDetect){
+          this.queryCondition2.push("启用人脸识别")
+        }
 
 			}
 
@@ -738,9 +840,14 @@ export default {
               errEmpty += 1
             }
           })
+          this.subject.map(item => {
+            if(JSON.stringify(item) === '{}') {
+              errEmpty += 1
+            }
+          })
           if(errEmpty>0){
             this.$message({
-              message: '考试科目请填写完整',
+              message: '科目信息不能为空',
             })
             return
           }
@@ -763,6 +870,11 @@ export default {
           this.subject.map((item,index)=>{
             if(item.subjectEndtime < item.subjectStarttime){
               errCount += 1
+            }
+          })
+          this.subject.map(item => {
+            if(!item?.id) {
+              console.error('this:', item)
             }
           })
           if(errCount>0){
@@ -805,12 +917,6 @@ export default {
 
           }
 
-
-          console.log(this.subject);
-          this.subject.forEach((item,index)=>{
-            item.uploadPaperStarttime="";
-            item.uploadPaperEndtime = "";
-          })
 		 
 
           let data = {
