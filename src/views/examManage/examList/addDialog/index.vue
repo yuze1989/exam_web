@@ -194,6 +194,69 @@
           </el-checkbox-group>
         </div>
       </el-form-item>
+      
+      <div>
+        <el-button
+          type="primary"
+          style="margin-bottom: 10px;"
+          @click="addMenu"
+        >
+          关联独立院校
+        </el-button>
+        <span style="padding: 10px; color: red;">举办独立院校考试时请选择在app里对应的院校名称，非独立院校考试时请勿选择</span>
+      </div>
+
+      <div v-for="(item, index) in menus" :key="index+'a'" :value="item">
+        <el-form
+          :inline="true"
+          :model="item"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="30px"
+          class="demo-ruleForm"
+        >
+          <el-form-item>
+            <el-select clearable
+              v-model="item.firstMenuId"
+              style="width: 285px;"
+              placeholder="请选择在app上显示院校或主办方归属"
+              @change="menuChange(item,index)"
+            >
+              <el-option
+                v-for="(ite, i) in menuList"
+                :key="i"
+                :value="ite.id"
+                :label="ite.name"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select clearable
+              v-model="item.secondMenuId"
+              style="width: 285px;"
+              placeholder="请选择在app上显示院校或主办方名称"
+              @change="menuChildChange(item, index)"
+            >
+              <el-option
+                v-for="(ite, i) in menuChildList"
+                :key="i"
+                :value="ite.id"
+                :label="ite.name"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="submit">
+            <el-button
+              type="text"
+              style="width: 50px;"
+              @click="delMenu(index,item.id)"
+            >
+              移除
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      
       <div>
         <el-button
           type="primary"
@@ -205,7 +268,7 @@
         <!-- <span> (设置0为不限人数) </span> -->
       </div>
 
-      <div v-for="(item, index) in address" :key="index" :value="item">
+      <div v-for="(item, index) in address" :key="index+'b'" :value="item">
         <el-form
           :inline="true"
           :model="item"
@@ -266,7 +329,7 @@
         </el-button>
       </div>
 
-      <div v-for="(item, index) in subject" :key="index + '-'" :value="item">
+      <div v-for="(item, index) in subject" :key="index + 'c'" :value="item">
         <el-form
           :inline="true"
           :model="item"
@@ -300,6 +363,7 @@
               value-format="HH:mm"
               placeholder="起始时间"
               v-model="item.subjectStarttime"
+              @change="filterStartTime"
             ></el-time-picker>
             <el-time-picker
               style="width: 180px;"
@@ -307,6 +371,7 @@
               format="HH:mm"
               value-format="HH:mm"
               v-model="item.subjectEndtime"
+              @change="filterEndTime"
             ></el-time-picker>
             <el-form-item prop="submit">
               <el-button
@@ -325,7 +390,13 @@
               </el-form-item>
               <el-form-item>
                 <el-form-item >
-                  <el-input v-model="item.seenQuestionBeforeMinute" type="number" :max="30" placeholder="不早于考前30分钟"></el-input>
+                  <el-input-number 
+                    controls-position="right"
+                    v-model="item.seenQuestionBeforeMinute" 
+                    :max="30" 
+                    placeholder="不早于考前30分钟"
+                    style="width: 210px"
+                  ></el-input-number>
                 </el-form-item>
               </el-form-item>
             </div>
@@ -335,13 +406,29 @@
                 上传试卷开始和结束时间
               </el-form-item>
               <el-form-item>
-                <el-input v-model="item.uploadPaperStarttimeAfterMinute" type="number" placeholder="不早于考后30分钟" style="width: 160px" :max="30" :min="0"></el-input>
+                <el-input-number
+                  controls-position="right"
+                  v-model="item.uploadPaperStarttimeAfterMinute" 
+                  placeholder="不早于考后30分钟" 
+                  style="width: 180px" 
+                  :max="500" 
+                  :min="30"
+                  @change="upPaperTime"
+                ></el-input-number>
               </el-form-item>
               <el-form-item>
                 至
               </el-form-item>
               <el-form-item>
-                <el-input v-model="item.uploadPaperEndtimeAfterMinute" type="number" placeholder="不超当晚24点" style="width: 160px" :max="720" :min="0"></el-input>
+                <el-input-number 
+                  controls-position="right"
+                  v-model="item.uploadPaperEndtimeAfterMinute" 
+                  placeholder="不超当晚24点" 
+                  style="width: 180px" 
+                  :max="720" 
+                  :min="0"
+                  @change="downPaperTime"
+                ></el-input-number>
               </el-form-item>
             </el-form-item>
 
@@ -420,6 +507,37 @@
                 </div>
               </el-form-item>
             </div>
+
+            <div>
+              <el-form-item>
+                设置作品照片要求
+              </el-form-item>
+              <el-form-item>
+                <el-input
+                    type="textarea"
+                    style="width: 280px"
+                    :rows="4"
+                    placeholder="用于App手机上传试卷，拍摄示例说明"
+                    maxlength="500"
+                    show-word-limit
+                    v-model="item.takePic">
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                上传拍摄示例图片
+              </el-form-item>
+              <el-form-item class="xxx">
+                <div class="rulePic">
+                  <el-image :src="item.picUrl" v-if="item.picUrl" class="ruleImage"></el-image>
+                  <input  type="file" v-show="false" @change="uploadchanged3(item, index)" :class="'refs'+index" />
+                  <div class="ruleImageNo" @click="upToOss3(item, index)">
+                    <p class="addIcon" v-show="!item.picUrl">+</p>
+                    <p class="addDes" v-show="!item.picUrl">只支持.jpg文件</p>
+                  </div>
+                </div>
+              </el-form-item>
+            </div>
+
           </div>
         </el-form>
       </div>
@@ -491,12 +609,20 @@ export default {
   },
   data() {
     return {
+      menuChildList: [],
+      startTime: null,
+      endTime: null,
       baoming:false,
       admin_username:"",
       admin_password:"",
       msg:"",
       imgUrl:"",
+      picUrl:"",
       provinceList: [],
+      menuList: [],
+      menus: [{}],
+      menuParams: [],
+      menuItem: null,
       address: [
         {
           // examAddress:"地址", //: 考试地址 ,
@@ -595,23 +721,94 @@ export default {
       xx_id:"",
       xx_index:"",
       is_type:"",
-	  queryCondition:['姓名'],
-	  queryCondition2:['启用录制视频','启用邮寄纸质试卷'],
-	  showRankInProvince:true,
-	  showRankInStudio:true,
-	  showScore:true,
-	  showTotalRankInProvince:true,
-	  showTotalRankInStudio:true,
-	  showTotalScore:true,
-	  showList:[],
+      queryCondition:['姓名'],
+      queryCondition2:['启用录制视频','启用邮寄纸质试卷'],
+      showRankInProvince:true,
+      showRankInStudio:true,
+      showScore:true,
+      showTotalRankInProvince:true,
+      showTotalRankInStudio:true,
+      showTotalScore:true,
+      showList:[],
     }
   },
   created() {
     this.getProvinceList()
+    this.getMenuList()
   },
   mounted() {
   },
   methods: {
+    menuChange(val, ind) {
+      const item = JSON.parse(JSON.stringify(val));
+      this.menuList.forEach(ite => {
+        if(ite.id === item.firstMenuId) {
+          this.menuChildList = ite.childMenus
+          this.menuItem = ite
+        }
+      })
+    },
+    menuChildChange(val) {
+      const item = JSON.parse(JSON.stringify(val));
+      this.menuItem?.childMenus.forEach(ite => {
+        if(ite.id === item.secondMenuId) {
+          console.error('ite', ite, JSON.parse(JSON.stringify(this.menuParams)))
+          let old_params = JSON.parse(JSON.stringify(this.menuParams))
+          console.error('[]', old_params.concat([1,2]), old_params)
+
+          this.menuParams = old_params.concat([{ examId: '', id: item.firstMenuId, firstMenuId: item.firstMenuId, secondMenuId: item.secondMenuId }]) 
+          // [...old_params, { examId: '', id: item.firstMenuId, firstMenuId: item.firstMenuId, secondMenuId: item.secondMenuId }]
+        }
+      })
+    },
+    filterStartTime(val) {
+      this.startTime = val
+    },
+    filterEndTime(val) {
+      this.endTime = val
+    },
+    upPaperTime(val) {
+      const miner = 86400000;
+      const now_miner = val*60*1000;
+      let time_arr = '';
+      let unixNo = '';
+      if(this.startTime) {
+        time_arr = this.startTime.split(':');
+        unixNo = (time_arr[0]*3600+time_arr[1]*60)*1000;
+        if(unixNo+now_miner > miner) {
+          this.$message({
+            message: '错了哦，上传试卷开始时间不得晚于当晚24:00',
+            type: 'warning'
+          })
+        }
+      }else {
+        this.$message({
+          message: '错了哦，请先选择科目起始时间',
+          type: 'warning'
+        })
+      }
+    },
+    downPaperTime(val) {
+      const miner = 86400000;
+      const now_miner = val*60*1000;
+      let time_arr = '';
+      let unixNo = '';
+      if(this.endTime) {
+        time_arr = this.endTime.split(':');
+        unixNo = (time_arr[0]*3600+time_arr[1]*60)*1000;
+        if(unixNo+now_miner > miner) {
+          this.$message({
+            message: '错了哦，上传试卷结束时间不得晚于当晚24:00',
+            type: 'warning'
+          })
+        }
+      }else {
+        this.$message({
+          message: '错了哦，请先选择科目结束时间',
+          type: 'warning'
+        })
+      }
+    },
     uploadchanged() {
       console.log('1')
         let file = this.$refs.fileup.files[0]
@@ -641,12 +838,32 @@ export default {
           }).catch(()=>{})
         }
     },
+    uploadchanged3(item, index) {
+      console.log('3')
+        let xx = 'refs'+index;
+      let file = document.querySelectorAll("." + xx)[0].files[0]
+        if(file !=undefined){
+          var fromDate = new FormData();
+          fromDate.append("file",file)
+          this.$axios.post('/file/upload',fromDate).then(res=>{
+            if(res){
+              item.picUrl = res.result;
+              this.$forceUpdate()
+            }
+          }).catch(()=>{})
+        }
+    },
     upToOss(item) {
       this.$refs.fileup.click()
     },
     upToOss2(item, index) {
       console.error('item:', JSON.parse(JSON.stringify(item)), item, index)
         let xx = 'ref'+index;
+      document.querySelectorAll("." + xx)[0].click()
+    },
+    upToOss3(item, index) {
+      console.error('item:', JSON.parse(JSON.stringify(item)), item, index)
+        let xx = 'refs'+index;
       document.querySelectorAll("." + xx)[0].click()
     },
     dataChange(item,index){
@@ -663,6 +880,14 @@ export default {
         .get(this.API.examinfo.allProvince)
         .then((res) => {
           this.provinceList = res.result
+        })
+        .catch(() => {})
+    },
+    getMenuList() {
+      this.$axios
+        .post(this.API.examinfo.menuList)
+        .then((res) => {
+          this.menuList = res.data
         })
         .catch(() => {})
     },
@@ -806,7 +1031,7 @@ export default {
           //     return
           //   }
           // }
-          // 地址校验
+          
           if(this.address.length<0){
             this.$message({
               message: '请添加考试地址',
@@ -917,10 +1142,9 @@ export default {
 
           }
 
-		 
-
           let data = {
             ...this.from,
+            menus: this.menuParams,
             addressList: this.address,
             subjectList: this.subject,
 			      queryParams:JSON.stringify(queryParams),
@@ -950,6 +1174,9 @@ export default {
 
     addAddress() {
       this.address.push({})
+    },
+    addMenu() {
+      this.menus.push({})
     },
     del(){
       if(!this.admin_username){
@@ -1002,6 +1229,11 @@ export default {
       }else {
         this.address.splice(index, 1)
       }
+    },
+    delMenu(index,id) {
+      console.error('index-id:', index, id)
+      this.menus.splice(index, 1)
+      this.menuParams.splice(index, 1)
     },
     addSubject() {
       this.subject.push({})
@@ -1115,9 +1347,10 @@ export default {
           this.$axios
             .post(this.API.examinfo.update, {
               ...this.from,
+              menus: this.menuParams,
               addressList: this.address,
               subjectList: this.subject,
-			  queryParams:JSON.stringify(queryParams),
+			        queryParams:JSON.stringify(queryParams),
               price: (this.from.price * 100).toFixed(0),
               url:this.imgUrl,
               isAppEnroll:this.baoming,
