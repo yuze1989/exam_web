@@ -430,7 +430,7 @@
                   placeholder="不超当晚24点" 
                   style="width: 180px" 
                   :max="downPaperTimeMax" 
-                  :min="0"
+                  :min="downPaperTimeMin"
                   @change="downPaperTime"
                 ></el-input-number>
               </el-form-item>
@@ -629,6 +629,7 @@ export default {
     return {
       upPaperTimeMax: 0,
       downPaperTimeMax: 0,
+      downPaperTimeMin: 0,
       menuChildList: [],
       startTime: null,
       endTime: null,
@@ -801,6 +802,7 @@ export default {
       const now_miner = val*60*1000;
       let time_arr = '';
       let unixNo = '';
+      this.downPaperTimeMin = val;
       if(this.startTime) {
         time_arr = this.startTime.split(':');
         unixNo = (time_arr[0]*3600+time_arr[1]*60)*1000;
