@@ -756,7 +756,7 @@ export default {
           let old_params = JSON.parse(JSON.stringify(this.menuParams))
           console.error('[]', old_params.concat([1,2]), old_params)
 
-          this.menuParams = old_params.concat([{ examId: '', id: item.firstMenuId, firstMenuId: item.firstMenuId, secondMenuId: item.secondMenuId }]) 
+          this.menuParams = old_params.concat([{ firstMenuId: item.firstMenuId, secondMenuId: item.secondMenuId }]) 
           // [...old_params, { examId: '', id: item.firstMenuId, firstMenuId: item.firstMenuId, secondMenuId: item.secondMenuId }]
         }
       })
@@ -926,6 +926,7 @@ export default {
               queryEnable:result.queryEnable,
               queryEndTime:result.queryEndTime,
               queryStartTime:result.queryStartTime,
+              menus:result.menus,
             }
             this.queryCondition2 = []
 			if(result.queryParams){
