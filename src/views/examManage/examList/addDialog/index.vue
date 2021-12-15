@@ -195,6 +195,7 @@
         </div>
       </el-form-item>
       
+      <div v-if="baoming">
       <div>
         <el-button
           type="primary"
@@ -215,6 +216,7 @@
           label-width="30px"
           class="demo-ruleForm"
         >
+
           <el-form-item>
             <el-select clearable
               v-model="item.firstMenuId"
@@ -238,13 +240,14 @@
               @change="menuChildChange(item, index)"
             >
               <el-option
-                v-for="(ite, i) in menuChildList"
+                v-for="(ite, i) in filterMenu(menuList, item.firstMenuId)"
                 :key="i"
                 :value="ite.id"
                 :label="ite.name"
               ></el-option>
             </el-select>
           </el-form-item>
+
           <el-form-item prop="submit">
             <el-button
               type="text"
@@ -255,6 +258,7 @@
             </el-button>
           </el-form-item>
         </el-form>
+      </div>
       </div>
       
       <div>
@@ -437,13 +441,27 @@
                 <el-checkbox v-model="item.isFaceDetect" style="margin-right: 45px">启用人脸识别</el-checkbox>
               </el-form-item>
               <el-form-item>
-                <el-input v-model="item.faceDetectBeforeMinute" type="number" placeholder="不早于考前45分钟" style="width: 160px" :max="45" :min="0"></el-input>
+                <el-input-number 
+                  controls-position="right" 
+                  v-model="item.faceDetectBeforeMinute" 
+                  placeholder="不早于考前45分钟" 
+                  style="width: 160px" 
+                  :max="45" 
+                  :min="0"
+                ></el-input-number>
               </el-form-item>
               <el-form-item>
                 至
               </el-form-item>
               <el-form-item>
-                <el-input v-model="item.faceDetectAfterMinute" type="number" placeholder="不晚于考后30分钟" style="width: 160px" :max="30" :min="0"></el-input>
+                <el-input-number
+                  controls-position="right" 
+                  v-model="item.faceDetectAfterMinute" 
+                  placeholder="不晚于考后30分钟" 
+                  style="width: 160px" 
+                  :max="30" 
+                  :min="0"
+                ></el-input-number>
               </el-form-item>
             </div>
             <div>
@@ -739,6 +757,15 @@ export default {
   mounted() {
   },
   methods: {
+    filterMenu(arr = [], id) {
+      const menu_arr = JSON.parse(JSON.stringify(arr));
+      let arr_new = []
+      menu_arr.forEach(item => {
+        if(item.id === id) arr_new = item.childMenus
+      })
+      return arr_new
+      //menuList.map(ite => { if(ite?.id === item.firstMenuId) return ite.childMenus })
+    },
     menuChange(val, ind) {
       const item = JSON.parse(JSON.stringify(val));
       this.menuList.forEach(ite => {
