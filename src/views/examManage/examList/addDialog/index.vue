@@ -926,54 +926,57 @@ export default {
               queryEnable:result.queryEnable,
               queryEndTime:result.queryEndTime,
               queryStartTime:result.queryStartTime,
-              menus:result.menus,
+            }
+            this.menus = result.menus || []
+            if(result.menus?.[0]) {
+              this.menuChildList = this.menuList?.[0].childMenus
             }
             this.queryCondition2 = []
-			if(result.queryParams){
-				let queryParams = JSON.parse(result.queryParams);
-				if(queryParams.queryCondition.includes("admission_ticket_code")){
-					this.queryCondition.push("准考证")
-				}
-				if(queryParams.queryCondition.includes("identification")){
-					this.queryCondition.push("身份证")
-				}
-        if(queryParams.queryCondition.includes("identification")){
-          this.queryCondition.push("身份证")
-        }
-				if(queryParams.showPaper){
-					this.showList.push("试卷")
-				}
-				if(queryParams.showTotalScore){
-					this.showList.push("总分")
-				}
-				if(queryParams.showTotalRankInProvince){
-					this.showList.push("总排名")
-				}
-				if(queryParams.showTotalRankInStudio){
-					this.showList.push("机构内排名")
-				}
-				if(queryParams.showScore){
-					this.showList.push("各科成绩")
-				}
-				if(queryParams.showRankInStudio){
-					this.showList.push("科目机构排名")
-				}
-				if(queryParams.showRankInProvince){
-					this.showList.push("科目总排名")
-				}
-        this.imgUrl = result.url;//图片
-        this.baoming = result.isAppEnroll;
-        if(result.isNeedExpress){
-          this.queryCondition2.push("启用邮寄纸质试卷")
-        }
-        if(result.isRecordVideo){
-          this.queryCondition2.push("启用录制视频")
-        }
-        if(result.isFaceDetect){
-          this.queryCondition2.push("启用人脸识别")
-        }
+            if(result.queryParams){
+              let queryParams = JSON.parse(result.queryParams);
+              if(queryParams.queryCondition.includes("admission_ticket_code")){
+                this.queryCondition.push("准考证")
+              }
+              if(queryParams.queryCondition.includes("identification")){
+                this.queryCondition.push("身份证")
+              }
+              if(queryParams.queryCondition.includes("identification")){
+                this.queryCondition.push("身份证")
+              }
+              if(queryParams.showPaper){
+                this.showList.push("试卷")
+              }
+              if(queryParams.showTotalScore){
+                this.showList.push("总分")
+              }
+              if(queryParams.showTotalRankInProvince){
+                this.showList.push("总排名")
+              }
+              if(queryParams.showTotalRankInStudio){
+                this.showList.push("机构内排名")
+              }
+              if(queryParams.showScore){
+                this.showList.push("各科成绩")
+              }
+              if(queryParams.showRankInStudio){
+                this.showList.push("科目机构排名")
+              }
+              if(queryParams.showRankInProvince){
+                this.showList.push("科目总排名")
+              }
+              this.imgUrl = result.url;//图片
+              this.baoming = result.isAppEnroll;
+              if(result.isNeedExpress){
+                this.queryCondition2.push("启用邮寄纸质试卷")
+              }
+              if(result.isRecordVideo){
+                this.queryCondition2.push("启用录制视频")
+              }
+              if(result.isFaceDetect){
+                this.queryCondition2.push("启用人脸识别")
+              }
 
-			}
+            }
 
             this.address = result.addressList ? result.addressList : [{}]
             this.subject = result.subjectList ? result.subjectList : [{}]
