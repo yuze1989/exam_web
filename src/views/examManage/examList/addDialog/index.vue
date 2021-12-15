@@ -444,9 +444,9 @@
                 <el-input-number 
                   controls-position="right" 
                   v-model="item.faceDetectBeforeMinute" 
-                  placeholder="不早于考前45分钟" 
-                  style="width: 160px" 
-                  :max="45" 
+                  placeholder="不早于考前60分钟" 
+                  style="width: 180px" 
+                  :max="60" 
                   :min="0"
                 ></el-input-number>
               </el-form-item>
@@ -458,7 +458,7 @@
                   controls-position="right" 
                   v-model="item.faceDetectAfterMinute" 
                   placeholder="不晚于考后30分钟" 
-                  style="width: 160px" 
+                  style="width: 180px" 
                   :max="30" 
                   :min="0"
                 ></el-input-number>
