@@ -415,7 +415,7 @@
                   v-model="item.uploadPaperStarttimeAfterMinute" 
                   placeholder="不早于考后30分钟" 
                   style="width: 180px" 
-                  :max="500" 
+                  :max="upPaperTimeMax" 
                   :min="30"
                   @change="upPaperTime"
                 ></el-input-number>
@@ -429,7 +429,7 @@
                   v-model="item.uploadPaperEndtimeAfterMinute" 
                   placeholder="不超当晚24点" 
                   style="width: 180px" 
-                  :max="720" 
+                  :max="downPaperTimeMax" 
                   :min="0"
                   @change="downPaperTime"
                 ></el-input-number>
@@ -627,6 +627,8 @@ export default {
   },
   data() {
     return {
+      upPaperTimeMax: 0,
+      downPaperTimeMax: 0,
       menuChildList: [],
       startTime: null,
       endTime: null,
@@ -802,6 +804,7 @@ export default {
       if(this.startTime) {
         time_arr = this.startTime.split(':');
         unixNo = (time_arr[0]*3600+time_arr[1]*60)*1000;
+        this.upPaperTimeMax = (miner-unixNo)/60000
         if(unixNo+now_miner > miner) {
           this.$message({
             message: '错了哦，上传试卷开始时间不得晚于当晚24:00',
@@ -823,6 +826,7 @@ export default {
       if(this.endTime) {
         time_arr = this.endTime.split(':');
         unixNo = (time_arr[0]*3600+time_arr[1]*60)*1000;
+        this.downPaperTimeMax = (miner-unixNo)/60000;
         if(unixNo+now_miner > miner) {
           this.$message({
             message: '错了哦，上传试卷结束时间不得晚于当晚24:00',
