@@ -415,7 +415,7 @@
                   v-model="item.uploadPaperStarttimeAfterMinute" 
                   placeholder="不早于考后30分钟" 
                   style="width: 180px" 
-                  :max="upPaperTimeMax" 
+                  :max="getUpPaperTimeMax(item.subjectStarttime)" 
                   :min="30"
                   @change="upPaperTime"
                 ></el-input-number>
@@ -429,8 +429,8 @@
                   v-model="item.uploadPaperEndtimeAfterMinute" 
                   placeholder="不超当晚24点" 
                   style="width: 180px" 
-                  :max="downPaperTimeMax" 
-                  :min="downPaperTimeMin"
+                  :max="getDownPaperTimeMax(item.subjectEndtime)" 
+                  :min="getDownPaperTimeMin(item.uploadPaperStarttimeAfterMinute)"
                   @change="downPaperTime"
                 ></el-input-number>
               </el-form-item>
@@ -758,6 +758,7 @@ export default {
     this.getMenuList()
   },
   mounted() {
+    // this.$refs['examForm'].resetFields()
   },
   methods: {
     filterMenu(arr = [], id) {
@@ -796,6 +797,32 @@ export default {
     },
     filterEndTime(val) {
       this.endTime = val
+    },
+    // 获取上传试卷开始时间最大值
+    getUpPaperTimeMax(val = 0) {  // val 起始时间
+      const miner = 86400000;
+      if(val) {
+        const time_arr = val.split(':');
+        const unixNo = (time_arr[0]*3600+time_arr[1]*60)*1000;
+        return (miner-unixNo)/60000
+      }else {
+        return val
+      }
+    },
+    // 获取上传试卷结束时间最大值
+    getDownPaperTimeMax(val = 0) {  // val 结束时间
+      const miner = 86400000;
+      if(val) {
+        const time_arr = val.split(':');
+        const unixNo = (time_arr[0]*3600+time_arr[1]*60)*1000;
+        return (miner-unixNo)/60000
+      }else {
+        return val
+      }
+    },
+    // 获取上传试卷结束时间最小值
+    getDownPaperTimeMin(val = 0) {  // 上传试卷开始时间当前值
+      return val
     },
     upPaperTime(val) {
       const miner = 86400000;
@@ -941,6 +968,7 @@ export default {
         this.imgUrl = "";//图片
         this.baoming = false;
         this.queryCondition2 = ['启用人脸识别','启用录制视频','启用邮寄纸质试卷'];
+        this.menus = [{}]
       } else {
         this.$axios
           .get(this.API.examinfo.detail + '?id=' + this.editItem.id)
