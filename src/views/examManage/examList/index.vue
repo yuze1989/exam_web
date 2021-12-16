@@ -408,8 +408,14 @@ export default {
     },
     // 新增
     add() {
-      this.isAddType = 1
-      this.isAdd = true
+      setTimeout(() => {
+        this.isAddType = 1
+        this.isAdd = true
+      }, 500)
+      this.$message({
+          message: '当启用app报名且有考生通过app进行报名时，考试信息中时间不可更改',
+          type: 'warning'
+        });
     },
     editItemAction(item) {
       this.editItemData = item;

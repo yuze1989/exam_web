@@ -50,7 +50,7 @@
           v-model="from.enrollStartTime"
           style="width: 250px;"
           value-format="yyyy-MM-dd"
-          :disabled="false"
+          :disabled="appEnrollCount !== 0 || auditState === 'auditing'"
           :clearable="false"
         ></el-date-picker>
       </el-form-item>
@@ -61,7 +61,7 @@
           v-model="from.enrollEndTime"
           style="width: 250px;"
           value-format="yyyy-MM-dd"
-          :disabled="false"
+          :disabled="appEnrollCount !== 0 || auditState === 'auditing'"
           :clearable="false"
         ></el-date-picker>
       </el-form-item>
@@ -73,7 +73,7 @@
           v-model="from.examStartTime"
           style="width: 250px;"
           value-format="yyyy-MM-dd"
-          :disabled="false"
+          :disabled="appEnrollCount !== 0 || auditState === 'auditing'"
           :clearable="true"
         ></el-date-picker>
       </el-form-item>
@@ -84,7 +84,7 @@
           v-model="from.examEndTime"
           style="width: 250px;"
           value-format="yyyy-MM-dd"
-          :disabled="false"
+          :disabled="appEnrollCount !== 0 || auditState === 'auditing'"
           :clearable="false"
         ></el-date-picker>
       </el-form-item>
@@ -356,7 +356,7 @@
               v-model="item.subjectDate"
               style="width: 180px;"
               value-format="yyyy-MM-dd"
-              :disabled="false"
+              :disabled="appEnrollCount !== 0 || auditState === 'auditing'"
               :clearable="false"
             ></el-date-picker>
           </el-form-item>
@@ -366,6 +366,7 @@
               format="HH:mm"
               value-format="HH:mm"
               placeholder="起始时间"
+              :disabled="appEnrollCount !== 0 || auditState === 'auditing'"
               v-model="item.subjectStarttime"
               @change="filterStartTime"
             ></el-time-picker>
@@ -374,6 +375,7 @@
               placeholder="结束时间"
               format="HH:mm"
               value-format="HH:mm"
+              :disabled="appEnrollCount !== 0 || auditState === 'auditing'"
               v-model="item.subjectEndtime"
               @change="filterEndTime"
             ></el-time-picker>
@@ -387,176 +389,184 @@
               </el-button>
             </el-form-item>
           </el-form-item>
-          <div v-if="baoming">
-            <div>
+
+          <el-radio-group v-if="baoming" style="margin-top: 4px" v-model="item.subInfoToggle" size="small" @change="subChange(index, item.subInfoToggle)">
+            <el-radio-button label="true">展开</el-radio-button>
+            <el-radio-button label="false">收起</el-radio-button>
+          </el-radio-group>
+
+          <!-- <div v-if="item.subInfoToggle"> -->
+            <div v-if="baoming && item.subInfoToggle">
+              <div>
+                <el-form-item>
+                  考前多久查看考题（分钟）
+                </el-form-item>
+                <el-form-item>
+                  <el-form-item >
+                    <el-input-number 
+                      controls-position="right"
+                      v-model="item.seenQuestionBeforeMinute" 
+                      :max="30" 
+                      placeholder="不早于考前30分钟"
+                      style="width: 210px"
+                    ></el-input-number>
+                  </el-form-item>
+                </el-form-item>
+              </div>
+
               <el-form-item>
-                考前多久查看考题（分钟）
-              </el-form-item>
-              <el-form-item>
-                <el-form-item >
+                <el-form-item>
+                  上传试卷开始和结束时间
+                </el-form-item>
+                <el-form-item>
+                  <el-input-number
+                    controls-position="right"
+                    v-model="item.uploadPaperStarttimeAfterMinute" 
+                    placeholder="不早于考后30分钟" 
+                    style="width: 180px" 
+                    :max="getUpPaperTimeMax(item.subjectStarttime)" 
+                    :min="30"
+                    @change="upPaperTime"
+                  ></el-input-number>
+                </el-form-item>
+                <el-form-item>
+                  至
+                </el-form-item>
+                <el-form-item>
                   <el-input-number 
                     controls-position="right"
-                    v-model="item.seenQuestionBeforeMinute" 
-                    :max="30" 
-                    placeholder="不早于考前30分钟"
-                    style="width: 210px"
+                    v-model="item.uploadPaperEndtimeAfterMinute" 
+                    placeholder="不超当晚24点" 
+                    style="width: 180px" 
+                    :max="getDownPaperTimeMax(item.subjectEndtime)" 
+                    :min="getDownPaperTimeMin(item.uploadPaperStarttimeAfterMinute)"
+                    @change="downPaperTime"
                   ></el-input-number>
                 </el-form-item>
               </el-form-item>
-            </div>
 
-            <el-form-item>
-              <el-form-item>
-                上传试卷开始和结束时间
-              </el-form-item>
-              <el-form-item>
-                <el-input-number
-                  controls-position="right"
-                  v-model="item.uploadPaperStarttimeAfterMinute" 
-                  placeholder="不早于考后30分钟" 
-                  style="width: 180px" 
-                  :max="getUpPaperTimeMax(item.subjectStarttime)" 
-                  :min="30"
-                  @change="upPaperTime"
-                ></el-input-number>
-              </el-form-item>
-              <el-form-item>
-                至
-              </el-form-item>
-              <el-form-item>
-                <el-input-number 
-                  controls-position="right"
-                  v-model="item.uploadPaperEndtimeAfterMinute" 
-                  placeholder="不超当晚24点" 
-                  style="width: 180px" 
-                  :max="getDownPaperTimeMax(item.subjectEndtime)" 
-                  :min="getDownPaperTimeMin(item.uploadPaperStarttimeAfterMinute)"
-                  @change="downPaperTime"
-                ></el-input-number>
-              </el-form-item>
-            </el-form-item>
-
-            <div>
-              <el-form-item>
-                <el-checkbox v-model="item.isFaceDetect" style="margin-right: 45px">启用人脸识别</el-checkbox>
-              </el-form-item>
-              <el-form-item>
-                <el-input-number 
-                  controls-position="right" 
-                  v-model="item.faceDetectBeforeMinute" 
-                  placeholder="不早于考前60分钟" 
-                  style="width: 180px" 
-                  :max="60" 
-                  :min="0"
-                ></el-input-number>
-              </el-form-item>
-              <el-form-item>
-                至
-              </el-form-item>
-              <el-form-item>
-                <el-input-number
-                  controls-position="right" 
-                  v-model="item.faceDetectAfterMinute" 
-                  placeholder="不晚于考后30分钟" 
-                  style="width: 180px" 
-                  :max="30" 
-                  :min="0"
-                ></el-input-number>
-              </el-form-item>
-            </div>
-            <div>
-              <el-form-item>
-                考试题目
-              </el-form-item>
-              <el-form-item>
-                <el-input
-                    type="textarea"
-                    style="width: 450px"
-                    :rows="4"
-                    placeholder="请输入考试题目"
-                    maxlength="30"
-                    show-word-limit
-                    v-model="item.questionContent">
-                </el-input>
-              </el-form-item>
-            </div>
-            <div>
-              <el-form-item>
-                考试要求
-              </el-form-item>
-              <el-form-item>
-                <el-input
-                    type="textarea"
-                    style="width: 450px"
-                    :rows="4"
-                    placeholder="请输入考试要求"
-                    maxlength="500"
-                    show-word-limit
-                    v-model="item.questionRule">
-                </el-input>
-              </el-form-item>
-            </div>
-            <div>
-              <el-form-item>
-                备注
-              </el-form-item>
-              <el-form-item>
-                <el-input
-                    type="textarea"
-                    style="width: 280px"
-                    :rows="4"
-                    placeholder="请输入考试邀请信息"
-                    maxlength="500"
-                    show-word-limit
-                    v-model="item.questionRemark">
-                </el-input>
-              </el-form-item>
-              <el-form-item>
-                上传考试图片
-              </el-form-item>
-              <el-form-item class="xxx">
-                <div class="rulePic">
-                  <el-image :src="item.questionUrl" v-if="item.questionUrl" class="ruleImage"></el-image>
-                  <input  type="file" v-show="false" @change="uploadchanged2(item, index)" :class="'ref'+index" />
-                  <div class="ruleImageNo" @click="upToOss2(item, index)">
-                    <p class="addIcon" v-show="!item.questionUrl">+</p>
-                    <p class="addDes" v-show="!item.questionUrl">只支持.jpg文件</p>
+              <div>
+                <el-form-item>
+                  <el-checkbox v-model="item.isFaceDetect" style="margin-right: 45px">启用人脸识别</el-checkbox>
+                </el-form-item>
+                <el-form-item>
+                  <el-input-number 
+                    controls-position="right" 
+                    v-model="item.faceDetectBeforeMinute" 
+                    placeholder="不早于考前60分钟" 
+                    style="width: 180px" 
+                    :max="60" 
+                    :min="0"
+                  ></el-input-number>
+                </el-form-item>
+                <el-form-item>
+                  至
+                </el-form-item>
+                <el-form-item>
+                  <el-input-number
+                    controls-position="right" 
+                    v-model="item.faceDetectAfterMinute" 
+                    placeholder="不晚于考后30分钟" 
+                    style="width: 180px" 
+                    :max="30" 
+                    :min="0"
+                  ></el-input-number>
+                </el-form-item>
+              </div>
+              <div>
+                <el-form-item>
+                  考试题目
+                </el-form-item>
+                <el-form-item>
+                  <el-input
+                      type="textarea"
+                      style="width: 450px"
+                      :rows="4"
+                      placeholder="请输入考试题目"
+                      maxlength="30"
+                      show-word-limit
+                      v-model="item.questionContent">
+                  </el-input>
+                </el-form-item>
+              </div>
+              <div>
+                <el-form-item>
+                  考试要求
+                </el-form-item>
+                <el-form-item>
+                  <el-input
+                      type="textarea"
+                      style="width: 450px"
+                      :rows="4"
+                      placeholder="请输入考试要求"
+                      maxlength="500"
+                      show-word-limit
+                      v-model="item.questionRule">
+                  </el-input>
+                </el-form-item>
+              </div>
+              <div>
+                <el-form-item>
+                  备注
+                </el-form-item>
+                <el-form-item>
+                  <el-input
+                      type="textarea"
+                      style="width: 280px"
+                      :rows="4"
+                      placeholder="请输入考试邀请信息"
+                      maxlength="500"
+                      show-word-limit
+                      v-model="item.questionRemark">
+                  </el-input>
+                </el-form-item>
+                <el-form-item>
+                  上传考试图片
+                </el-form-item>
+                <el-form-item class="xxx">
+                  <div class="rulePic">
+                    <el-image :src="item.questionUrl" v-if="item.questionUrl" class="ruleImage"></el-image>
+                    <input  type="file" v-show="false" @change="uploadchanged2(item, index)" :class="'ref'+index" />
+                    <div class="ruleImageNo" @click="upToOss2(item, index)">
+                      <p class="addIcon" v-show="!item.questionUrl">+</p>
+                      <p class="addDes" v-show="!item.questionUrl">只支持.jpg文件</p>
+                    </div>
                   </div>
-                </div>
-              </el-form-item>
-            </div>
+                </el-form-item>
+              </div>
 
-            <div>
-              <el-form-item>
-                设置作品照片要求
-              </el-form-item>
-              <el-form-item>
-                <el-input
-                    type="textarea"
-                    style="width: 280px"
-                    :rows="4"
-                    placeholder="用于App手机上传试卷，拍摄示例说明"
-                    maxlength="500"
-                    show-word-limit
-                    v-model="item.takePic">
-                </el-input>
-              </el-form-item>
-              <el-form-item>
-                上传拍摄示例图片
-              </el-form-item>
-              <el-form-item class="xxx">
-                <div class="rulePic">
-                  <el-image :src="item.picUrl" v-if="item.picUrl" class="ruleImage"></el-image>
-                  <input  type="file" v-show="false" @change="uploadchanged3(item, index)" :class="'refs'+index" />
-                  <div class="ruleImageNo" @click="upToOss3(item, index)">
-                    <p class="addIcon" v-show="!item.picUrl">+</p>
-                    <p class="addDes" v-show="!item.picUrl">只支持.jpg文件</p>
+              <div>
+                <el-form-item>
+                  设置作品照片要求
+                </el-form-item>
+                <el-form-item>
+                  <el-input
+                      type="textarea"
+                      style="width: 280px"
+                      :rows="4"
+                      placeholder="用于App手机上传试卷，拍摄示例说明"
+                      maxlength="500"
+                      show-word-limit
+                      v-model="item.takePic">
+                  </el-input>
+                </el-form-item>
+                <el-form-item>
+                  上传拍摄示例图片
+                </el-form-item>
+                <el-form-item class="xxx">
+                  <div class="rulePic">
+                    <el-image :src="item.picUrl" v-if="item.picUrl" class="ruleImage"></el-image>
+                    <input  type="file" v-show="false" @change="uploadchanged3(item, index)" :class="'refs'+index" />
+                    <div class="ruleImageNo" @click="upToOss3(item, index)">
+                      <p class="addIcon" v-show="!item.picUrl">+</p>
+                      <p class="addDes" v-show="!item.picUrl">只支持.jpg文件</p>
+                    </div>
                   </div>
-                </div>
-              </el-form-item>
-            </div>
+                </el-form-item>
+              </div>
 
-          </div>
+            </div>
+          <!-- </div> -->
         </el-form>
       </div>
     </el-form>
@@ -627,6 +637,8 @@ export default {
   },
   data() {
     return {
+      auditState: null, // 审核状态  auditing 审核中 audit_succeeded 审核通过  audit_failed 失败
+      appEnrollCount: 0, // 报名人数
       upPaperTimeMax: 0,
       downPaperTimeMax: 0,
       downPaperTimeMin: 0,
@@ -654,6 +666,7 @@ export default {
       ],
       subject: [
         {
+          subInfoToggle: false
           // subjectDate:"2020-10-10", //: 科目日期 ,
           // subjectStarttime:"00:00:00", //: 科目开始时间
           // subjectEndtime:"01:00:00", //: 科目结束时间 ,
@@ -757,10 +770,14 @@ export default {
     this.getProvinceList()
     this.getMenuList()
   },
-  mounted() {
-    // this.$refs['examForm'].resetFields()
-  },
+  mounted() {},
   methods: {
+    subChange(ind, bool) {
+      let that = this;
+      let list = that.subject;
+      list[ind].subInfoToggle = bool === 'false' ? false : true;
+      that.subject = list
+    },
     filterMenu(arr = [], id) {
       const menu_arr = JSON.parse(JSON.stringify(arr));
       let arr_new = []
@@ -964,7 +981,7 @@ export default {
       if (this.isAdd) {
         this.from = {}
         this.address = [{}]
-        this.subject = [{}]
+        this.subject = [{subInfoToggle: false}]
         this.imgUrl = "";//图片
         this.baoming = false;
         this.queryCondition2 = ['启用人脸识别','启用录制视频','启用邮寄纸质试卷'];
@@ -988,6 +1005,8 @@ export default {
               queryEndTime:result.queryEndTime,
               queryStartTime:result.queryStartTime,
             }
+            this.appEnrollCount = result.appEnrollCount
+            this.auditState = result.auditState
             this.menus = result.menus || []
             if(result.menus?.[0]) {
               this.menuChildList = this.menuList?.[0].childMenus
@@ -1040,7 +1059,7 @@ export default {
             }
 
             this.address = result.addressList ? result.addressList : [{}]
-            this.subject = result.subjectList ? result.subjectList : [{}]
+            this.subject = result.subjectList ? result.subjectList : [{subInfoToggle: false}]
           })
       }
     },
@@ -1301,7 +1320,7 @@ export default {
       this.menuParams.splice(index, 1)
     },
     addSubject() {
-      this.subject.push({})
+      this.subject.push({subInfoToggle: false})
     },
     delSubject(index,id) {
       if(id){
