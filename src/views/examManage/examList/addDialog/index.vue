@@ -770,7 +770,7 @@ export default {
     this.getProvinceList()
     this.getMenuList()
   },
-  mounted() {},
+  mounted() { },
   methods: {
     subChange(ind, bool) {
       let that = this;
@@ -1228,7 +1228,7 @@ export default {
 
           let data = {
             ...this.from,
-            menus: this.menuParams,
+            menus: this._.uniqWith(this.menuParams, this._.isEqual), // this.menuParams,
             addressList: this.address,
             subjectList: this.subject,
 			      queryParams:JSON.stringify(queryParams),
@@ -1431,7 +1431,7 @@ export default {
           this.$axios
             .post(this.API.examinfo.update, {
               ...this.from,
-              menus: this.menuParams,
+              menus: this._.uniqWith(this.menuParams, this._.isEqual), // this.menuParams,
               addressList: this.address,
               subjectList: this.subject,
 			        queryParams:JSON.stringify(queryParams),
